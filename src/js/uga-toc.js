@@ -1,5 +1,9 @@
-import {LitElement, html, css} from 'lit';
+import { LitElement, html, css } from 'lit';
+import { debounce } from '../utils/dom.js';
+import { SCROLL_OFFSET } from '../utils/constants.js';
+import { track } from '../services/telemetry.js';
 
+export const UGAComponentsLoaded = true;
 export class UGATableOfContents extends LitElement {
   // Disable Shadow DOM so global styles and light-DOM behavior can take effect
   createRenderRoot() {

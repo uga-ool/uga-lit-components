@@ -5,16 +5,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "build:zip": "npm run build && npm run zip",
-    "zip": "node scripts/zip-dist.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "lit": "^3.3.1"
   },
   "devDependencies": {
-    "glob": "^10",
-    "rollup": "^4",
-    "vite": "^5"
+    "vite": "^5.4.0"
   }
 }

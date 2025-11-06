@@ -1,26 +1,21 @@
 import { defineConfig } from 'vite';
-import { globSync } from 'glob';
 import path from 'node:path';
 
-// Create a build entry for each component under src/js
-const entries = Object.fromEntries(
-  globSync('src/js/*.js').map((p) => [path.basename(p, '.js'), path.resolve(p)])
-);
-
 export default defineConfig({
-  base: './', // ensures relative URLs work in Brightspace
+  base: './',            // relative URLs work in Brightspace
   build: {
-    outDir: 'dist',
+    outDir: 'dist',      // only one output folder now
     emptyOutDir: true,
     target: 'es2020',
-    sourcemap: true,
+    sourcemap: true,     // helpful when debugging in Brightspace
     rollupOptions: {
-      input: entries,
+      input: { 'uga-all': path.resolve('src/all.js') },
       output: {
         entryFileNames: 'js/[name].js',
-        chunkFileNames: 'js/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]',
-      },
-    },
-  },
+        // ensure ONE file: no code-splitting, no extra vendor chunk
+        inlineDynamicImports: true,
+        manualChunks: undefined
+      }
+    }
+  }
 });
