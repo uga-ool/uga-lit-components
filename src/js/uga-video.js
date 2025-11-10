@@ -52,7 +52,7 @@ class UgaVideo extends LitElement {
 
     if (this.playerid == "") {  // If no playerid is specified, then we use the standard player. 
       this.playerid = "1574196844";
-      this.uiconfid = "40170611"; // this value is different for the standard player, but matches the playerid in other players.
+      this.uiconfid = "57494843"; // this value is different for the standard player, but matches the playerid in other players.
     } else {
       this.uiconfid = this.playerid;
     }
