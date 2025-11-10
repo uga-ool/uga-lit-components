@@ -9,7 +9,7 @@ export default defineConfig({
     target: 'es2020',
     sourcemap: true,     // helpful when debugging in Brightspace
     rollupOptions: {
-      input: { 'uga-all': path.resolve('src/all.js') },
+      input: { 'uga-components': path.resolve('src/all.js') },
       output: {
         entryFileNames: 'js/[name].js',
         // ensure ONE file: no code-splitting, no extra vendor chunk
