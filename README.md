@@ -2,14 +2,14 @@
 
 This repository contains a collection of reusable **Lit web components** designed for use within the **University of Georgia’s Brightspace (D2L)** learning environment.
 
-The project has been modernized to use **Vite** for development and builds, and to bundle all components into a **single optimized JavaScript file** (`uga-all.js`) that can be easily uploaded to Brightspace Public Files.
+The project has been modernized to use **Vite** for development and builds, and to bundle all components into a **single optimized JavaScript file** (`uga-components.js`) that can be easily uploaded to Brightspace Public Files.
 
 ---
 
 ## 🚀 Key Features
 
 - **Single bundle deployment:**  
-  One ES module (`uga-all.js`) registers all custom elements.
+  One ES module (`uga-components.js.js`) registers all custom elements.
   
 - **Modern tooling:**  
   Uses [Vite](https://vitejs.dev/) for fast builds and optimized output.
