@@ -1,9 +1,7 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-
-// Axios is available globally in Brightspace
-declare const axios: any;
+import { loadData } from '../lib/data/data-loader.js';
 
 export const UGAComponentsLoaded = true;
 
@@ -37,14 +35,9 @@ class UgaTabs extends LitElement {
   }
   
   async getDataFile(): Promise<void> {
-    let dataFile;
-    if (this.type === 'local') {
-      dataFile = await axios.get(this.filename);
-    } else if (this.type === 'program') {
-      dataFile = await axios.get('/shared/ugaonline/templates/' + this.program + '/data/' + this.filename);
-    }
-    if (dataFile) {
-      this.tabs = dataFile.data.data;
+    if (this.type === 'local' || this.type === 'program') {
+      const dataFile = await loadData<{ data: Tab[] }>(this.type, this.filename, this.program);
+      this.tabs = dataFile.data;
       this.loaded = true;
       this.requestUpdate();
     }

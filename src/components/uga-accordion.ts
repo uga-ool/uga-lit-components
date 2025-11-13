@@ -1,9 +1,7 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-
-// Axios is available globally in Brightspace
-declare const axios: any;
+import { loadData } from '../lib/data/data-loader.js';
 
 export const UGAComponentsLoaded = true;
 
@@ -36,18 +34,13 @@ class UgaAccordion extends LitElement {
   }
 
   async init(): Promise<void> {
-    await this.getDataFile();
+    await this.getData();
   }
 
-  async getDataFile(): Promise<void> {
-    if (this.type === 'local') {
-      const dataFile = await axios.get(this.filename);
-      this.accordionData = dataFile.data;
-      this.loaded = true;
-      this.requestUpdate();
-    } else if (this.type === 'program') {
-      const dataFile = await axios.get('/shared/ugaonline/templates/' + this.program + '/data/' + this.filename);
-      this.accordionData = dataFile.data;
+  async getData(): Promise<void> {
+    if (this.type === 'local' || this.type === 'program') {
+      const data = await loadData<AccordionData>(this.type, this.filename, this.program);
+      this.accordionData = data;
       this.loaded = true;
       this.requestUpdate();
     }
