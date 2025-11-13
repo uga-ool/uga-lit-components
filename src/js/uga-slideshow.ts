@@ -1,45 +1,48 @@
 import { LitElement, html, css } from 'lit';
-import { debounce } from '../utils/dom.js';
-import { SCROLL_OFFSET } from '../utils/constants.js';
-import { track } from '../services/telemetry.js';
+import { customElement, property } from 'lit/decorators.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+
+// Axios is available globally in Brightspace
+declare const axios: any;
 
 export const UGAComponentsLoaded = true;
 
+interface SlideImage {
+  id?: string;
+  src: string;
+  alt: string;
+  title: string;
+  description: string;
+  displayClass?: string;
+  fadeClass?: string;
+}
+
+interface SlideshowData {
+  title: string;
+  description: string;
+  id: string;
+  data: SlideImage[];
+}
+
+@customElement('uga-slideshow')
 class UgaSlideshow extends LitElement {
 
-  static get properties() {
-    return {
-      slideshowTitle: {type: String},
-      slideshowId: {type: String},
-      slideshowDescription: {type: String},
-      slideshowData: {type: Object},
-      filename: {type: String},
-      activeImage: {type: Number},
-      imageHeight: {type: String},
-      initialLoadHeight: {type: String},
-      loaded: {type: Boolean}
-    }
-  }
+  @property({ type: String }) slideshowTitle = 'Loading';
+  @property({ type: String }) slideshowId: string | null = null;
+  @property({ type: String }) slideshowDescription: string | null = null;
+  @property({ type: Object }) slideshowData: SlideImage[] = [];
+  @property({ type: String }) filename: string | null = null;
+  @property({ type: Number }) activeImage = 0;
+  @property({ type: String }) imageHeight = '500';
+  @property({ type: String }) initialLoadHeight = '700';
+  @property({ type: Boolean }) loaded = false;
 
-  constructor() {
-    super();
-    this.slideshowData = {}
-    this.slideshowTitle = "Loading"
-    this.filename = null
-    this.slideshowDescription = null
-    this.slideshowId = null
-    this.activeImage = 0
-    this.imageHeight = "500"
-    this.initialLoadHeight = "700"
-    this.loaded = false
-  }
-
-  connectedCallback() {
-    super.connectedCallback()
+  connectedCallback(): void {
+    super.connectedCallback();
     this.getDataFile().then((dataFile) => {
-      this.addData(dataFile)
-      this.loaded = true
-    }) 
+      this.addData(dataFile);
+      this.loaded = true;
+    });
   }
 
   static styles = css`
@@ -141,59 +144,59 @@ class UgaSlideshow extends LitElement {
     }
   `
 
-  async getDataFile() {
-    let dataFile = await axios.get(this.filename)
-    return dataFile
+  async getDataFile(): Promise<any> {
+    const dataFile = await axios.get(this.filename);
+    return dataFile;
   }
 
-  addData(dataFile) {
-    this.slideshowTitle = dataFile.data.title
-    this.slideshowDescription = dataFile.data.description
-    this.slideshowId = dataFile.data.id
-    this.slideshowData = dataFile.data.data
+  addData(dataFile: any): void {
+    this.slideshowTitle = dataFile.data.title;
+    this.slideshowDescription = dataFile.data.description;
+    this.slideshowId = dataFile.data.id;
+    this.slideshowData = dataFile.data.data;
   }
 
-  decrementActive() {
-    if (this.activeImage == 0) {
-      this.activeImage = this.slideshowData.length-1
+  decrementActive(): void {
+    if (this.activeImage === 0) {
+      this.activeImage = this.slideshowData.length - 1;
     } else {
-      this.activeImage = this.activeImage - 1 
+      this.activeImage = this.activeImage - 1;
     }
   }
 
-  incrementActive() {
-    if (this.activeImage == this.slideshowData.length-1) {
-      this.activeImage = 0
+  incrementActive(): void {
+    if (this.activeImage === this.slideshowData.length - 1) {
+      this.activeImage = 0;
     } else {
-      this.activeImage = this.activeImage + 1
+      this.activeImage = this.activeImage + 1;
     }
   }
 
-  jumpToItem(id) {
-    this.activeImage = parseInt(id)
+  jumpToItem(id: string): void {
+    this.activeImage = parseInt(id);
   }
 
   render() {
     if(this.loaded) {
 
-      let count = 0
+      let count = 0;
 
 
       for (let i in this.slideshowData) {
-        this.slideshowData[i]['id'] = i
+        this.slideshowData[i]['id'] = i;
 
-        if (count == this.activeImage) {
+        if (count === this.activeImage) {
           this.slideshowData[i]['displayClass'] = "";
           this.slideshowData[i]['fadeClass'] = "fade";
         } else {
           this.slideshowData[i]['displayClass'] = "util-visually-hidden";
           this.slideshowData[i]['fadeClass'] = "";
         }
-        count += 1
+        count += 1;
       }
 
       let images = this.slideshowData.map((image) => html`
-          <div class="cmp-slide ${image.displayClass}" aria-hidden="${this.activeImage == image.id ? false : true}">
+          <div class="cmp-slide ${image.displayClass}" aria-hidden="${this.activeImage === parseInt(image.id || '0') ? false : true}">
             <div class="cmp-slide__container" style="max-height:${this.imageHeight}px;">
               <div class="cmp-slide__controls">
                 <button type="button" alt="Previous Image" class="cmp-slide__button cmp-slide__button-prev" @click="${this.decrementActive}">&#10094;</button>
@@ -203,7 +206,7 @@ class UgaSlideshow extends LitElement {
             </div>
             <div class="cmp-slide__dots util-margin-bottom-md">
               ${this.slideshowData.map((image) => html`
-                ${this.activeImage == image.id ? html`<button type="button" alt="image_${image.id}" class="cmp-slide__dot cmp-slide__dot-active util-margin-top-lg util-margin-horiz-sm"></button>` : html`<button type="button" alt="image_${image.id}" class="cmp-slide__dot util-margin-top-lg util-margin-horiz-sm" @click="${() => this.jumpToItem(image.id)}"></button>`}
+                ${this.activeImage === parseInt(image.id || '0') ? html`<button type="button" alt="image_${image.id}" class="cmp-slide__dot cmp-slide__dot-active util-margin-top-lg util-margin-horiz-sm"></button>` : html`<button type="button" alt="image_${image.id}" class="cmp-slide__dot util-margin-top-lg util-margin-horiz-sm" @click="${() => this.jumpToItem(image.id || '0')}"></button>`}
               `)}
             </div>
             <div class="cmp-slide__content">
@@ -211,7 +214,7 @@ class UgaSlideshow extends LitElement {
               <p>${unsafeHTML(image.description)}</p>
             </div>
           </div>
-        `)
+        `);
 
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
@@ -219,12 +222,9 @@ class UgaSlideshow extends LitElement {
           <h1 class="cmp-heading-1 util-text-center">${this.slideshowTitle}</h1>
           ${images}
         </div>
-      `
+      `;
     } else {
-      return html`<div style="min-height: ${this.initialLoadHeight}px"></div>`
+      return html`<div style="min-height: ${this.initialLoadHeight}px"></div>`;
     }
   }
 }
-
-
-customElements.define('uga-slideshow', UgaSlideshow)

@@ -1,9 +1,9 @@
-import { LitElement, html, css } from 'lit';
-import { debounce } from '../utils/dom.js';
-import { SCROLL_OFFSET } from '../utils/constants.js';
-import { track } from '../services/telemetry.js';
+import { LitElement, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 export const UGAComponentsLoaded = true;
+
+@customElement('uga-toc')
 export class UGATableOfContents extends LitElement {
   // Disable Shadow DOM so global styles and light-DOM behavior can take effect
   createRenderRoot() {
@@ -11,12 +11,12 @@ export class UGATableOfContents extends LitElement {
   }
 
   // This lifecycle method runs after the component first renders
-  firstUpdated() {
+  firstUpdated(): void {
     // Since we're not using shadow DOM, grab the element from the light DOM
     const tocList = this.querySelector('#toc-list');
     const headings = document.querySelectorAll('h1, h2, h3, h4');
-    const idMap = new Map();
-    let currentLists = { 1: tocList };
+    const idMap = new Map<string, boolean>();
+    const currentLists: { [key: number]: HTMLUListElement | null } = { 1: tocList as HTMLUListElement };
 
     headings.forEach(heading => {
       // Ensure each heading has a unique ID
@@ -40,7 +40,7 @@ export class UGATableOfContents extends LitElement {
       // Create a link to each heading
       const level = parseInt(heading.tagName[1]);
       const listItem = document.createElement('li');
-	  listItem.className = "util-margin-vert-sm"
+	  listItem.className = "util-margin-vert-sm";
       const link = document.createElement('a');
       link.href = `#${heading.id}`;
       link.textContent = heading.textContent;
@@ -49,7 +49,10 @@ export class UGATableOfContents extends LitElement {
       // Smooth scroll on click
       link.addEventListener('click', (event) => {
         event.preventDefault();
-        document.getElementById(heading.id).scrollIntoView({ behavior: 'smooth' });
+        const target = document.getElementById(heading.id);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
       });
 
       // Reset child lists from current level down
@@ -62,13 +65,16 @@ export class UGATableOfContents extends LitElement {
       // Create a new nested <ul> if needed
       if (!currentLists[level]) {
         const parentLevel = level - 1;
-        const parentList = currentLists[parentLevel] || tocList;
+        const parentList = currentLists[parentLevel] || (tocList as HTMLUListElement);
         const newList = document.createElement('ul');
         parentList.appendChild(newList);
         currentLists[level] = newList;
       }
 
-      currentLists[level].appendChild(listItem);
+      const targetList = currentLists[level];
+      if (targetList) {
+        targetList.appendChild(listItem);
+      }
     });
   }
 
@@ -90,5 +96,3 @@ export class UGATableOfContents extends LitElement {
     `;
   }
 }
-
-customElements.define('uga-toc', UGATableOfContents);
