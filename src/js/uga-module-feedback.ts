@@ -1,27 +1,15 @@
 import { LitElement, html, css } from 'lit';
-import { debounce } from '../utils/dom.js';
-import { SCROLL_OFFSET } from '../utils/constants.js';
-import { track } from '../services/telemetry.js';
+import { customElement, property } from 'lit/decorators.js';
 
 export const UGAComponentsLoaded = true;
 
+@customElement('uga-module-feedback')
 class UgaModuleFeedback extends LitElement {
-  static get properties() {
-    return {
-      parentUrl: { type: String },
-      encodedParentUrl: { type: String },
-      loaded: { type: Boolean },
-    };
-  }
+  @property({ type: String }) parentUrl: string | null = null;
+  @property({ type: String }) encodedParentUrl: string | null = null;
+  @property({ type: Boolean }) loaded = false;
 
-  constructor() {
-    super();
-    this.parentUrl = null;
-    this.encodedParentUrl = null;
-    this.loaded = false;
-  }
-
-  connectedCallback() {
+  connectedCallback(): void {
     super.connectedCallback();
     this.parentUrl = this.getParentUrl();
     this.encodedParentUrl = this.getEncodedParentUrl();
@@ -31,13 +19,13 @@ class UgaModuleFeedback extends LitElement {
   /******
    * Other functions go here
    */
-  getParentUrl() {
+  getParentUrl(): string {
     const currentLocation = window.parent.parent.location;
     const url = currentLocation.href;
     return url;
   }
 
-  getEncodedParentUrl() {
+  getEncodedParentUrl(): string | null {
     if (this.parentUrl) {
       return encodeURIComponent(this.parentUrl);
     }
@@ -101,5 +89,3 @@ class UgaModuleFeedback extends LitElement {
       : html``;
   }
 }
-
-customElements.define("uga-module-feedback", UgaModuleFeedback);

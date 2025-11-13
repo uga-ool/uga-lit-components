@@ -1,10 +1,9 @@
 import { LitElement, html, css } from 'lit';
-import { debounce } from '../utils/dom.js';
-import { SCROLL_OFFSET } from '../utils/constants.js';
-import { track } from '../services/telemetry.js';
+import { customElement } from 'lit/decorators.js';
 
 export const UGAComponentsLoaded = true;
 
+@customElement('uga-return-to-top')
 class UgaReturnToTop extends LitElement {
   static styles = css`
     :host {
@@ -42,17 +41,17 @@ class UgaReturnToTop extends LitElement {
     this._scrollToTop = this._scrollToTop.bind(this);
   }
 
-  connectedCallback() {
+  connectedCallback(): void {
     super.connectedCallback();
     this.addEventListener('click', this._scrollToTop);
   }
 
-  disconnectedCallback() {
+  disconnectedCallback(): void {
     this.removeEventListener('click', this._scrollToTop);
     super.disconnectedCallback();
   }
 
-  _scrollToTop() {
+  _scrollToTop(): void {
     const scrollBehavior = { top: 0, behavior: 'smooth' };
 
     // Check if the window is inside an iframe and determine where to scroll
@@ -85,5 +84,3 @@ class UgaReturnToTop extends LitElement {
     `;
   }
 }
-
-customElements.define('uga-return-to-top', UgaReturnToTop);

@@ -1,47 +1,51 @@
-import { LitElement, html, css } from 'lit';
-import { debounce } from '../utils/dom.js';
-import { SCROLL_OFFSET } from '../utils/constants.js';
-import { track } from '../services/telemetry.js';
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+
+// Axios is available globally in Brightspace
+declare const axios: any;
 
 export const UGAComponentsLoaded = true;
 
+interface FooterData {
+  link: string;
+  alt: string;
+}
+
+interface FooterResponse {
+  data: FooterData;
+}
+
+@customElement('uga-footer')
 class UgaFooter extends LitElement {
 
-	createRenderRoot() {
-	  return this;
-	}
+  @property({ type: String }) type = '';
+  @property({ type: String }) filename = '';
+  @property({ type: String }) imagefile = '';
+  @property({ type: String }) program = '';
+  @property({ type: Boolean }) loaded = false;
 
-	static get properties() {
-		return {
-		  type: {type: String},
-		  filename: {type: String},
-		  imagefile: {type: String},
-		  program: {type: String},
-		  loaded: {type: Boolean}
-		}
-	}
+  private footerData: FooterData = { link: '', alt: '' };
 
-	constructor() {
-		super();
-		this.program = "";
-		this.footerData = {};
-		this.loaded = false;
-	}
+  createRenderRoot() {
+    return this;
+  }
 
-	async init() {
-		await this.getDataFile()
+	async init(): Promise<void> {
+		await this.getDataFile();
 	}
 	
-	async getDataFile() {
+	async getDataFile(): Promise<void> {
 		let dataFile;
-		if (this.type == 'local') {
+		if (this.type === 'local') {
 			dataFile = await axios.get(this.filename);
-		} else if (this.type == 'program') {
+		} else if (this.type === 'program') {
 			dataFile = await axios.get('/shared/ugaonline/templates/' + this.program + '/data/footer.json');
 		}
-		this.footerData = dataFile.data.data;
-		this.loaded = true;
-		this.requestUpdate();
+		if (dataFile) {
+			this.footerData = dataFile.data.data;
+			this.loaded = true;
+			this.requestUpdate();
+		}
 	}
 
 	render() {
@@ -66,5 +70,3 @@ class UgaFooter extends LitElement {
 		}
 	  }
 	}
-
-customElements.define('uga-footer', UgaFooter)

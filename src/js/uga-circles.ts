@@ -1,49 +1,57 @@
-import { LitElement, html, css } from 'lit';
-import { debounce } from '../utils/dom.js';
-import { SCROLL_OFFSET } from '../utils/constants.js';
-import { track } from '../services/telemetry.js';
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+
+// Axios is available globally in Brightspace
+declare const axios: any;
 
 export const UGAComponentsLoaded = true;
 
+interface CircleData {
+	figure: string;
+	caption: string;
+}
+
+interface CirclesResponse {
+	data: CircleData[];
+}
+
+@customElement('uga-circles')
 class UgaCircles extends LitElement {
 
-	createRenderRoot() {
-	  return this;
-	}
+	@property({ type: String }) type = '';
+	@property({ type: String }) filename = '';
+	@property({ type: String }) program = '';
+	@property({ type: Boolean }) loaded = false;
 
-	static get properties() {
-		return {
-		  type: {type: String},
-		  filename: {type: String},
-		  program: {type: String},
-		  loaded: {type: Boolean}
-		}
+	private circles: CircleData[] = [];
+
+	createRenderRoot() {
+		return this;
 	}
 
 	constructor() {
 		super();
-		this.program = "";
-		this.circles = [];
-		this.loaded = false;
 	}
 
-	async init() {
-		await this.getDataFile()
+	async init(): Promise<void> {
+		await this.getDataFile();
 	}
 	
-	async getDataFile() {
+	async getDataFile(): Promise<void> {
 		let dataFile;
-		if (this.type == 'local') {
+		if (this.type === 'local') {
 			dataFile = await axios.get(this.filename);
-		} else if (this.type == 'program') {
+		} else if (this.type === 'program') {
 			dataFile = await axios.get('/shared/ugaonline/templates/' + this.program + '/data/' + this.filename);
 		}
-		this.circles = dataFile.data.data;
-		this.loaded = true;
-		this.requestUpdate();
+		if (dataFile) {
+			this.circles = dataFile.data.data;
+			this.loaded = true;
+			this.requestUpdate();
+		}
 	}
 
-	getWideGridClass(count) {
+	getWideGridClass(count: number): string {
 		switch (count) {
 		  case 1:
 			return 'obj-grid__12-12';
@@ -58,7 +66,7 @@ class UgaCircles extends LitElement {
 		}
 	}
 
-	getNarrowGridClass(count) {
+	getNarrowGridClass(count: number): string {
 		switch (count) {
 		  case 1:
 			return 'obj-grid__12-12';
@@ -93,7 +101,5 @@ class UgaCircles extends LitElement {
 		} else {
 		  this.init();
 		}
-	  }
 	}
-
-customElements.define('uga-circles', UgaCircles)
+}

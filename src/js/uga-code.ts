@@ -1,29 +1,23 @@
-import { LitElement, html, css } from 'lit';
-import { debounce } from '../utils/dom.js';
-import { SCROLL_OFFSET } from '../utils/constants.js';
-import { track } from '../services/telemetry.js';
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import type { PropertyValues } from 'lit';
+
+// Prism is available globally
+declare const Prism: any;
 
 export const UGAComponentsLoaded = true;
 
+@customElement('uga-code')
 class UgaCode extends LitElement {
+  @property({ type: String }) filename = '';
+  @property({ type: String }) language = '';
+  @property({ type: String }) code = '';
+
   createRenderRoot() {
     return this;
   }
 
-  static get properties() {
-    return {
-      filename: { type: String },
-      language: { type: String },
-      code: { type: String }
-    };
-  }
-
-  constructor() {
-    super();
-    this.code = '';
-  }
-
-  updated(changedProperties) {
+  updated(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('filename')) {
       this.fetchCode();
     }
@@ -34,39 +28,38 @@ class UgaCode extends LitElement {
     }
   }
 
-  fetchCode() {
+  fetchCode(): void {
     if (this.filename) {
       fetch(this.filename)
         .then(response => response.text())
         .then(code => {
-          this.code = code;
-		  this.code = code.trim();
+          this.code = code.trim();
         })
         .catch(error => console.error('Error fetching code:', error));
     }
   }
 
-  copyCode() {
+  copyCode(): void {
     const codeElement = this.querySelector('code');
-    const code = codeElement.textContent;
+    const code = codeElement?.textContent || '';
 
     navigator.clipboard.writeText(code).then(() => {
       const button = this.querySelector('button');
-      button.innerHTML = copiedIcon;
+      if (button) {
+        button.innerHTML = copiedIcon as unknown as string;
 
-      setTimeout(() => {
-        button.innerHTML = copyIcon;
-      }, 2000);
+        setTimeout(() => {
+          button.innerHTML = copyIcon as unknown as string;
+        }, 2000);
+      }
     }).catch((err) => {
       console.error('Failed to copy text: ', err);
     });
   }
 
-  runExternalScripts() {
-    // Assuming Prism is loaded and globally available
+  runExternalScripts(): void {
+    // Prism is loaded and globally available in Brightspace
     Prism.highlightAllUnder(this);
-
-    // Add any other scripts that need to run after the content updates
   }
 
   render() {
@@ -103,5 +96,3 @@ const copiedIcon = html`
   </svg>
   Copied
 `;
-
-customElements.define('uga-code', UgaCode);
