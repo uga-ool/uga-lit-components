@@ -1,14 +1,13 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { getVersions, getUser, getForums, getTopics, getXsrfToken, createForum, createTopic, createPost } from '../lib/api/d2l-client.js';
+import { getCourse } from '../lib/api/d2l-utils.js';
+import type { ApiVersions } from '../types/d2l.js';
 
 // Axios is available globally in Brightspace
 declare const axios: any;
 
 export const UGAComponentsLoaded = true;
-
-interface ApiVersions {
-  [key: string]: string;
-}
 
 interface RatingOption {
   value: string;
@@ -90,41 +89,38 @@ class UgaRating extends LitElement {
     }
 
     if (this.ou === null) {
-      this.ou = this.getCourse();
+      this.ou = getCourse();
     }
 
-    const versionsRoute = "/d2l/api/versions/";
-    const versions = this.makeGetRequest(versionsRoute);
-    await versions.then(data => { this.addVersions(data); });
+    if (!this.ou) return;
 
-    const whoAmIRoute = "/d2l/api/lp/" + this.versions.lp + "/users/whoami";
-    const whoAmI = this.makeGetRequest(whoAmIRoute);
-    await whoAmI.then(data => { this.addWhoAmI(data); });
+    const versions = await getVersions();
+    this.addVersions(versions);
+
+    const whoAmI = await getUser(this.versions.lp);
+    this.addWhoAmI(whoAmI);
 
     if (this.forumId === null) {
-      const forumRoute = "/d2l/api/le/" + this.versions.le + "/" + this.ou + "/discussions/forums/";
-      const forums = this.makeGetRequest(forumRoute);
-      await forums.then(data => { this.findForum(data); });
+      const forums = await getForums(this.ou, this.versions.le);
+      this.findForum(forums);
     }
 
-    if (this.topicId === null) {
-      const topicRoute = "/d2l/api/le/" + this.versions.le + "/" + this.ou + "/discussions/forums/" + this.forumId + "/topics/";
-      const topics = this.makeGetRequest(topicRoute);
-      await topics.then(data => { this.findTopic(data); });
+    if (this.topicId === null && this.forumId) {
+      const topics = await getTopics(this.ou, this.versions.le, parseInt(this.forumId, 10));
+      this.findTopic(topics);
     }
 
     if (this.topicId === null || this.forumId === null) {
       this.error = true;
     } else {
       const postsRoute = "/d2l/api/le/" + this.versions.le + "/" + this.ou + "/discussions/forums/" + this.forumId + "/topics/" + this.topicId + "/posts/";
-      const posts = this.makeGetRequest(postsRoute);
-      await posts.then(data => { this.findPost(data); });
+      const posts = await this.makeGetRequest(postsRoute);
+      this.findPost(posts);
     }
   }
 
   async getToken(): Promise<void> {
-    const token = this.makeGetRequest(this.xsrfRoute);
-    await token.then(data => { this.token = data.referrerToken; });
+    this.token = await getXsrfToken();
   }
 
   async makePostRequest(route: string, data: any): Promise<any> {
@@ -143,9 +139,9 @@ class UgaRating extends LitElement {
    * Handle Valence Responses Here
    */
 
-  addVersions(apiVersions: any): void {
-    for (let i in apiVersions) {
-      this.versions[apiVersions[i]['ProductCode']] = apiVersions[i]['LatestVersion'];
+  addVersions(apiVersions: ApiVersions): void {
+    for (let key in apiVersions) {
+      this.versions[key] = apiVersions[key];
     }
   }
 
@@ -188,29 +184,6 @@ class UgaRating extends LitElement {
   /******
    * Other functions go here
    */
-   getCourse(): string | null {
-    const currentLocation = window.location;
-    const url = currentLocation.href;
-    let ou: string | null = null;
-    const a = url.split("/");
-    this.domain = a[2];
-    const lastSegment = a[a.length-1];
-    const attributes = lastSegment.split("&");
-
-    for (var i=0; i<attributes.length; i++) {  // Try to get the URL attribute
-      let attribute = attributes[i];
-      if (attribute.slice(0,3) === "ou=") {
-        ou = attribute.slice(3);
-        return ou;
-      }
-    }
-
-    if (ou === null) {  // If URL attribute fails, parse from the folder structure in URL
-      ou = a[5].split("-")[0];
-      return ou;
-    }
-    return ou;
-  }
 
   async submitRating(): Promise<void> {
 
@@ -225,7 +198,7 @@ class UgaRating extends LitElement {
       const result = rating.concat(feedback);
 
       if (this.ou === null) {
-        this.ou = this.getCourse();
+        this.ou = getCourse();
       }
 
       const route = "/d2l/api/le/" + this.versions.le + "/" + this.ou + "/discussions/forums/" + this.forumId + "/topics/" + this.topicId + "/posts/";

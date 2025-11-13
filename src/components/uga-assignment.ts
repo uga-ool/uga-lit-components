@@ -1,15 +1,11 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-
-// Axios is available globally in Brightspace
-declare const axios: any;
+import { getVersions, getEnrollment, getAssignments } from '../lib/api/d2l-client.js';
+import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
+import type { ApiVersions } from '../types/d2l.js';
 
 export const UGAComponentsLoaded = true;
-
-interface ApiVersions {
-  [key: string]: string;
-}
 
 interface AssignmentData {
   Name: string;
@@ -58,43 +54,22 @@ class UgaAssignment extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.ou = this.getCourse();
-    this.getVersions().then((versions) => {
+    this.ou = getCourse();
+    
+    getVersions().then((versions) => {
       this.addVersions(versions);
 
-      this.getEnrollment().then((enrollment) =>{
+      if (!this.ou) return;
+
+      getEnrollment(this.ou, this.versions.lp).then((enrollment) =>{
         this.checkStudent(enrollment);
 
-        this.getAssignments().then((assignments) => {
+        getAssignments(this.ou!, this.versions.le).then((assignments) => {
           this.findAssignment(assignments);
           this.loaded = true;
-
-        });  // End Find Assignments
-      }); // End Get Enrollment
-    });  // End Get Versions
-  }
-
-  /******
-   * API Calls Go Here
-   */
-
-  async getVersions(): Promise<ApiVersions> {
-    const apiVer = await axios.get('/d2l/api/versions/');
-    const result: ApiVersions = {};
-    for (let i in apiVer.data) {
-      result[apiVer.data[i].ProductCode] = apiVer.data[i].LatestVersion;
-    }
-    return result;
-  }
-
-  async getAssignments(): Promise<any> {
-    const assignments = await axios.get('/d2l/api/le/' + this.versions.le + '/' + this.ou + '/dropbox/folders/');
-    return assignments;
-  }
-
-  async getEnrollment(): Promise<any> {
-    const enrollment = await axios.get('/d2l/api/lp/' + this.versions.lp + '/enrollments/myenrollments/' + this.ou);
-    return enrollment;
+        });
+      });
+    });
   }
 
   /******
@@ -108,7 +83,8 @@ class UgaAssignment extends LitElement {
   }
 
   checkStudent(enrollment: any): void {
-    if (this.studentRoles.includes(enrollment.data.Access.ClasslistRoleName)) {
+    const roleName = enrollment.Role?.Name || enrollment.data?.Access?.ClasslistRoleName;
+    if (this.studentRoles.includes(roleName)) {
       this.student = true;
     } else {
       this.student = false;
@@ -117,29 +93,30 @@ class UgaAssignment extends LitElement {
 
   findAssignment(assignments: any): void {
     let assignmentFound = false;
-    for (let i in assignments.data) {
-      if (assignments.data[i].Name === this.name) {
+    const assignmentList = Array.isArray(assignments) ? assignments : assignments.data || [];
+    for (let i in assignmentList) {
+      if (assignmentList[i].Name === this.name) {
         assignmentFound = true;
-        this.assignmentData = assignments.data[i];
+        this.assignmentData = assignmentList[i];
       }
     }
 
     if (assignmentFound) {  // If we find the assignment, then we check for specific attributes to use in the component.
       if (this.assignmentData.DueDate) {
-        this.dueDate = this.transformDate(this.assignmentData.DueDate);
+        this.dueDate = transformDate(this.assignmentData.DueDate);
       } else {
         this.dueDate = null;
       }
 
       if (this.assignmentData.Availability) {
         if(this.assignmentData.Availability.StartDate) {
-          this.startDate = this.transformDate(this.assignmentData.Availability.StartDate);
+          this.startDate = transformDate(this.assignmentData.Availability.StartDate);
         } else {
           this.startDate = null;
         }
   
         if(this.assignmentData.Availability.EndDate) {
-          this.endDate = this.transformDate(this.assignmentData.Availability.EndDate);
+          this.endDate = transformDate(this.assignmentData.Availability.EndDate);
         } else {
           this.endDate = null;
         }
@@ -177,34 +154,6 @@ class UgaAssignment extends LitElement {
       this.assignmentData = { Name: "Assignment Not Found", CustomInstructions: { Html: "" }, Error: "Assignment Not Found" };
     }
 
-  }
-
-  /******
-   * Other functions go here
-   */
-
-  getCourse(): string | null {
-    const currentLocation = window.location;
-    const url = currentLocation.href;
-    const a = url.split("/");
-    this.domain = a[2];
-    const lastSegment = a[a.length-1];
-    const attributes = lastSegment.split("&");
-
-    for (var i=0; i<attributes.length; i++) {
-      let attribute = attributes[i];
-      if (attribute.slice(0,3) === "ou=") {
-        const ou = attribute.slice(3);
-        return ou;
-      }
-    }
-    return null;  // If this returns null, then the OU could not be determined
-  }
-
-  transformDate(apiDate: string): string {
-    const date = new Date(apiDate);
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-    return date.toLocaleDateString("en-US", options);
   }
 
   render() {

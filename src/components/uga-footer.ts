@@ -1,8 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
-// Axios is available globally in Brightspace
-declare const axios: any;
+import { loadData } from '../lib/data/data-loader.js';
 
 export const UGAComponentsLoaded = true;
 
@@ -30,25 +28,18 @@ class UgaFooter extends LitElement {
     return this;
   }
 
-	async init(): Promise<void> {
-		await this.getDataFile();
-	}
-	
-	async getDataFile(): Promise<void> {
-		let dataFile;
-		if (this.type === 'local') {
-			dataFile = await axios.get(this.filename);
-		} else if (this.type === 'program') {
-			dataFile = await axios.get('/shared/ugaonline/templates/' + this.program + '/data/footer.json');
-		}
-		if (dataFile) {
-			this.footerData = dataFile.data.data;
-			this.loaded = true;
-			this.requestUpdate();
-		}
-	}
-
-	render() {
+  async init(): Promise<void> {
+    await this.getDataFile();
+  }
+  
+  async getDataFile(): Promise<void> {
+    if (this.type === 'local' || this.type === 'program') {
+      const dataFile = await loadData<{ data: FooterData }>(this.type, this.type === 'program' ? 'footer.json' : this.filename, this.program);
+      this.footerData = dataFile.data;
+      this.loaded = true;
+      this.requestUpdate();
+    }
+  }	render() {
 		if (this.loaded) {
 			return html`
 			<footer class="cmp-site-footer">

@@ -1,30 +1,18 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { getVersions, getClasslist } from '../lib/api/d2l-client.js';
+import { getCourse } from '../lib/api/d2l-utils.js';
+import { loadData } from '../lib/data/data-loader.js';
+import type { ApiVersions, ClasslistUser } from '../types/d2l.js';
 import './uga-rating.js';
 
-// Axios is available globally in Brightspace
-declare const axios: any;
-
 export const UGAComponentsLoaded = true;
-
-interface ApiVersions {
-  [key: string]: string;
-}
-
-interface VideoData {
-  data: { [username: string]: string[] };
-}
-
-interface ClasslistUser {
-  Username: string;
-  RoleId: number;
-}
 
 @customElement('uga-video')
 class UgaVideo extends LitElement {
 
   @property({ type: String }) ou: string | null = null;
-  @property({ type: Object }) videodata: VideoData = { data: {} };
+  @property({ type: Object }) videodata: any = { data: {} };
   @property({ type: String }) type = '';
   @property({ type: String }) filename = '';
   @property({ type: String }) program = '';
@@ -46,7 +34,7 @@ class UgaVideo extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.ou = this.getCourse();
+    this.ou = getCourse();
 
     if (this.playerid === "") {  // If no playerid is specified, then we use the standard player. 
       this.playerid = "1574196844";
@@ -65,10 +53,12 @@ class UgaVideo extends LitElement {
         this.getDataFile().then(() => { // Get the data file
             const videoData = this.videodata.data;
 
-            this.getVersions().then((versions) => { // Get API versions
+            getVersions().then((versions) => { // Get API versions
               this.addVersions(versions);
               
-              this.getClasslist().then((classlist) => { // Get the classlist
+              if (!this.ou) return;
+
+              getClasslist(this.ou, this.versions.le).then((classlist) => { // Get the classlist
 
                 for (let i in classlist) {
                   if (classlist[i].Username in videoData && classlist[i].RoleId === 195) { // Check to see if the user from the classlist is an instructor and is in the video list
@@ -89,33 +79,10 @@ class UgaVideo extends LitElement {
   }
 
   async getDataFile(): Promise<void> {
-    if (this.type === 'local') {
-      const dataFile = await axios.get(this.filename);
-      this.videodata = dataFile.data;
-      this.requestUpdate();
-    } else if (this.type === 'program') {
-      const dataFile = await axios.get('/shared/ugaonline/templates/' + this.program + '/data/' + this.filename);
-      this.videodata = dataFile.data;
+    if (this.type === 'local' || this.type === 'program') {
+      this.videodata = await loadData<any>(this.type, this.filename, this.program);
       this.requestUpdate();
     }
-  }
-
-  /******
-   * API Calls Go Here
-   */
-
-   async getVersions(): Promise<ApiVersions> {
-    const apiVer = await axios.get('/d2l/api/versions/');
-    const result: ApiVersions = {};
-    for (let i in apiVer.data) {
-      result[apiVer.data[i].ProductCode] = apiVer.data[i].LatestVersion;
-    }
-    return result;
-  }
-
-  async getClasslist(): Promise<ClasslistUser[]> {
-    const classlist = await axios.get('/d2l/api/le/' + this.versions.le + '/' + this.ou + '/classlist/');
-    return classlist.data;
   }
 
   /******
@@ -128,33 +95,6 @@ class UgaVideo extends LitElement {
     }
   }
 
-
-  /******
-   * Other functions go here
-   */
-   getCourse(): string | null {
-    const currentLocation = window.location;
-    const url = currentLocation.href;
-    let ou: string | null = null;
-    const a = url.split("/");
-    this.domain = a[2];
-    const lastSegment = a[a.length-1];
-    const attributes = lastSegment.split("&");
-
-    for (var i=0; i<attributes.length; i++) {  // Try to get the URL attribute
-      let attribute = attributes[i];
-      if (attribute.slice(0,3) === "ou=") {
-        ou = attribute.slice(3);
-        return ou;
-      }
-    }
-
-    if (ou === null) {  // If URL attribute fails, parse from the folder structure in URL
-      ou = a[5].split("-")[0];
-      return ou;
-    }
-    return ou;
-  }
 
   kalturaCode(videoId: string) {
     const embedCode = html`
