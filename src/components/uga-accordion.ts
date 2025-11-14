@@ -1,9 +1,7 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
-
-export const UGAComponentsLoaded = true;
 
 interface AccordionItem {
   id?: string;
@@ -33,7 +31,10 @@ class UgaAccordion extends LitElement {
     return this;
   }
 
-  async init(): Promise<void> {
+  async connectedCallback() {
+    super.connectedCallback();
+    // Kick off data load once when the element connects
+    // Avoid side-effects in render()
     await this.getData();
   }
 
@@ -57,23 +58,24 @@ class UgaAccordion extends LitElement {
       }
       
       return html`
+      <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
       <button class="cmp-button cmp-accordion-toggle-all js-toggle-all" aria-controls="${this.accordionData.title}" aria-hidden="${this.ariaHiddenAll}" @click="${this.allToggle}">${this.allState} All</button>
       <dl id="${this.accordionData.title}" class="cmp-accordion">
         ${this.accordionData.data.map(
           (item) => html`
           <dt>
-            <button id="${item.id}" class="cmp-accordion__button js-toggler" aria-expanded="${item.ariaExpanded}" @click="${() => this.toggleItem(item)}">${item.title}</button>
+            <button id="${item.id ?? ''}" class="cmp-accordion__button js-toggler" aria-expanded="${item.ariaExpanded ?? false}" @click="${() => this.toggleItem(item)}">${item.title}</button>
           </dt>
-          <dd class="cmp-accordion__content" aria-labelledby="${item.id}" aria-hidden="${item.ariaHidden}">
+          <dd class="cmp-accordion__content" aria-labelledby="${item.id ?? ''}" aria-hidden="${item.ariaHidden ?? true}">
             ${unsafeHTML(item.body)}
           </dd>
           `
         )}
       </dl>
       `
-    } else {
-      this.init()
     }
+    // Not loaded yet: render a minimal placeholder
+    return html`<p>Loading...</p>`;
   }
 
   allToggle(): void {

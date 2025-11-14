@@ -6,12 +6,16 @@ import { getCourse } from '../lib/api/d2l-utils.js';
 import { loadData } from '../lib/data/data-loader.js';
 import type { ApiVersions } from '../types/d2l.js';
 
-export const UGAComponentsLoaded = true;
 
 @customElement('uga-instructor-note')
 class UgaInstructorNote extends LitElement {
 
   @property({ type: Object }) versions: ApiVersions = {};
+
+  // Light DOM: render into the page directly (D2L-friendly)
+  createRenderRoot() {
+    return this;
+  }
   @property({ type: Object }) currentUser: any = {};
   @property({ type: String }) ou = '';
   @property({ type: String }) enrollment = 'Student';

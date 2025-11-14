@@ -6,7 +6,6 @@ import { loadData } from '../lib/data/data-loader.js';
 import type { ApiVersions, ClasslistUser } from '../types/d2l.js';
 import './uga-rating.js';
 
-export const UGAComponentsLoaded = true;
 
 @customElement('uga-video')
 class UgaVideo extends LitElement {
@@ -27,6 +26,8 @@ class UgaVideo extends LitElement {
 
   private uiconfid = '';
   private domain: string | null = null;
+  private kalturaScriptLoaded = false;
+  private playerInstances: Map<string, any> = new Map();
 
   createRenderRoot() {
     return this;
@@ -38,7 +39,7 @@ class UgaVideo extends LitElement {
 
     if (this.playerid === "") {  // If no playerid is specified, then we use the standard player. 
       this.playerid = "1574196844";
-      this.uiconfid = "57494843"; // this value is different for the standard player, but matches the playerid in other players.
+      this.uiconfid = "57494843"; // this value is different for the standard player, but matches the playerid in other players. 40170611
     } else {
       this.uiconfid = this.playerid;
     }
@@ -47,6 +48,7 @@ class UgaVideo extends LitElement {
 
         this.videos.push(this.videoid);  // Have to push to array to account for cases where a file loads multiple videos for an instructor.
         this.loaded = true;
+        this.requestUpdate();
 
     } else {  // If we enter this loop, then no videoid was specified and we have to retrieve it via a json file
 
@@ -95,14 +97,90 @@ class UgaVideo extends LitElement {
     }
   }
 
+  /**
+   * Dynamically load the KalturaPlayer script from CDN
+   */
+  private loadKalturaScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.kalturaScriptLoaded || (window as any).KalturaPlayer) {
+        this.kalturaScriptLoaded = true;
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = `https://cdnapisec.kaltura.com/p/1727411/embedPlaykitJs/uiconf_id/${this.uiconfid}`;
+      script.type = 'text/javascript';
+      script.onload = () => {
+        this.kalturaScriptLoaded = true;
+        resolve();
+      };
+      script.onerror = () => {
+        console.error('Failed to load KalturaPlayer script');
+        reject(new Error('KalturaPlayer script failed to load'));
+      };
+      document.head.appendChild(script);
+    });
+  }
+
+  /**
+   * Initialize a Kaltura player for a specific video
+   */
+  private async initKalturaPlayer(videoId: string, containerId: string): Promise<void> {
+    try {
+      await this.loadKalturaScript();
+      
+      const kalturaPlayer = (window as any).KalturaPlayer.setup({
+        targetId: containerId,
+        provider: {
+          partnerId: 1727411,
+          uiConfId: this.uiconfid
+        },
+        ui: {
+          components: {
+            // Hide the Kaltura logo/watermark
+            logo: {
+              disabled: true
+            }
+          }
+        }
+      });
+
+      kalturaPlayer.loadMedia({ entryId: videoId });
+      this.playerInstances.set(videoId, kalturaPlayer);
+    } catch (error) {
+      console.error(`Failed to initialize Kaltura player for video ${videoId}:`, error);
+    }
+  }
 
   kalturaCode(videoId: string) {
+    const containerId = `kaltura_player_${videoId}`;
+    
+    // Schedule player initialization after the DOM is updated
+    setTimeout(() => {
+      this.initKalturaPlayer(videoId, containerId);
+    }, 0);
+
     const embedCode = html`
-    <div class="cmp-video util-margin-top-lg">
-        <iframe id="kaltura_player_${this.playerid}" title=${this.name} src="https://cdnapisec.kaltura.com/p/1727411/sp/172741100/embedIframeJs/uiconf_id/${this.uiconfid}/partner_id/1727411?iframeembed=true&playerId=kaltura_player_${this.playerid}&entry_id=${videoId}" class="cmp-video__embed" width="560" height="315" allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *; picture-in-picture; gyroscope" frameborder="0" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">
-        </iframe>
-    </div>
-    ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.name} contentPlatform="kaltura"></uga-rating>`:html``}
+      <style>
+        .cmp-video {
+          margin: 1.5rem 0 0 0;
+        }
+        .cmp-video__container {
+          width: 100%;
+          background: #000;
+        }
+        .cmp-video__container > div {
+          width: 100%;
+          height: auto;
+        }
+      </style>
+      <div class="cmp-video util-margin-top-lg">
+        <div class="cmp-video__container">
+          <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
+        </div>
+      </div>
+      ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.name} contentPlatform="kaltura"></uga-rating>`:html``}
     `;
     return embedCode;
   }
@@ -138,11 +216,18 @@ class UgaVideo extends LitElement {
 
       if (embedCodes.length > 0) {
         return html`
+          <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
           ${embedCodes.map((embedCode) => 
               html`${embedCode}`
             )}
         `;
       }
+      
+      // No videos found
+      return html`<p>No videos available.</p>`;
     }
+    
+    // Not loaded yet
+    return html`<p>Loading video...</p>`;
   }
 }

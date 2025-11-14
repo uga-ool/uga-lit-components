@@ -7,7 +7,6 @@ import type { ApiVersions } from '../types/d2l.js';
 // Axios is available globally in Brightspace
 declare const axios: any;
 
-export const UGAComponentsLoaded = true;
 
 interface RatingOption {
   value: string;
@@ -23,6 +22,11 @@ interface CurrentUser {
 
 @customElement('uga-rating')
 class UgaRating extends LitElement {
+
+  // Light DOM: render into the page directly (D2L-friendly)
+  createRenderRoot() {
+    return this;
+  }
 
   @property({ type: Boolean }) loaded = true;
   @property({ type: String }) token: string | null = null;
@@ -61,7 +65,7 @@ class UgaRating extends LitElement {
 
     this.addEventListener('keypress', (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        const activeElement = this.shadowRoot?.activeElement as HTMLElement;
+        const activeElement = this.querySelector('#feedback-field') as HTMLElement;
         if (activeElement?.id === 'feedback-field') {
           e.preventDefault();
 

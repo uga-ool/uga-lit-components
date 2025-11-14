@@ -5,7 +5,6 @@ import { getVersions, getEnrollment, getAssignments } from '../lib/api/d2l-clien
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import type { ApiVersions } from '../types/d2l.js';
 
-export const UGAComponentsLoaded = true;
 
 interface AssignmentData {
   Name: string;
@@ -36,6 +35,11 @@ class UgaAssignment extends LitElement {
 
   @property({ type: Object }) versions: ApiVersions = {};
   @property({ type: String }) domain: string | null = null;
+
+  // Light DOM: render into the page directly (D2L-friendly)
+  createRenderRoot() {
+    return this;
+  }
   @property({ type: String }) ou: string | null = null;
   @property({ type: String }) flexClasses = 'obj-flex-item obj-flex-item__xs util-text-center util-background-light-gray util-pad-all-md';
   @property({ type: String }) name = '';

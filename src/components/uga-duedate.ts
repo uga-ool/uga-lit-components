@@ -4,7 +4,6 @@ import { getVersions, getAssignments } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import type { ApiVersions } from '../types/d2l.js';
 
-export const UGAComponentsLoaded = true;
 
 interface AssignmentData {
   Name: string;
@@ -15,6 +14,11 @@ interface AssignmentData {
 class UgaDueDate extends LitElement {
   @property({ type: Object }) versions: ApiVersions = {};
   @property({ type: String }) ou: string | null = null;
+
+  // Light DOM: render into the page directly (D2L-friendly)
+  createRenderRoot() {
+    return this;
+  }
   @property({ type: String }) name = '';
   @property({ type: Object }) assignmentData: AssignmentData = { Name: '' };
   @property({ type: String }) dueDate = 'LOADING';
@@ -34,7 +38,6 @@ class UgaDueDate extends LitElement {
 
       getAssignments(this.ou, this.versions.le).then((assignments) => {
         this.findAssignment(assignments);
-        console.log(this.dueDate);
         this.loaded = true;
         this.requestUpdate();
       });
@@ -58,7 +61,6 @@ class UgaDueDate extends LitElement {
       if (assignmentList[i].Name === this.name) {
         assignmentFound = true;
         this.assignmentData = assignmentList[i];
-        console.log(this.assignmentData);
       }
     }
 

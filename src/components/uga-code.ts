@@ -5,7 +5,6 @@ import type { PropertyValues } from 'lit';
 // Prism is available globally
 declare const Prism: any;
 
-export const UGAComponentsLoaded = true;
 
 @customElement('uga-code')
 class UgaCode extends LitElement {

@@ -1,7 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-export const UGAComponentsLoaded = true;
 
 @customElement('uga-toc')
 export class UGATableOfContents extends LitElement {

@@ -2,7 +2,6 @@ import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { loadData } from '../lib/data/data-loader.js';
 
-export const UGAComponentsLoaded = true;
 
 interface FooterData {
   link: string;

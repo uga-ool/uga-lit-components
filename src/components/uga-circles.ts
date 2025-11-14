@@ -2,7 +2,6 @@ import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { loadData } from '../lib/data/data-loader.js';
 
-export const UGAComponentsLoaded = true;
 
 interface CircleData {
 	figure: string;
@@ -76,7 +75,6 @@ class UgaCircles extends LitElement {
 		if (this.loaded) {
 			const wideGridClass = this.getWideGridClass(this.circles.length);
 			const narrowGridClass = this.getNarrowGridClass(this.circles.length);
-			console.log(this.circles)
 			return html`
 			  <div class="obj-grid obj-grid--gap-lg">
 				${this.circles.map(circle => html`

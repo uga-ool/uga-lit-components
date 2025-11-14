@@ -1,40 +1,49 @@
 import { LitElement, html, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-export const UGAComponentsLoaded = true;
 
 @customElement('uga-return-to-top')
 class UgaReturnToTop extends LitElement {
-  static styles = css`
-    :host {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      width: 50px;
-      height: 50px;
-      background-color: rgba(186, 12, 47, 0.7); /* 70% opacity */
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 24px;
-      text-align: center;
-      line-height: 50px;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+  static styles = css``;
+
+  // Light DOM: render into the page directly (D2L-friendly)
+  createRenderRoot() {
+    return this;
+  }
+
+  // Light DOM styles injected into the page
+  private styleTag() {
+    return html`<style>
+      uga-return-to-top {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 50px;
+        height: 50px;
+        background-color: rgba(186, 12, 47, 0.7);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 24px;
+        text-align: center;
+        line-height: 50px;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      uga-return-to-top button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+    </style>`;
+  }
 
   constructor() {
     super();
@@ -52,7 +61,7 @@ class UgaReturnToTop extends LitElement {
   }
 
   _scrollToTop(): void {
-    const scrollBehavior = { top: 0, behavior: 'smooth' };
+    const scrollBehavior: ScrollToOptions = { top: 0, behavior: 'smooth' };
 
     // Check if the window is inside an iframe and determine where to scroll
     try {
@@ -80,7 +89,8 @@ class UgaReturnToTop extends LitElement {
 
   render() {
     return html`
-      <button>⇧</button>
+      ${this.styleTag()}
+      <button aria-label="Return to top">⇧</button>
     `;
   }
 }
