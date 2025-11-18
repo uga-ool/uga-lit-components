@@ -1,0 +1,205 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [Unreleased] - 2025-11-18
+
+### 🎉 Major Updates
+
+#### Demo System Restructure
+
+- **Separated component demos into individual HTML files** for easier testing and reference
+- Created 15 dedicated demo pages (one per component + setup guide)
+- Maintained comprehensive `index.html` as component gallery with navigation cards
+- Preserved original unified demo as `index-all-in-one.html` for reference
+
+#### New Demo Pages
+
+- `accordion.html` - Accordion component demo
+- `assignment.html` - Assignment component demo
+- `circles.html` - Circles component demo
+- `code.html` - Code block component demo
+- `duedate.html` - Due date component demo
+- `footer.html` - Footer component demo
+- `instructor-note.html` - Instructor note component demo
+- `module-feedback.html` - Module feedback component demo
+- `rating.html` - Rating component demo
+- `return-to-top.html` - Return to top component demo
+- `slideshow.html` - Slideshow component demo
+- `tabs.html` - Tabs component demo
+- `toc.html` - Table of contents component demo
+- `video.html` - Video component demo
+- `setup.html` - **NEW** Comprehensive setup and usage guide
+
+### 🔧 Component Improvements
+
+#### uga-accordion
+
+- **Refactored to match original JavaScript pattern** from data-loader abstraction
+- Changed to direct `axios.get()` calls for better transparency
+- Added lazy loading: `init()` only called when component renders
+- Fixed TypeScript compilation issues with array indexing using `findIndex()`
+- **Added `<span class="icon"></span>` inside button elements** for +/- icon support
+- Improved error handling and data structure validation
+
+#### uga-video
+
+- **Enhanced Kaltura player integration** with script injection pattern
+- Added logo/watermark hiding capability: `logo: { disabled: true }` in UI config
+- Eliminated scrollbar issues by using direct DOM container instead of iframe
+- Implemented player instance caching to prevent multiple script loads
+- Added proper cleanup and player lifecycle management
+- Improved aspect ratio handling with `aspect-ratio: 16 / 9`
+
+#### uga-assignment
+
+- **Added axios detection and graceful degradation**
+- Display friendly error message when D2L APIs unavailable (demo mode)
+- Better error handling for missing assignment data
+
+#### uga-footer
+
+- **Complete rewrite with full UGA footer structure**
+- Fixed logo image paths from `/img/` to `/images/` on design.online.uga.edu
+- Self-contained implementation with embedded HTML structure
+
+#### uga-toc
+
+- **Modified heading scanning to h2 and h3 only** (previously h1-h4)
+- Reduces clutter by excluding h4 "Properties" headings from table of contents
+- Better navigation focus on major sections and subsections
+
+### 📝 Documentation Updates
+
+#### README.md
+
+- Updated to reflect demo system restructure
+- Added Kaltura video integration details
+- Clarified component architecture patterns
+- Enhanced troubleshooting section
+
+#### QUICK_START.md
+
+- Updated file structure to include all new demo pages
+- Added instructions for individual component demos
+- Clarified local development vs. D2L deployment workflow
+
+#### New: CHANGELOG.md
+
+- This file! Comprehensive record of all changes
+
+#### Demo Documentation
+
+- All demo pages include "Back to All Components" navigation link
+- Updated index.html with links to individual component demos
+- Added comprehensive setup.html with troubleshooting and best practices
+- Updated TOC documentation to reflect h2/h3 scanning behavior
+
+### 🐛 Bug Fixes
+
+#### Critical Fixes
+
+- **Fixed accordion icon display issue**: Added `class="js"` requirement to `<html>` tag in demo pages
+  - Required for UGA CSS `.js .cmp-accordion__button::after` pseudo-element styles
+  - Applied to accordion.html and index.html
+- **Fixed footer logo path**: Changed from `/img/` to `/images/` on design.online.uga.edu domain
+- **Fixed assignment component axios errors**: Added detection and graceful fallback for demo mode
+- **Fixed TOC clutter**: Reduced heading scan to h2/h3 to exclude repetitive h4 "Properties" entries
+
+#### TypeScript Fixes
+
+- Fixed accordion array indexing with proper `findIndex()` usage instead of string index
+- Improved type safety throughout refactored components
+
+### 🎨 Styling & UX
+
+- Maintained consistent styling across all demo pages
+- Added category-based navigation cards to index.html
+- Improved code block syntax highlighting with Prism.js
+- Enhanced property documentation tables with better formatting
+- Added visual hierarchy with category headers (Content, Media, Interactive, Navigation, Instructor Tools)
+
+### 🏗️ Architecture
+
+#### Build System
+
+- No changes to Vite configuration (single bundle output maintained)
+- All components still register via `src/all.ts` entry point
+- Build output: `dist/js/uga-components.js` (unchanged)
+
+#### Component Patterns
+
+- **Light DOM rendering maintained** across all components: `createRenderRoot() { return this; }`
+- **Direct axios pattern** now preferred over data-loader abstraction (see accordion refactor)
+- **Lazy loading pattern** implemented in accordion for better performance
+- **Script injection pattern** for Kaltura player provides full configuration control
+
+### 📁 File Structure Changes
+
+```
+demo/
+├── index.html                    # Main navigation gallery (updated)
+├── index-all-in-one.html        # Original comprehensive demo (preserved)
+├── setup.html                    # NEW: Setup and usage guide
+├── accordion.html                # NEW: Individual demo pages
+├── assignment.html               # NEW
+├── circles.html                  # NEW
+├── code.html                     # NEW
+├── duedate.html                  # NEW
+├── footer.html                   # NEW
+├── instructor-note.html          # NEW
+├── module-feedback.html          # NEW
+├── rating.html                   # NEW
+├── return-to-top.html            # NEW
+├── slideshow.html                # NEW
+├── tabs.html                     # NEW
+├── toc.html                      # NEW
+├── video.html                    # NEW
+├── QUICK_START.md                # Updated
+├── README.md                     # Updated
+└── *.json                        # Demo data files (unchanged)
+```
+
+### 🔄 Migration Notes
+
+#### For Existing Users
+
+1. **No breaking changes to component APIs** - all existing usage continues to work
+2. **Demo restructure is additive** - original demo preserved as `index-all-in-one.html`
+3. **Accordion refactor is internal** - same external API, improved implementation
+4. **Video component enhancements** are backwards compatible
+
+#### CSS Requirement for Accordions
+
+- **Action Required**: Add `class="js"` to `<html>` tag in pages using uga-accordion
+- Example: `<html lang="en" class="js">`
+- This enables UGA CSS icon styles for expand/collapse indicators
+
+#### TOC Behavior Change
+
+- **Table of Contents now scans h2 and h3 only** (previously h1-h4)
+- Review TOC output if you rely on h4 headings appearing in navigation
+- This change improves navigation clarity by focusing on major sections
+
+### 🚀 What's Next
+
+#### Recommended Actions
+
+1. Review individual component demo pages for updated usage patterns
+2. Read `setup.html` for comprehensive deployment guide
+3. Test accordion components with `class="js"` on HTML element
+4. Update any accordion implementations to use direct axios pattern (optional)
+5. Check TOC components to ensure h2/h3 filtering meets your needs
+
+#### Known Limitations
+
+- D2L API components (assignment, duedate, rating, instructor-note) require Brightspace environment
+- Kaltura video component requires valid video IDs and player configuration
+- Mock axios in demo mode has limited functionality compared to Brightspace global axios
+
+---
+
+## Version History
+
+**Current:** Unreleased (feature/updated-video branch)  
+**Previous:** 1.0 baseline (main branch)

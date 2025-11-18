@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "title": "Module Overview",
+      "body": "<h3>Welcome to Module 1</h3><p>This module introduces the fundamental concepts you'll need throughout the course. By the end of this module, you will be able to:</p><ul><li>Identify key terminology and concepts</li><li>Apply basic principles to real-world scenarios</li><li>Evaluate different approaches to problem-solving</li></ul><p><strong>Estimated Time:</strong> 3-4 hours</p>"
+    },
+    {
+      "title": "Learning Objectives",
+      "body": "<h3>By the end of this module, you will:</h3><ol><li><strong>Understand</strong> the historical context and development of the field</li><li><strong>Identify</strong> key concepts and their interrelationships</li><li><strong>Apply</strong> theoretical frameworks to practical examples</li><li><strong>Analyze</strong> case studies using appropriate methodologies</li><li><strong>Evaluate</strong> different perspectives and approaches</li></ol>"
+    },
+    {
+      "title": "Required Readings",
+      "body": "<h3>Required Materials</h3><ul><li>Chapter 1: Introduction (textbook pages 1-25)</li><li>Smith, J. (2023). 'Foundational Concepts.' <em>Journal of the Field</em>, 45(2), 123-145.</li><li>Online resource: <a href='#'>Interactive Tutorial</a></li></ul><h3>Supplemental Materials</h3><ul><li>Video lecture: Introduction to Key Concepts (20 minutes)</li><li>Podcast episode: Expert Interview (30 minutes)</li></ul>"
+    },
+    {
+      "title": "Assignments",
+      "body": "<h3>Module Assignments</h3><table style='width: 100%; border-collapse: collapse;'><tr style='background-color: #f0f0f0;'><th style='padding: 8px; border: 1px solid #ddd;'>Assignment</th><th style='padding: 8px; border: 1px solid #ddd;'>Points</th><th style='padding: 8px; border: 1px solid #ddd;'>Due Date</th></tr><tr><td style='padding: 8px; border: 1px solid #ddd;'>Discussion Post</td><td style='padding: 8px; border: 1px solid #ddd;'>20</td><td style='padding: 8px; border: 1px solid #ddd;'>Wednesday, 11:59 PM</td></tr><tr><td style='padding: 8px; border: 1px solid #ddd;'>Quiz 1</td><td style='padding: 8px; border: 1px solid #ddd;'>30</td><td style='padding: 8px; border: 1px solid #ddd;'>Friday, 11:59 PM</td></tr><tr><td style='padding: 8px; border: 1px solid #ddd;'>Reflection Paper</td><td style='padding: 8px; border: 1px solid #ddd;'>50</td><td style='padding: 8px; border: 1px solid #ddd;'>Sunday, 11:59 PM</td></tr></table>"
+    }
+  ]
+}

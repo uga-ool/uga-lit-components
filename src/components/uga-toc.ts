@@ -1,7 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-export const UGAComponentsLoaded = true;
 
 @customElement('uga-toc')
 export class UGATableOfContents extends LitElement {
@@ -12,9 +11,19 @@ export class UGATableOfContents extends LitElement {
 
   // This lifecycle method runs after the component first renders
   firstUpdated(): void {
+    // Wait for the full DOM to be ready before scanning for headings
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.buildTOC());
+    } else {
+      // DOM already loaded, build immediately
+      this.buildTOC();
+    }
+  }
+
+  private buildTOC(): void {
     // Since we're not using shadow DOM, grab the element from the light DOM
     const tocList = this.querySelector('#toc-list');
-    const headings = document.querySelectorAll('h1, h2, h3, h4');
+    const headings = document.querySelectorAll('h2, h3');
     const idMap = new Map<string, boolean>();
     const currentLists: { [key: number]: HTMLUListElement | null } = { 1: tocList as HTMLUListElement };
 

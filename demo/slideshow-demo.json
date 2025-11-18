@@ -1,0 +1,37 @@
+{
+  "title": "Course Walkthrough",
+  "description": "Step-by-step guide to navigating your course",
+  "id": "course-walkthrough",
+  "data": [
+    {
+      "src": "https://picsum.photos/800/400?random=1",
+      "alt": "Course Home Page",
+      "title": "Step 1: Course Home",
+      "description": "Start at the course home page. Here you'll find important announcements and quick links to key course sections."
+    },
+    {
+      "src": "https://picsum.photos/800/400?random=2",
+      "alt": "Content Section",
+      "title": "Step 2: Access Content",
+      "description": "Navigate to the Content section to access all course modules, readings, and materials."
+    },
+    {
+      "src": "https://picsum.photos/800/400?random=3",
+      "alt": "Assignments Page",
+      "title": "Step 3: View Assignments",
+      "description": "Check the Assignments section to see what's due and submit your work."
+    },
+    {
+      "src": "https://picsum.photos/800/400?random=4",
+      "alt": "Discussions Page",
+      "title": "Step 4: Participate in Discussions",
+      "description": "Join course discussions to engage with your peers and instructor."
+    },
+    {
+      "src": "https://picsum.photos/800/400?random=5",
+      "alt": "Grades Page",
+      "title": "Step 5: Check Your Grades",
+      "description": "View your grades and feedback in the Grades section."
+    }
+  ]
+}
