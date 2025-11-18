@@ -47,9 +47,15 @@ class UgaSlideshow extends LitElement {
       .then((data) => {
         this.addData(data);
         this.loaded = true;
+        this.requestUpdate();
       })
       .catch((err) => {
-        console.error('Failed to load slideshow data', err);
+        console.error('Failed to load slideshow data:', err);
+        console.error('Filename:', this.filename);
+        this.slideshowTitle = 'Error Loading Slideshow';
+        this.slideshowDescription = `Failed to load: ${this.filename}`;
+        this.loaded = true;
+        this.requestUpdate();
       });
   }
 
@@ -254,7 +260,12 @@ class UgaSlideshow extends LitElement {
         </div>
       `;
     } else {
-      return html`<div style="min-height: ${this.initialLoadHeight}px"></div>`;
+      return html`
+        <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
+        <div style="min-height: ${this.initialLoadHeight}px; display: flex; align-items: center; justify-content: center;">
+          <p>${this.slideshowTitle}</p>
+        </div>
+      `;
     }
   }
 }

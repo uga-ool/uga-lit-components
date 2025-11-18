@@ -1,0 +1,25 @@
+{
+  "title": "Frequently Asked Questions",
+  "data": [
+    {
+      "title": "How do I access course materials?",
+      "body": "<p>All course materials are available in the <strong>Content</strong> section of D2L. You can access readings, videos, and assignments by navigating through the module structure.</p><p>If you have trouble accessing any materials, please contact your instructor.</p>"
+    },
+    {
+      "title": "When are assignments due?",
+      "body": "<p>Assignment due dates are listed in the <strong>Assignments</strong> section and in each module's overview page. All times are in Eastern Time (ET).</p><p>Late submissions may incur a penalty as outlined in the syllabus.</p>"
+    },
+    {
+      "title": "How do I participate in discussions?",
+      "body": "<p>Go to the <strong>Discussions</strong> section in D2L. Each module has designated discussion topics.</p><ul><li>Read the prompt carefully</li><li>Post your initial response by the first deadline</li><li>Reply to at least two classmates by the second deadline</li></ul>"
+    },
+    {
+      "title": "What are the technical requirements?",
+      "body": "<p>You'll need:</p><ul><li>A reliable internet connection</li><li>An updated web browser (Chrome, Firefox, Safari, or Edge)</li><li>Speakers or headphones for video content</li><li>A webcam and microphone if required for presentations</li></ul><p>For detailed system requirements, visit the <a href='https://elearning.uga.edu/technical-support/' target='_blank'>UGA eLearning Technical Support</a> page.</p>"
+    },
+    {
+      "title": "Who do I contact for help?",
+      "body": "<p><strong>Course content questions:</strong> Contact your instructor via D2L email</p><p><strong>Technical issues:</strong> Contact UGA eLearning Support at <a href='mailto:support@uga.edu'>support@uga.edu</a></p><p><strong>General university questions:</strong> Visit <a href='https://www.uga.edu' target='_blank'>uga.edu</a></p>"
+    }
+  ]
+}

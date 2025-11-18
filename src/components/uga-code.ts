@@ -16,6 +16,16 @@ class UgaCode extends LitElement {
     return this;
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    // If no code property is set, read from element's text content
+    if (!this.code && this.textContent) {
+      this.code = this.textContent.trim();
+      // Clear the light DOM content to prevent double display
+      this.textContent = '';
+    }
+  }
+
   updated(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('filename')) {
       this.fetchCode();
