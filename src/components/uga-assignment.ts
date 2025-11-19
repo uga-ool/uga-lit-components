@@ -5,7 +5,8 @@ import { getVersions, getEnrollment, getAssignments } from '../lib/api/d2l-clien
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import type { ApiVersions } from '../types/d2l.js';
 
-export const UGAComponentsLoaded = true;
+// Axios is available globally in Brightspace
+declare const axios: any;
 
 interface AssignmentData {
   Name: string;
@@ -36,6 +37,11 @@ class UgaAssignment extends LitElement {
 
   @property({ type: Object }) versions: ApiVersions = {};
   @property({ type: String }) domain: string | null = null;
+
+  // Light DOM: render into the page directly (D2L-friendly)
+  createRenderRoot() {
+    return this;
+  }
   @property({ type: String }) ou: string | null = null;
   @property({ type: String }) flexClasses = 'obj-flex-item obj-flex-item__xs util-text-center util-background-light-gray util-pad-all-md';
   @property({ type: String }) name = '';
@@ -54,7 +60,21 @@ class UgaAssignment extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
+    
+    // Check if axios is available (D2L environment)
+    if (typeof axios === 'undefined') {
+      this.assignmentData = {
+        Name: this.name,
+        CustomInstructions: { Html: '' },
+        Error: 'This component requires D2L API access. It will only function within a Brightspace course.'
+      };
+      this.loaded = true;
+      this.requestUpdate();
+      return;
+    }
+
     this.ou = getCourse();
+    this.domain = window.location.hostname;
     
     getVersions().then((versions) => {
       this.addVersions(versions);
@@ -68,7 +88,23 @@ class UgaAssignment extends LitElement {
           this.findAssignment(assignments);
           this.loaded = true;
         });
+      }).catch((error) => {
+        this.assignmentData = {
+          Name: this.name,
+          CustomInstructions: { Html: '' },
+          Error: `Unable to load enrollment data: ${error.message}`
+        };
+        this.loaded = true;
+        this.requestUpdate();
       });
+    }).catch((error) => {
+      this.assignmentData = {
+        Name: this.name,
+        CustomInstructions: { Html: '' },
+        Error: `Unable to load API versions: ${error.message}`
+      };
+      this.loaded = true;
+      this.requestUpdate();
     });
   }
 
@@ -157,6 +193,22 @@ class UgaAssignment extends LitElement {
   }
 
   render() {
+    // Display error state
+    if (this.assignmentData.Error) {
+      return html`
+        <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
+        <div class="obj-grid">
+          <div class="obj-grid__12-12">
+            <h1 class="cmp-heading-1 util-margin-vert-md">${this.assignmentData.Name}</h1>
+            <div class="util-pad-all-md util-background-light-gray" style="border-left: 4px solid #ba0c2f;">
+              <p><strong>Unable to load API versions: ${this.assignmentData.Error}</strong></p>
+              <p><em>Note: Requires D2L API access to load assignment data</em></p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
         <div class="obj-grid">
@@ -172,7 +224,7 @@ class UgaAssignment extends LitElement {
               ${this.startDate ? html`<div class=${this.flexClasses}><span class="util-font-size-sm">Start Date</span><br />${this.startDate}</div>` : html``}
               ${this.endDate ? html`<div class=${this.flexClasses}><span class="util-font-size-sm">End Date</span><br />${this.endDate}</div>` : html``}
             </div>
-            ${ this.student ? html`<a class="cmp-button cmp-button--full-width" href="https://${this.domain}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${this.assignmentData.Id}&ou=${this.ou}" target="_blank">Click to visit this assignment</a>` : html`<a class="cmp-button cmp-button--full-width" href="https://${this.domain}//d2l/lms/dropbox/admin/mark/folder_submissions_users.d2l?db=${this.assignmentData.Id}&ou=${this.ou}" target="_blank">Click to visit this assignment</a>`}
+            ${ this.student ? html`<a class="cmp-button cmp-button--full-width" href="https://${this.domain}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${this.assignmentData.Id}&ou=${this.ou}" target="_blank">Click to visit this assignment</a>` : html`<a class="cmp-button cmp-button--full-width" href="https://${this.domain}/d2l/lms/dropbox/admin/mark/folder_submissions_users.d2l?db=${this.assignmentData.Id}&ou=${this.ou}" target="_blank">Click to visit this assignment</a>`}
           </div>
         </div>
         ${this.loaded ? html`` : html`<div style="min-height: ${this.initialHeight}px"></div>`}

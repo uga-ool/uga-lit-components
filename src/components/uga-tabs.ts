@@ -3,7 +3,6 @@ import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
 
-export const UGAComponentsLoaded = true;
 
 interface Tab {
   title: string;

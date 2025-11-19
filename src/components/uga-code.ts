@@ -5,7 +5,6 @@ import type { PropertyValues } from 'lit';
 // Prism is available globally
 declare const Prism: any;
 
-export const UGAComponentsLoaded = true;
 
 @customElement('uga-code')
 class UgaCode extends LitElement {
@@ -15,6 +14,16 @@ class UgaCode extends LitElement {
 
   createRenderRoot() {
     return this;
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    // If no code property is set, read from element's text content
+    if (!this.code && this.textContent) {
+      this.code = this.textContent.trim();
+      // Clear the light DOM content to prevent double display
+      this.textContent = '';
+    }
   }
 
   updated(changedProperties: PropertyValues<this>): void {
