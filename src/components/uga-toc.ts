@@ -23,15 +23,9 @@ export class UGATableOfContents extends LitElement {
   private buildTOC(): void {
     // Since we're not using shadow DOM, grab the element from the light DOM
     const tocList = this.querySelector('#toc-list');
-    
-    // Select all h1 through h6 headings that have an id attribute, excluding the TOC's own heading
-    const headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
-    
-    // Track the current list for each heading level
-    const currentLists: { [key: number]: HTMLUListElement } = {};
-    
-    // Find the first heading level to use as the root
-    let rootLevel: number | null = null;
+    const headings = document.querySelectorAll('h2, h3');
+    const idMap = new Map<string, boolean>();
+    const currentLists: { [key: number]: HTMLUListElement | null } = { 1: tocList as HTMLUListElement };
 
     headings.forEach(heading => {
       // Skip the TOC's own heading to prevent self-reference

@@ -64,8 +64,8 @@
 
     <section class="component-demo">
       <div class="demo-description">
-        <p><strong>Auto-generates a navigable table of contents</strong> from h1 through h6 headings on the page. Provides smooth scrolling navigation with proper nesting.</p>
-        <p><em>Note: The TOC below is a live example! It automatically scans all headings (h1-h6) with id attributes on the page.</em></p>
+        <p><strong>Auto-generates a navigable table of contents</strong> from h2 and h3 headings on the page. Provides smooth scrolling navigation.</p>
+        <p><em>Note: The TOC below is a live example! It automatically scans all h2 and h3 headings on the page.</em></p>
       </div>
 
       <div class="demo-example">
@@ -74,9 +74,7 @@
 
       <div class="demo-props">
         <h4>Properties</h4>
-        <p>No properties required - automatically scans page for h1 through h6 headings that have <code>id</code> attributes.</p>
-        <p><strong>Important:</strong> Headings must have an <code>id</code> attribute to appear in the table of contents. The component will skip its own "Contents" heading to prevent self-reference.</p>
-        <p><strong>Behavior:</strong> The first heading level found becomes the root level. All subsequent headings nest appropriately based on their level relative to the root.</p>
+        <p>No properties required - automatically scans page for h2 and h3 headings.</p>
       </div>
 
       <div class="demo-code">
@@ -85,20 +83,14 @@
     </section>
 
     <!-- Sample headings for TOC to detect -->
-    <h2 id="sample-section-1">Sample Section 1</h2>
+    <h2>Sample Section 1</h2>
     <p>This is sample content to demonstrate the TOC functionality.</p>
     
-    <h3 id="subsection-1-1">Subsection 1.1</h3>
+    <h3>Subsection 1.1</h3>
     <p>More sample content here.</p>
     
-    <h3 id="subsection-1-2">Subsection 1.2</h3>
-    <p>Additional subsection content.</p>
-    
-    <h2 id="sample-section-2">Sample Section 2</h2>
+    <h2>Sample Section 2</h2>
     <p>Another section to show in the table of contents.</p>
-    
-    <h3 id="subsection-2-1">Subsection 2.1</h3>
-    <p>Nested content under section 2.</p>
 
     <uga-return-to-top></uga-return-to-top>
   </div>

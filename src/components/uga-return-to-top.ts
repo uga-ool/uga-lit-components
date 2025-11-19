@@ -20,8 +20,8 @@ class UgaReturnToTop extends LitElement {
         bottom: 20px;
         width: 50px;
         height: 50px;
-        background-color: rgba(0, 0, 0, 100);
-        color: #FFFFFF;
+        background-color: rgba(186, 12, 47, 0.7);
+        color: #fff;
         border: none;
         border-radius: 50%;
         cursor: pointer;
