@@ -111,7 +111,7 @@ class UgaModuleFeedback extends LitElement {
           <div class="obj-grid">
             <div class="obj-grid__full">
               <div class="util-pad-all-xl">
-                <h1 class="cmp-heading-2">Module Feedback Form</h1>
+                <h2 class="cmp-heading-2">Module Feedback Form</h2>
                 <iframe
                   src="https://ugeorgia.ca1.qualtrics.com/jfe/form/SV_a4BRev9rAxLhSJ0?ParentUrl=${this
                     .encodedParentUrl}"
