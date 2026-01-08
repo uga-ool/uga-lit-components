@@ -163,8 +163,10 @@ class UgaVideo extends LitElement {
 
     const embedCode = html`
       <style>
-        .cmp-video {
-          margin: 1.5rem 0 0 0;
+        .cmp-video::after {
+          content: none !important;
+          display: none !important;
+          padding-top: 0 !important;
         }
         .cmp-video__container {
           width: 100%;

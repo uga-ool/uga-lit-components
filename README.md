@@ -1,6 +1,6 @@
-# UGA Brightspace Lit Components
+# UGA Brightspace (eLC) Lit Components
 
-This repository contains a collection of reusable **Lit web components** designed for use within the **University of Georgia’s Brightspace (D2L)** learning environment.
+This repository contains a collection of reusable **Lit web components** designed for use within the **University of Georgia’s Brightspace (eLC/D2L)** learning environment.
 
 The project has been modernized to use **Vite** for development and builds, and to bundle all components into a **single optimized JavaScript file** (`uga-components.js`) that can be easily uploaded to Brightspace Public Files.
 
@@ -12,6 +12,7 @@ The project has been modernized to use **Vite** for development and builds, and 
 
 - **🎨 Demo System Restructured**: 15 individual component demo pages + comprehensive navigation gallery
 - **🎬 Enhanced Kaltura Video**: Logo hiding, improved player lifecycle, eliminated scrollbar issues
+- **📺 Video Spacing Fix**: Removed extra vertical gap under Kaltura embeds by overriding `cmp-video::after` padding
 - **📂 Accordion Refactored**: Direct axios pattern, better error handling, TypeScript improvements
 - **🗂️ TOC Filtering**: Now scans h2/h3 only for cleaner navigation
 - **📘 New Setup Guide**: Comprehensive `demo/setup.html` with troubleshooting and best practices
@@ -28,6 +29,9 @@ The project has been modernized to use **Vite** for development and builds, and 
 - **Modern tooling:**  
   Uses [Vite](https://vitejs.dev/) for fast builds and optimized output.
 
+- **TypeScript throughout:**  
+  All components converted from `.js` to `.ts` for improved maintainability, error prevention, and better tooling support in large-scale, team-based development environments.
+
 - **Enhanced demo system:**  
   Individual demo pages for each component + comprehensive navigation gallery.
 
@@ -41,7 +45,7 @@ The project has been modernized to use **Vite** for development and builds, and 
   Components render into the light DOM with `createRenderRoot() { return this; }` to work seamlessly inside Brightspace content.
 
 - **Brightspace-ready:**  
-  Designed for easy integration via Public Files with `<script type="module">`.
+  Designed for easy integration via eLC Public Files with `<script type="module">`.
 
 ---
 
@@ -129,20 +133,6 @@ All components use **Light DOM** rendering (`createRenderRoot() { return this; }
    - Each component has its own dedicated demo page
    - Review `demo/setup.html` for deployment instructions
 
-### Installation
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/uga-ool/uga-lit-components.git
-   cd uga-lit-components
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
 ### Development
 
 Start the Vite dev server with hot module replacement (HMR):
@@ -161,7 +151,7 @@ Create the production bundle:
 npm run build
 ```
 
-This generates `dist/js/uga-components.js` — the single file to upload to Brightspace Public Files.
+This generates `dist/js/uga-components.js` — the single file to upload to eLC Public Files.
 
 ### Preview
 
@@ -203,7 +193,7 @@ The `uga-video` component uses **KalturaPlayer script injection** for full contr
 **Key Features:**
 
 - ✅ Kaltura logo/watermark completely hidden via UI config
-- ✅ No scrollbar issues - uses direct DOM container instead of iframe
+- ✅ No scrollbar issues — uses direct DOM container instead of iframe
 - ✅ Full player lifecycle management with cleanup
 - ✅ Script caching to avoid multiple loads
 - ✅ Proper aspect ratio handling (16:9 default)
@@ -241,7 +231,7 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 ---
 
-## 🚀 Deploying to Brightspace
+## 🚀 Deploying to eLC (Brightspace)
 
 1. **Build the bundle:**
 
@@ -249,10 +239,10 @@ const kalturaPlayer = KalturaPlayer.setup({
    npm run build
    ```
 
-2. **Upload to Brightspace Public Files:**
+2. **Upload to eLC Public Files:**
 
-   - Navigate to: Course → Course Administration → Files
-   - Upload `dist/js/uga-components.js` to `/shared/PublicFiles/`
+- Navigate to: Course → Course Administration → Files
+- Upload `dist/js/uga-components.js` to `/shared/ugaonline/js/` (or `/shared/ugaonline/dev/js/` for testing)
 
 3. **Add to Content Pages:**
 
@@ -262,7 +252,7 @@ const kalturaPlayer = KalturaPlayer.setup({
    <uga-video host="kaltura" videoid="abc123"></uga-video>
 
    <!-- Load all components -->
-   <script type="module" src="/shared/PublicFiles/uga-components.js"></script>
+   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
    ```
 
 ---
