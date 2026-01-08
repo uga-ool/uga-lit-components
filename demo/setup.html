@@ -66,28 +66,39 @@
     <header class="util-margin-vert-lg">
       <h1>Setup & Usage</h1>
       <div class="intro">
-        <p><strong>Complete guide to setting up and using UGA Lit Components in Brightspace (D2L).</strong></p>
+        <p><strong>Complete guide to setting up and using UGA Lit Components in eLC.</strong></p>
         <p>This page covers installation, configuration, and data file creation for all components.</p>
       </div>
     </header>
 
     <section class="component-demo">
-      <h2>How to Use These Components in D2L</h2>
+      <h2>How to Use These Components in eLC</h2>
       
-      <h3>1. Upload the Bundle</h3>
-      <uga-code language="markup">Upload dist/js/uga-components.js to:
-D2L → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-code>
+      <h3>1. Add to Your Page</h3>
+      <p>Create a new HTML page in eLC and add your components:</p>
+      <uga-code language="markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My Page&lt;/title&gt;
+  &lt;link rel="stylesheet" href="https://design.online.uga.edu/css/base.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;My Course Content&lt;/h1&gt;
+  
+  &lt;!-- Your components --&gt;
+  &lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
+  &lt;uga-video videoid="1_abc123de"&gt;&lt;/uga-video&gt;
+  
+  &lt;!-- Load bundle at end of page --&gt;
+  &lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</uga-code>
+      <p>If you maintain a separate testing location, swap the script path to <code>/shared/ugaonline/dev/js/uga-components.js</code>.</p>
 
-      <h3>2. Add to Your Page</h3>
-      <uga-code language="markup">&lt;!-- Your components --&gt;
-&lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
-&lt;uga-video videoid="1_abc123de"&gt;&lt;/uga-video&gt;
-
-&lt;!-- Load bundle at end of page --&gt;
-&lt;script type="module" src="/shared/PublicFiles/uga-components.js"&gt;&lt;/script&gt;</uga-code>
-
-      <h3>3. Create Data Files (for components that need them)</h3>
-      <p>Some components load data from JSON files. Upload these to Public Files and reference them by filename.</p>
+      <h3>2. Create Data Files (for components that need them)</h3>
+      <p>Some components load data from JSON files. Upload these to Local Course Files and reference them by filename.</p>
 
       <h4>Example: accordion-data.json</h4>
       <uga-code language="javascript">{
@@ -171,21 +182,15 @@ D2L → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-
   ]
 }</uga-code>
 
-      <h3>4. Testing Locally</h3>
-      <p>For development and testing outside of D2L:</p>
-      <uga-code language="bash">npm run dev    # Start development server
-npm run build  # Build production bundle
-npm run preview # Preview production build</uga-code>
-
-      <h3>5. Component-Specific Setup</h3>
+      <h3>3. Component-Specific Setup</h3>
       
-      <h4>D2L API Components</h4>
-      <p>These components require D2L API access and will only work in Brightspace:</p>
+      <h4>eLC API Components</h4>
+      <p>These components require eLC API access and will only work in eLC:</p>
       <ul>
-        <li><strong>uga-assignment</strong> - Displays assignment details from D2L</li>
-        <li><strong>uga-duedate</strong> - Shows assignment due dates from D2L</li>
-        <li><strong>uga-instructor-note</strong> - Visible only to instructors (uses D2L role checking)</li>
-        <li><strong>uga-rating</strong> - Stores ratings in D2L forums</li>
+        <li><strong>uga-assignment</strong> - Displays assignment details from eLC</li>
+        <li><strong>uga-duedate</strong> - Shows assignment due dates from eLC</li>
+        <li><strong>uga-instructor-note</strong> - Visible only to instructors (uses eLC role checking)</li>
+        <li><strong>uga-rating</strong> - Stores ratings in eLC forums</li>
       </ul>
 
       <h4>Kaltura Video Component</h4>
@@ -204,26 +209,13 @@ npm run preview # Preview production build</uga-code>
         <li>Contact your program administrator for survey setup</li>
       </ul>
 
-      <h3>6. File Organization Best Practices</h3>
-      <p>Recommended folder structure in D2L Public Files:</p>
-      <uga-code language="markup">/shared/PublicFiles/
-  uga-components.js           # Main bundle
-  /data/
-    accordion-faq.json        # Data files
-    tabs-module1.json
-    circles-stats.json
-  /images/
-    logo.png                  # Images
-    slide1.jpg
-    slide2.jpg</uga-code>
-
-      <h3>7. Troubleshooting</h3>
+      <h3>4. Troubleshooting</h3>
       
       <h4>Components Not Showing</h4>
       <ul>
         <li>Verify the script tag is at the end of your HTML (before closing <code>&lt;/body&gt;</code>)</li>
         <li>Check browser console for errors (F12)</li>
-        <li>Ensure the bundle path is correct: <code>/shared/PublicFiles/uga-components.js</code></li>
+        <li>Ensure the bundle path is correct: <code>/shared/ugaonline/js/uga-components.js</code></li>
       </ul>
 
       <h4>Data Not Loading</h4>
@@ -239,14 +231,14 @@ npm run preview # Preview production build</uga-code>
         <li>This enables the UGA CSS pseudo-element styles for accordion icons</li>
       </ul>
 
-      <h4>D2L API Errors</h4>
+      <h4>eLC API Errors</h4>
       <ul>
-        <li>These components only work inside Brightspace (D2L)</li>
-        <li>Verify you're testing in the D2L environment, not locally</li>
+        <li>These components only work inside eLC</li>
+        <li>Verify you're testing in the eLC environment, not locally</li>
         <li>Check browser console for specific API error messages</li>
       </ul>
 
-      <h3>8. Support & Documentation</h3>
+      <h3>5. Support & Documentation</h3>
       <p>For additional help:</p>
       <ul>
         <li>View individual component demos for specific usage examples</li>
@@ -270,6 +262,6 @@ npm run preview # Preview production build</uga-code>
   </div>
 
   <!-- Load the components bundle -->
-  <script type="module" src="/shared/ugaonline/dev/js/uga-components.js"></script>
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 </body>
 </html>
