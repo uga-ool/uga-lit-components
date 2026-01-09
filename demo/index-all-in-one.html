@@ -461,10 +461,10 @@ console.log(x);
     <section class="component-demo" id="assignment-demo">
       <h2>Assignment Component</h2>
       <div class="demo-description">
-        <p><strong>Displays assignment details from D2L.</strong> Shows instructions, due dates, availability, and rubric information automatically pulled from the course.</p>
+        <p><strong>Displays all assignments from the current D2L course.</strong> Automatically fetches and displays assignment details including instructions, due dates, availability, rubric information, and submission links.</p>
       </div>
       <div class="demo-example">
-        <uga-assignment name="Module 1 Assignment"></uga-assignment>
+        <uga-assignment></uga-assignment>
         <p><em>Note: Requires D2L API access to load assignment data</em></p>
       </div>
       <div class="demo-props">
@@ -476,14 +476,12 @@ console.log(x);
             <th>Description</th>
           </tr>
           <tr>
-            <td>name</td>
-            <td>string</td>
-            <td>Name of the assignment in D2L</td>
+            <td colspan="3"><em>No properties required - automatically loads all assignments from the current course</em></td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-assignment name="Module 1 Assignment"&gt;&lt;/uga-assignment&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
       </div>
     </section>
 
