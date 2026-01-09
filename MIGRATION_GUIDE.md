@@ -145,9 +145,16 @@ The `feature/updated-video` branch includes:
 
 **Migration:**
 
-```html
+````html
 <!-- No changes required -->
+```html
+<!-- Before: Required assignment name -->
 <uga-assignment name="Module 1 Assignment"></uga-assignment>
+
+<!-- After: Automatically displays all assignments -->
+<uga-assignment></uga-assignment>
+````
+
 ```
 
 **Benefits:**
@@ -162,16 +169,18 @@ The `feature/updated-video` branch includes:
 ### New File Structure
 
 ```
+
 demo/
-├── index.html                    # NEW: Navigation gallery
-├── setup.html                    # NEW: Setup guide
-├── accordion.html                # NEW: Individual demos
-├── video.html                    # NEW
-├── toc.html                      # NEW
-├── ...                          # (15 demo pages total)
-├── index-all-in-one.html        # PRESERVED: Original demo
-└── *.json                       # UNCHANGED: Sample data
-```
+├── index.html # NEW: Navigation gallery
+├── setup.html # NEW: Setup guide
+├── accordion.html # NEW: Individual demos
+├── video.html # NEW
+├── toc.html # NEW
+├── ... # (15 demo pages total)
+├── index-all-in-one.html # PRESERVED: Original demo
+└── \*.json # UNCHANGED: Sample data
+
+````
 
 ### What This Means for You
 
@@ -223,7 +232,7 @@ npm run dev
 
 # Open demo gallery
 # http://localhost:5173/demo/index.html
-```
+````
 
 ### 2. Test Individual Components
 

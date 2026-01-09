@@ -1,11 +1,9 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import axios from 'axios';
 import { getVersions, getUser, getForums, getTopics, getXsrfToken, createForum, createTopic, createPost } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import type { ApiVersions } from '../types/d2l.js';
-
-// Axios is available globally in Brightspace
-declare const axios: any;
 
 
 interface RatingOption {
@@ -168,7 +166,9 @@ class UgaRating extends LitElement {
   findPost(postData: any): void {
     for (let i in postData) {
       if (!postData[i]["IsDeleted"] && postData[i]["PostingUserId"] === this.currentUser.userId) {
-        let reviewedContentId = postData[i]['Subject'].split("|")[0];
+        const subject: string = postData[i]['Subject'] || '';
+        const parts = subject.split('|').map((s: string) => s.trim());
+        const reviewedContentId = parts.length > 0 ? parts[parts.length - 1] : '';
         if (this.contentId === reviewedContentId) {
           this.reviewExists = true;
           this.postId = postData[i]["PostId"];
@@ -197,9 +197,10 @@ class UgaRating extends LitElement {
       this.requestUpdate();
     } else {
       const rating = this.selected;
-      const feedbackField = this.shadowRoot?.querySelector('#feedback-field') as HTMLInputElement;
-      const feedback = feedbackField?.value || '';
-      const result = rating.concat(feedback);
+      const feedbackField = this.querySelector('#feedback-field') as HTMLInputElement;
+      const feedback = (feedbackField?.value || '').trim();
+      const label = this.options.find(o => o.value === rating)?.text || '';
+      const result = label ? `${rating} ${label} - ${feedback}` : `${rating} - ${feedback}`;
 
       if (this.ou === null) {
         this.ou = getCourse();
@@ -207,12 +208,13 @@ class UgaRating extends LitElement {
 
       const route = "/d2l/api/le/" + this.versions.le + "/" + this.ou + "/discussions/forums/" + this.forumId + "/topics/" + this.topicId + "/posts/";
 
-      const data = {
+        const data = {
           "ParentPostId": null,
-          "Subject": this.contentId + "|" + this.contentType + "|" + this.contentName + "|" + this.contentPlatform,
+          // New subject format: "{contentName} | {contentId}"
+          "Subject": `${this.contentName} | ${this.contentId}`,
           "Message": { "Content": result, "Type": "Text" },
           "IsAnonymous": false
-      };
+        };
       
       if (this.token === null) {
           await this.getToken();

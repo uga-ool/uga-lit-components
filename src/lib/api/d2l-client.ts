@@ -1,10 +1,8 @@
 // D2L/Brightspace API client methods
 // Centralized API calls used across multiple components
 
+import axios from 'axios';
 import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost } from '../../types/d2l.js';
-
-// Axios is available globally in Brightspace
-declare const axios: any;
 
 /**
  * Get D2L API versions
@@ -38,12 +36,17 @@ export async function getClasslist(ou: string, leVersion: string): Promise<Class
  */
 export async function getEnrollment(ou: string, lpVersion: string): Promise<Enrollment> {
   const myEnrollment = await axios.get(`/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?orgUnitTypeId=3`);
-  for (let i in myEnrollment.data.Items) {
-    if (myEnrollment.data.Items[i].OrgUnit.Id.toString() === ou) {
-      return myEnrollment.data.Items[i];
+  const items = myEnrollment.data.Items || [];
+  
+  for (let i in items) {
+    if (items[i].OrgUnit.Id.toString() === ou) {
+      return items[i];
     }
   }
-  throw new Error('Enrollment not found for the specified course');
+  
+  // Helpful error message with available course IDs
+  const availableIds = items.map((item: any) => item.OrgUnit.Id).join(', ');
+  throw new Error(`Enrollment not found for course ID ${ou}. Available enrollments: ${availableIds || 'none'}`);
 }
 
 /**

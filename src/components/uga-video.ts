@@ -1,4 +1,5 @@
 import { LitElement, html } from 'lit';
+import axios from 'axios';
 import { customElement, property } from 'lit/decorators.js';
 import { getVersions, getClasslist } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
@@ -28,6 +29,7 @@ class UgaVideo extends LitElement {
   private domain: string | null = null;
   private kalturaScriptLoaded = false;
   private playerInstances: Map<string, any> = new Map();
+  private videoNames: Map<string, string> = new Map();
 
   createRenderRoot() {
     return this;
@@ -153,8 +155,59 @@ class UgaVideo extends LitElement {
     }
   }
 
+  /**
+   * Get a short-lived Kaltura session (KS) using widget session for public access
+   */
+  private async getKalturaSession(): Promise<string | null> {
+    try {
+      const params = new URLSearchParams();
+      // Widget ID format: _<partnerId>
+      params.append('widgetId', `_1727411`);
+      params.append('format', '1');
+      const { data } = await axios.post(
+        'https://www.kaltura.com/api_v3/service/session/action/startWidgetSession',
+        params
+      );
+      return data?.ks ?? null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /**
+   * Retrieve Kaltura media name by entryId via media.get
+   */
+  private async fetchKalturaName(entryId: string): Promise<string | null> {
+    try {
+      const ks = await this.getKalturaSession();
+      if (!ks) return null;
+      const params = new URLSearchParams();
+      params.append('entryId', entryId);
+      params.append('ks', ks);
+      params.append('format', '1');
+      const { data } = await axios.post(
+        'https://www.kaltura.com/api_v3/service/media/action/get',
+        params
+      );
+      return data?.name ?? null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  private async ensureVideoName(entryId: string): Promise<void> {
+    if (this.videoNames.has(entryId)) return;
+    const name = await this.fetchKalturaName(entryId);
+    if (name) {
+      this.videoNames.set(entryId, name);
+      this.requestUpdate();
+    }
+  }
+
   kalturaCode(videoId: string) {
     const containerId = `kaltura_player_${videoId}`;
+    // Kick off async name fetch for rating display
+    this.ensureVideoName(videoId);
     
     // Schedule player initialization after the DOM is updated
     setTimeout(() => {
@@ -182,7 +235,7 @@ class UgaVideo extends LitElement {
           <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
         </div>
       </div>
-      ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.name} contentPlatform="kaltura"></uga-rating>`:html``}
+      ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.videoNames.get(videoId) ?? this.name} contentPlatform="kaltura"></uga-rating>`:html``}
     `;
     return embedCode;
   }

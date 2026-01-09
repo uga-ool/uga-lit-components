@@ -167,7 +167,7 @@ In the D2L HTML editor, update file paths to:
 ### Components That Need D2L API
 
 - `<uga-video>` - Needs Kaltura video ID
-- `<uga-assignment>` - Needs D2L assignment name
+- `<uga-assignment>` - Displays all course assignments automatically
 - `<uga-duedate>` - Needs D2L assignment name
 - `<uga-rating>` - Works in D2L environment
 - `<uga-module-feedback>` - Works in D2L environment

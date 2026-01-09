@@ -170,7 +170,7 @@ The repository includes 14 pre-built components:
 | Component               | Purpose                                                 |
 | ----------------------- | ------------------------------------------------------- |
 | **uga-accordion**       | Collapsible accordion sections with expand/collapse all |
-| **uga-assignment**      | Display assignment details (due date, type, rubrics)    |
+| **uga-assignment**      | Display all assignments from the current course         |
 | **uga-circles**         | Display data in circular badge format                   |
 | **uga-code**            | Syntax-highlighted code blocks with copy button         |
 | **uga-duedate**         | Show assignment due date                                |
