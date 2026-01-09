@@ -22,10 +22,14 @@ export class UGATableOfContents extends LitElement {
 
   private buildTOC(): void {
     // Since we're not using shadow DOM, grab the element from the light DOM
-    const tocList = this.querySelector('#toc-list');
-    const headings = document.querySelectorAll('h2, h3');
-    const idMap = new Map<string, boolean>();
-    const currentLists: { [key: number]: HTMLUListElement | null } = { 1: tocList as HTMLUListElement };
+    const tocList = this.querySelector('#toc-list') as HTMLUListElement | null;
+    if (!tocList) return;
+    const headings = Array.from(document.querySelectorAll('h2, h3')) as HTMLHeadingElement[];
+    const usedIds = new Set<string>();
+    // Seed with any existing IDs to guarantee uniqueness
+    headings.forEach(h => { if (h.id) usedIds.add(h.id); });
+    let rootLevel: number | null = null;
+    const currentLists: { [key: number]: HTMLUListElement | null } = { 1: tocList };
 
     headings.forEach(heading => {
       // Skip the TOC's own heading to prevent self-reference
@@ -35,6 +39,21 @@ export class UGATableOfContents extends LitElement {
 
       // Create a link to each heading
       const level = parseInt(heading.tagName[1]); // Get the heading level (1-6)
+      // Ensure heading has an id; generate slug if missing
+      if (!heading.id) {
+        const base = (heading.textContent || 'section')
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-');
+        let slug = base || 'section';
+        let i = 2;
+        while (usedIds.has(slug) || document.getElementById(slug)) {
+          slug = `${base}-${i++}`;
+        }
+        heading.id = slug;
+        usedIds.add(slug);
+      }
       
       // Set root level based on first heading
       if (rootLevel === null) {

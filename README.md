@@ -1,8 +1,8 @@
-# UGA Brightspace (eLC) Lit Components
+# UGA eLC Lit Components
 
-This repository contains a collection of reusable **Lit web components** designed for use within the **University of Georgia’s Brightspace (eLC/D2L)** learning environment.
+This repository contains a collection of reusable **Lit web components** designed for use within the **University of Georgia's eLC** learning environment.
 
-The project has been modernized to use **Vite** for development and builds, and to bundle all components into a **single optimized JavaScript file** (`uga-components.js`) that can be easily uploaded to Brightspace Public Files.
+The project has been modernized to use **Vite** for development and builds, and to bundle all components into a **single optimized JavaScript file** (`uga-components.js`) that can be easily uploaded to eLC Public Files.
 
 ---
 
@@ -42,9 +42,9 @@ The project has been modernized to use **Vite** for development and builds, and 
   All components built on the latest stable version of [Lit](https://lit.dev/).
 
 - **Light DOM by default:**  
-  Components render into the light DOM with `createRenderRoot() { return this; }` to work seamlessly inside Brightspace content.
+  Components render into the light DOM with `createRenderRoot() { return this; }` to work seamlessly inside eLC content.
 
-- **Brightspace-ready:**  
+- **eLC-ready:**  
   Designed for easy integration via eLC Public Files with `<script type="module">`.
 
 ---
@@ -95,7 +95,7 @@ uga-lit-components/
 
 ## 🎨 Styling Convention: Light DOM
 
-All components use **Light DOM** rendering (`createRenderRoot() { return this; }`) for seamless integration inside Brightspace content pages. This means:
+All components use **Light DOM** rendering (`createRenderRoot() { return this; }`) for seamless integration inside eLC content pages. This means:
 
 - Component styles either:
   1. Link to the shared UGA design system: `<link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />`

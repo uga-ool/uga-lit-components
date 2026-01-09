@@ -145,16 +145,12 @@ The `feature/updated-video` branch includes:
 
 **Migration:**
 
-````html
-<!-- No changes required -->
 ```html
 <!-- Before: Required assignment name -->
-<uga-assignment name="Module 1 Assignment"></uga-assignment>
+<uga-duedate name="Module 1 Assignment"></uga-duedate>
 
-<!-- After: Automatically displays all assignments -->
-<uga-assignment></uga-assignment>
-````
-
+<!-- After: Automatically displays all assignments with due dates -->
+<uga-duedate></uga-duedate>
 ```
 
 **Benefits:**
@@ -180,7 +176,7 @@ demo/
 ├── index-all-in-one.html # PRESERVED: Original demo
 └── \*.json # UNCHANGED: Sample data
 
-````
+```
 
 ### What This Means for You
 
@@ -232,7 +228,7 @@ npm run dev
 
 # Open demo gallery
 # http://localhost:5173/demo/index.html
-````
+```
 
 ### 2. Test Individual Components
 

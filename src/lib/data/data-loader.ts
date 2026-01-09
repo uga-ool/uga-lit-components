@@ -32,5 +32,5 @@ export async function loadData<T>(
   return response.data as T;
 }
 
-// Axios is available globally in Brightspace
+// Axios is available globally in eLC
 declare const axios: any;

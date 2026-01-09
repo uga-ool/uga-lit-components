@@ -28,7 +28,7 @@ class UgaAssignment extends LitElement {
   @property({ type: Object }) versions: ApiVersions = {};
   @property({ type: String }) domain: string | null = null;
 
-  // Light DOM: render into the page directly (D2L-friendly)
+  // Light DOM: render into the page directly (eLC-friendly)
   createRenderRoot() {
     return this;
   }
@@ -47,7 +47,7 @@ class UgaAssignment extends LitElement {
     this.ou = getCourse();
     
     if (!this.ou) {
-      this.errorMessage = 'Unable to determine course ID from URL. Make sure you are viewing this in a D2L course page.';
+      this.errorMessage = 'Unable to determine course ID from URL. Make sure you are viewing this in an eLC course page.';
       this.loaded = true;
       this.requestUpdate();
       return;
@@ -140,7 +140,6 @@ class UgaAssignment extends LitElement {
           <div class="obj-grid__12-12">
             <div class="util-pad-all-md util-background-light-gray" style="border-left: 4px solid #ba0c2f;">
               <p><strong>${this.errorMessage}</strong></p>
-              <p><em>Note: Requires D2L API access to load assignment data</em></p>
             </div>
           </div>
         </div>

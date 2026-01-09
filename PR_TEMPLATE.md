@@ -164,7 +164,7 @@ This PR restructures the demo system into individual component pages and enhance
 - [ ] Test accordion with `class="js"` requirement
 - [ ] Verify all demo pages load correctly
 - [ ] Check console for errors (F12)
-- [ ] Test in D2L environment (if possible)
+- [ ] Test in eLC environment (if possible)
 
 ### Post-Deployment Steps
 

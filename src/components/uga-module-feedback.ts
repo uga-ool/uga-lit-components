@@ -4,7 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 
 @customElement('uga-module-feedback')
 class UgaModuleFeedback extends LitElement {
-  // Light DOM: render into the page directly (D2L-friendly)
+  // Light DOM: render into the page directly (eLC-friendly)
   createRenderRoot() {
     return this;
   }

@@ -21,7 +21,7 @@ interface CurrentUser {
 @customElement('uga-rating')
 class UgaRating extends LitElement {
 
-  // Light DOM: render into the page directly (D2L-friendly)
+  // Light DOM: render into the page directly (eLC-friendly)
   createRenderRoot() {
     return this;
   }

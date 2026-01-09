@@ -12,7 +12,7 @@ class UgaInstructorNote extends LitElement {
 
   @property({ type: Object }) versions: ApiVersions = {};
 
-  // Light DOM: render into the page directly (D2L-friendly)
+  // Light DOM: render into the page directly (eLC-friendly)
   createRenderRoot() {
     return this;
   }

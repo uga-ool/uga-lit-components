@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
-// Axios is available globally in Brightspace
+// Axios is available globally in eLC
 declare const axios: any;
 
 interface AccordionItem {
