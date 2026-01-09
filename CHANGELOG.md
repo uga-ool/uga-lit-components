@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2026-01-09
+
+### 🎨 Branding Updates
+
+- **Rebranded all D2L/Brightspace references to eLC** across components, demos, and documentation
+- Removed "Note: Requires D2L API access" callouts from demo pages and component error displays
+- Updated comments, error messages, and user-facing text to use eLC terminology
+
+### 📚 Documentation Enhancements
+
+- **Added Google Drive links for example JSON files** in demo documentation
+- Components with example files: accordion, tabs, slideshow, circles, footer, instructor-note
+- Standardized link format: "Download [filename] to modify and upload it to your course files"
+- Updated both `index-all-in-one.html` and individual component demo pages
+
+### 🐛 Bug Fixes
+
+#### uga-toc
+
+- **Fixed missing `rootLevel` variable** declaration causing runtime errors
+- **Implemented auto-ID generation** for headings without IDs
+- Added slug generation algorithm with collision detection
+- Ensures all TOC links navigate correctly even when headings lack manual IDs
+- Type-safe null checking for tocList and heading elements
+
 ## [Unreleased] - 2025-11-18
 
 ### 🎉 Major Updates

@@ -1,11 +1,11 @@
-// D2L/Brightspace API client methods
+// eLC API client methods
 // Centralized API calls used across multiple components
 
 import axios from 'axios';
 import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost } from '../../types/d2l.js';
 
 /**
- * Get D2L API versions
+ * Get eLC API versions
  * @returns Object mapping product codes to version numbers
  */
 export async function getVersions(): Promise<ApiVersions> {

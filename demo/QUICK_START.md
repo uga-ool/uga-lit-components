@@ -127,7 +127,7 @@ Upload:
 - `dist/js/uga-components.js`
 - All `demo/*.json` and `demo/*.html` files
 
-### Step 3: Copy Demo HTML to D2L Content Page
+### Step 3: Copy Demo HTML to eLC Content Page
 
 1. Open `demo/index.html` in a text editor
 2. Copy the entire `<body>` content (everything inside `<body>...</body>`)
@@ -169,8 +169,8 @@ In the D2L HTML editor, update file paths to:
 - `<uga-video>` - Needs Kaltura video ID
 - `<uga-assignment>` - Displays all course assignments automatically
 - `<uga-duedate>` - Needs D2L assignment name
-- `<uga-rating>` - Works in D2L environment
-- `<uga-module-feedback>` - Works in D2L environment
+- `<uga-rating>` - Works in eLC environment
+- `<uga-module-feedback>` - Works in eLC environment
 
 ## Customization Tips
 
@@ -198,7 +198,7 @@ Follow the JSON structure in the sample files:
 <!-- Course overview with mixed components -->
 <uga-toc></uga-toc>
 <uga-accordion type="local" filename="module-overview.json"></uga-accordion>
-<uga-video videoid="1_abc123" includerating="true"></uga-video>
+<uga-video videoid="1_icw0df6y" includerating="true"></uga-video>
 <uga-circles type="local" filename="course-stats.json"></uga-circles>
 <uga-return-to-top></uga-return-to-top>
 

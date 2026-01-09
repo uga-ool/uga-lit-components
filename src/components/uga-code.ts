@@ -67,7 +67,7 @@ class UgaCode extends LitElement {
   }
 
   runExternalScripts(): void {
-    // Prism is loaded and globally available in Brightspace
+    // Prism is loaded and globally available in eLC
     Prism.highlightAllUnder(this);
   }
 

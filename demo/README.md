@@ -49,7 +49,7 @@ npm run build
 npx serve .
 ```
 
-## Using in D2L/Brightspace
+## Using in eLC
 
 ### 1. Build the Bundle
 
@@ -59,9 +59,9 @@ npm run build
 
 This creates `dist/js/uga-components.js`
 
-### 2. Upload Files to D2L
+### 2. Upload Files to eLC
 
-Upload the following to **D2L → Content → Manage Files → Public Files**:
+Upload the following to **eLC → Content → Manage Files → Public Files**:
 
 - `dist/js/uga-components.js` (the component bundle)
 - All JSON/HTML data files from the `demo/` directory
@@ -69,12 +69,12 @@ Upload the following to **D2L → Content → Manage Files → Public Files**:
 
 ### 3. Create Your Content Page
 
-In D2L, create an HTML page with your components and load the bundle:
+In eLC, create an HTML page with your components and load the bundle:
 
 ```html
 <!-- Your components -->
 <uga-accordion type="local" filename="accordion-demo.json"></uga-accordion>
-<uga-video videoid="1_abc123de"></uga-video>
+<uga-video videoid="1_icw0df6y"></uga-video>
 
 <!-- Load bundle at end -->
 <script type="module" src="/shared/PublicFiles/uga-components.js"></script>
@@ -185,7 +185,7 @@ In D2L, create an HTML page with your components and load the bundle:
 ## Notes
 
 - Some components (Assignment, Due Date, Rating, Instructor Note) require D2L API access
-- The demo uses mock axios when not in D2L environment
+- The demo uses mock axios when not in eLC environment
 - All components use Light DOM for compatibility with Brightspace
 - External dependencies (Prism.js for code highlighting, Kaltura for video) are loaded via CDN
 

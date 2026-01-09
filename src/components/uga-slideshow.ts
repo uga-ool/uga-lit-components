@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
-// Axios is available globally in Brightspace
+// Axios is available globally in eLC
 declare const axios: any;
 
 
@@ -26,7 +26,7 @@ interface SlideshowData {
 @customElement('uga-slideshow')
 class UgaSlideshow extends LitElement {
 
-  // Light DOM: render into the page directly (D2L-friendly)
+  // Light DOM: render into the page directly (eLC-friendly)
   createRenderRoot() {
     return this;
   }

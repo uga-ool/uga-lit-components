@@ -91,8 +91,7 @@
       <h1>UGA Lit Components Demo</h1>
       <div class="intro">
         <p><strong>Welcome to the UGA Lit Components demonstration page.</strong></p>
-        <p>This page showcases all available Lit web components designed for use in UGA's Brightspace (D2L) environment. Each component includes a live example, description, available properties, and sample code.</p>
-        <p><strong>Note:</strong> Some components require D2L API access and will display placeholder data in this demo environment.</p>
+        <p>This page showcases all available Lit web components designed for use in UGA's eLC environment. Each component includes a live example, description, available properties, and sample code.</p>
       </div>
     </header>
 
@@ -203,6 +202,9 @@
       <h2>Slideshow Component</h2>
       <div class="demo-description">
         <p><strong>Creates an image slideshow with navigation controls.</strong> Perfect for visual content, step-by-step instructions, or image galleries.</p>
+        <p><strong>Example data file:</strong> Download <code>slideshow-demo.json</code> from
+          <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Google Drive</a>
+          and upload it to your course files.</p>
       </div>
       <div class="demo-example">
         <uga-slideshow filename="slideshow-demo.json" imageheight="400"></uga-slideshow>
@@ -244,7 +246,7 @@
         <p><strong>Embeds Kaltura videos with customizable player.</strong> Supports single videos, playlists, and optional rating integration. Logo/watermark is hidden by default.</p>
       </div>
       <div class="demo-example">
-        <uga-video videoid="1_abc123de" playerid="57494843"></uga-video>
+        <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
         <p><em>Note: Replace videoid with actual Kaltura video ID</em></p>
       </div>
       <div class="demo-props">
@@ -283,10 +285,10 @@
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-video videoid="1_abc123de" playerid="1574196844"&gt;&lt;/uga-video&gt;
+        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="1574196844"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
-&lt;uga-video videoid="1_abc123de" includerating="true"&gt;&lt;/uga-video&gt;
+&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
 
 &lt;!-- Multiple videos from file --&gt;
 &lt;uga-video type="local" filename="videos.json"&gt;&lt;/uga-video&gt;</uga-code>
@@ -351,7 +353,7 @@ console.log(x);
     <section class="component-demo" id="rating-demo">
       <h2>Rating Component</h2>
       <div class="demo-description">
-        <p><strong>Collects user ratings for content.</strong> Integrates with D2L forums to store feedback. Useful for video ratings, resource evaluations, etc.</p>
+        <p><strong>Collects user ratings for content.</strong> Integrates with eLC forums to store feedback. Useful for video ratings, resource evaluations, etc.</p>
       </div>
       <div class="demo-example">
         <uga-rating 
@@ -360,7 +362,7 @@ console.log(x);
           contentname="Introduction Video"
           contentplatform="kaltura">
         </uga-rating>
-        <p><em>Note: Requires D2L API access to submit ratings</em></p>
+        
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -445,11 +447,11 @@ console.log(x);
     <section class="component-demo" id="assignment-demo">
       <h2>Assignment Component</h2>
       <div class="demo-description">
-        <p><strong>Displays all assignments from the current D2L course.</strong> Automatically fetches and displays assignment details including instructions, due dates, availability, rubric information, and submission links.</p>
+        <p><strong>Displays all assignments from the current eLC course.</strong> Automatically fetches and displays assignment details including instructions, due dates, availability, rubric information, and submission links.</p>
       </div>
       <div class="demo-example">
         <uga-assignment></uga-assignment>
-        <p><em>Note: Requires D2L API access to load assignment data</em></p>
+        
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -546,11 +548,11 @@ console.log(x);
     <section class="component-demo" id="instructor-note-demo">
       <h2>Instructor Note Component</h2>
       <div class="demo-description">
-        <p><strong>Displays notes visible only to instructors.</strong> Uses D2L role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
+        <p><strong>Displays notes visible only to instructors.</strong> Uses eLC role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
       </div>
       <div class="demo-example">
         <uga-instructor-note type="local" filename="instructor-note-demo.html"></uga-instructor-note>
-        <p><em>Note: Only visible to users with instructor role in D2L</em></p>
+        <p><em>Note: Only visible to users with instructor role in eLC</em></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -586,11 +588,11 @@ console.log(x);
     <section class="component-demo" id="duedate-demo">
       <h2>Due Date Component</h2>
       <div class="demo-description">
-        <p><strong>Displays assignment due date from D2L.</strong> Automatically pulls and formats the due date for a specific assignment.</p>
+        <p><strong>Displays all assignment due dates from the current eLC course.</strong> Automatically fetches and displays all assignments with due dates in a formatted table.</p>
       </div>
       <div class="demo-example">
-        <uga-duedate name="Module 1 Assignment"></uga-duedate>
-        <p><em>Note: Requires D2L API access to load due date</em></p>
+        <uga-duedate></uga-duedate>
+        
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -601,14 +603,12 @@ console.log(x);
             <th>Description</th>
           </tr>
           <tr>
-            <td>name</td>
-            <td>string</td>
-            <td>Name of the assignment in D2L</td>
+            <td colspan="3"><em>No properties required - automatically loads all assignments with due dates from the current course</em></td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-duedate name="Module 1 Assignment"&gt;&lt;/uga-duedate&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;</uga-code>
       </div>
     </section>
 
@@ -637,16 +637,16 @@ console.log(x);
     </div>
 
     <section class="component-demo">
-      <h2>How to Use These Components in D2L</h2>
+      <h2>How to Use These Components in eLC</h2>
       
       <h3>1. Upload the Bundle</h3>
       <uga-code language="markup">Upload dist/js/uga-components.js to:
-D2L → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-code>
+eLC → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-code>
 
       <h3>2. Add to Your Page</h3>
       <uga-code language="markup">&lt;!-- Your components --&gt;
 &lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
-&lt;uga-video videoid="1_abc123de"&gt;&lt;/uga-video&gt;
+&lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
 
 &lt;!-- Load bundle at end of page --&gt;
 &lt;script type="module" src="/shared/PublicFiles/uga-components.js"&gt;&lt;/script&gt;</uga-code>
@@ -720,7 +720,7 @@ npm run preview # Preview production build</uga-code>
   <!-- Load the components bundle -->
   <script type="module" src="/shared/ugaonline/dev/js/uga-components.js"></script>
   
-  <!-- Mock axios for demo (since we're not in D2L) -->
+  <!-- Mock axios for demo (since we're not in eLC) -->
   <script>
     if (typeof axios === 'undefined') {
       window.axios = {

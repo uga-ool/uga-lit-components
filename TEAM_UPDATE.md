@@ -26,7 +26,7 @@ Without this, accordion expand/collapse icons won't display.
 
 **Where to add it:**
 
-- D2L content pages with accordions
+- eLC content pages with accordions
 - Any custom HTML with accordion components
 - Demo pages (already updated)
 
@@ -111,7 +111,7 @@ Without this, accordion expand/collapse icons won't display.
 
 ### For QA/Testing
 
-- [ ] Test accordion components in D2L
+- [ ] Test accordion components in eLC
 - [ ] Verify video components with Kaltura IDs
 - [ ] Check TOC navigation (h2/h3 only)
 - [ ] Test all demo pages
@@ -232,7 +232,7 @@ A: Check `MIGRATION_GUIDE.md` or `demo/setup.html` troubleshooting sections.
 **Next:**
 
 - Team review and feedback
-- Final testing in D2L environment
+- Final testing in eLC environment
 - Merge to main branch
 
 **After Merge:**
