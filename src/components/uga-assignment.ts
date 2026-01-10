@@ -8,10 +8,13 @@ import type { ApiVersions } from '../types/d2l.js';
 interface AssignmentData {
   Name: string;
   Id?: number;
-  CustomInstructions: {
+  Instructions?: {
     Html: string;
   };
-  DueDate?: string;
+  CustomInstructions?: {
+    Html: string;
+  };
+  DueDate?: string | null;
   Availability?: {
     StartDate?: string;
     EndDate?: string;
@@ -70,7 +73,11 @@ class UgaAssignment extends LitElement {
         .finally(() => {
           // Load assignments regardless of enrollment status
           getAssignments(this.ou!, this.versions.le).then((assignmentsData) => {
-            this.assignments = assignmentsData;
+            this.assignments = assignmentsData.map(a => ({
+              ...a,
+              CustomInstructions: a.Instructions,
+              DueDate: a.DueDate || undefined
+            }));
             this.loaded = true;
             this.requestUpdate();
           }).catch((error) => {
