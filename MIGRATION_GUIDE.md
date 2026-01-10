@@ -40,9 +40,13 @@ The `feature/updated-video` branch includes:
 
 ### Table of Contents Filtering
 
-**Change:** `uga-toc` now scans h2 and h3 headings only (previously h1-h4).
+**Change:** `uga-toc` now scans h2 and h3 headings only (previously h1-h4). Additionally, the component now auto-generates IDs for headings without them.
 
-**Impact:** TOC will exclude h4 headings. This provides cleaner navigation by removing repetitive property tables and minor headings.
+**Impact:**
+
+- TOC will exclude h4 headings (provides cleaner navigation)
+- All h2/h3 headings will be navigable even if they lack manual IDs
+- Navigation links work reliably across all demo pages
 
 **Action:**
 
