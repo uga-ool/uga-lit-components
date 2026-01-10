@@ -43,7 +43,7 @@ class UgaDueDate extends LitElement {
           .filter(a => a.DueDate)
           .map(a => ({
             ...a,
-            DueDate: transformDate(a.DueDate)
+            DueDate: transformDate(a.DueDate!)
           }));
         this.loaded = true;
         this.requestUpdate();
