@@ -2,15 +2,16 @@
 
 ## What You Just Got
 
-A comprehensive demo system with **15 dedicated pages** showcasing all UGA Lit components:
+A comprehensive demo system with **16 dedicated pages** showcasing all UGA Lit components:
 
-- ✅ **Navigation gallery** (`index.html`) with component cards organized by category
-- ✅ **Individual demo pages** for each component with live examples
-- ✅ **Setup guide** (`setup.html`) with deployment instructions and troubleshooting
+- ✅ **Main demo page** (`index.html`) - Comprehensive all-in-one scrollable demo
+- ✅ **Alternative view** (`index-all-in-one.html`) - Same content, clearly named for team clarity
+- ✅ **14 individual demo pages** - One per component, perfect for eLC side navigation
+- ✅ **Setup guide** (`setup.html`) - Deployment instructions and troubleshooting
 - ✅ **Property documentation** tables for every component
 - ✅ **Copy-paste ready** code snippets
-- ✅ **Sample data files** for testing
-- ✅ **Auto-generated table of contents** on main page
+- ✅ **Sample data files** with Google Drive links for easy sharing
+- ✅ **Auto-generated table of contents** on main pages
 
 ## Recent Updates (November 2025)
 
@@ -28,11 +29,12 @@ A comprehensive demo system with **15 dedicated pages** showcasing all UGA Lit c
 
 ```
 demo/
-├── index.html                    # Main navigation gallery
-├── setup.html                    # Setup & usage guide (NEW)
-├── accordion.html                # Individual component demos
-├── assignment.html
-├── circles.html
+├── index.html                    # Main comprehensive demo (all components)
+├── index-all-in-one.html        # Identical to index.html (clearly named)
+├── setup.html                    # Setup & usage guide
+├── accordion.html                # Individual component demos (14 pages)
+├── assignment.html               #   Each shows one component in detail
+├── circles.html                  #   Perfect for eLC side navigation
 ├── code.html
 ├── duedate.html
 ├── footer.html
@@ -44,10 +46,9 @@ demo/
 ├── tabs.html
 ├── toc.html
 ├── video.html
-├── index-all-in-one.html        # Original unified demo (preserved)
 ├── README.md                     # Detailed documentation
 ├── QUICK_START.md               # This file
-├── accordion-demo.json           # Sample data files
+├── accordion-demo.json           # Sample data files (available on Google Drive)
 ├── tabs-demo.json
 ├── circles-demo.json
 ├── slideshow-demo.json
@@ -82,21 +83,32 @@ Then open: `http://localhost:4173/demo/index.html`
 
 ## Demo System Navigation
 
-### Main Gallery (`index.html`)
+### Main Demo Pages
 
-- Browse all components organized by category
-- Click component cards to view individual demos
-- Includes comprehensive table of contents
-- Links to setup guide and documentation
+**`index.html` and `index-all-in-one.html`** (identical content):
 
-### Individual Component Pages
+- Comprehensive scrollable demo with all 14 components
+- Organized by category (Content, Media, Interactive, Navigation, Instructor Tools)
+- Auto-generated table of contents for quick navigation
+- Live examples, property tables, and code snippets for each component
+- Setup instructions at the bottom
+
+**Why two files?** `index-all-in-one.html` provides clarity for team members - the name explicitly indicates it's a comprehensive single-page demo.
+
+### Individual Component Pages (14 files)
 
 Each component has a dedicated demo page:
 
-- Live working example
-- Complete property documentation
-- Sample code snippets
-- "Back to All Components" navigation link
+- **One component focus** - Single live example without distraction
+- **Complete documentation** - Property tables and code samples
+- **eLC-friendly** - Perfect for linking from eLC side navigation
+- **"Back to All Components" link** - Returns to index.html
+
+**When to use:**
+
+- Link directly from eLC course navigation
+- Share specific component examples with instructional designers
+- Test one component in isolation
 
 ### Setup Guide (`setup.html`)
 
@@ -108,7 +120,7 @@ Comprehensive guide covering:
 - Troubleshooting common issues
 - Best practices and file organization
 
-## Use in D2L (Brightspace)
+## Use in eLC
 
 ### Step 1: Build
 
@@ -116,25 +128,40 @@ Comprehensive guide covering:
 npm run build
 ```
 
-This creates `dist/js/uga-components.js`
+This creates `dist/js/uga-components.js` (~113 kB, 37 kB gzipped)
 
-### Step 2: Upload to D2L
+### Step 2: Upload to eLC
 
-Go to: **D2L → Content → Manage Files → Public Files**
+Go to: **eLC → Content → Manage Files → Public Files**
 
 Upload:
 
-- `dist/js/uga-components.js`
-- All `demo/*.json` and `demo/*.html` files
+- `dist/js/uga-components.js` (required - the component bundle)
+- Demo pages you want to use (optional - for reference or direct linking)
+- Sample JSON files (optional - customize and upload as needed)
 
-### Step 3: Copy Demo HTML to eLC Content Page
+### Step 3: Create eLC Content Page
 
-1. Open `demo/index.html` in a text editor
-2. Copy the entire `<body>` content (everything inside `<body>...</body>`)
-3. In D2L, create a new Content page
+**Option A: Full Component Showcase** (use `index.html` content)
+
+1. Open `demo/index.html` or `demo/index-all-in-one.html` in a text editor
+2. Copy the entire `<body>` content
+3. In eLC, create a new Content page
 4. Switch to HTML editor
 5. Paste the content
-6. Make sure the script tag points to: `/shared/PublicFiles/uga-components.js`
+6. Update script path to: `/shared/PublicFiles/uga-components.js`
+
+**Option B: Individual Component** (use specific demo page)
+
+1. Open desired demo page (e.g., `demo/accordion.html`)
+2. Copy the `<body>` content
+3. Follow steps 3-6 from Option A
+
+**Option C: Custom Page** (build from scratch)
+
+1. Use code snippets from any demo page
+2. Add component tags as needed
+3. Load bundle at end: `<script type="module" src="/shared/PublicFiles/uga-components.js"></script>`
 
 ### Step 4: Update Data File Paths
 
@@ -151,26 +178,35 @@ In the D2L HTML editor, update file paths to:
 
 ### Components That Need Data Files
 
-- `<uga-accordion>` - accordion-demo.json
-- `<uga-tabs>` - tabs-demo.json
-- `<uga-circles>` - circles-demo.json
-- `<uga-slideshow>` - slideshow-demo.json
-- `<uga-footer>` - footer-demo.json
-- `<uga-instructor-note>` - instructor-note-demo.html
+**Download example files from Google Drive links in the demo pages, then customize:**
+
+- `<uga-accordion>` - accordion-demo.json (expandable/collapsible sections)
+- `<uga-tabs>` - tabs-demo.json (tabbed content navigation)
+- `<uga-circles>` - circles-demo.json (circular statistics/figures)
+- `<uga-slideshow>` - slideshow-demo.json (image carousel with controls)
+- `<uga-footer>` - footer-demo.json (branded footer with logo)
+- `<uga-instructor-note>` - instructor-note-demo.json (instructor-only notes)
+
+**All example files include:**
+
+- Complete JSON structure
+- Sample data you can modify
+- Comments explaining each field
+- Ready to upload to eLC Public Files
 
 ### Components That Work Standalone
 
-- `<uga-toc>` - Auto-generates from page headings
-- `<uga-return-to-top>` - No configuration needed
-- `<uga-code>` - Add code inline or via filename attribute
+- `<uga-toc>` - Auto-generates from h2/h3 headings on page
+- `<uga-return-to-top>` - Smooth scroll button (appears after scrolling)
+- `<uga-code>` - Syntax-highlighted code with copy button
 
-### Components That Need D2L API
+### Components That Need eLC API
 
-- `<uga-video>` - Needs Kaltura video ID
-- `<uga-assignment>` - Displays all course assignments automatically
-- `<uga-duedate>` - Needs D2L assignment name
-- `<uga-rating>` - Works in eLC environment
-- `<uga-module-feedback>` - Works in eLC environment
+- `<uga-video>` - Kaltura video ID required (hides logo by default)
+- `<uga-assignment>` - Auto-loads all course assignments
+- `<uga-duedate>` - Displays assignment due dates in table format
+- `<uga-rating>` - Collects user ratings via eLC forums
+- `<uga-module-feedback>` - Embeds Qualtrics survey with page URL
 
 ## Customization Tips
 
