@@ -14,7 +14,7 @@ The project has been modernized to use **Vite** for development and builds, and 
 - **📁 Dual Index Structure**: `index.html` and `index-all-in-one.html` for flexible demo navigation
 - **📦 Google Drive Integration**: Example JSON files available via Google Drive links with consistent formatting
 - **🔗 TOC Auto-ID Generation**: Headings without IDs are automatically linkable
-- **📚 Enhanced Documentation**: Updated QUICK_START.md and MIGRATION_GUIDE.md with clear file structure explanations
+- **📚 Enhanced Documentation**: Updated QUICK_START.md with clear file structure explanations
 - **🎬 Kaltura Video Enhancement**: Logo hiding, improved player lifecycle, eliminated scrollbar issues
 - **📂 Accordion Refactored**: Direct axios pattern, better error handling, TypeScript improvements
 - **🗂️ TOC Filtering**: Now scans h2/h3 only for cleaner navigation
@@ -62,8 +62,7 @@ uga-lit-components/
 │   ├── video.html                # (one for each component)
 │   ├── toc.html
 │   ├── ...                       # (14 individual component pages)
-│   ├── QUICK_START.md            # Quick start guide
-│   ├── README.md                 # Demo documentation
+│   ├── QUICK_START.md            # Quick start guide for demo system
 │   └── *.json                    # Sample data files (also on Google Drive)
 ├── src/
 │   ├── all.ts                    # Entry point: eagerly imports all components
@@ -169,21 +168,21 @@ npm run preview
 
 The repository includes 14 pre-built components:
 
-| Component               | Purpose                                                 |
-| ----------------------- | ------------------------------------------------------- |
-| **uga-accordion**       | Collapsible accordion sections with expand/collapse all |
-| **uga-assignment**      | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property. |
-| **uga-circles**         | Display data in circular badge format                   |
-| **uga-code**            | Syntax-highlighted code blocks with copy button         |
+| Component               | Purpose                                                                                                                     |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **uga-accordion**       | Collapsible accordion sections with expand/collapse all                                                                     |
+| **uga-assignment**      | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property.           |
+| **uga-circles**         | Display data in circular badge format                                                                                       |
+| **uga-code**            | Syntax-highlighted code blocks with copy button                                                                             |
 | **uga-duedate**         | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property. |
-| **uga-footer**          | Site footer with branding                               |
-| **uga-instructor-note** | Instructor-only notes (hidden from students)            |
-| **uga-rating**          | Collect feedback/ratings on content                     |
-| **uga-return-to-top**   | Fixed button to scroll to top                           |
-| **uga-slideshow**       | Image carousel with navigation                          |
-| **uga-tabs**            | Tab navigation interface                                |
-| **uga-toc**             | Auto-generated table of contents                        |
-| **uga-video**           | Embed Kaltura or YouTube videos with logo control       |
+| **uga-footer**          | Site footer with branding                                                                                                   |
+| **uga-instructor-note** | Instructor-only notes (hidden from students)                                                                                |
+| **uga-rating**          | Collect feedback/ratings on content                                                                                         |
+| **uga-return-to-top**   | Fixed button to scroll to top                                                                                               |
+| **uga-slideshow**       | Image carousel with navigation                                                                                              |
+| **uga-tabs**            | Tab navigation interface                                                                                                    |
+| **uga-toc**             | Auto-generated table of contents                                                                                            |
+| **uga-video**           | Embed Kaltura or YouTube videos with logo control                                                                           |
 
 ---
 
@@ -347,17 +346,38 @@ const kalturaPlayer = KalturaPlayer.setup({
 <html lang="en" class="js"></html>
 ```
 
-This enables UGA CSS pseudo-element styles (`.js .cmp-accordion__button::after`) for the expand/collapse icons.
+This enables UGA CSS pseudo-element styles (`.js .cmp-accordion__button::after`) for the expand/collapse icons. Without this class, accordion icons will not display.
+
+**Impact:** All pages with accordion components need this update.
 
 #### Table of Contents Behavior
 
-The `uga-toc` component now scans **h2 and h3 headings only** (changed from h1-h4). This provides cleaner navigation by excluding h4 property tables and other minor headings.
+The `uga-toc` component now scans **h2 and h3 headings only** (changed from h1-h4). This provides cleaner navigation by excluding h4 property tables and other minor headings. The component also auto-generates IDs for headings without them, ensuring all h2/h3 headings are navigable even if they lack manual IDs.
+
+**Action:** No code changes required, but review TOC output to ensure it meets your needs.
+
+### Troubleshooting Common Issues
+
+**Problem:** Accordion icons not showing  
+**Solution:** Add `class="js"` to `<html>` tag
+
+**Problem:** TOC showing too many items  
+**Solution:** Component now filters to h2/h3 only - this is expected behavior
+
+**Problem:** Video not loading  
+**Solution:** Check browser console for errors, verify Kaltura video ID
+
+**Problem:** Demo pages not loading  
+**Solution:** Run `npm install` and `npm run dev`, then try again
+
+**Problem:** Multiple video players not initializing  
+**Solution:** Ensure you're using the latest build - unique component IDs prevent container conflicts
 
 ### More Help
 
-- Review `demo/setup.html` for comprehensive troubleshooting
+- Review `demo/setup.html` for comprehensive troubleshooting and deployment instructions
 - Check individual component demo pages for usage examples
-- See `CHANGELOG.md` for recent changes and migration notes
+- See `CHANGELOG.md` for complete change history
 
 ---
 

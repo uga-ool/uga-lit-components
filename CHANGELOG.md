@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
+
 ## [Unreleased] - 2026-01-09
 
 ### 🎨 Branding Updates
@@ -13,9 +14,16 @@ All notable changes to this project will be documented in this file.
 ### 📚 Documentation Enhancements
 
 - **Added Google Drive links for example JSON files** in demo documentation
-- Components with example files: accordion, tabs, slideshow, circles, footer, instructor-note
+- Components with example files: accordion, tabs, slideshow, circles, footer, instructor-note, videos
 - Standardized link format: "Download [filename] to modify and upload it to your course files"
 - Updated both `index-all-in-one.html` and individual component demo pages
+- **Updated `index-all-in-one.html` to match individual demo files**:
+  - Split video section into "Single Video" and "Multiple Videos from JSON File" sections
+  - Updated assignment and due date code examples with comprehensive filtering examples
+  - Added Google Drive links to all JSON file examples in setup section (videos-demo.json)
+  - Updated setup section structure to match `setup.html`
+  - Added Component-Specific Setup section with eLC API components information
+  - Changed setup instructions to match `setup.html` format (removed "Upload the Bundle" step, added full HTML template)
 
 ### 🐛 Bug Fixes
 
@@ -26,6 +34,21 @@ All notable changes to this project will be documented in this file.
 - Added slug generation algorithm with collision detection
 - Ensures all TOC links navigate correctly even when headings lack manual IDs
 - Type-safe null checking for tocList and heading elements
+
+#### uga-video
+
+- **Fixed multiple video player initialization issue** by adding unique component IDs to container elements
+- Prevents "target id already in use" errors when the same video ID appears in multiple components on the same page
+- Uses Lit's `updated` lifecycle method for more reliable player initialization timing
+
+### 🔧 Component Improvements
+
+#### uga-duedate
+
+- **Assignment names are now hyperlinked** (matching Assignment component behavior)
+- Users can click directly to assignments or discussions from the due date table
+- Added enrollment checking to generate appropriate student/instructor links
+- Implemented `getAssignmentLink()` method for consistent link generation
 
 ## [Unreleased] - 2025-11-18
 

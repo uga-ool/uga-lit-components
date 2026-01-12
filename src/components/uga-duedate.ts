@@ -1,12 +1,13 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { getVersions, getAssignments, getMyItemsDue, getForums, getTopics } from '../lib/api/d2l-client.js';
+import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import { getItemType, getTypesArray, shouldIncludeItem, formatItemType, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
-import type { ApiVersions, MyItemsDue, DiscussionTopicWithForum } from '../types/d2l.js';
+import type { ApiVersions, MyItemsDue, Enrollment, DiscussionTopicWithForum } from '../types/d2l.js';
 
 interface AssignmentData {
   Name: string;
+  Id?: number;
   DueDate?: string;
   TopicId?: number;
   ForumId?: number;
@@ -16,8 +17,10 @@ interface AssignmentData {
 @customElement('uga-duedate')
 class UgaDueDate extends LitElement {
   @property({ type: Object }) versions: ApiVersions = {};
+  @property({ type: String }) domain: string | null = null;
   @property({ type: String }) ou: string | null = null;
   @property({ type: Array }) assignments: AssignmentData[] = [];
+  @property({ type: Array }) studentRoles = ['Student', 'Demo Student'];
   @property({ type: String }) errorMessage: string | null = null;
   @property({ type: String }) types = DEFAULT_TYPES_STRING; // Comma-separated list of types to include
 
@@ -26,6 +29,7 @@ class UgaDueDate extends LitElement {
     return this;
   }
 
+  private student: boolean | null = null;
   private loaded = false;
 
   connectedCallback(): void {
@@ -39,77 +43,93 @@ class UgaDueDate extends LitElement {
       return;
     }
     
+    this.domain = window.location.hostname;
+    
     getVersions().then((versions) => {
       this.addVersions(versions);
 
-      // Try the myItems/due endpoint first, fallback to assignments if it fails
-      getMyItemsDue(this.ou!, this.versions.le).then((itemsData) => {
-        // Map and filter items with due dates
-        const mappedItems = itemsData
-          .filter((item: MyItemsDue) => item.DueDate || item.EndDate)
-          .map((item: MyItemsDue) => ({
-            Name: item.Name || item.Title || item.ItemName || 'Untitled',
-            DueDate: transformDate(item.DueDate || item.EndDate!),
-            TopicId: item.TopicId,
-            ForumId: item.ForumId,
-            ItemType: item.ItemType || item.ContentType
-          }));
-        // Filter by types
-        const allowedTypes = getTypesArray(this.types);
-        this.assignments = mappedItems.filter(item => shouldIncludeItem(item, allowedTypes));
-        this.loaded = true;
-        this.requestUpdate();
-      }).catch((error) => {
-        // Fallback: fetch both assignments and discussions
-        console.warn('myItems/due endpoint unavailable, falling back to assignments and discussions:', error.message);
-        Promise.all([
-          getAssignments(this.ou!, this.versions.le).catch(() => []),
-          getForums(this.ou!, this.versions.le)
-            .then(forums => {
-              // Get all topics for all forums
-              return Promise.all(
-                forums.map(forum => 
-                  getTopics(this.ou!, this.versions.le, forum.ForumId)
-                    .then(topics => topics.map(topic => ({ ...topic, ForumId: forum.ForumId } as DiscussionTopicWithForum)))
-                    .catch(() => [] as DiscussionTopicWithForum[])
-                )
-              ).then(allTopics => allTopics.flat());
-            })
-            .catch(() => [])
-        ]).then(([assignmentsData, topicsData]) => {
-          // Map assignments with due dates
-          const assignmentItems = assignmentsData
-            .filter(a => a.DueDate)
-            .map(a => ({
-              Name: a.Name,
-              DueDate: transformDate(a.DueDate!),
-              ItemType: 'assignment'
-            }));
-          
-          // Map discussion topics with due dates
-          const discussionItems = topicsData
-            .filter((topic: DiscussionTopicWithForum) => topic.DueDate || topic.EndDate || topic.Availability?.EndDate)
-            .map((topic: DiscussionTopicWithForum) => ({
-              Name: topic.Name,
-              DueDate: transformDate(topic.DueDate || topic.EndDate || topic.Availability?.EndDate!),
-              TopicId: topic.TopicId,
-              ForumId: topic.ForumId,
-              ItemType: 'discussion'
-            }));
-          
-          // Combine assignments and discussions
-          const allItems = [...assignmentItems, ...discussionItems];
-          // Filter by types
-          const allowedTypes = getTypesArray(this.types);
-          this.assignments = allItems.filter(item => shouldIncludeItem(item, allowedTypes));
-          this.loaded = true;
-          this.requestUpdate();
-        }).catch((fallbackError) => {
-          this.errorMessage = `Unable to load assignments and discussions: ${fallbackError.message}`;
-          this.loaded = true;
-          this.requestUpdate();
+      // Try to get enrollment to determine student/instructor role, but don't fail if unavailable
+      getEnrollment(this.ou!, this.versions.lp)
+        .then((enrollment) => {
+          this.checkStudent(enrollment);
+        })
+        .catch((error) => {
+          console.warn('Unable to determine enrollment, defaulting to instructor view:', error.message);
+          this.student = false; // Default to instructor view
+        })
+        .finally(() => {
+
+          // Try the myItems/due endpoint first, fallback to assignments if it fails
+          getMyItemsDue(this.ou!, this.versions.le).then((itemsData) => {
+            // Map and filter items with due dates
+            const mappedItems = itemsData
+              .filter((item: MyItemsDue) => item.DueDate || item.EndDate)
+              .map((item: MyItemsDue) => ({
+                Name: item.Name || item.Title || item.ItemName || 'Untitled',
+                Id: item.Id || item.AssignmentId || item.ItemId,
+                DueDate: transformDate(item.DueDate || item.EndDate!),
+                TopicId: item.TopicId,
+                ForumId: item.ForumId,
+                ItemType: item.ItemType || item.ContentType
+              }));
+            // Filter by types
+            const allowedTypes = getTypesArray(this.types);
+            this.assignments = mappedItems.filter(item => shouldIncludeItem(item, allowedTypes));
+            this.loaded = true;
+            this.requestUpdate();
+          }).catch((error) => {
+            // Fallback: fetch both assignments and discussions
+            console.warn('myItems/due endpoint unavailable, falling back to assignments and discussions:', error.message);
+            Promise.all([
+              getAssignments(this.ou!, this.versions.le).catch(() => []),
+              getForums(this.ou!, this.versions.le)
+                .then(forums => {
+                  // Get all topics for all forums
+                  return Promise.all(
+                    forums.map(forum => 
+                      getTopics(this.ou!, this.versions.le, forum.ForumId)
+                        .then(topics => topics.map(topic => ({ ...topic, ForumId: forum.ForumId } as DiscussionTopicWithForum)))
+                        .catch(() => [] as DiscussionTopicWithForum[])
+                    )
+                  ).then(allTopics => allTopics.flat());
+                })
+                .catch(() => [])
+            ]).then(([assignmentsData, topicsData]) => {
+              // Map assignments with due dates
+              const assignmentItems = assignmentsData
+                .filter(a => a.DueDate)
+                .map(a => ({
+                  Name: a.Name,
+                  Id: a.Id,
+                  DueDate: transformDate(a.DueDate!),
+                  ItemType: 'assignment'
+                }));
+              
+              // Map discussion topics with due dates
+              const discussionItems = topicsData
+                .filter((topic: DiscussionTopicWithForum) => topic.DueDate || topic.EndDate || topic.Availability?.EndDate)
+                .map((topic: DiscussionTopicWithForum) => ({
+                  Name: topic.Name,
+                  DueDate: transformDate(topic.DueDate || topic.EndDate || topic.Availability?.EndDate!),
+                  TopicId: topic.TopicId,
+                  ForumId: topic.ForumId,
+                  ItemType: 'discussion'
+                }));
+              
+              // Combine assignments and discussions
+              const allItems = [...assignmentItems, ...discussionItems];
+              // Filter by types
+              const allowedTypes = getTypesArray(this.types);
+              this.assignments = allItems.filter(item => shouldIncludeItem(item, allowedTypes));
+              this.loaded = true;
+              this.requestUpdate();
+            }).catch((fallbackError) => {
+              this.errorMessage = `Unable to load assignments and discussions: ${fallbackError.message}`;
+              this.loaded = true;
+              this.requestUpdate();
+            });
+          });
         });
-      });
     }).catch((error) => {
       this.errorMessage = `Unable to load API versions: ${error.message}`;
       this.loaded = true;
@@ -124,6 +144,30 @@ class UgaDueDate extends LitElement {
   addVersions(apiVersions: ApiVersions): void {
     for (let i in apiVersions) {
       this.versions[i] = apiVersions[i];
+    }
+  }
+
+  checkStudent(enrollment: Enrollment): void {
+    this.student = this.studentRoles.includes(enrollment.Role.Name);
+  }
+
+  getAssignmentLink(assignment: AssignmentData): string {
+    // Handle discussion links
+    if (getItemType(assignment) === 'discussion') {
+      const topicId = assignment.TopicId || assignment.Id;
+      if (!topicId || !this.domain || !this.ou) return '#';
+      // D2L discussion topic URL format
+      return `https://${this.domain}/d2l/lms/discussions/topic/${topicId}/view?ou=${this.ou}`;
+    }
+    
+    // Handle assignment links
+    const assignmentId = assignment.Id;
+    if (!assignmentId || !this.domain || !this.ou) return '#';
+    
+    if (this.student) {
+      return `https://${this.domain}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${assignmentId}&ou=${this.ou}`;
+    } else {
+      return `https://${this.domain}/d2l/lms/dropbox/admin/mark/folder_submissions_users.d2l?db=${assignmentId}&ou=${this.ou}`;
     }
   }
 
@@ -158,13 +202,20 @@ class UgaDueDate extends LitElement {
             </tr>
           </thead>
           <tbody>
-            ${this.assignments.map((assignment) => html`
+            ${this.assignments.map((assignment) => {
+              const assignmentLink = this.getAssignmentLink(assignment);
+              return html`
               <tr style="border-bottom: 1px solid #e0e0e0;">
-                <td style="padding: 0.75rem;">${assignment.Name}</td>
+                <td style="padding: 0.75rem;">
+                  <a href="${assignmentLink}" target="_blank" style="color: #ba0c2f; text-decoration: none;">
+                    ${assignment.Name}
+                  </a>
+                </td>
                 <td style="padding: 0.75rem;">${formatItemType(assignment)}</td>
                 <td style="padding: 0.75rem;">${assignment.DueDate || 'No Due Date'}</td>
               </tr>
-            `)}
+            `;
+            })}
           </tbody>
         </table>
       </div>

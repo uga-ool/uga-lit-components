@@ -4,8 +4,7 @@
 
 A comprehensive demo system with **16 dedicated pages** showcasing all UGA Lit components:
 
-- ✅ **Main demo page** (`index.html`) - Comprehensive all-in-one scrollable demo
-- ✅ **Alternative view** (`index-all-in-one.html`) - Same content, clearly named for team clarity
+- ✅ **Main demo page** (`index-all-in-one.html`) - Comprehensive all-in-one scrollable demo with all components
 - ✅ **14 individual demo pages** - One per component, perfect for eLC side navigation
 - ✅ **Setup guide** (`setup.html`) - Deployment instructions and troubleshooting
 - ✅ **Property documentation** tables for every component
@@ -13,7 +12,7 @@ A comprehensive demo system with **16 dedicated pages** showcasing all UGA Lit c
 - ✅ **Sample data files** with Google Drive links for easy sharing
 - ✅ **Auto-generated table of contents** on main pages
 
-## Recent Updates (November 2025)
+## Recent Updates (January 2026)
 
 ### What's New
 
@@ -29,8 +28,7 @@ A comprehensive demo system with **16 dedicated pages** showcasing all UGA Lit c
 
 ```
 demo/
-├── index.html                    # Main comprehensive demo (all components)
-├── index-all-in-one.html        # Identical to index.html (clearly named)
+├── index-all-in-one.html        # Main comprehensive demo (all components)
 ├── setup.html                    # Setup & usage guide
 ├── accordion.html                # Individual component demos (14 pages)
 ├── assignment.html               #   Each shows one component in detail
@@ -46,7 +44,6 @@ demo/
 ├── tabs.html
 ├── toc.html
 ├── video.html
-├── README.md                     # Detailed documentation
 ├── QUICK_START.md               # This file
 ├── accordion-demo.json           # Sample data files (available on Google Drive)
 ├── tabs-demo.json
@@ -64,11 +61,11 @@ demo/
 npm run dev
 ```
 
-Then open: `http://localhost:5173/demo/index.html`
+Then open: `http://localhost:5173/demo/index-all-in-one.html`
 
 **Navigate the demos:**
 
-- Main gallery: `http://localhost:5173/demo/index.html`
+- Main demo: `http://localhost:5173/demo/index-all-in-one.html`
 - Individual component: `http://localhost:5173/demo/accordion.html`
 - Setup guide: `http://localhost:5173/demo/setup.html`
 
@@ -79,21 +76,19 @@ npm run build
 npm run preview
 ```
 
-Then open: `http://localhost:4173/demo/index.html`
+Then open: `http://localhost:4173/demo/index-all-in-one.html`
 
 ## Demo System Navigation
 
 ### Main Demo Pages
 
-**`index.html` and `index-all-in-one.html`** (identical content):
+**`index-all-in-one.html`** - Main comprehensive demo page:
 
 - Comprehensive scrollable demo with all 14 components
 - Organized by category (Content, Media, Interactive, Navigation, Instructor Tools)
 - Auto-generated table of contents for quick navigation
 - Live examples, property tables, and code snippets for each component
 - Setup instructions at the bottom
-
-**Why two files?** `index-all-in-one.html` provides clarity for team members - the name explicitly indicates it's a comprehensive single-page demo.
 
 ### Individual Component Pages (14 files)
 
@@ -102,7 +97,7 @@ Each component has a dedicated demo page:
 - **One component focus** - Single live example without distraction
 - **Complete documentation** - Property tables and code samples
 - **eLC-friendly** - Perfect for linking from eLC side navigation
-- **"Back to All Components" link** - Returns to index.html
+- **"Back to All Components" link** - Returns to index-all-in-one.html
 
 **When to use:**
 
@@ -114,7 +109,7 @@ Each component has a dedicated demo page:
 
 Comprehensive guide covering:
 
-- D2L deployment steps
+- eLC deployment steps
 - Data file creation examples
 - Component-specific setup notes
 - Troubleshooting common issues
@@ -142,9 +137,9 @@ Upload:
 
 ### Step 3: Create eLC Content Page
 
-**Option A: Full Component Showcase** (use `index.html` content)
+**Option A: Full Component Showcase** (use `index-all-in-one.html` content)
 
-1. Open `demo/index.html` or `demo/index-all-in-one.html` in a text editor
+1. Open `demo/index-all-in-one.html` in a text editor
 2. Copy the entire `<body>` content
 3. In eLC, create a new Content page
 4. Switch to HTML editor
@@ -165,7 +160,7 @@ Upload:
 
 ### Step 4: Update Data File Paths
 
-In the D2L HTML editor, update file paths to:
+In the eLC HTML editor, update file paths to:
 
 ```html
 <uga-accordion
@@ -248,14 +243,14 @@ Follow the JSON structure in the sample files:
 4. **Copy-Paste Ready** - Code samples work as-is
 5. **Complete Documentation** - Properties, descriptions, use cases
 6. **Sample Data** - Working JSON files for testing
-7. **D2L Ready** - Designed for easy migration to Brightspace
+7. **eLC Ready** - Designed for seamless eLC deployment
 
 ## Next Steps
 
 1. **Test Locally** - Run `npm run dev` and view the demo
 2. **Customize** - Edit sample data files to match your needs
 3. **Build** - Run `npm run build` when ready
-4. **Upload to D2L** - Follow the D2L upload steps above
+4. **Upload to eLC** - Follow the eLC upload steps above
 5. **Create Content** - Start building course pages with components!
 
 ## Troubleshooting
@@ -274,7 +269,7 @@ Follow the JSON structure in the sample files:
 
 - Check JSON file paths are correct
 - Validate JSON syntax at jsonlint.com
-- Ensure files are uploaded to D2L Public Files
+- Ensure files are uploaded to eLC Public Files
 
 **"Styles look wrong"**
 
@@ -311,7 +306,7 @@ The table of contents component now scans **h2 and h3 headings only** (previousl
 - **Setup Guide**: `/demo/setup.html` - Comprehensive deployment and troubleshooting
 - **Main README**: `/README.md` - Project overview and architecture
 - **Changelog**: `/CHANGELOG.md` - Recent updates and migration notes
-- **Demo Gallery**: `/demo/index.html` - All components with navigation
+- **Demo Gallery**: `/demo/index-all-in-one.html` - All components with navigation
 - **Individual Demos**: `/demo/[component].html` - Dedicated component pages
 - **Copilot instructions**: `/.github/copilot-instructions.md` - Development guidelines
 - **Component source**: `/src/components/*.ts` - Implementation details
@@ -323,15 +318,15 @@ The table of contents component now scans **h2 and h3 headings only** (previousl
 3. **Copy-Paste Ready** - Code samples work as-is
 4. **Complete Documentation** - Properties, examples, troubleshooting
 5. **Sample Data Included** - Working JSON files for immediate testing
-6. **D2L Ready** - Designed for seamless Brightspace deployment
+6. **eLC Ready** - Designed for seamless eLC deployment
 7. **Progressive Enhancement** - Works locally and in production
 
 ---
 
 **You're all set!** 🎉
 
-1. Browse the demo gallery: `npm run dev` → `http://localhost:5173/demo/index.html`
+1. Browse the demo gallery: `npm run dev` → `http://localhost:5173/demo/index-all-in-one.html`
 2. Review setup guide: `/demo/setup.html`
 3. Test individual components: Click cards in the gallery
 4. Check changelog: `/CHANGELOG.md` for recent updates
-5. Build for D2L: `npm run build` when ready to deploy
+5. Build for eLC: `npm run build` when ready to deploy
