@@ -79,7 +79,7 @@
 
     <section class="component-demo">
       <div class="demo-description">
-        <p><strong>Displays all assignments from the current eLC course.</strong> Automatically fetches and displays assignment details including instructions, due dates, availability, rubric information, and submission links.</p>
+        <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
       </div>
 
       <div class="demo-example">
@@ -96,13 +96,26 @@
             <th>Description</th>
           </tr>
           <tr>
-            <td colspan="3"><em>No properties required - automatically loads all assignments from the current course</em></td>
+            <td><code>types</code></td>
+            <td>String</td>
+            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
           </tr>
         </table>
       </div>
 
       <div class="demo-code">
+        <h4>Basic Usage</h4>
         <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
+        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
+&lt;uga-assignment types="assignment"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show assignments and discussions --&gt;
+&lt;uga-assignment types="assignment,discussion"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show only discussions --&gt;
+&lt;uga-assignment types="discussion"&gt;&lt;/uga-assignment&gt;</uga-code>
       </div>
     </section>
 

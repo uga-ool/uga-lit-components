@@ -60,6 +60,40 @@ export interface Assignment {
   EndDate: string | null;
 }
 
+export interface MyItemsDue {
+  Id?: number;
+  ItemId?: number;
+  AssignmentId?: number;
+  TopicId?: number;
+  ForumId?: number;
+  Name?: string;
+  Title?: string;
+  ItemName?: string;
+  DueDate?: string | null;
+  EndDate?: string | null;
+  StartDate?: string | null;
+  Instructions?: {
+    Text?: string;
+    Html?: string;
+  };
+  Description?: {
+    Text?: string;
+    Html?: string;
+    Content?: string;
+  };
+  Availability?: {
+    StartDate?: string;
+    EndDate?: string;
+  };
+  DropboxType?: number;
+  Type?: number;
+  ItemType?: string | number;
+  ContentType?: string;
+  Assessment?: {
+    Rubrics?: Array<{ Name: string }>;
+  };
+}
+
 export interface DiscussionForum {
   ForumId: number;
   Name: string;
@@ -75,6 +109,13 @@ export interface DiscussionTopic {
   Description?: {
     Text: string;
     Html: string;
+  };
+  DueDate?: string | null;
+  EndDate?: string | null;
+  StartDate?: string | null;
+  Availability?: {
+    StartDate?: string;
+    EndDate?: string;
   };
 }
 
