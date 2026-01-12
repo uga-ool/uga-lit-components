@@ -79,7 +79,7 @@
 
     <section class="component-demo">
       <div class="demo-description">
-        <p><strong>Displays all assignment due dates from the current eLC course.</strong> Automatically fetches and displays all assignments with due dates in a formatted table.</p>
+        <p><strong>Displays due dates for assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays all items with due dates in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
       </div>
 
       <div class="demo-example">
@@ -95,13 +95,26 @@
             <th>Description</th>
           </tr>
           <tr>
-            <td colspan="3"><em>No properties required - automatically loads all assignments with due dates from the current course</em></td>
+            <td><code>types</code></td>
+            <td>String</td>
+            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
           </tr>
         </table>
       </div>
 
       <div class="demo-code">
+        <h4>Basic Usage</h4>
         <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
+        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
+&lt;uga-duedate types="assignment"&gt;&lt;/uga-duedate&gt;
+
+&lt;!-- Show assignments and discussions --&gt;
+&lt;uga-duedate types="assignment,discussion"&gt;&lt;/uga-duedate&gt;
+
+&lt;!-- Show only discussions --&gt;
+&lt;uga-duedate types="discussion"&gt;&lt;/uga-duedate&gt;</uga-code>
       </div>
     </section>
 

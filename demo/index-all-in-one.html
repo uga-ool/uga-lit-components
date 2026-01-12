@@ -472,7 +472,7 @@ console.log(x);
     <section class="component-demo" id="assignment-demo">
       <h2>Assignment Component</h2>
       <div class="demo-description">
-        <p><strong>Displays all assignments from the current eLC course.</strong> Automatically fetches and displays assignment details including instructions, due dates, availability, rubric information, and submission links.</p>
+        <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
       </div>
       <div class="demo-example">
         <uga-assignment></uga-assignment>
@@ -487,12 +487,15 @@ console.log(x);
             <th>Description</th>
           </tr>
           <tr>
-            <td colspan="3"><em>No properties required - automatically loads all assignments from the current course</em></td>
+            <td><code>types</code></td>
+            <td>String</td>
+            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;
+&lt;!-- Filter by type: types="assignment,discussion" --&gt;</uga-code>
       </div>
     </section>
 
@@ -619,7 +622,7 @@ console.log(x);
     <section class="component-demo" id="duedate-demo">
       <h2>Due Date Component</h2>
       <div class="demo-description">
-        <p><strong>Displays all assignment due dates from the current eLC course.</strong> Automatically fetches and displays all assignments with due dates in a formatted table.</p>
+        <p><strong>Displays due dates for assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays all items with due dates in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
       </div>
       <div class="demo-example">
         <uga-duedate></uga-duedate>
@@ -634,33 +637,19 @@ console.log(x);
             <th>Description</th>
           </tr>
           <tr>
-            <td colspan="3"><em>No properties required - automatically loads all assignments with due dates from the current course</em></td>
+            <td><code>types</code></td>
+            <td>String</td>
+            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;
+&lt;!-- Filter by type: types="assignment,discussion" --&gt;</uga-code>
       </div>
     </section>
 
-    <!-- Module Feedback Component -->
-    <section class="component-demo" id="module-feedback-demo">
-      <h2>Module Feedback Component</h2>
-      <div class="demo-description">
-        <p><strong>Embeds Qualtrics feedback survey.</strong> Automatically passes the page URL to the survey for context.</p>
-      </div>
-      <div class="demo-example">
-        <uga-module-feedback></uga-module-feedback>
-        <p><em>Note: Requires Qualtrics survey configuration</em></p>
-      </div>
-      <div class="demo-props">
-        <h4>Properties</h4>
-        <p>No properties required - automatically captures page URL for survey context.</p>
-      </div>
-      <div class="demo-code">
-        <uga-code language="markup">&lt;uga-module-feedback&gt;&lt;/uga-module-feedback&gt;</uga-code>
-      </div>
-    </section>
+    
 
     <!-- Setup Instructions -->
     <div class="category-header">

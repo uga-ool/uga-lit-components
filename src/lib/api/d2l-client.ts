@@ -2,7 +2,7 @@
 // Centralized API calls used across multiple components
 
 import axios from 'axios';
-import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost } from '../../types/d2l.js';
+import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost, MyItemsDue } from '../../types/d2l.js';
 
 /**
  * Get eLC API versions
@@ -68,6 +68,17 @@ export async function getUser(lpVersion: string): Promise<User> {
 export async function getAssignments(ou: string, leVersion: string): Promise<Assignment[]> {
   const assignments = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/`);
   return assignments.data;
+}
+
+/**
+ * Get my items with due dates for a course
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @returns Array of items with due dates
+ */
+export async function getMyItemsDue(ou: string, leVersion: string): Promise<MyItemsDue[]> {
+  const myItems = await axios.get(`/d2l/api/le/${leVersion}/${ou}/content/myItems/due/`);
+  return myItems.data;
 }
 
 /**

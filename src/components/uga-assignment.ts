@@ -1,13 +1,16 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { getVersions, getEnrollment, getAssignments } from '../lib/api/d2l-client.js';
+import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
-import type { ApiVersions } from '../types/d2l.js';
+import type { ApiVersions, MyItemsDue } from '../types/d2l.js';
 
 interface AssignmentData {
   Name: string;
   Id?: number;
+  TopicId?: number;
+  ForumId?: number;
+  ItemType?: string | number;
   Instructions?: {
     Html: string;
   };
@@ -40,6 +43,7 @@ class UgaAssignment extends LitElement {
   @property({ type: Array }) assignments: AssignmentData[] = [];
   @property({ type: Array }) studentRoles = ['Student', 'Demo Student'];
   @property({ type: String }) errorMessage: string | null = null;
+  @property({ type: String }) types = 'assignment,discussion,quiz,content'; // Comma-separated list of types to include
 
   private student: boolean | null = null;
   private loaded = false;
@@ -71,19 +75,96 @@ class UgaAssignment extends LitElement {
           this.student = false; // Default to instructor view
         })
         .finally(() => {
-          // Load assignments regardless of enrollment status
-          getAssignments(this.ou!, this.versions.le).then((assignmentsData) => {
-            this.assignments = assignmentsData.map(a => ({
-              ...a,
-              CustomInstructions: a.Instructions,
-              DueDate: a.DueDate || undefined
-            }));
+          // Try the myItems/due endpoint first, fallback to assignments if it fails
+          getMyItemsDue(this.ou!, this.versions.le).then((itemsData) => {
+            // Map the myItems/due response to our assignment format
+            const mappedItems = itemsData.map((item: MyItemsDue) => {
+              const assignment = {
+                Name: item.Name || item.Title || item.ItemName || 'Untitled',
+                Id: item.Id || item.ItemId || item.AssignmentId,
+                TopicId: item.TopicId,
+                ForumId: item.ForumId,
+                ItemType: item.ItemType || item.ContentType,
+                Instructions: item.Instructions || item.Description,
+                CustomInstructions: item.Instructions || item.Description,
+                DueDate: item.DueDate || item.EndDate || null,
+                Availability: item.Availability || {
+                  StartDate: item.StartDate,
+                  EndDate: item.EndDate
+                },
+                DropboxType: item.DropboxType || item.Type || 2,
+                Assessment: item.Assessment
+              };
+              return assignment;
+            });
+            // Filter by types
+            this.assignments = mappedItems.filter(item => this.shouldIncludeItem(item));
             this.loaded = true;
             this.requestUpdate();
           }).catch((error) => {
-            this.errorMessage = `Unable to load assignments: ${error.message}`;
-            this.loaded = true;
-            this.requestUpdate();
+            // Fallback: fetch both assignments and discussions
+            console.warn('myItems/due endpoint unavailable, falling back to assignments and discussions:', error.message);
+            Promise.all([
+              getAssignments(this.ou!, this.versions.le).catch(() => []),
+              getForums(this.ou!, this.versions.le)
+                .then(forums => {
+                  // Get all topics for all forums
+                  return Promise.all(
+                    forums.map(forum => 
+                      getTopics(this.ou!, this.versions.le, forum.ForumId)
+                        .then(topics => topics.map(topic => ({ ...topic, ForumId: forum.ForumId })))
+                        .catch(() => [])
+                    )
+                  ).then(allTopics => allTopics.flat());
+                })
+                .catch(() => [])
+            ]).then(([assignmentsData, topicsData]) => {
+              // Map assignments
+              const assignmentItems = assignmentsData.map(a => ({
+                Name: a.Name,
+                Id: a.Id,
+                Instructions: a.Instructions,
+                CustomInstructions: a.Instructions,
+                DueDate: a.DueDate || null,
+                Availability: {
+                  StartDate: a.StartDate,
+                  EndDate: a.EndDate
+                },
+                DropboxType: 2,
+                Assessment: undefined
+              }));
+              
+              // Map discussion topics with due dates
+              const discussionItems = topicsData
+                .filter(topic => topic.DueDate || topic.EndDate || topic.Availability?.EndDate)
+                .map(topic => ({
+                  Name: topic.Name,
+                  Id: topic.TopicId,
+                  TopicId: topic.TopicId,
+                  ForumId: (topic as any).ForumId,
+                  ItemType: 'discussion',
+                  Instructions: topic.Description,
+                  CustomInstructions: topic.Description,
+                  DueDate: topic.DueDate || topic.EndDate || topic.Availability?.EndDate || null,
+                  Availability: topic.Availability || {
+                    StartDate: topic.StartDate,
+                    EndDate: topic.EndDate
+                  },
+                  DropboxType: undefined,
+                  Assessment: undefined
+                }));
+              
+              // Combine assignments and discussions
+              const allItems = [...assignmentItems, ...discussionItems];
+              // Filter by types
+              this.assignments = allItems.filter(item => this.shouldIncludeItem(item));
+              this.loaded = true;
+              this.requestUpdate();
+            }).catch((fallbackError) => {
+              this.errorMessage = `Unable to load assignments and discussions: ${fallbackError.message}`;
+              this.loaded = true;
+              this.requestUpdate();
+            });
           });
         });
     }).catch((error) => {
@@ -112,10 +193,57 @@ class UgaAssignment extends LitElement {
     }
   }
 
-  formatAssignmentType(dropboxType?: number): string | null {
-    if (dropboxType === 1) return "Group";
-    if (dropboxType === 2) return "Individual";
-    return null;
+  /**
+   * Determine the item type (assignment, discussion, quiz, content)
+   */
+  getItemType(assignment: AssignmentData): string {
+    // Check if it's a discussion
+    if (assignment.TopicId || assignment.ForumId || 
+        assignment.ItemType === 'Discussion' || 
+        assignment.ItemType === 'DiscussionTopic' ||
+        (typeof assignment.ItemType === 'string' && assignment.ItemType.toLowerCase().includes('discussion'))) {
+      return "discussion";
+    }
+    // Check if it's a quiz (might have ItemType or ContentType indicating quiz)
+    if (assignment.ItemType === 'Quiz' || assignment.ItemType === 'Quizzing' ||
+        (typeof assignment.ItemType === 'string' && assignment.ItemType.toLowerCase().includes('quiz'))) {
+      return "quiz";
+    }
+    // Check if it's content
+    if (assignment.ItemType === 'Content' || assignment.ItemType === 'ContentObject' ||
+        (typeof assignment.ItemType === 'string' && assignment.ItemType.toLowerCase().includes('content'))) {
+      return "content";
+    }
+    // Default to assignment
+    return "assignment";
+  }
+
+  /**
+   * Get the types array from the types property
+   */
+  getTypesArray(): string[] {
+    if (!this.types) return ['assignment', 'discussion', 'quiz', 'content'];
+    return this.types.split(',').map(t => t.trim().toLowerCase());
+  }
+
+  /**
+   * Check if an item should be included based on the types filter
+   */
+  shouldIncludeItem(assignment: AssignmentData): boolean {
+    const allowedTypes = this.getTypesArray();
+    const itemType = this.getItemType(assignment);
+    return allowedTypes.includes(itemType);
+  }
+
+  formatAssignmentType(assignment: AssignmentData): string {
+    const itemType = this.getItemType(assignment);
+    if (itemType === "discussion") return "Discussion";
+    if (itemType === "quiz") return "Quiz";
+    if (itemType === "content") return "Content";
+    // Handle assignment types
+    if (assignment.DropboxType === 1) return "Group";
+    if (assignment.DropboxType === 2) return "Individual";
+    return "Assignment";
   }
 
   formatRubrics(assignment: AssignmentData): string | null {
@@ -128,7 +256,20 @@ class UgaAssignment extends LitElement {
     return `<span class="util-font-size-sm">${rubricLabel}</span><br />${rubricNames}`;
   }
 
-  getAssignmentLink(assignmentId?: number): string {
+  getAssignmentLink(assignment: AssignmentData): string {
+    // Handle discussion links
+    if (assignment.TopicId || assignment.ForumId || 
+        assignment.ItemType === 'Discussion' || 
+        assignment.ItemType === 'DiscussionTopic' ||
+        (typeof assignment.ItemType === 'string' && assignment.ItemType.toLowerCase().includes('discussion'))) {
+      const topicId = assignment.TopicId || assignment.Id;
+      if (!topicId || !this.domain || !this.ou) return '#';
+      // D2L discussion topic URL format
+      return `https://${this.domain}/d2l/lms/discussions/topic/${topicId}/view?ou=${this.ou}`;
+    }
+    
+    // Handle assignment links
+    const assignmentId = assignment.Id;
     if (!assignmentId || !this.domain || !this.ou) return '#';
     
     if (this.student) {
@@ -179,35 +320,35 @@ class UgaAssignment extends LitElement {
 
     return html`
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-      <div class="obj-grid">
-        ${this.assignments.map(assignment => {
-          const dueDate = assignment.DueDate ? transformDate(assignment.DueDate) : null;
-          const startDate = assignment.Availability?.StartDate ? transformDate(assignment.Availability.StartDate) : null;
-          const endDate = assignment.Availability?.EndDate ? transformDate(assignment.Availability.EndDate) : null;
-          const assignmentType = this.formatAssignmentType(assignment.DropboxType);
-          const rubricString = this.formatRubrics(assignment);
+      <div class="util-margin-top-md">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ba0c2f;">
+              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Assignment</th>
+              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Type</th>
+              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Due Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${this.assignments.map((assignment) => {
+              const dueDate = assignment.DueDate ? transformDate(assignment.DueDate) : 'No Due Date';
+              const assignmentType = this.formatAssignmentType(assignment);
+              const assignmentLink = this.getAssignmentLink(assignment);
 
-          return html`
-            <div class="obj-grid__12-12" style="margin-bottom: 3rem;">
-              <h2 class="cmp-heading-2 util-margin-vert-md">${assignment.Name}</h2>
-              ${assignment.CustomInstructions?.Html ? unsafeHTML(assignment.CustomInstructions.Html) : html``}
-              
-              <div class="obj-flex util-margin-top-md">
-                ${assignmentType ? html`<div class=${this.flexClasses}><span class="util-font-size-sm">Assignment Type</span><br />${assignmentType}</div>` : html``}
-                ${dueDate ? html`<div class=${this.flexClasses}><span class="util-font-size-sm">Due Date</span><br/>${dueDate}</div>` : html``}
-                ${rubricString ? html`<div class=${this.flexClasses}>${unsafeHTML(rubricString)}</div>` : html``}
-                ${startDate ? html`<div class=${this.flexClasses}><span class="util-font-size-sm">Start Date</span><br />${startDate}</div>` : html``}
-                ${endDate ? html`<div class=${this.flexClasses}><span class="util-font-size-sm">End Date</span><br />${endDate}</div>` : html``}
-              </div>
-              
-              <a class="cmp-button cmp-button--full-width util-margin-top-md" 
-                 href="${this.getAssignmentLink(assignment.Id)}" 
-                 target="_blank">
-                Click to visit this assignment
-              </a>
-            </div>
-          `;
-        })}
+              return html`
+                <tr style="border-bottom: 1px solid #e0e0e0;">
+                  <td style="padding: 0.75rem;">
+                    <a href="${assignmentLink}" target="_blank" style="color: #ba0c2f; text-decoration: none;">
+                      ${assignment.Name}
+                    </a>
+                  </td>
+                  <td style="padding: 0.75rem;">${assignmentType}</td>
+                  <td style="padding: 0.75rem;">${dueDate}</td>
+                </tr>
+              `;
+            })}
+          </tbody>
+        </table>
       </div>
     `;
   }

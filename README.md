@@ -6,17 +6,19 @@ The project has been modernized to use **Vite** for development and builds, and 
 
 ---
 
-## � Recent Updates (November 2025)
+## 📋 Recent Updates (January 2026)
 
-### What's New
+### What's New in v3.0
 
-- **🎨 Demo System Restructured**: 15 individual component demo pages + comprehensive navigation gallery
-- **🎬 Enhanced Kaltura Video**: Logo hiding, improved player lifecycle, eliminated scrollbar issues
-- **📺 Video Spacing Fix**: Removed extra vertical gap under Kaltura embeds by overriding `cmp-video::after` padding
+- **🎨 eLC Rebranding Complete**: All references updated from "D2L (Brightspace)" to "eLC" (eLearning Commons)
+- **📁 Dual Index Structure**: `index.html` and `index-all-in-one.html` for flexible demo navigation
+- **📦 Google Drive Integration**: Example JSON files available via Google Drive links with consistent formatting
+- **🔗 TOC Auto-ID Generation**: Headings without IDs are automatically linkable
+- **📚 Enhanced Documentation**: Updated QUICK_START.md and MIGRATION_GUIDE.md with clear file structure explanations
+- **🎬 Kaltura Video Enhancement**: Logo hiding, improved player lifecycle, eliminated scrollbar issues
 - **📂 Accordion Refactored**: Direct axios pattern, better error handling, TypeScript improvements
 - **🗂️ TOC Filtering**: Now scans h2/h3 only for cleaner navigation
-- **📘 New Setup Guide**: Comprehensive `demo/setup.html` with troubleshooting and best practices
-- **🐛 Critical Fixes**: Accordion icons, footer logo paths, axios error handling
+- **🐛 TypeScript Fixes**: Resolved type mismatches in assignment and duedate components
 
 👉 **See [CHANGELOG.md](./CHANGELOG.md) for complete details**
 
@@ -54,16 +56,15 @@ The project has been modernized to use **Vite** for development and builds, and 
 ```
 uga-lit-components/
 ├── demo/                         # Demo pages and sample data
-│   ├── index.html                # Navigation gallery with all components
+│   ├── index-all-in-one.html     # Comprehensive all-in-one demo page
 │   ├── setup.html                # Comprehensive setup & usage guide
 │   ├── accordion.html            # Individual component demo pages
 │   ├── video.html                # (one for each component)
 │   ├── toc.html
-│   ├── ...                       # (15 demo pages total)
-│   ├── index-all-in-one.html     # Original unified demo (preserved)
+│   ├── ...                       # (14 individual component pages)
 │   ├── QUICK_START.md            # Quick start guide
 │   ├── README.md                 # Demo documentation
-│   └── *.json                    # Sample data files
+│   └── *.json                    # Sample data files (also on Google Drive)
 ├── src/
 │   ├── all.ts                    # Entry point: eagerly imports all components
 │   ├── components/               # Individual Lit web components
@@ -125,12 +126,13 @@ All components use **Light DOM** rendering (`createRenderRoot() { return this; }
 
    ```bash
    npm run dev
-   # Open http://localhost:5173/demo/index.html
+   # Open http://localhost:5173/demo/index-all-in-one.html
    ```
 
 3. **Explore individual components:**
-   - Navigate through the demo gallery at `demo/index.html`
-   - Each component has its own dedicated demo page
+   - View comprehensive demo at `demo/index-all-in-one.html`
+   - Each component has its own dedicated demo page (14 individual pages)
+   - Access via eLC side navigation for easy browsing
    - Review `demo/setup.html` for deployment instructions
 
 ### Development
@@ -176,13 +178,18 @@ The repository includes 14 pre-built components:
 | **uga-duedate**         | Show assignment due date                                |
 | **uga-footer**          | Site footer with branding                               |
 | **uga-instructor-note** | Instructor-only notes (hidden from students)            |
-| **uga-module-feedback** | Embed Qualtrics feedback form                           |
 | **uga-rating**          | Collect feedback/ratings on content                     |
 | **uga-return-to-top**   | Fixed button to scroll to top                           |
 | **uga-slideshow**       | Image carousel with navigation                          |
 | **uga-tabs**            | Tab navigation interface                                |
 | **uga-toc**             | Auto-generated table of contents                        |
 | **uga-video**           | Embed Kaltura or YouTube videos with logo control       |
+
+---
+
+### Note: Module Feedback moved to React
+
+The previous `uga-module-feedback` web component has been removed from this bundle. Module feedback is now implemented using React and maintained separately. If you need the module feedback functionality, use the React-based solution provided by the team and do not reference `uga-module-feedback` in eLC pages.
 
 ---
 
@@ -231,7 +238,7 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 ---
 
-## 🚀 Deploying to eLC (Brightspace)
+## 🚀 Deploying to eLC
 
 1. **Build the bundle:**
 
@@ -241,18 +248,18 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 2. **Upload to eLC Public Files:**
 
-- Navigate to: Course → Course Administration → Files
-- Upload `dist/js/uga-components.js` to `/shared/ugaonline/js/` (or `/shared/ugaonline/dev/js/` for testing)
+- Navigate to: **eLC → Content → Manage Files → Public Files**
+- Upload `dist/js/uga-components.js` to `/shared/PublicFiles/` (or `/shared/ugaonline/dev/js/` for testing)
 
 3. **Add to Content Pages:**
 
    ```html
    <!-- Your content and components -->
    <uga-accordion type="local" filename="accordion-data.json"></uga-accordion>
-   <uga-video host="kaltura" videoid="abc123"></uga-video>
+   <uga-video videoid="1_abc123de"></uga-video>
 
    <!-- Load all components -->
-   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+   <script type="module" src="/shared/PublicFiles/uga-components.js"></script>
    ```
 
 ---
@@ -301,9 +308,9 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 | File                              | Purpose                                               |
 | --------------------------------- | ----------------------------------------------------- |
-| `demo/index.html`                 | Navigation gallery showing all components             |
+| `demo/index-all-in-one.html`      | Comprehensive all-in-one demo showing all components  |
 | `demo/setup.html`                 | Comprehensive setup, usage, and troubleshooting guide |
-| `demo/[component].html`           | Individual component demo pages (15 total)            |
+| `demo/[component].html`           | Individual component demo pages (14 total)            |
 | `src/all.ts`                      | Entry point; eagerly imports all components           |
 | `src/components/*.ts`             | Individual component implementations                  |
 | `src/lib/api/d2l-client.ts`       | Centralized D2L API methods                           |
@@ -318,16 +325,17 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 ## 🐛 Troubleshooting
 
-| Problem                           | Solution                                                                     |
-| --------------------------------- | ---------------------------------------------------------------------------- |
-| Component not appearing in bundle | Ensure it's in `src/components/` with `.ts` extension                        |
-| Styles not applying               | Add `<link rel="stylesheet" href="...base.css" />` if using UGA classes      |
-| **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**          |
-| Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors         |
-| D2L API 404 errors                | Verify course ID (`ou`) is correct and API version matches                   |
-| `axios` is undefined              | Ensure code runs in Brightspace environment (axios is globally available)    |
-| TOC showing too many items        | Component now scans h2/h3 only - check if you need h4 headings in navigation |
-| Data files not loading            | Verify JSON paths are correct and files are uploaded to Public Files         |
+| Problem                           | Solution                                                                                      |
+| --------------------------------- | --------------------------------------------------------------------------------------------- |
+| Component not appearing in bundle | Ensure it's in `src/components/` with `.ts` extension                                         |
+| Styles not applying               | Add `<link rel="stylesheet" href="...base.css" />` if using UGA classes                       |
+| **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**                           |
+| Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                          |
+| D2L API 404 errors                | Verify course ID (`ou`) is correct and API version matches                                    |
+| `axios` is undefined              | Ensure code runs in eLC environment (axios is globally available)                             |
+| TOC showing too many items        | Component now scans h2/h3 only - check if you need h4 headings in navigation                  |
+| TOC links not working             | Component now auto-generates IDs for headings without them                                    |
+| Data files not loading            | Download example files from Google Drive links in demo pages, then upload to eLC Public Files |
 
 ### Important Notes
 
