@@ -100,7 +100,7 @@
       <h3>2. Create Data Files (for components that need them)</h3>
       <p>Some components load data from JSON files. Upload these to Local Course Files and reference them by filename.</p>
 
-      <h4>Example: accordion-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">accordion-data.json</a></h4>
       <uga-code language="javascript">{
   "title": "Course FAQ",
   "data": [
@@ -115,7 +115,7 @@
   ]
 }</uga-code>
 
-      <h4>Example: tabs-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1a4rAQHgJCY8Z6u-dRpQ4fp8yibmDLm78/view?usp=drive_link" target="_blank" rel="noopener noreferrer">tabs-data.json</a></h4>
       <uga-code language="javascript">{
   "data": [
     {
@@ -129,7 +129,7 @@
   ]
 }</uga-code>
 
-      <h4>Example: circles-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1M4Yqk_cgFMzCftXe1Whw8ytyH6ShyiCA/view?usp=drive_link" target="_blank" rel="noopener noreferrer">circles-data.json</a></h4>
       <uga-code language="javascript">{
   "data": [
     {
@@ -143,7 +143,7 @@
   ]
 }</uga-code>
 
-      <h4>Example: slideshow-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer">slideshow-data.json</a></h4>
       <uga-code language="javascript">{
   "data": [
     {
@@ -157,18 +157,18 @@
   ]
 }</uga-code>
 
-      <h4>Example: footer-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer">footer-data.json</a></h4>
       <uga-code language="javascript">{
   "link": "https://online.uga.edu/program-name",
   "logo": "/shared/PublicFiles/images/program-logo.png"
 }</uga-code>
 
-      <h4>Example: instructor-note-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note-data.json</a></h4>
       <uga-code language="javascript">{
   "content": "&lt;p&gt;This is a note only visible to instructors.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Grading tip 1&lt;/li&gt;&lt;li&gt;Grading tip 2&lt;/li&gt;&lt;/ul&gt;"
 }</uga-code>
 
-      <h4>Example: videos-data.json (for multiple videos)</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer">videos-data.json</a> (for multiple videos)</h4>
       <uga-code language="javascript">{
   "data": [
     {
@@ -187,11 +187,26 @@
       <h4>eLC API Components</h4>
       <p>These components require eLC API access and will only work in eLC:</p>
       <ul>
-        <li><strong>uga-assignment</strong> - Displays all assignments from the current eLC course</li>
-        <li><strong>uga-duedate</strong> - Shows assignment due dates from eLC</li>
+        <li><strong>uga-assignment</strong> - Displays assignments, discussions, quizzes, and content with due dates from the current eLC course. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment,discussion"</code>).</li>
+        <li><strong>uga-duedate</strong> - Displays due dates for assignments, discussions, quizzes, and content in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment"</code>).</li>
         <li><strong>uga-instructor-note</strong> - Visible only to instructors (uses eLC role checking)</li>
         <li><strong>uga-rating</strong> - Stores ratings in eLC forums</li>
       </ul>
+
+      <h4>Assignment & Due Date Components - Type Filtering</h4>
+      <p>Both <strong>uga-assignment</strong> and <strong>uga-duedate</strong> support filtering by item type:</p>
+      <uga-code language="markup">&lt;!-- Show all types (default) --&gt;
+&lt;uga-assignment&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show only assignments --&gt;
+&lt;uga-assignment types="assignment"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show assignments and discussions --&gt;
+&lt;uga-assignment types="assignment,discussion"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show only discussions --&gt;
+&lt;uga-duedate types="discussion"&gt;&lt;/uga-duedate&gt;</uga-code>
+      <p>Available types: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code></p>
 
       <h4>Kaltura Video Component</h4>
       <p>For <strong>uga-video</strong>, you'll need:</p>

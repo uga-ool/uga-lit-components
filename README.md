@@ -172,10 +172,10 @@ The repository includes 14 pre-built components:
 | Component               | Purpose                                                 |
 | ----------------------- | ------------------------------------------------------- |
 | **uga-accordion**       | Collapsible accordion sections with expand/collapse all |
-| **uga-assignment**      | Display all assignments from the current course         |
+| **uga-assignment**      | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property. |
 | **uga-circles**         | Display data in circular badge format                   |
 | **uga-code**            | Syntax-highlighted code blocks with copy button         |
-| **uga-duedate**         | Show assignment due date                                |
+| **uga-duedate**         | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property. |
 | **uga-footer**          | Site footer with branding                               |
 | **uga-instructor-note** | Instructor-only notes (hidden from students)            |
 | **uga-rating**          | Collect feedback/ratings on content                     |

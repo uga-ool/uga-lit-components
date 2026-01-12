@@ -1,5 +1,6 @@
 // Data loader service
 // Handles loading JSON files from local or program-specific locations
+import axios from 'axios';
 
 /**
  * Load data from a JSON file
@@ -31,6 +32,3 @@ export async function loadData<T>(
   const response = await axios.get(url);
   return response.data as T;
 }
-
-// Axios is available globally in eLC
-declare const axios: any;
