@@ -262,17 +262,20 @@
     </div>
 
     <!-- Video Component -->
+    <!-- Single Video Section -->
     <section class="component-demo" id="video-demo">
-      <h2>Video Component</h2>
+      <h2>Single Video</h2>
       <div class="demo-description">
-        <p><strong>Embeds Kaltura videos with customizable player.</strong> Supports single videos, playlists, and optional rating integration. Logo/watermark is hidden by default.</p>
+        <p><strong>Embeds a single Kaltura video with customizable player.</strong> Use this method when you have one video to display. Logo/watermark is hidden by default.</p>
       </div>
+
       <div class="demo-example">
         <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
         <p><em>Note: Replace videoid with actual Kaltura video ID</em></p>
       </div>
+
       <div class="demo-props">
-        <h4>Properties</h4>
+        <h4>Properties for Single Video</h4>
         <table>
           <tr>
             <th>Property</th>
@@ -282,22 +285,12 @@
           <tr>
             <td>videoid</td>
             <td>string</td>
-            <td>Kaltura video entry ID</td>
+            <td>Kaltura video entry ID (required)</td>
           </tr>
           <tr>
             <td>playerid</td>
             <td>string</td>
             <td>Kaltura player ID (default: 1574196844)</td>
-          </tr>
-          <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>Data source type for multiple videos: 'local' or 'program'</td>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>JSON file for multiple videos</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -306,14 +299,72 @@
           </tr>
         </table>
       </div>
+
       <div class="demo-code">
         <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="1574196844"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
-&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
+&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+      </div>
+    </section>
 
-&lt;!-- Multiple videos from file --&gt;
-&lt;uga-video type="local" filename="videos.json"&gt;&lt;/uga-video&gt;</uga-code>
+    <!-- Multiple Videos Section -->
+    <section class="component-demo">
+      <h2>Multiple Videos from JSON File</h2>
+      <div class="demo-description">
+        <p><strong>Embeds multiple Kaltura videos from a JSON data file.</strong> Use this method when you want to load multiple videos from a single JSON file. Perfect for course playlists or module video collections.</p>
+        <p><strong>Example data file:</strong> Download
+          <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos-demo.json</code></a>
+          to modify and upload it to your course files.</p>
+      </div>
+
+      <div class="demo-example">
+        <uga-video type="local" filename="videos-demo.json"></uga-video>
+        <p><em>Note: This example loads multiple videos from the videos-demo.json file</em></p>
+      </div>
+
+      <div class="demo-props">
+        <h4>Properties for Multiple Videos</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>type</td>
+            <td>string</td>
+            <td>Data source type: 'local' or 'program' (required)</td>
+          </tr>
+          <tr>
+            <td>filename</td>
+            <td>string</td>
+            <td>Name of the JSON data file (required)</td>
+          </tr>
+          <tr>
+            <td>program</td>
+            <td>string</td>
+            <td>Program identifier (for program type)</td>
+          </tr>
+          <tr>
+            <td>playerid</td>
+            <td>string</td>
+            <td>Kaltura player ID (default: 1574196844)</td>
+          </tr>
+          <tr>
+            <td>includerating</td>
+            <td>boolean</td>
+            <td>Add rating component below video</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="demo-code">
+        <uga-code language="markup">&lt;!-- Multiple videos from file --&gt;
+&lt;uga-video type="local" filename="videos-demo.json"&gt;&lt;/uga-video&gt;
+
+&lt;!-- With custom player ID --&gt;
+&lt;uga-video type="local" filename="videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -494,8 +545,18 @@ console.log(x);
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;
-&lt;!-- Filter by type: types="assignment,discussion" --&gt;</uga-code>
+        <h4>Basic Usage</h4>
+        <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
+        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
+&lt;uga-assignment types="assignment"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show assignments and discussions --&gt;
+&lt;uga-assignment types="assignment,discussion"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show only discussions --&gt;
+&lt;uga-assignment types="discussion"&gt;&lt;/uga-assignment&gt;</uga-code>
       </div>
     </section>
 
@@ -644,8 +705,18 @@ console.log(x);
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;
-&lt;!-- Filter by type: types="assignment,discussion" --&gt;</uga-code>
+        <h4>Basic Usage</h4>
+        <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
+        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
+&lt;uga-duedate types="assignment"&gt;&lt;/uga-duedate&gt;
+
+&lt;!-- Show assignments and discussions --&gt;
+&lt;uga-duedate types="assignment,discussion"&gt;&lt;/uga-duedate&gt;
+
+&lt;!-- Show only discussions --&gt;
+&lt;uga-duedate types="discussion"&gt;&lt;/uga-duedate&gt;</uga-code>
       </div>
     </section>
 
@@ -659,22 +730,33 @@ console.log(x);
     <section class="component-demo">
       <h2>How to Use These Components in eLC</h2>
       
-      <h3>1. Upload the Bundle</h3>
-      <uga-code language="markup">Upload dist/js/uga-components.js to:
-eLC → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-code>
+      <h3>1. Add to Your Page</h3>
+      <p>Create a new HTML page in eLC and add your components:</p>
+      <uga-code language="markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My Page&lt;/title&gt;
+  &lt;link rel="stylesheet" href="https://design.online.uga.edu/css/base.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;My Course Content&lt;/h1&gt;
+  
+  &lt;!-- Your components --&gt;
+  &lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
+  &lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
+  
+  &lt;!-- Load bundle at end of page --&gt;
+  &lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</uga-code>
+      <p>If you maintain a separate testing location, swap the script path to <code>/shared/ugaonline/dev/js/uga-components.js</code>.</p>
 
-      <h3>2. Add to Your Page</h3>
-      <uga-code language="markup">&lt;!-- Your components --&gt;
-&lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
-&lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
+      <h3>2. Create Data Files (for components that need them)</h3>
+      <p>Some components load data from JSON files. Upload these to Local Course Files and reference them by filename.</p>
 
-&lt;!-- Load bundle at end of page --&gt;
-&lt;script type="module" src="/shared/PublicFiles/uga-components.js"&gt;&lt;/script&gt;</uga-code>
-
-      <h3>3. Create Data Files (for components that need them)</h3>
-      <p>Some components load data from JSON files. Upload these to Public Files and reference them by filename.</p>
-
-      <h4>Example: accordion-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">accordion-data.json</a></h4>
       <uga-code language="javascript">{
   "title": "Course FAQ",
   "data": [
@@ -689,7 +771,7 @@ eLC → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-
   ]
 }</uga-code>
 
-      <h4>Example: tabs-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1a4rAQHgJCY8Z6u-dRpQ4fp8yibmDLm78/view?usp=drive_link" target="_blank" rel="noopener noreferrer">tabs-data.json</a></h4>
       <uga-code language="javascript">{
   "data": [
     {
@@ -703,7 +785,7 @@ eLC → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-
   ]
 }</uga-code>
 
-      <h4>Example: circles-data.json</h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1M4Yqk_cgFMzCftXe1Whw8ytyH6ShyiCA/view?usp=drive_link" target="_blank" rel="noopener noreferrer">circles-data.json</a></h4>
       <uga-code language="javascript">{
   "data": [
     {
@@ -716,6 +798,55 @@ eLC → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-
     }
   ]
 }</uga-code>
+
+      <h4>Example: <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer">slideshow-data.json</a></h4>
+      <uga-code language="javascript">{
+  "data": [
+    {
+      "image": "/shared/PublicFiles/images/slide1.jpg",
+      "caption": "Introduction to the course"
+    },
+    {
+      "image": "/shared/PublicFiles/images/slide2.jpg",
+      "caption": "Key concepts overview"
+    }
+  ]
+}</uga-code>
+
+      <h4>Example: <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer">footer-data.json</a></h4>
+      <uga-code language="javascript">{
+  "link": "https://online.uga.edu/program-name",
+  "logo": "/shared/PublicFiles/images/program-logo.png"
+}</uga-code>
+
+      <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note-data.json</a></h4>
+      <uga-code language="javascript">{
+  "content": "&lt;p&gt;This is a note only visible to instructors.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Grading tip 1&lt;/li&gt;&lt;li&gt;Grading tip 2&lt;/li&gt;&lt;/ul&gt;"
+}</uga-code>
+
+      <h4>Example: <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer">videos-data.json</a> (for multiple videos)</h4>
+      <uga-code language="javascript">{
+  "data": [
+    {
+      "videoid": "1_abc123de",
+      "title": "Introduction Video"
+    },
+    {
+      "videoid": "1_xyz789fg",
+      "title": "Lecture 1"
+    }
+  ]
+}</uga-code>
+
+      <h3>3. Component-Specific Setup</h3>
+      
+      <h4>eLC API Components</h4>
+      <p>These components require eLC API access and will only work in eLC:</p>
+      <ul>
+        <li><code>&lt;uga-assignment&gt;</code> - Fetches assignments, discussions, quizzes, and content from the current course</li>
+        <li><code>&lt;uga-duedate&gt;</code> - Fetches due dates for assignments, discussions, quizzes, and content from the current course</li>
+        <li><code>&lt;uga-video&gt;</code> - Multiple videos from JSON file (username-keyed structure) requires API access</li>
+      </ul>
 
       <h3>4. Testing Locally</h3>
       <uga-code language="bash">npm run dev    # Start development server

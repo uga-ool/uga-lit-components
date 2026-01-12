@@ -36,7 +36,7 @@ export async function getClasslist(ou: string, leVersion: string): Promise<Class
  */
 export async function getEnrollment(ou: string, lpVersion: string): Promise<Enrollment> {
   const myEnrollment = await axios.get(`/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?orgUnitTypeId=3`);
-  const items = myEnrollment.data.Items || [];
+  const items: Enrollment[] = myEnrollment.data.Items || [];
   
   for (let i in items) {
     if (items[i].OrgUnit.Id.toString() === ou) {
@@ -45,7 +45,7 @@ export async function getEnrollment(ou: string, lpVersion: string): Promise<Enro
   }
   
   // Helpful error message with available course IDs
-  const availableIds = items.map((item: any) => item.OrgUnit.Id).join(', ');
+  const availableIds = items.map((item: Enrollment) => item.OrgUnit.Id).join(', ');
   throw new Error(`Enrollment not found for course ID ${ou}. Available enrollments: ${availableIds || 'none'}`);
 }
 

@@ -58,6 +58,11 @@
       padding-bottom: 1rem;
       margin-bottom: 2rem;
     }
+    h2 {
+      color: #333;
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
     .back-link {
       display: inline-block;
       margin-bottom: 1rem;
@@ -77,9 +82,11 @@
       <h1>Video Component</h1>
     </header>
 
+    <!-- Single Video Section -->
     <section class="component-demo">
+      <h2>Single Video</h2>
       <div class="demo-description">
-        <p><strong>Embeds Kaltura videos with customizable player.</strong> Supports single videos, playlists, and optional rating integration. Logo/watermark is hidden by default.</p>
+        <p><strong>Embeds a single Kaltura video with customizable player.</strong> Use this method when you have one video to display. Logo/watermark is hidden by default.</p>
       </div>
 
       <div class="demo-example">
@@ -88,7 +95,7 @@
       </div>
 
       <div class="demo-props">
-        <h4>Properties</h4>
+        <h4>Properties for Single Video</h4>
         <table>
           <tr>
             <th>Property</th>
@@ -98,22 +105,12 @@
           <tr>
             <td>videoid</td>
             <td>string</td>
-            <td>Kaltura video entry ID</td>
+            <td>Kaltura video entry ID (required)</td>
           </tr>
           <tr>
             <td>playerid</td>
             <td>string</td>
             <td>Kaltura player ID (default: 1574196844)</td>
-          </tr>
-          <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>Data source type for multiple videos: 'local' or 'program'</td>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>JSON file for multiple videos</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -127,10 +124,67 @@
         <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="1574196844"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
-&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
+&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+      </div>
+    </section>
 
-&lt;!-- Multiple videos from file --&gt;
-&lt;uga-video type="local" filename="videos.json"&gt;&lt;/uga-video&gt;</uga-code>
+    <!-- Multiple Videos Section -->
+    <section class="component-demo">
+      <h2>Multiple Videos from JSON File</h2>
+      <div class="demo-description">
+        <p><strong>Embeds multiple Kaltura videos from a JSON data file.</strong> Use this method when you want to load multiple videos from a single JSON file. Perfect for course playlists or module video collections.</p>
+        <p><strong>Example data file:</strong> Download
+          <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos-demo.json</code></a>
+          to modify and upload it to your course files.</p>
+      </div>
+
+      <div class="demo-example">
+        <uga-video type="local" filename="videos-demo.json"></uga-video>
+        <p><em>Note: This example loads multiple videos from the videos-demo.json file</em></p>
+      </div>
+
+      <div class="demo-props">
+        <h4>Properties for Multiple Videos</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>type</td>
+            <td>string</td>
+            <td>Data source type: 'local' or 'program' (required)</td>
+          </tr>
+          <tr>
+            <td>filename</td>
+            <td>string</td>
+            <td>Name of the JSON data file (required)</td>
+          </tr>
+          <tr>
+            <td>program</td>
+            <td>string</td>
+            <td>Program identifier (for program type)</td>
+          </tr>
+          <tr>
+            <td>playerid</td>
+            <td>string</td>
+            <td>Kaltura player ID (default: 1574196844)</td>
+          </tr>
+          <tr>
+            <td>includerating</td>
+            <td>boolean</td>
+            <td>Add rating component below video</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="demo-code">
+        <uga-code language="markup">&lt;!-- Multiple videos from file --&gt;
+&lt;uga-video type="local" filename="videos-demo.json"&gt;&lt;/uga-video&gt;
+
+&lt;!-- With custom player ID --&gt;
+&lt;uga-video type="local" filename="videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 

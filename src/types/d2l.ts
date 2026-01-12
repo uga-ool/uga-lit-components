@@ -119,6 +119,11 @@ export interface DiscussionTopic {
   };
 }
 
+// Extended type for topics with ForumId added during processing
+export interface DiscussionTopicWithForum extends DiscussionTopic {
+  ForumId: number;
+}
+
 export interface DiscussionPost {
   PostId: number;
   ThreadId: number;

@@ -1,4 +1,5 @@
 import { LitElement, html } from 'lit';
+import type { PropertyValues } from 'lit';
 import axios from 'axios';
 import { customElement, property } from 'lit/decorators.js';
 import { getVersions, getClasslist } from '../lib/api/d2l-client.js';
@@ -30,6 +31,7 @@ class UgaVideo extends LitElement {
   private kalturaScriptLoaded = false;
   private playerInstances: Map<string, any> = new Map();
   private videoNames: Map<string, string> = new Map();
+  private componentId: string = `video_${Math.random().toString(36).substr(2, 9)}`;
 
   createRenderRoot() {
     return this;
@@ -55,28 +57,59 @@ class UgaVideo extends LitElement {
     } else {  // If we enter this loop, then no videoid was specified and we have to retrieve it via a json file
 
         this.getDataFile().then(() => { // Get the data file
-            const videoData = this.videodata.data;
+            const videoData = this.videodata?.data;
 
-            getVersions().then((versions) => { // Get API versions
-              this.addVersions(versions);
-              
-              if (!this.ou) return;
-
-              getClasslist(this.ou, this.versions.le).then((classlist) => { // Get the classlist
-
-                for (let i in classlist) {
-                  if (classlist[i].Username in videoData && classlist[i].RoleId === 195) { // Check to see if the user from the classlist is an instructor and is in the video list
-                    for (let video in videoData[classlist[i].Username]) {  // Iterate over all videos listed for the identified instructor
-                      this.videos.push(videoData[classlist[i].Username][video]);  // Add the videos to the this.videos array
-                    }
-                  }
+            // Check if videoData is an array (simple structure - accessible to all)
+            if (Array.isArray(videoData)) {
+              // Simple array structure: just use all videos
+              for (let i = 0; i < videoData.length; i++) {
+                this.videos.push(videoData[i]);
+              }
+              this.loaded = true;
+              this.requestUpdate();
+            } else if (videoData && typeof videoData === 'object') {
+              // Username-based structure (for backwards compatibility)
+              getVersions().then((versions) => { // Get API versions
+                this.addVersions(versions);
+                
+                if (!this.ou) {
+                  this.loaded = true;
+                  this.requestUpdate();
+                  return;
                 }
 
+                getClasslist(this.ou, this.versions.le).then((classlist) => { // Get the classlist
+
+                  for (let i in classlist) {
+                    if (classlist[i].Username in videoData && classlist[i].RoleId === 195) { // Check to see if the user from the classlist is an instructor and is in the video list
+                      for (let video in videoData[classlist[i].Username]) {  // Iterate over all videos listed for the identified instructor
+                        this.videos.push(videoData[classlist[i].Username][video]);  // Add the videos to the this.videos array
+                      }
+                    }
+                  }
+
+                  this.loaded = true;
+                  this.requestUpdate();
+
+                }).catch((error) => {
+                  console.error('Failed to get classlist:', error);
+                  this.loaded = true;
+                  this.requestUpdate();
+                }); // End Get Classlist
+              }).catch((error) => {
+                console.error('Failed to get API versions:', error);
                 this.loaded = true;
                 this.requestUpdate();
-
-              }); // End Get Classlist
-            }); // End Get Versions
+              }); // End Get Versions
+            } else {
+              console.error('Invalid video data structure:', videoData);
+              this.loaded = true;
+              this.requestUpdate();
+            }
+        }).catch((error) => {
+          console.error('Failed to load video data file:', error);
+          this.loaded = true;
+          this.requestUpdate();
         }); // End Get Data File
     }
     
@@ -130,6 +163,25 @@ class UgaVideo extends LitElement {
    */
   private async initKalturaPlayer(videoId: string, containerId: string): Promise<void> {
     try {
+      // Check if player already exists for this video
+      if (this.playerInstances.has(videoId)) {
+        return;
+      }
+
+      // Check if container element exists
+      const containerElement = document.getElementById(containerId);
+      if (!containerElement) {
+        console.warn(`Container element not found for video ${videoId}, retrying...`);
+        setTimeout(() => this.initKalturaPlayer(videoId, containerId), 100);
+        return;
+      }
+
+      // Check if container already has a player (might exist from previous render)
+      if (containerElement.hasChildNodes() && containerElement.children.length > 0) {
+        // Container already has content, skip initialization
+        return;
+      }
+
       await this.loadKalturaScript();
       
       const kalturaPlayer = (window as any).KalturaPlayer.setup({
@@ -152,6 +204,7 @@ class UgaVideo extends LitElement {
       this.playerInstances.set(videoId, kalturaPlayer);
     } catch (error) {
       console.error(`Failed to initialize Kaltura player for video ${videoId}:`, error);
+      // If initialization fails, don't retry to avoid infinite loops
     }
   }
 
@@ -205,14 +258,9 @@ class UgaVideo extends LitElement {
   }
 
   kalturaCode(videoId: string) {
-    const containerId = `kaltura_player_${videoId}`;
+    const containerId = `kaltura_player_${this.componentId}_${videoId}`;
     // Kick off async name fetch for rating display
     this.ensureVideoName(videoId);
-    
-    // Schedule player initialization after the DOM is updated
-    setTimeout(() => {
-      this.initKalturaPlayer(videoId, containerId);
-    }, 0);
 
     const embedCode = html`
       <style>
@@ -284,5 +332,20 @@ class UgaVideo extends LitElement {
     
     // Not loaded yet
     return html`<p>Loading video...</p>`;
+  }
+
+  updated(changedProperties: PropertyValues<this>): void {
+    // Initialize players after DOM is updated when videos are loaded
+    if ((changedProperties.has('loaded') || changedProperties.has('videos')) && this.loaded && this.videos.length > 0) {
+      this.updateComplete.then(() => {
+        // Initialize all videos that haven't been initialized yet
+        this.videos.forEach((videoId) => {
+          if (!this.playerInstances.has(videoId)) {
+            const containerId = `kaltura_player_${this.componentId}_${videoId}`;
+            this.initKalturaPlayer(videoId, containerId);
+          }
+        });
+      });
+    }
   }
 }

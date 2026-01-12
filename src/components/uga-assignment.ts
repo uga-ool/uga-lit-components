@@ -3,7 +3,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
-import type { ApiVersions, MyItemsDue } from '../types/d2l.js';
+import { getItemType, getTypesArray, shouldIncludeItem, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
+import type { ApiVersions, MyItemsDue, Enrollment, DiscussionTopicWithForum } from '../types/d2l.js';
 
 interface AssignmentData {
   Name: string;
@@ -43,7 +44,7 @@ class UgaAssignment extends LitElement {
   @property({ type: Array }) assignments: AssignmentData[] = [];
   @property({ type: Array }) studentRoles = ['Student', 'Demo Student'];
   @property({ type: String }) errorMessage: string | null = null;
-  @property({ type: String }) types = 'assignment,discussion,quiz,content'; // Comma-separated list of types to include
+  @property({ type: String }) types = DEFAULT_TYPES_STRING; // Comma-separated list of types to include
 
   private student: boolean | null = null;
   private loaded = false;
@@ -98,7 +99,8 @@ class UgaAssignment extends LitElement {
               return assignment;
             });
             // Filter by types
-            this.assignments = mappedItems.filter(item => this.shouldIncludeItem(item));
+            const allowedTypes = getTypesArray(this.types);
+            this.assignments = mappedItems.filter(item => shouldIncludeItem(item, allowedTypes));
             this.loaded = true;
             this.requestUpdate();
           }).catch((error) => {
@@ -112,8 +114,8 @@ class UgaAssignment extends LitElement {
                   return Promise.all(
                     forums.map(forum => 
                       getTopics(this.ou!, this.versions.le, forum.ForumId)
-                        .then(topics => topics.map(topic => ({ ...topic, ForumId: forum.ForumId })))
-                        .catch(() => [])
+                        .then(topics => topics.map(topic => ({ ...topic, ForumId: forum.ForumId } as DiscussionTopicWithForum)))
+                        .catch(() => [] as DiscussionTopicWithForum[])
                     )
                   ).then(allTopics => allTopics.flat());
                 })
@@ -136,12 +138,12 @@ class UgaAssignment extends LitElement {
               
               // Map discussion topics with due dates
               const discussionItems = topicsData
-                .filter(topic => topic.DueDate || topic.EndDate || topic.Availability?.EndDate)
-                .map(topic => ({
+                .filter((topic: DiscussionTopicWithForum) => topic.DueDate || topic.EndDate || topic.Availability?.EndDate)
+                .map((topic: DiscussionTopicWithForum) => ({
                   Name: topic.Name,
                   Id: topic.TopicId,
                   TopicId: topic.TopicId,
-                  ForumId: (topic as any).ForumId,
+                  ForumId: topic.ForumId,
                   ItemType: 'discussion',
                   Instructions: topic.Description,
                   CustomInstructions: topic.Description,
@@ -157,7 +159,8 @@ class UgaAssignment extends LitElement {
               // Combine assignments and discussions
               const allItems = [...assignmentItems, ...discussionItems];
               // Filter by types
-              this.assignments = allItems.filter(item => this.shouldIncludeItem(item));
+              const allowedTypes = getTypesArray(this.types);
+              this.assignments = allItems.filter(item => shouldIncludeItem(item, allowedTypes));
               this.loaded = true;
               this.requestUpdate();
             }).catch((fallbackError) => {
@@ -184,7 +187,7 @@ class UgaAssignment extends LitElement {
     }
   }
 
-  checkStudent(enrollment: any): void {
+  checkStudent(enrollment: Enrollment): void {
     const roleName = enrollment.Role?.Name;
     if (this.studentRoles.includes(roleName)) {
       this.student = true;
@@ -193,50 +196,8 @@ class UgaAssignment extends LitElement {
     }
   }
 
-  /**
-   * Determine the item type (assignment, discussion, quiz, content)
-   */
-  getItemType(assignment: AssignmentData): string {
-    // Check if it's a discussion
-    if (assignment.TopicId || assignment.ForumId || 
-        assignment.ItemType === 'Discussion' || 
-        assignment.ItemType === 'DiscussionTopic' ||
-        (typeof assignment.ItemType === 'string' && assignment.ItemType.toLowerCase().includes('discussion'))) {
-      return "discussion";
-    }
-    // Check if it's a quiz (might have ItemType or ContentType indicating quiz)
-    if (assignment.ItemType === 'Quiz' || assignment.ItemType === 'Quizzing' ||
-        (typeof assignment.ItemType === 'string' && assignment.ItemType.toLowerCase().includes('quiz'))) {
-      return "quiz";
-    }
-    // Check if it's content
-    if (assignment.ItemType === 'Content' || assignment.ItemType === 'ContentObject' ||
-        (typeof assignment.ItemType === 'string' && assignment.ItemType.toLowerCase().includes('content'))) {
-      return "content";
-    }
-    // Default to assignment
-    return "assignment";
-  }
-
-  /**
-   * Get the types array from the types property
-   */
-  getTypesArray(): string[] {
-    if (!this.types) return ['assignment', 'discussion', 'quiz', 'content'];
-    return this.types.split(',').map(t => t.trim().toLowerCase());
-  }
-
-  /**
-   * Check if an item should be included based on the types filter
-   */
-  shouldIncludeItem(assignment: AssignmentData): boolean {
-    const allowedTypes = this.getTypesArray();
-    const itemType = this.getItemType(assignment);
-    return allowedTypes.includes(itemType);
-  }
-
   formatAssignmentType(assignment: AssignmentData): string {
-    const itemType = this.getItemType(assignment);
+    const itemType = getItemType(assignment);
     if (itemType === "discussion") return "Discussion";
     if (itemType === "quiz") return "Quiz";
     if (itemType === "content") return "Content";
@@ -258,10 +219,7 @@ class UgaAssignment extends LitElement {
 
   getAssignmentLink(assignment: AssignmentData): string {
     // Handle discussion links
-    if (assignment.TopicId || assignment.ForumId || 
-        assignment.ItemType === 'Discussion' || 
-        assignment.ItemType === 'DiscussionTopic' ||
-        (typeof assignment.ItemType === 'string' && assignment.ItemType.toLowerCase().includes('discussion'))) {
+    if (getItemType(assignment) === 'discussion') {
       const topicId = assignment.TopicId || assignment.Id;
       if (!topicId || !this.domain || !this.ou) return '#';
       // D2L discussion topic URL format

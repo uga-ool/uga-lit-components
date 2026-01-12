@@ -2,7 +2,8 @@ import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { getVersions, getAssignments, getMyItemsDue, getForums, getTopics } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
-import type { ApiVersions, MyItemsDue } from '../types/d2l.js';
+import { getItemType, getTypesArray, shouldIncludeItem, formatItemType, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
+import type { ApiVersions, MyItemsDue, DiscussionTopicWithForum } from '../types/d2l.js';
 
 interface AssignmentData {
   Name: string;
@@ -18,7 +19,7 @@ class UgaDueDate extends LitElement {
   @property({ type: String }) ou: string | null = null;
   @property({ type: Array }) assignments: AssignmentData[] = [];
   @property({ type: String }) errorMessage: string | null = null;
-  @property({ type: String }) types = 'assignment,discussion,quiz,content'; // Comma-separated list of types to include
+  @property({ type: String }) types = DEFAULT_TYPES_STRING; // Comma-separated list of types to include
 
   // Light DOM: render into the page directly (eLC-friendly)
   createRenderRoot() {
@@ -54,7 +55,8 @@ class UgaDueDate extends LitElement {
             ItemType: item.ItemType || item.ContentType
           }));
         // Filter by types
-        this.assignments = mappedItems.filter(item => this.shouldIncludeItem(item));
+        const allowedTypes = getTypesArray(this.types);
+        this.assignments = mappedItems.filter(item => shouldIncludeItem(item, allowedTypes));
         this.loaded = true;
         this.requestUpdate();
       }).catch((error) => {
@@ -68,8 +70,8 @@ class UgaDueDate extends LitElement {
               return Promise.all(
                 forums.map(forum => 
                   getTopics(this.ou!, this.versions.le, forum.ForumId)
-                    .then(topics => topics.map(topic => ({ ...topic, ForumId: forum.ForumId })))
-                    .catch(() => [])
+                    .then(topics => topics.map(topic => ({ ...topic, ForumId: forum.ForumId } as DiscussionTopicWithForum)))
+                    .catch(() => [] as DiscussionTopicWithForum[])
                 )
               ).then(allTopics => allTopics.flat());
             })
@@ -86,19 +88,20 @@ class UgaDueDate extends LitElement {
           
           // Map discussion topics with due dates
           const discussionItems = topicsData
-            .filter(topic => topic.DueDate || topic.EndDate || topic.Availability?.EndDate)
-            .map(topic => ({
+            .filter((topic: DiscussionTopicWithForum) => topic.DueDate || topic.EndDate || topic.Availability?.EndDate)
+            .map((topic: DiscussionTopicWithForum) => ({
               Name: topic.Name,
               DueDate: transformDate(topic.DueDate || topic.EndDate || topic.Availability?.EndDate!),
               TopicId: topic.TopicId,
-              ForumId: (topic as any).ForumId,
+              ForumId: topic.ForumId,
               ItemType: 'discussion'
             }));
           
           // Combine assignments and discussions
           const allItems = [...assignmentItems, ...discussionItems];
           // Filter by types
-          this.assignments = allItems.filter(item => this.shouldIncludeItem(item));
+          const allowedTypes = getTypesArray(this.types);
+          this.assignments = allItems.filter(item => shouldIncludeItem(item, allowedTypes));
           this.loaded = true;
           this.requestUpdate();
         }).catch((fallbackError) => {
@@ -124,56 +127,6 @@ class UgaDueDate extends LitElement {
     }
   }
 
-  /**
-   * Determine the item type (assignment, discussion, quiz, content)
-   */
-  getItemType(item: AssignmentData): string {
-    // Check if it's a discussion
-    if (item.TopicId || item.ForumId || 
-        item.ItemType === 'Discussion' || 
-        item.ItemType === 'DiscussionTopic' ||
-        (typeof item.ItemType === 'string' && item.ItemType.toLowerCase().includes('discussion'))) {
-      return "discussion";
-    }
-    // Check if it's a quiz
-    if (item.ItemType === 'Quiz' || item.ItemType === 'Quizzing' ||
-        (typeof item.ItemType === 'string' && item.ItemType.toLowerCase().includes('quiz'))) {
-      return "quiz";
-    }
-    // Check if it's content
-    if (item.ItemType === 'Content' || item.ItemType === 'ContentObject' ||
-        (typeof item.ItemType === 'string' && item.ItemType.toLowerCase().includes('content'))) {
-      return "content";
-    }
-    // Default to assignment
-    return "assignment";
-  }
-
-  /**
-   * Get the types array from the types property
-   */
-  getTypesArray(): string[] {
-    if (!this.types) return ['assignment', 'discussion', 'quiz', 'content'];
-    return this.types.split(',').map(t => t.trim().toLowerCase());
-  }
-
-  /**
-   * Check if an item should be included based on the types filter
-   */
-  shouldIncludeItem(item: AssignmentData): boolean {
-    const allowedTypes = this.getTypesArray();
-    const itemType = this.getItemType(item);
-    return allowedTypes.includes(itemType);
-  }
-
-  /**
-   * Format the item type for display
-   */
-  formatItemType(item: AssignmentData): string {
-    const itemType = this.getItemType(item);
-    // Capitalize first letter
-    return itemType.charAt(0).toUpperCase() + itemType.slice(1);
-  }
 
   render() {
     if (this.errorMessage) {
@@ -208,7 +161,7 @@ class UgaDueDate extends LitElement {
             ${this.assignments.map((assignment) => html`
               <tr style="border-bottom: 1px solid #e0e0e0;">
                 <td style="padding: 0.75rem;">${assignment.Name}</td>
-                <td style="padding: 0.75rem;">${this.formatItemType(assignment)}</td>
+                <td style="padding: 0.75rem;">${formatItemType(assignment)}</td>
                 <td style="padding: 0.75rem;">${assignment.DueDate || 'No Due Date'}</td>
               </tr>
             `)}

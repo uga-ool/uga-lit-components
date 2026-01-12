@@ -1,9 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-
-// Axios is available globally in eLC
-declare const axios: any;
+import axios from 'axios';
 
 
 interface SlideImage {

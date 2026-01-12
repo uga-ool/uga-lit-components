@@ -98,7 +98,7 @@ In eLC, create an HTML page with your components and load the bundle:
 
 - **Rating** - User rating collection
 - **Circles** - Statistical/visual data display
-- **Assignment** - D2L assignment details
+- **Assignment** - Displays assignments, discussions, quizzes, and content with due dates. Supports filtering by type.
 
 ### Navigation Components
 
@@ -108,7 +108,7 @@ In eLC, create an HTML page with your components and load the bundle:
 ### Instructor Tools
 
 - **Instructor Note** - Role-restricted content
-- **Due Date** - Assignment due date display
+- **Due Date** - Displays due dates for assignments, discussions, quizzes, and content in a formatted table. Supports filtering by type.
 
 ## Data File Formats
 

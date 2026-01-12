@@ -203,8 +203,8 @@ In the D2L HTML editor, update file paths to:
 ### Components That Need eLC API
 
 - `<uga-video>` - Kaltura video ID required (hides logo by default)
-- `<uga-assignment>` - Auto-loads all course assignments
-- `<uga-duedate>` - Displays assignment due dates in table format
+- `<uga-assignment>` - Displays assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property (default: all types).
+- `<uga-duedate>` - Displays due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property (default: all types).
 - `<uga-rating>` - Collects user ratings via eLC forums
 
 ## Customization Tips
