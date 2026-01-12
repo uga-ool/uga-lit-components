@@ -47,7 +47,7 @@ All notable changes to this project will be documented in this file.
 - `duedate.html` - Due date component demo
 - `footer.html` - Footer component demo
 - `instructor-note.html` - Instructor note component demo
- 
+
 - `rating.html` - Rating component demo
 - `return-to-top.html` - Return to top component demo
 - `slideshow.html` - Slideshow component demo

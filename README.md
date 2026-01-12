@@ -187,6 +187,12 @@ The repository includes 14 pre-built components:
 
 ---
 
+### Note: Module Feedback moved to React
+
+The previous `uga-module-feedback` web component has been removed from this bundle. Module feedback is now implemented using React and maintained separately. If you need the module feedback functionality, use the React-based solution provided by the team and do not reference `uga-module-feedback` in eLC pages.
+
+---
+
 ## 🎥 Kaltura Video Integration
 
 The `uga-video` component uses **KalturaPlayer script injection** for full control over player configuration:
