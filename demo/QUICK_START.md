@@ -206,7 +206,6 @@ In the D2L HTML editor, update file paths to:
 - `<uga-assignment>` - Auto-loads all course assignments
 - `<uga-duedate>` - Displays assignment due dates in table format
 - `<uga-rating>` - Collects user ratings via eLC forums
-- `<uga-module-feedback>` - Embeds Qualtrics survey with page URL
 
 ## Customization Tips
 

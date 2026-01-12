@@ -109,7 +109,7 @@ In eLC, create an HTML page with your components and load the bundle:
 
 - **Instructor Note** - Role-restricted content
 - **Due Date** - Assignment due date display
-- **Module Feedback** - Qualtrics survey embed
+ 
 
 ## Data File Formats
 
