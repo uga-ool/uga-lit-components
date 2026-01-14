@@ -105,15 +105,52 @@ class UgaRating extends LitElement {
     if (this.forumId === null) {
       const forums = await getForums(this.ou, this.versions.le);
       this.findForum(forums);
+      
+      // Create forum if it doesn't exist
+      if (this.forumId === null && this.forumName) {
+        try {
+          if (this.token === null) {
+            await this.getToken();
+          }
+          if (this.token !== null) {
+            const forum = await createForum(this.ou, this.versions.le, this.forumName, '');
+            this.forumId = forum.ForumId.toString();
+          }
+        } catch (error) {
+          console.error('Error creating forum:', error);
+          this.error = true;
+          this.errorMessage = 'Failed to create rating forum';
+        }
+      }
     }
 
     if (this.topicId === null && this.forumId) {
       const topics = await getTopics(this.ou, this.versions.le, parseInt(this.forumId, 10));
       this.findTopic(topics);
+      
+      // Create topic if it doesn't exist
+      if (this.topicId === null && this.topicName) {
+        try {
+          if (this.token === null) {
+            await this.getToken();
+          }
+          if (this.token !== null) {
+            const topic = await createTopic(this.ou, this.versions.le, parseInt(this.forumId, 10), this.topicName, '');
+            this.topicId = topic.TopicId.toString();
+          }
+        } catch (error) {
+          console.error('Error creating topic:', error);
+          this.error = true;
+          this.errorMessage = 'Failed to create rating topic';
+        }
+      }
     }
 
     if (this.topicId === null || this.forumId === null) {
       this.error = true;
+      if (!this.errorMessage) {
+        this.errorMessage = 'Failed to initialize rating system';
+      }
     } else {
       const postsRoute = "/d2l/api/le/" + this.versions.le + "/" + this.ou + "/discussions/forums/" + this.forumId + "/topics/" + this.topicId + "/posts/";
       const posts = await this.makeGetRequest(postsRoute);
@@ -259,7 +296,7 @@ class UgaRating extends LitElement {
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
       <form class="util-background-light-gray util-pad-all-sm util-pad-all-md@sm util-pad-all-lg@md util-display-none@print">
         <fieldset>
-            <legend class="cmp-heading-5 util-margin-bottom-sm util-text-center util-full-width">Leave feedback for ${this.name}</legend>
+            <legend class="cmp-heading-5 util-margin-bottom-sm util-text-center util-full-width">Leave feedback for ${this.contentName}</legend>
             ${this.error ? html`<p class="util-text-center util-color-red">${this.errorMessage}</p>`: html``}
             <div class="obj-grid obj-grid--gap-md@md">
               <div class="obj-grid__full obj-grid__half@md">
