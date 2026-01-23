@@ -8,9 +8,11 @@ export interface ClasslistUser {
   Username: string;
   RoleId: number;
   UserId?: number;
+  Identifier?: string | number;
   DisplayName?: string;
   FirstName?: string;
   LastName?: string;
+  ClasslistRoleDisplayName?: string;
 }
 
 export interface Enrollment {
@@ -132,4 +134,47 @@ export interface DiscussionPost {
     Text: string;
     Html: string;
   };
+}
+
+export interface GradeObject {
+  OrgUnitId: number;
+  GradeObjectId: number;
+  Name: string;
+  ShortName?: string;
+  Type: number; // 1 = Numeric, 2 = Pass/Fail, 3 = Selectbox, 4 = Text, 5 = Calculated
+  MaxPoints?: number;
+  CanExceedMaxPoints?: boolean;
+  IsBonus?: boolean;
+  ExcludeFromFinalGrade?: boolean;
+  GradeSchemeId?: number;
+}
+
+export interface GradeValue {
+  OrgUnitId: number;
+  UserId: number;
+  GradeObjectId: number;
+  PointsNumerator?: number;
+  PointsDenominator?: number;
+  WeightedNumerator?: number;
+  WeightedDenominator?: number;
+  Comments?: {
+    Text: string;
+    Html: string;
+  };
+}
+
+export interface AssignmentSubmission {
+  SubmissionId: number;
+  SubmissionNumber: number;
+  UserId: number;
+  UserName: string;
+  DisplayName: string;
+  SubmittedDate: string;
+  IsRetracted: boolean;
+  Files: Array<{
+    FileId: number;
+    FileName: string;
+    FileSize: number;
+  }>;
+  TextSubmission?: string;
 }

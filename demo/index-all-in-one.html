@@ -7,8 +7,6 @@
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
   <style>
     .component-demo {
@@ -106,8 +104,8 @@
     <header class="util-margin-vert-lg">
       <h1>UGA Lit Components Demo</h1>
       <div class="intro">
-        <p><strong>Welcome to the UGA Lit Components demonstration page.</strong></p>
-        <p>This page showcases all available Lit web components designed for use in UGA's eLC environment. Each component includes a live example, description, available properties, and sample code.</p>
+        <p><strong>UGA Lit Components Demo</strong></p>
+        <p>This page showcases all available Lit web components for UGA's eLC environment. Each component includes a live example, properties, and sample code.</p>
       </div>
     </header>
 
@@ -271,7 +269,6 @@
 
       <div class="demo-example">
         <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
-        <p><em>Note: Replace videoid with actual Kaltura video ID</em></p>
       </div>
 
       <div class="demo-props">
@@ -320,7 +317,6 @@
 
       <div class="demo-example">
         <uga-video type="local" filename="videos-demo.json"></uga-video>
-        <p><em>Note: This example loads multiple videos from the videos-demo.json file</em></p>
       </div>
 
       <div class="demo-props">
@@ -435,7 +431,6 @@ console.log(x);
           contentname="Introduction Video"
           contentplatform="kaltura">
         </uga-rating>
-        
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -474,6 +469,24 @@ console.log(x);
   contentname="Lecture 1"
   contentplatform="kaltura"&gt;
 &lt;/uga-rating&gt;</uga-code>
+      </div>
+    </section>
+
+    <!-- Instructor Card Component -->
+    <section class="component-demo" id="instructor-card-demo">
+      <h2>Instructor Card Component</h2>
+      <div class="demo-description">
+        <p><strong>Displays an instructor profile card with photo and name.</strong> Automatically detects the course from the URL and finds the instructor from the classlist. Works for students, instructors, and admins.</p>
+      </div>
+      <div class="demo-example">
+        <uga-instructor-card></uga-instructor-card>
+      </div>
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <p>This component has no required properties. It automatically detects the course and loads instructor information.</p>
+      </div>
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-instructor-card&gt;&lt;/uga-instructor-card&gt;</uga-code>
       </div>
     </section>
 
@@ -524,10 +537,10 @@ console.log(x);
       <h2>Assignment Component</h2>
       <div class="demo-description">
         <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
+        <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can export existing grades from the gradebook for assignments. This is useful for syncing grades or exporting grade data to CSV format.</p>
       </div>
       <div class="demo-example">
         <uga-assignment></uga-assignment>
-        
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -541,6 +554,11 @@ console.log(x);
             <td><code>types</code></td>
             <td>String</td>
             <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
+          </tr>
+          <tr>
+            <td><code>enable-export</code></td>
+            <td>Boolean</td>
+            <td>Enable grade export features for instructors. When enabled, instructors see "Export Grades" buttons for each assignment and an "Export All Assignments (CSV)" button at the top. Default: <code>false</code></td>
           </tr>
         </table>
       </div>
@@ -557,6 +575,13 @@ console.log(x);
 
 &lt;!-- Show only discussions --&gt;
 &lt;uga-assignment types="discussion"&gt;&lt;/uga-assignment&gt;</uga-code>
+
+        <h4 style="margin-top: 1.5rem;">Enable Grade Export</h4>
+        <uga-code language="markup">&lt;!-- Enable grade export for instructors --&gt;
+&lt;uga-assignment enable-export&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Combine with type filtering --&gt;
+&lt;uga-assignment types="assignment" enable-export&gt;&lt;/uga-assignment&gt;</uga-code>
       </div>
     </section>
 
@@ -573,7 +598,6 @@ console.log(x);
       </div>
       <div class="demo-example">
         <uga-return-to-top></uga-return-to-top>
-        <p><em>Scroll down to see the button appear in the bottom right corner</em></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -588,13 +612,13 @@ console.log(x);
     <section class="component-demo" id="footer-demo">
       <h2>Footer Component</h2>
       <div class="demo-description">
-        <p><strong>Displays a branded footer.</strong> Can be customized per program with logo and link.</p>
-        <p><strong>Example data file:</strong> Download
+        <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file. Customization happens via the JSON file in eLC. By default, loads from local course files using the <code>filename</code> property.</p>
+        <p><strong>Example data file:</strong> The <code>filename</code> must match the file exactly. Download
           <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>
-          to modify and upload it to your course files.</p>
+          to modify and upload to your course files.</p>
       </div>
       <div class="demo-example">
-        <uga-footer type="local" filename="footer-demo.json" imagefile="logo.png"></uga-footer>
+        <uga-footer filename="footer-demo.json"></uga-footer>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -605,29 +629,28 @@ console.log(x);
             <th>Description</th>
           </tr>
           <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>Data source type: 'local' or 'program'</td>
-          </tr>
-          <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file (for local type)</td>
-          </tr>
-          <tr>
-            <td>imagefile</td>
-            <td>string</td>
-            <td>Name of logo image file</td>
+            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>). Not needed when using <code>program</code>.</td>
           </tr>
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Program identifier (for program type)</td>
+            <td>Program identifier; if not provided, defaults to local file mode.</td>
+          </tr>
+          <tr>
+            <td>imagefile</td>
+            <td>string</td>
+            <td>Name of logo image file (optional; used when JSON doesn't include imageSrc, or for program type)</td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-footer type="local" filename="footer.json" imagefile="logo.png"&gt;&lt;/uga-footer&gt;</uga-code>
+        <h4>Basic Usage (Local File)</h4>
+        <uga-code language="markup">&lt;uga-footer filename="footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
+        <uga-code language="markup">&lt;uga-footer program="program-name" imagefile="logo.png"&gt;&lt;/uga-footer&gt;</uga-code>
       </div>
     </section>
 
@@ -647,7 +670,6 @@ console.log(x);
       </div>
       <div class="demo-example">
         <uga-instructor-note type="local" filename="instructor-note-demo.html"></uga-instructor-note>
-        <p><em>Note: Only visible to users with instructor role in eLC</em></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -687,7 +709,6 @@ console.log(x);
       </div>
       <div class="demo-example">
         <uga-duedate></uga-duedate>
-        
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -722,146 +743,6 @@ console.log(x);
 
     
 
-    <!-- Setup Instructions -->
-    <div class="category-header">
-      <h2 id="setup" style="margin: 0; color: white;">Setup & Usage</h2>
-    </div>
-
-    <section class="component-demo">
-      <h2>How to Use These Components in eLC</h2>
-      
-      <h3>1. Add to Your Page</h3>
-      <p>Create a new HTML page in eLC and add your components:</p>
-      <uga-code language="markup">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-  &lt;title&gt;My Page&lt;/title&gt;
-  &lt;link rel="stylesheet" href="https://design.online.uga.edu/css/base.css"&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;My Course Content&lt;/h1&gt;
-  
-  &lt;!-- Your components --&gt;
-  &lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
-  &lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
-  
-  &lt;!-- Load bundle at end of page --&gt;
-  &lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</uga-code>
-      <p>If you maintain a separate testing location, swap the script path to <code>/shared/ugaonline/dev/js/uga-components.js</code>.</p>
-
-      <h3>2. Create Data Files (for components that need them)</h3>
-      <p>Some components load data from JSON files. Upload these to Local Course Files and reference them by filename.</p>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">accordion-data.json</a></h4>
-      <uga-code language="javascript">{
-  "title": "Course FAQ",
-  "data": [
-    {
-      "title": "How do I submit assignments?",
-      "body": "&lt;p&gt;Go to the Assignments page and click Submit.&lt;/p&gt;"
-    },
-    {
-      "title": "When are office hours?",
-      "body": "&lt;p&gt;Tuesday and Thursday, 2-4 PM EST.&lt;/p&gt;"
-    }
-  ]
-}</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1a4rAQHgJCY8Z6u-dRpQ4fp8yibmDLm78/view?usp=drive_link" target="_blank" rel="noopener noreferrer">tabs-data.json</a></h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "title": "Overview",
-      "body": "&lt;p&gt;This module covers...&lt;/p&gt;"
-    },
-    {
-      "title": "Learning Objectives",
-      "body": "&lt;ul&gt;&lt;li&gt;Objective 1&lt;/li&gt;&lt;/ul&gt;"
-    }
-  ]
-}</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1M4Yqk_cgFMzCftXe1Whw8ytyH6ShyiCA/view?usp=drive_link" target="_blank" rel="noopener noreferrer">circles-data.json</a></h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "figure": "85%",
-      "caption": "Pass Rate"
-    },
-    {
-      "figure": "150",
-      "caption": "Students Enrolled"
-    }
-  ]
-}</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer">slideshow-data.json</a></h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "image": "/shared/PublicFiles/images/slide1.jpg",
-      "caption": "Introduction to the course"
-    },
-    {
-      "image": "/shared/PublicFiles/images/slide2.jpg",
-      "caption": "Key concepts overview"
-    }
-  ]
-}</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer">footer-data.json</a></h4>
-      <uga-code language="javascript">{
-  "link": "https://online.uga.edu/program-name",
-  "logo": "/shared/PublicFiles/images/program-logo.png"
-}</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note-data.json</a></h4>
-      <uga-code language="javascript">{
-  "content": "&lt;p&gt;This is a note only visible to instructors.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Grading tip 1&lt;/li&gt;&lt;li&gt;Grading tip 2&lt;/li&gt;&lt;/ul&gt;"
-}</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer">videos-data.json</a> (for multiple videos)</h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "videoid": "1_abc123de",
-      "title": "Introduction Video"
-    },
-    {
-      "videoid": "1_xyz789fg",
-      "title": "Lecture 1"
-    }
-  ]
-}</uga-code>
-
-      <h3>3. Component-Specific Setup</h3>
-      
-      <h4>eLC API Components</h4>
-      <p>These components require eLC API access and will only work in eLC:</p>
-      <ul>
-        <li><code>&lt;uga-assignment&gt;</code> - Fetches assignments, discussions, quizzes, and content from the current course</li>
-        <li><code>&lt;uga-duedate&gt;</code> - Fetches due dates for assignments, discussions, quizzes, and content from the current course</li>
-        <li><code>&lt;uga-video&gt;</code> - Multiple videos from JSON file (username-keyed structure) requires API access</li>
-      </ul>
-
-      <h3>4. Testing Locally</h3>
-      <uga-code language="bash">npm run dev    # Start development server
-npm run build  # Build production bundle
-npm run preview # Preview production build</uga-code>
-
-    </section>
-
-    <!-- Footer -->
-    <div style="margin-top: 4rem; padding-top: 2rem; border-top: 2px solid #ba0c2f;">
-      <p style="text-align: center; color: #666;">
-        <strong>UGA Lit Components Demo</strong><br>
-        Version 3.0 | University of Georgia | UGA Online
-      </p>
-    </div>
 
     <!-- Return to Top Button -->
     <uga-return-to-top></uga-return-to-top>
@@ -871,29 +752,13 @@ npm run preview # Preview production build</uga-code>
   <!-- Load the components bundle -->
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
   
-  <!-- Mock axios for demo (since we're not in eLC) -->
   <script>
     if (typeof axios === 'undefined') {
       window.axios = {
         get: async (url) => {
-          console.log('Mock axios GET:', url);
-          try {
-            const response = await fetch(url);
-            const data = await response.json();
-            return { data };
-          } catch (error) {
-            console.error('Error fetching:', url, error);
-            throw error;
-          }
-        },
-        post: async (url, data) => {
-          console.log('Mock axios POST:', url, data);
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
-          return { data: await response.json() };
+          const response = await fetch(url);
+          const data = await response.json();
+          return { data };
         }
       };
     }
