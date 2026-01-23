@@ -153,14 +153,26 @@ export interface GradeValue {
   OrgUnitId: number | string; // D2L API can return as string (D2LID) or number
   UserId: number | string; // D2L API can return as string (D2LID) or number - bulk grade values use string
   GradeObjectId: number | string; // D2L API can return as string (D2LID) or number
-  PointsNumerator?: number;
-  PointsDenominator?: number;
-  WeightedNumerator?: number;
-  WeightedDenominator?: number;
+  GradeObjectIdentifier?: string; // Alternative field name for GradeObjectId (D2LID as string)
+  GradeObjectName?: string;
+  GradeObjectType?: number; // GRADEOBJ_T: 1=Numeric, 2=PassFail, 3=SelectBox, 4=Text, etc.
+  GradeObjectTypeName?: string;
+  DisplayedGrade?: string; // Formatted grade display value
+  PointsNumerator?: number | null; // null indicates ungraded
+  PointsDenominator?: number | null; // null indicates ungraded
+  WeightedNumerator?: number | null;
+  WeightedDenominator?: number | null;
   Comments?: {
     Text: string;
     Html: string;
   };
+  PrivateComments?: {
+    Text: string;
+    Html: string;
+  };
+  LastModified?: string | null; // UTCDateTime
+  LastModifiedBy?: string | null; // D2LID
+  ReleasedDate?: string | null; // UTCDateTime - for final grades
 }
 
 export interface AssignmentSubmission {
@@ -177,4 +189,91 @@ export interface AssignmentSubmission {
     FileSize: number;
   }>;
   TextSubmission?: string;
+  // Feedback information from EntityDropbox.Feedback
+  FeedbackScore?: number | null;
+  IsGraded?: boolean;
+  FeedbackText?: string;
+  // Group submission information
+  IsGroupSubmission?: boolean;
+  GroupId?: number | string; // Group ID if this is a group submission
+}
+
+/**
+ * EntityDropbox structure from D2L Dropbox API
+ * Each EntityDropbox represents a user or group's submission status
+ */
+export interface EntityDropbox {
+  Entity: {
+    EntityId: number | string; // D2LID
+    EntityType: 'User' | 'Group';
+    DisplayName?: string; // For User entities
+    Name?: string; // For Group entities
+  };
+  Status: number; // ENTITYDROPBOXSTATUS_T: 0=Unsubmitted, 1=Submitted, 2=Draft, 3=Published
+  Feedback?: DropboxFeedbackOut;
+  Submissions: Array<{
+    Id: number; // D2LID
+    SubmittedBy: {
+      Id: string; // Username or identifier
+      DisplayName: string;
+    };
+    SubmissionNumber?: number;
+    SubmissionDate: string | null; // UTCDateTime
+    Comment?: {
+      Text?: string;
+      Html?: string;
+    };
+    Files: Array<{
+      FileId: number; // D2LID
+      FileName: string;
+      Size: number; // long
+      isRead?: boolean;
+      isFlagged?: boolean;
+    }>;
+    IsRetracted?: boolean;
+  }>;
+  CompletionDate?: string | null; // UTCDateTime
+}
+
+/**
+ * DropboxFeedbackOut structure from D2L Dropbox API
+ * Contains feedback/grade information for a submission
+ */
+export interface DropboxFeedbackOut {
+  Score: number | null; // decimal
+  Feedback?: {
+    Text?: string;
+    Html?: string;
+  };
+  RubricAssessments?: Array<any>; // Array of RubricAssessment blocks
+  IsGraded: boolean;
+  Files?: Array<{
+    FileId: number; // D2LID
+    FileName: string;
+    Size: number; // long
+  }>;
+  Links?: Array<{
+    Type: 'External' | 'Internal' | 'MediaContent';
+    LinkId: number; // D2LID
+    LinkName: string;
+    Href: string | null;
+  }>;
+  GradedSymbol?: string | null; // For select-box grade objects
+}
+
+/**
+ * UserGradeValue structure from D2L Grades API
+ * Contains both User and GradeValue information
+ */
+export interface UserGradeValue {
+  User: {
+    Identifier?: string; // D2LID as string
+    UserId?: number; // D2LID as number
+    Id?: number | string; // Alternative ID field
+    DisplayName?: string;
+    FirstName?: string;
+    LastName?: string;
+    UserName?: string;
+  };
+  GradeValue: GradeValue | null; // null if ungraded
 }

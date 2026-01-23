@@ -48,6 +48,7 @@ class UgaFooter extends LitElement {
 
   @state() private footerData: FooterData | null = null;
   @state() private loadError: string | null = null;
+  @state() private loading = false;
 
   createRenderRoot() {
     return this;
@@ -79,7 +80,9 @@ class UgaFooter extends LitElement {
   }
   
   async getDataFile(): Promise<void> {
+    this.loading = true;
     this.loadError = null;
+    
     try {
       let dataFile: FooterResponse | any;
 
@@ -88,6 +91,7 @@ class UgaFooter extends LitElement {
         // Program type - use the standard footer.json filename
         const programFilename = 'footer.json';
         console.log('[uga-footer] Loading JSON from program:', this.program);
+        // Retry logic is handled internally by loadData if it uses fetch/axios
         dataFile = await loadData<FooterResponse>('program', programFilename, this.program);
         console.log('[uga-footer] JSON loaded successfully:', dataFile);
       } else {
@@ -96,11 +100,13 @@ class UgaFooter extends LitElement {
         if (!this.filename) {
           this.loadError = 'Missing filename. Use filename="footer-demo.json" (or your JSON file).';
           this.loaded = true;
+          this.loading = false;
           this.requestUpdate();
           return;
         }
         const url = this.cacheBust ? `${this.filename}?t=${Date.now()}` : this.filename;
         console.log('[uga-footer] Loading JSON from:', url);
+        // Retry logic is handled internally by loadData if it uses fetch/axios
         dataFile = await loadData<FooterResponse>('local', url);
         console.log('[uga-footer] JSON loaded successfully:', dataFile);
       }
@@ -124,17 +130,18 @@ class UgaFooter extends LitElement {
       }
       
       this.loaded = true;
-      this.requestUpdate();
     } catch (error: any) {
-        const msg = error?.response?.status === 404
-          ? `File not found: ${this.filename}. Upload it to the same folder as this page, or use the full path (e.g. /content/enforced/COURSE_ID/.../footer-demo-copy.json).`
-          : (error?.message || 'Failed to load footer data');
-        this.loadError = msg;
-        console.error('Failed to load footer data:', error);
-        console.error('Filename:', this.filename);
-        this.loaded = true; // Set to true to prevent infinite loop
-        this.requestUpdate();
-      }
+      const msg = error?.response?.status === 404
+        ? `File not found: ${this.filename}. Upload it to the same folder as this page, or use the full path (e.g. /content/enforced/COURSE_ID/.../footer-demo-copy.json).`
+        : (error?.message || 'Failed to load footer data');
+      this.loadError = msg;
+      console.error('Failed to load footer data:', error);
+      console.error('Filename:', this.filename);
+      this.loaded = true; // Set to true to prevent infinite loop
+    } finally {
+      this.loading = false;
+      this.requestUpdate();
+    }
   }
 
   private getSocialIconSVG(iconName: string): string {
@@ -169,6 +176,15 @@ class UgaFooter extends LitElement {
   }
 
   render() {
+    if (this.loading) {
+      return html`
+        <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+        <div class="cmp-site-footer" style="padding: 1rem; text-align: center;">
+          <p>Loading footer...</p>
+        </div>
+      `;
+    }
+    
     if (!this.loaded) {
       return html``;
     }
