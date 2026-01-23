@@ -1,9 +1,9 @@
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics } from '../lib/api/d2l-client.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, getGradebook, getGradeValues } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import { getItemType, getTypesArray, shouldIncludeItem, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
+import { exportGradesToGradebook, type GradeExport } from '../lib/api/gradebook-utils.js';
 import type { ApiVersions, MyItemsDue, Enrollment, DiscussionTopicWithForum } from '../types/d2l.js';
 
 interface AssignmentData {
@@ -40,17 +40,24 @@ class UgaAssignment extends LitElement {
     return this;
   }
   @property({ type: String }) ou: string | null = null;
-  @property({ type: String }) flexClasses = 'obj-flex-item obj-flex-item__xs util-text-center util-background-light-gray util-pad-all-md';
   @property({ type: Array }) assignments: AssignmentData[] = [];
   @property({ type: Array }) studentRoles = ['Student', 'Demo Student'];
   @property({ type: String }) errorMessage: string | null = null;
   @property({ type: String }) types = DEFAULT_TYPES_STRING; // Comma-separated list of types to include
+  @property({ type: Boolean }) enableExport = false; // Enable grade export features for instructors
+  @state() private exportInProgress = false;
+  @state() private exportResults: { success: number; failed: number; errors: string[] } | null = null;
 
   private student: boolean | null = null;
   private loaded = false;
 
   connectedCallback(): void {
     super.connectedCallback();
+    
+    // Check if enable-export attribute is present
+    if (this.hasAttribute('enable-export')) {
+      this.enableExport = true;
+    }
     
     this.ou = getCourse();
     
@@ -191,9 +198,13 @@ class UgaAssignment extends LitElement {
     const roleName = enrollment.Role?.Name;
     if (this.studentRoles.includes(roleName)) {
       this.student = true;
+      console.log('🔵 User identified as student, role:', roleName);
     } else {
       this.student = false;
+      console.log('🟢 User identified as instructor, role:', roleName);
     }
+    // Force update to show/hide Actions column
+    this.requestUpdate();
   }
 
   formatAssignmentType(assignment: AssignmentData): string {
@@ -205,16 +216,6 @@ class UgaAssignment extends LitElement {
     if (assignment.DropboxType === 1) return "Group";
     if (assignment.DropboxType === 2) return "Individual";
     return "Assignment";
-  }
-
-  formatRubrics(assignment: AssignmentData): string | null {
-    if (!assignment.Assessment || assignment.Assessment.Rubrics.length === 0) {
-      return null;
-    }
-
-    const rubricLabel = assignment.Assessment.Rubrics.length > 1 ? "Rubrics" : "Rubric";
-    const rubricNames = assignment.Assessment.Rubrics.map(r => r.Name).join("<br />");
-    return `<span class="util-font-size-sm">${rubricLabel}</span><br />${rubricNames}`;
   }
 
   getAssignmentLink(assignment: AssignmentData): string {
@@ -237,20 +238,180 @@ class UgaAssignment extends LitElement {
     }
   }
 
-  render() {
-    // Display error state
-    if (this.errorMessage) {
-      return html`
-        <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-        <div class="obj-grid">
-          <div class="obj-grid__12-12">
-            <div class="util-pad-all-md util-background-light-gray" style="border-left: 4px solid #ba0c2f;">
-              <p><strong>${this.errorMessage}</strong></p>
-            </div>
-          </div>
-        </div>
-      `;
+  /**
+   * Export existing grades from gradebook for an assignment
+   */
+  async exportGrades(assignment: AssignmentData): Promise<void> {
+    if (!assignment.Id || !this.ou || !this.versions.le) {
+      console.error('❌ Missing required data:', { assignmentId: assignment.Id, ou: this.ou, leVersion: this.versions.le });
+      return;
     }
+
+    this.exportInProgress = true;
+    this.exportResults = null;
+    this.errorMessage = null;
+    this.requestUpdate();
+
+    try {
+      // Get gradebook to find the grade object for this assignment
+      const gradebook = await getGradebook(this.ou, this.versions.le);
+      const gradeObject = gradebook.find(g => g.Name === assignment.Name);
+
+      if (!gradeObject) {
+        this.exportResults = {
+          success: 0,
+          failed: 0,
+          errors: [`Grade object "${assignment.Name}" not found in gradebook. Please create it first.`]
+        };
+        this.exportInProgress = false;
+        this.requestUpdate();
+        return;
+      }
+
+      // Get existing grades from gradebook
+      const existingGrades = await getGradeValues(this.ou, this.versions.le, gradeObject.GradeObjectId);
+
+      if (existingGrades.length === 0) {
+        this.exportResults = {
+          success: 0,
+          failed: 0,
+          errors: [`No grades found for "${assignment.Name}" in gradebook.`]
+        };
+        this.exportInProgress = false;
+        this.requestUpdate();
+        return;
+      }
+
+      // Convert to GradeExport format (grades are already in gradebook, so this is just for display/verification)
+      const grades: GradeExport[] = existingGrades.map(grade => ({
+        userId: grade.UserId,
+        pointsEarned: grade.PointsNumerator || 0,
+        pointsPossible: grade.PointsDenominator || gradeObject.MaxPoints || 100,
+        percentage: grade.PointsDenominator ? (grade.PointsNumerator / grade.PointsDenominator) * 100 : 0,
+        comments: grade.Comments?.Text || ''
+      }));
+
+      // Export grades (this will update them, but since they're already there, it's essentially a sync operation)
+      const results = await exportGradesToGradebook(
+        this.ou,
+        this.versions.le,
+        gradeObject.GradeObjectId,
+        grades
+      );
+
+      this.exportResults = results;
+    } catch (error: any) {
+      console.error('❌ Error exporting grades:', error);
+      const errorMsg = error.message || 'Unknown error occurred during export';
+      this.errorMessage = `Export failed: ${errorMsg}`;
+      this.exportResults = {
+        success: 0,
+        failed: 1,
+        errors: [errorMsg]
+      };
+    } finally {
+      this.exportInProgress = false;
+      this.requestUpdate();
+    }
+  }
+
+
+  /**
+   * Export all assignments with grades and due dates to CSV
+   */
+  async exportAllAssignments(): Promise<void> {
+    if (!this.ou || !this.versions.le) {
+      console.error('❌ Missing required data for export');
+      return;
+    }
+
+    try {
+      // Collect all assignment data with grades
+      const exportData: Array<{
+        assignmentName: string;
+        dueDate: string;
+        type: string;
+        gradeObjectId?: number;
+        gradeObjectName?: string;
+        maxPoints?: number;
+        studentCount?: number;
+      }> = [];
+
+      // Get gradebook to match assignments with grade objects
+      const gradebook = await getGradebook(this.ou, this.versions.le);
+
+      for (const assignment of this.assignments) {
+        const isAssignment = getItemType(assignment) === 'assignment';
+        if (!isAssignment) continue;
+
+        const dueDate = assignment.DueDate ? transformDate(assignment.DueDate) : 'No Due Date';
+        const assignmentType = this.formatAssignmentType(assignment);
+
+        // Try to find matching grade object
+        const gradeObject = gradebook.find(g => g.Name === assignment.Name);
+        
+        // Get student count from gradebook if grade object exists
+        let studentCount = 0;
+        if (gradeObject) {
+          try {
+            const gradeValues = await getGradeValues(this.ou, this.versions.le, gradeObject.GradeObjectId);
+            studentCount = gradeValues.length;
+          } catch (error) {
+            // Ignore errors getting grade values
+          }
+        }
+
+        exportData.push({
+          assignmentName: assignment.Name,
+          dueDate,
+          type: assignmentType,
+          gradeObjectId: gradeObject?.GradeObjectId,
+          gradeObjectName: gradeObject?.Name,
+          maxPoints: gradeObject?.MaxPoints,
+          studentCount
+        });
+      }
+
+      // Generate CSV
+      const csvHeaders = ['Assignment Name', 'Due Date', 'Type', 'Grade Object ID', 'Grade Object Name', 'Max Points', 'Students Graded'];
+      const csvRows = exportData.map(row => [
+        `"${row.assignmentName}"`,
+        `"${row.dueDate}"`,
+        `"${row.type}"`,
+        row.gradeObjectId?.toString() || '',
+        `"${row.gradeObjectName || ''}"`,
+        row.maxPoints?.toString() || '',
+        row.studentCount?.toString() || '0'
+      ]);
+
+      const csvContent = [
+        csvHeaders.join(','),
+        ...csvRows.map(row => row.join(','))
+      ].join('\n');
+
+      // Create download link
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `assignments-export-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      console.log('✅ Exported assignments to CSV');
+    } catch (error: any) {
+      console.error('❌ Error exporting assignments:', error);
+      this.errorMessage = `Export failed: ${error.message}`;
+      this.requestUpdate();
+    }
+  }
+
+
+  render() {
+    // Don't show error state if we have assignments loaded - show error inline instead
 
     // Display loading state
     if (!this.loaded) {
@@ -279,12 +440,43 @@ class UgaAssignment extends LitElement {
     return html`
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
       <div class="util-margin-top-md">
+        ${this.errorMessage ? html`
+          <div class="util-pad-all-md util-margin-bottom-md util-background-light-gray" style="border-left: 4px solid #ba0c2f;">
+            <p><strong>${this.errorMessage}</strong></p>
+          </div>
+        ` : ''}
+        ${this.exportResults ? html`
+          <div class="util-pad-all-md util-margin-bottom-md" style="background-color: ${this.exportResults.failed === 0 ? '#d4edda' : '#f8d7da'}; border-left: 4px solid ${this.exportResults.failed === 0 ? '#28a745' : '#dc3545'};">
+            <p><strong>Export Results:</strong> ${this.exportResults.success} successful, ${this.exportResults.failed} failed</p>
+            ${this.exportResults.errors.length > 0 ? html`
+              <ul style="margin-top: 0.5rem;">
+                ${this.exportResults.errors.map(error => html`<li>${error}</li>`)}
+              </ul>
+            ` : ''}
+          </div>
+        ` : ''}
+        
+        ${(this.student === false || this.student === null) && this.enableExport ? html`
+          <div style="margin-bottom: 1rem; text-align: right;">
+            <button 
+              class="cmp-button cmp-button--primary"
+              @click=${() => this.exportAllAssignments()}
+              style="margin-left: 0.5rem;"
+            >
+              Export All Assignments (CSV)
+            </button>
+          </div>
+        ` : ''}
+        
         <table style="width: 100%; border-collapse: collapse;">
           <thead>
             <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ba0c2f;">
               <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Assignment</th>
               <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Type</th>
               <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Due Date</th>
+              ${(this.student === false || this.student === null) && this.enableExport ? html`
+                <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Actions</th>
+              ` : ''}
             </tr>
           </thead>
           <tbody>
@@ -292,6 +484,7 @@ class UgaAssignment extends LitElement {
               const dueDate = assignment.DueDate ? transformDate(assignment.DueDate) : 'No Due Date';
               const assignmentType = this.formatAssignmentType(assignment);
               const assignmentLink = this.getAssignmentLink(assignment);
+              const isAssignment = getItemType(assignment) === 'assignment';
 
               return html`
                 <tr style="border-bottom: 1px solid #e0e0e0;">
@@ -302,6 +495,19 @@ class UgaAssignment extends LitElement {
                   </td>
                   <td style="padding: 0.75rem;">${assignmentType}</td>
                   <td style="padding: 0.75rem;">${dueDate}</td>
+                  ${(this.student === false || this.student === null) && this.enableExport && isAssignment ? html`
+                    <td style="padding: 0.75rem;">
+                      <button 
+                        class="cmp-button cmp-button--primary"
+                        @click=${() => this.exportGrades(assignment)}
+                        ?disabled=${this.exportInProgress}
+                      >
+                        ${this.exportInProgress ? 'Exporting...' : 'Export Grades'}
+                      </button>
+                    </td>
+                  ` : (this.student === false || this.student === null) && this.enableExport ? html`
+                    <td style="padding: 0.75rem;">—</td>
+                  ` : ''}
                 </tr>
               `;
             })}

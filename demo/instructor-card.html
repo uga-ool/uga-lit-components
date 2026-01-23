@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Footer Component Demo</title>
+  <title>Instructor Card Component Demo</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -17,122 +16,83 @@
       border-radius: 8px;
       background-color: #ffffff;
     }
-
     .demo-description {
       margin-bottom: 1.5rem;
       padding: 1rem;
       background-color: #f5f5f5;
       border-left: 4px solid #ba0c2f;
     }
-
     .demo-example {
       margin-bottom: 1.5rem;
       padding: 1.5rem;
       background-color: #fafafa;
       border: 1px dashed #ccc;
     }
-
     .demo-code {
       margin-top: 1rem;
     }
-
     .demo-props {
       margin: 1rem 0;
       padding: 1rem;
       background-color: #fff9e6;
       border-left: 4px solid #ffc107;
     }
-
     .demo-props table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 0.5rem;
     }
-
     .demo-props th,
     .demo-props td {
       padding: 0.5rem;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
-
     .demo-props th {
       background-color: #f0f0f0;
       font-weight: bold;
     }
-
     h1 {
       color: #ba0c2f;
       border-bottom: 3px solid #ba0c2f;
       padding-bottom: 1rem;
       margin-bottom: 2rem;
     }
-
     .back-link {
       display: inline-block;
       margin-bottom: 1rem;
       color: #ba0c2f;
       text-decoration: none;
     }
-
     .back-link:hover {
       text-decoration: underline;
     }
   </style>
 </head>
-
 <body>
   <div class="obj-container">
     <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
-
+    
     <header class="util-margin-vert-lg">
-      <h1>Footer Component</h1>
+      <h1>Instructor Card Component</h1>
     </header>
 
     <section class="component-demo">
       <div class="demo-description">
-        <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file. Customization happens via the JSON file in eLC. By default, loads from local course files using the <code>filename</code> property.</p>
-        <p><strong>Example data file:</strong> The <code>filename</code> must match the file exactly. Download
-          <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>
-          to modify and upload to your course files.</p>
+        <p><strong>Displays an instructor profile card with photo and name.</strong> Automatically detects the course from the URL and finds the instructor from the classlist. Works for students, instructors, and admins.</p>
       </div>
 
       <div class="demo-example">
-        <uga-footer filename="footer-demo.json"></uga-footer>
+        <uga-instructor-card></uga-instructor-card>
       </div>
 
       <div class="demo-props">
         <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>). Not needed when using <code>program</code>.</td>
-          </tr>
-          <tr>
-            <td>program</td>
-            <td>string</td>
-            <td>Program identifier; if not provided, defaults to local file mode.</td>
-          </tr>
-          <tr>
-            <td>imagefile</td>
-            <td>string</td>
-            <td>Name of logo image file (optional; used when JSON doesn't include imageSrc, or for program type)</td>
-          </tr>
-        </table>
+        <p>This component has no required properties. It automatically detects the course and loads instructor information.</p>
       </div>
 
       <div class="demo-code">
-        <h4>Basic Usage (Local File)</h4>
-        <uga-code language="markup">&lt;uga-footer filename="footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
-        
-        <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
-        <uga-code language="markup">&lt;uga-footer program="program-name" imagefile="logo.png"&gt;&lt;/uga-footer&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-instructor-card&gt;&lt;/uga-instructor-card&gt;</uga-code>
       </div>
     </section>
 
@@ -140,18 +100,5 @@
   </div>
 
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
-
-  <script>
-    if (typeof axios === 'undefined') {
-      window.axios = {
-        get: async (url) => {
-          const response = await fetch(url);
-          const data = await response.json();
-          return { data };
-        }
-      };
-    }
-  </script>
 </body>
-
 </html>

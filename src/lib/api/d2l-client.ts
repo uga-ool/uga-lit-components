@@ -2,7 +2,7 @@
 // Centralized API calls used across multiple components
 
 import axios from 'axios';
-import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost, MyItemsDue } from '../../types/d2l.js';
+import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost, MyItemsDue, GradeObject, GradeValue, AssignmentSubmission } from '../../types/d2l.js';
 
 /**
  * Get eLC API versions
@@ -68,6 +68,26 @@ export async function getUser(lpVersion: string): Promise<User> {
 export async function getAssignments(ou: string, leVersion: string): Promise<Assignment[]> {
   const assignments = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/`);
   return assignments.data;
+}
+
+/**
+ * Get a specific assignment by ID
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param assignmentId - Assignment folder ID
+ * @returns Assignment details
+ */
+export async function getAssignment(ou: string, leVersion: string, assignmentId: number): Promise<Assignment> {
+  try {
+    // Try the assignments endpoint first (provides more complete data including IsHidden)
+    const assignment = await axios.get(`/d2l/api/le/${leVersion}/${ou}/assignments/folders/${assignmentId}/`);
+    return assignment.data;
+  } catch (error: any) {
+    // Fall back to dropbox endpoint if assignments endpoint fails
+    console.warn('Assignments API endpoint failed, falling back to dropbox/folders:', error.message);
+    const assignment = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${assignmentId}/`);
+    return assignment.data;
+  }
 }
 
 /**
@@ -199,4 +219,115 @@ export async function createPost(
 export async function getXsrfToken(): Promise<string> {
   const xsrfToken = await axios.get('/d2l/lp/auth/xsrf-tokens');
   return xsrfToken.data.referrerToken;
+}
+
+/**
+ * Get gradebook for a course
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @returns Array of grade objects
+ */
+export async function getGradebook(ou: string, leVersion: string): Promise<GradeObject[]> {
+  const gradebook = await axios.get(`/d2l/api/le/${leVersion}/${ou}/grades/`);
+  return gradebook.data;
+}
+
+/**
+ * Get grade values for a specific grade object
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param gradeObjectId - Grade object ID
+ * @returns Array of grade values
+ */
+export async function getGradeValues(ou: string, leVersion: string, gradeObjectId: number): Promise<GradeValue[]> {
+  const grades = await axios.get(`/d2l/api/le/${leVersion}/${ou}/grades/${gradeObjectId}/values/`);
+  return grades.data;
+}
+
+/**
+ * Update a grade value
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param gradeObjectId - Grade object ID
+ * @param userId - User ID
+ * @param gradeValue - Grade value to update
+ * @returns Updated grade value
+ */
+export async function updateGradeValue(
+  ou: string,
+  leVersion: string,
+  gradeObjectId: number,
+  userId: number,
+  gradeValue: Partial<GradeValue>
+): Promise<GradeValue> {
+  const token = await getXsrfToken();
+  const grade = await axios.put(
+    `/d2l/api/le/${leVersion}/${ou}/grades/${gradeObjectId}/values/${userId}`,
+    gradeValue,
+    { headers: { "X-Csrf-Token": token } }
+  );
+  return grade.data;
+}
+
+/**
+ * Get submissions for an assignment
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param assignmentId - Assignment folder ID
+ * @returns Array of assignment submissions
+ */
+export async function getAssignmentSubmissions(
+  ou: string,
+  leVersion: string,
+  assignmentId: number
+): Promise<AssignmentSubmission[]> {
+  const submissions = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${assignmentId}/submissions/`);
+  return submissions.data;
+}
+
+/**
+ * Get a specific user's submission for an assignment
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param assignmentId - Assignment folder ID
+ * @param userId - User ID
+ * @returns User's submission or null
+ */
+export async function getUserSubmission(
+  ou: string,
+  leVersion: string,
+  assignmentId: number,
+  userId: number
+): Promise<AssignmentSubmission | null> {
+  try {
+    const submissions = await getAssignmentSubmissions(ou, leVersion, assignmentId);
+    const userSubmission = submissions.find(sub => sub.UserId === userId);
+    return userSubmission || null;
+  } catch (error) {
+    console.error('Error fetching user submission:', error);
+    return null;
+  }
+}
+
+/**
+ * Download a submission file from D2L
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param assignmentId - Assignment folder ID
+ * @param submissionId - Submission ID
+ * @param fileId - File ID
+ * @returns Blob containing the file data
+ */
+export async function downloadSubmissionFile(
+  ou: string,
+  leVersion: string,
+  assignmentId: number,
+  submissionId: number,
+  fileId: number
+): Promise<Blob> {
+  const response = await axios.get(
+    `/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${assignmentId}/submissions/${submissionId}/files/${fileId}/`,
+    { responseType: 'blob' }
+  );
+  return response.data;
 }
