@@ -150,9 +150,9 @@ export interface GradeObject {
 }
 
 export interface GradeValue {
-  OrgUnitId: number;
-  UserId: number;
-  GradeObjectId: number;
+  OrgUnitId: number | string; // D2L API can return as string (D2LID) or number
+  UserId: number | string; // D2L API can return as string (D2LID) or number - bulk grade values use string
+  GradeObjectId: number | string; // D2L API can return as string (D2LID) or number
   PointsNumerator?: number;
   PointsDenominator?: number;
   WeightedNumerator?: number;
@@ -166,7 +166,7 @@ export interface GradeValue {
 export interface AssignmentSubmission {
   SubmissionId: number;
   SubmissionNumber: number;
-  UserId: number;
+  UserId: number | string; // D2L API can return as string (D2LID) or number
   UserName: string;
   DisplayName: string;
   SubmittedDate: string;

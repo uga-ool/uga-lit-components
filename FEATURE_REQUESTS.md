@@ -97,6 +97,49 @@ This document tracks feature requests from the instructional design team for eLC
 - Could create `uga-groups` component
 - Display group info, members, activities
 
+### 6. Course Template Management Widget ⭐ HIGH PRIORITY
+**Requested by:** Chris Sparks  
+**Date:** January 2026  
+**Description:**
+- Admin-only widget for managing course templates and live course files
+- Should be placed in a live class and only visible to admins
+- When clicked, performs three operations:
+  1. **Export:** Export the original template for the live course to Google Drive
+  2. **Clear:** Clear the template contents
+  3. **Back-copy:** Back-copy the live course's files to the template
+
+**Use Case:**
+- Administrators need to manage course templates
+- Sync live course content back to templates
+- Archive template versions to Google Drive before clearing
+
+**Technical Considerations:**
+- **Admin Role Detection:** Need to identify admin role names/codes in D2L
+- **Template vs Live Course Identification:** How to determine which course is the template (course code pattern, metadata, property?)
+- **Google Drive API Integration:** 
+  - OAuth authentication or service account
+  - File upload/export functionality
+- **D2L Content API:** Need endpoints for:
+  - Listing course files
+  - Downloading files from course
+  - Uploading files to course
+  - Deleting files from course
+  - Copying files between courses (template ↔ live)
+- **Course Relationship:** Need to identify template course associated with live course
+
+**Implementation Approach:**
+- Could be Lit component (`uga-template-manager`) or separate React app/widget
+- Requires significant D2L Content API integration
+- Google Drive API integration (may need backend service for OAuth)
+- File management operations between courses
+- Admin-only visibility (similar to `uga-instructor-note` role checking)
+
+**Open Questions:**
+1. What role name/code indicates admin? (e.g., "Administrator", "System Administrator", specific role ID?)
+2. How to identify template course? (course code pattern, metadata field, configuration?)
+3. Google Drive authentication: service account or user OAuth?
+4. Should this be a Lit component or separate React app/widget?
+
 ## Implementation Notes
 
 ### Technology Stack Considerations
@@ -124,20 +167,23 @@ All features would require:
 - Understanding of D2L data models (rubrics, gradebook, groups, quizzes, etc.)
 - Release Conditions API (for #1)
 - Gradebook API (for #2)
-- Rubrics API (for #3)
-- LTI integration (for #4)
-- Groups API (for #5)
+- Rubrics API (for #4)
+- LTI integration (for #5)
+- Groups API (for #6)
+- Content API (for #6 - template management)
+- Google Drive API (for #6 - template export)
 
 ### Priority Assessment
 
 **High Priority:**
 1. Trackable In-Page Formative Quizzes (most requested, enables important workflow)
 2. Autograding and Gradebook Export (directly impacts instructor workload)
+3. Course Template Management Widget (admin workflow automation)
 
 **Medium Priority:**
-3. Rubric Upload Tool (convenience feature)
-4. In-Video Quizzes (LTI) (specific use case)
-5. Groups Tool Integration (mentioned as part of #2)
+4. Rubric Upload Tool (convenience feature)
+5. In-Video Quizzes (LTI) (specific use case)
+6. Groups Tool Integration (mentioned as part of #2)
 
 ## Next Steps
 
@@ -148,6 +194,8 @@ All features would require:
    - Groups API
    - Release Conditions API
    - LTI integration options
+   - Content API (for template management)
+   - Course/Org Unit API (for template identification)
 
 2. **Prototype Planning:**
    - Start with highest priority items

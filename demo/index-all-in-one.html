@@ -537,7 +537,7 @@ console.log(x);
       <h2>Assignment Component</h2>
       <div class="demo-description">
         <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
-        <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can export existing grades from the gradebook for assignments. This is useful for syncing grades or exporting grade data to CSV format.</p>
+        <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can download a per-assignment CSV that lists all students, submission status, and the current gradebook value (blank if not graded yet).</p>
       </div>
       <div class="demo-example">
         <uga-assignment></uga-assignment>
@@ -558,7 +558,7 @@ console.log(x);
           <tr>
             <td><code>enable-export</code></td>
             <td>Boolean</td>
-            <td>Enable grade export features for instructors. When enabled, instructors see "Export Grades" buttons for each assignment and an "Export All Assignments (CSV)" button at the top. Default: <code>false</code></td>
+            <td>Enable grade export features for instructors. When enabled, instructors see "Export Grades" (per-assignment roster CSV) and "Export All Assignments (CSV)" (course summary). Default: <code>false</code></td>
           </tr>
         </table>
       </div>

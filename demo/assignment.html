@@ -80,7 +80,7 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
-        <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can export existing grades from the gradebook for assignments. This is useful for syncing grades or exporting grade data to CSV format.</p>
+        <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can download a CSV for an assignment that lists <strong>all students</strong>, whether they submitted, and their current gradebook value (blank if not graded yet).</p>
       </div>
 
       <div class="demo-example">
@@ -92,7 +92,7 @@
         <h4>With Grade Export Enabled (Instructor View)</h4>
         <p><strong>Note:</strong> Grade export features are only visible to instructors. Students will see the standard assignment list.</p>
         <uga-assignment enable-export></uga-assignment>
-        <p><em>When <code>enable-export</code> is set, instructors see "Export Grades" buttons for each assignment. Clicking the button exports existing grades from the gradebook for that assignment. The "Export All Assignments (CSV)" button at the top exports a summary of all assignments with their gradebook information.</em></p>
+        <p><em>When <code>enable-export</code> is set, instructors see "Export Grades" buttons for each assignment. Clicking it downloads a per-assignment CSV (all students + submission status + gradebook value). The "Export All Assignments (CSV)" button exports a course-level summary of assignments and gradebook metadata.</em></p>
       </div>
 
       <div class="demo-props">
@@ -111,7 +111,7 @@
           <tr>
             <td><code>enable-export</code></td>
             <td>Boolean</td>
-            <td>Enable grade export features for instructors. When enabled, instructors see "Export Grades" buttons for each assignment and an "Export All Assignments (CSV)" button at the top. Default: <code>false</code></td>
+            <td>Enable grade export features for instructors. When enabled, instructors see "Export Grades" (per-assignment roster CSV) and "Export All Assignments (CSV)" (course summary). Default: <code>false</code></td>
           </tr>
         </table>
       </div>
@@ -144,9 +144,10 @@
           <li><strong>Export individual assignment grades</strong> - Click "Export Grades" button next to any assignment. This:
             <ul>
               <li>Finds the grade object in the gradebook that matches the assignment name</li>
-              <li>Retrieves all existing grades for that assignment</li>
-              <li>Exports/syncs the grades to the gradebook</li>
-              <li>Shows success/failure results</li>
+              <li>Loads the classlist to include every student</li>
+              <li>Loads submissions to mark who submitted</li>
+              <li>Loads gradebook values (if any) and leaves blanks for ungraded work</li>
+              <li>Downloads a per-assignment CSV</li>
             </ul>
           </li>
           <li><strong>Export all assignments summary</strong> - Click "Export All Assignments (CSV)" button at the top. This:
