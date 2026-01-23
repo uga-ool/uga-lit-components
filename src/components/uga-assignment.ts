@@ -1,8 +1,10 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, getGradebook, getGradeValues, getClasslist, getAssignmentSubmissions } from '../lib/api/d2l-client.js';
+import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, getGradebook, getGradeValues, getBulkGradeValues, getClasslist, getAssignmentSubmissions } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import { getItemType, getTypesArray, shouldIncludeItem, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
+import { memoize } from '../lib/utils/memoize.js';
+import { observeLazyLoad } from '../lib/utils/lazy-load.js';
 import type { ApiVersions, MyItemsDue, Enrollment, DiscussionTopicWithForum, ClasslistUser, AssignmentSubmission, GradeValue } from '../types/d2l.js';
 
 interface AssignmentData {
@@ -49,9 +51,20 @@ class UgaAssignment extends LitElement {
 
   private student: boolean | null = null;
   private loaded = false;
+  private abortController: AbortController | null = null;
+  private lazyLoadCleanup: (() => void) | null = null;
+  
+  // Memoized filter function - caches filtered results
+  private memoizedFilter = memoize(
+    (items: AssignmentData[], allowedTypes: string[]) => {
+      return items.filter(item => shouldIncludeItem(item, allowedTypes));
+    },
+    (items, allowedTypes) => `${items.length}:${allowedTypes.join(',')}`
+  );
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.abortController = new AbortController();
     
     // Check if enable-export attribute is present
     if (this.hasAttribute('enable-export')) {
@@ -73,9 +86,17 @@ class UgaAssignment extends LitElement {
       this.addVersions(versions);
 
       // Try to get enrollment to determine student/instructor role, but don't fail if unavailable
-      getEnrollment(this.ou!, this.versions.lp)
+      getEnrollment(this.ou!, this.versions.lp, {
+        fallbackToFirst: true,
+        throwOnNotFound: false
+      })
         .then((enrollment) => {
-          this.checkStudent(enrollment);
+          if (enrollment) {
+            this.checkStudent(enrollment);
+          } else {
+            console.warn('Unable to determine enrollment, defaulting to instructor view');
+            this.student = false; // Default to instructor view
+          }
         })
         .catch((error) => {
           console.warn('Unable to determine enrollment, defaulting to instructor view:', error.message);
@@ -104,9 +125,9 @@ class UgaAssignment extends LitElement {
               };
               return assignment;
             });
-            // Filter by types
+            // Filter by types (using memoization)
             const allowedTypes = getTypesArray(this.types);
-            this.assignments = mappedItems.filter(item => shouldIncludeItem(item, allowedTypes));
+            this.assignments = this.memoizedFilter(mappedItems, allowedTypes);
             this.loaded = true;
             this.requestUpdate();
           }).catch((error) => {
@@ -164,9 +185,9 @@ class UgaAssignment extends LitElement {
               
               // Combine assignments and discussions
               const allItems = [...assignmentItems, ...discussionItems];
-              // Filter by types
+              // Filter by types (using memoization)
               const allowedTypes = getTypesArray(this.types);
-              this.assignments = allItems.filter(item => shouldIncludeItem(item, allowedTypes));
+              this.assignments = this.memoizedFilter(allItems, allowedTypes);
               this.loaded = true;
               this.requestUpdate();
             }).catch((fallbackError) => {
@@ -177,10 +198,46 @@ class UgaAssignment extends LitElement {
           });
         });
     }).catch((error) => {
+      // Don't show error if request was aborted (component unmounted)
+      if (error.message === 'Request aborted' || this.abortController?.signal.aborted) {
+        return;
+      }
       this.errorMessage = `Unable to load API versions: ${error.message}`;
       this.loaded = true;
       this.requestUpdate();
     });
+  }
+  
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    // Cancel all in-flight requests
+    this.abortController?.abort();
+    this.abortController = null;
+    // Clean up lazy loading observer
+    this.lazyLoadCleanup?.();
+    this.lazyLoadCleanup = null;
+  }
+  
+  /**
+   * Enable lazy loading - only load data when component is visible
+   * Call this method to enable lazy loading instead of loading immediately
+   */
+  enableLazyLoad(): void {
+    if (this.lazyLoadCleanup) return; // Already enabled
+    
+    this.lazyLoadCleanup = observeLazyLoad(
+      this,
+      () => {
+        // Component is now visible - trigger data loading
+        if (!this.loaded && this.ou) {
+          this.connectedCallback();
+        }
+      },
+      {
+        rootMargin: '100px', // Start loading 100px before visible
+        once: true
+      }
+    );
   }
 
   /******
@@ -237,9 +294,28 @@ class UgaAssignment extends LitElement {
     }
   }
 
+  /**
+   * Normalize smart quotes and apostrophes to regular ASCII equivalents
+   * This helps prevent encoding issues in CSV files
+   * @param text - Text to normalize
+   * @returns Normalized text with regular quotes and apostrophes
+   */
+  private normalizeQuotes(text: string): string {
+    return text
+      // Smart apostrophes and single quotes
+      .replace(/[''']/g, "'")  // Left/right single quote → regular apostrophe
+      // Smart double quotes
+      .replace(/[""]/g, '"')   // Left/right double quote → regular double quote
+      // Other Unicode quote variants
+      .replace(/[''‚‛]/g, "'")  // Various single quote variants
+      .replace(/["„‟]/g, '"');  // Various double quote variants
+  }
+
   private csvEscape(value: unknown): string {
     if (value === null || value === undefined) return '';
-    const s = String(value);
+    let s = String(value);
+    // Normalize smart quotes before escaping
+    s = this.normalizeQuotes(s);
     // Quote if needed and escape quotes by doubling them
     if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
     return s;
@@ -661,7 +737,9 @@ class UgaAssignment extends LitElement {
       });
 
       const csvContent = [headers.join(','), ...rows].join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      // Add UTF-8 BOM for Excel compatibility (prevents encoding issues like "‚Äôs" instead of "'s")
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
 
@@ -728,6 +806,33 @@ class UgaAssignment extends LitElement {
 
       // Get gradebook to match assignments with grade objects
       const gradebook = await getGradebook(this.ou, this.versions.le);
+      
+      // Use bulk grade values endpoint for much better performance
+      // This fetches all grade values in one API call instead of one per assignment
+      let allGradeValues: GradeValue[] = [];
+      try {
+        allGradeValues = await getBulkGradeValues(this.ou, this.versions.le, {
+          pageSize: 200 // Request larger page size for efficiency
+        });
+        console.log(`📊 Fetched ${allGradeValues.length} grade values in bulk for all assignments`);
+      } catch (error) {
+        console.warn('Could not fetch bulk grade values, falling back to per-assignment fetching:', error);
+      }
+      
+      // Create a map of gradeObjectId -> grade values for quick lookup
+      const gradeValuesByObjectId = new Map<number | string, GradeValue[]>();
+      for (const gv of allGradeValues) {
+        const gradeObjectId = gv.GradeObjectId;
+        if (gradeObjectId !== null && gradeObjectId !== undefined) {
+          const id = typeof gradeObjectId === 'string' ? Number(gradeObjectId) : gradeObjectId;
+          if (Number.isFinite(id)) {
+            if (!gradeValuesByObjectId.has(id)) {
+              gradeValuesByObjectId.set(id, []);
+            }
+            gradeValuesByObjectId.get(id)!.push(gv);
+          }
+        }
+      }
 
       for (const assignment of this.assignments) {
         const isAssignment = getItemType(assignment) === 'assignment';
@@ -741,7 +846,7 @@ class UgaAssignment extends LitElement {
           gradebook.find(g => g.Name === assignment.Name) ||
           gradebook.find(g => (g.Name || '').trim().toLowerCase() === (assignment.Name || '').trim().toLowerCase());
         
-        // Get student count and calculate class average from gradebook if grade object exists
+        // Get student count and calculate class average from bulk grade values if grade object exists
         let studentCount = 0;
         let classAverage: number | null = null;
         if (gradeObject) {
@@ -750,7 +855,16 @@ class UgaAssignment extends LitElement {
                                           (gradeObject as any).gradeObjectId || 
                                           (gradeObject as any).Id ||
                                           (gradeObject as any).id;
-            const gradeValues = gradeObjectIdForExport ? await getGradeValues(this.ou, this.versions.le, gradeObjectIdForExport) : [];
+            
+            // Get grade values from bulk data if available, otherwise fetch individually
+            let gradeValues: GradeValue[] = [];
+            if (gradeObjectIdForExport && gradeValuesByObjectId.has(gradeObjectIdForExport)) {
+              gradeValues = gradeValuesByObjectId.get(gradeObjectIdForExport)!;
+            } else if (gradeObjectIdForExport && allGradeValues.length === 0) {
+              // Fallback to individual fetch if bulk fetch failed
+              gradeValues = await getGradeValues(this.ou, this.versions.le, gradeObjectIdForExport);
+            }
+            
             studentCount = gradeValues.length;
             
             // Calculate class average percentage
@@ -813,7 +927,9 @@ class UgaAssignment extends LitElement {
       ].join('\n');
 
       // Create download link
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      // Add UTF-8 BOM for Excel compatibility (prevents encoding issues like "‚Äôs" instead of "'s")
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);

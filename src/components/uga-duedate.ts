@@ -1,6 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics } from '../lib/api/d2l-client.js';
+import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import { getItemType, getTypesArray, shouldIncludeItem, formatItemType, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
 import type { ApiVersions, MyItemsDue, Enrollment, DiscussionTopicWithForum } from '../types/d2l.js';
@@ -31,9 +31,11 @@ class UgaDueDate extends LitElement {
 
   private student: boolean | null = null;
   private loaded = false;
+  private abortController: AbortController | null = null;
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.abortController = new AbortController();
     this.ou = getCourse();
     
     if (!this.ou) {
@@ -47,11 +49,29 @@ class UgaDueDate extends LitElement {
     
     getVersions().then((versions) => {
       this.addVersions(versions);
+      
+      // Check API versions for deprecation warnings
+      if (this.versions.le) {
+        logApiVersionWarning(this.versions.le, 'getMyItemsDue');
+        logApiVersionWarning(this.versions.le, 'getAssignments');
+        logApiVersionWarning(this.versions.le, 'getForums');
+      }
+      if (this.versions.lp) {
+        logApiVersionWarning(this.versions.lp, 'getEnrollment');
+      }
 
       // Try to get enrollment to determine student/instructor role, but don't fail if unavailable
-      getEnrollment(this.ou!, this.versions.lp)
+      getEnrollment(this.ou!, this.versions.lp, {
+        fallbackToFirst: true,
+        throwOnNotFound: false
+      })
         .then((enrollment) => {
-          this.checkStudent(enrollment);
+          if (enrollment) {
+            this.checkStudent(enrollment);
+          } else {
+            console.warn('Unable to determine enrollment, defaulting to instructor view');
+            this.student = false; // Default to instructor view
+          }
         })
         .catch((error) => {
           console.warn('Unable to determine enrollment, defaulting to instructor view:', error.message);
@@ -131,10 +151,21 @@ class UgaDueDate extends LitElement {
           });
         });
     }).catch((error) => {
+      // Don't show error if request was aborted (component unmounted)
+      if (error.message === 'Request aborted' || this.abortController?.signal.aborted) {
+        return;
+      }
       this.errorMessage = `Unable to load API versions: ${error.message}`;
       this.loaded = true;
       this.requestUpdate();
     });
+  }
+  
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    // Cancel all in-flight requests
+    this.abortController?.abort();
+    this.abortController = null;
   }
 
   /******

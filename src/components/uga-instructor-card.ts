@@ -5,7 +5,7 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import axios from 'axios';
-import { getVersions, getClasslist } from '../lib/api/d2l-client.js';
+import { getVersions, getClasslist, getClasslistPaged, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import type { ApiVersions, ClasslistUser } from '../types/d2l.js';
 
@@ -21,6 +21,8 @@ class UgaInstructorCard extends LitElement {
   @state() private _instructor: Instructor | null = null;
   @state() private _loading: boolean = false;
   @state() private _error: string = '';
+  @state() private _instructors: Array<{ userId: number; name: string }> = [];
+  private abortController: AbortController | null = null;
 
   createRenderRoot() {
     // Light DOM so UGA Design System CSS applies
@@ -29,7 +31,15 @@ class UgaInstructorCard extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.abortController = new AbortController();
     this._bootstrap();
+  }
+  
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    // Cancel all in-flight requests
+    this.abortController?.abort();
+    this.abortController = null;
   }
 
   render() {
@@ -91,8 +101,12 @@ class UgaInstructorCard extends LitElement {
 
       // 🔁 NEW: use LE classlist
       const users = await this._fetchClasslist(this.ou);
-      const instructor = this._pickInstructorFromClasslist(users);
-      if (!instructor) throw new Error("No instructor found.");
+      const instructors = this._pickInstructorsFromClasslist(users);
+      if (instructors.length === 0) throw new Error("No instructor found.");
+
+      // Use first instructor (can be extended to show multiple)
+      const instructor = instructors[0];
+      this._instructors = instructors; // Store all for potential future use
 
       const imageSrc = await this._resolveImageSrc(instructor.userId);
 
@@ -104,10 +118,16 @@ class UgaInstructorCard extends LitElement {
       console.log("✅ Instructor loaded:", this._instructor);
 
     } catch (err: any) {
+      // Don't show error if request was aborted (component unmounted)
+      if (err.message === 'Request aborted' || this.abortController?.signal.aborted) {
+        return;
+      }
       console.error("InstructorCard error:", err);
       this._error = err.message || "Failed to load instructor.";
     } finally {
-      this._loading = false;
+      if (!this.abortController?.signal.aborted) {
+        this._loading = false;
+      }
     }
   }
 
@@ -117,6 +137,14 @@ class UgaInstructorCard extends LitElement {
   async _getVersions(): Promise<void> {
     const versions = await getVersions();
     this.versions = versions;
+    
+    // Check API versions for deprecation warnings
+    if (versions.le) {
+      logApiVersionWarning(versions.le, 'uga-instructor-card');
+    }
+    if (versions.lp) {
+      logApiVersionWarning(versions.lp, 'uga-instructor-card');
+    }
   }
 
   // --------------------------------------------------
@@ -126,35 +154,54 @@ class UgaInstructorCard extends LitElement {
     if (!this.versions.le) {
       throw new Error("API versions not loaded");
     }
-    return await getClasslist(orgUnitId, this.versions.le);
+    
+    // Check for deprecated API version
+    logApiVersionWarning(this.versions.le, 'getClasslist');
+    
+    // Try paged endpoint first (better for large classes)
+    try {
+      return await getClasslistPaged(orgUnitId, this.versions.le, {
+        pageSize: 200 // Request larger page size for efficiency
+      });
+    } catch (error: any) {
+      // Fallback to non-paged endpoint if paged doesn't exist
+      if (error.response?.status === 404) {
+        console.warn('Paged classlist endpoint not available, falling back to non-paged');
+        return await getClasslist(orgUnitId, this.versions.le);
+      }
+      throw error;
+    }
   }
 
   // --------------------------------------------------
   // Pick Banner Instructor (preferred) or Instructor
+  // Supports multiple instructors
   // --------------------------------------------------
-  _pickInstructorFromClasslist(items: ClasslistUser[] = []): { userId: number; name: string } | null {
+  _pickInstructorsFromClasslist(items: ClasslistUser[] = []): Array<{ userId: number; name: string }> {
     const norm = (s: string | undefined): string => String(s ?? "").toLowerCase();
 
-    let pick = items.find(
+    // Find all Banner Instructors first
+    let picks = items.filter(
       (u: ClasslistUser) => norm(u.ClasslistRoleDisplayName).includes("banner instructor")
     );
 
-    if (!pick) {
-      pick = items.find(
+    // If no Banner Instructors, find regular Instructors
+    if (picks.length === 0) {
+      picks = items.filter(
         (u: ClasslistUser) => norm(u.ClasslistRoleDisplayName).includes("instructor")
       );
     }
 
-    if (!pick) return null;
-
-    return {
+    return picks.map(pick => ({
       userId: Number(pick.Identifier || pick.UserId || 0),
       name: pick.DisplayName || `${pick.FirstName || ''} ${pick.LastName || ''}`.trim() || 'Unknown',
-    };
+    }));
   }
 
   // --------------------------------------------------
   // Fetch instructor profile image (may still fallback)
+  // Note: Profile image endpoint doesn't have retry wrapper,
+  // but failures are handled gracefully with fallback
   // --------------------------------------------------
   async _resolveImageSrc(userId: number): Promise<string> {
     if (!userId || !this.versions.lp) return "";
