@@ -229,7 +229,12 @@ export async function getXsrfToken(): Promise<string> {
  */
 export async function getGradebook(ou: string, leVersion: string): Promise<GradeObject[]> {
   const gradebook = await axios.get(`/d2l/api/le/${leVersion}/${ou}/grades/`);
-  return gradebook.data;
+  const data = gradebook.data;
+  // Some Brightspace tenants return arrays; others wrap in Items.
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.Items)) return data.Items;
+  if (data && Array.isArray(data.Objects)) return data.Objects;
+  return [];
 }
 
 /**
@@ -237,11 +242,67 @@ export async function getGradebook(ou: string, leVersion: string): Promise<Grade
  * @param ou - Organization unit (course) ID
  * @param leVersion - Learning Environment API version
  * @param gradeObjectId - Grade object ID
- * @returns Array of grade values
+ * @returns Array of grade values with UserId attached
  */
 export async function getGradeValues(ou: string, leVersion: string, gradeObjectId: number): Promise<GradeValue[]> {
   const grades = await axios.get(`/d2l/api/le/${leVersion}/${ou}/grades/${gradeObjectId}/values/`);
-  return grades.data;
+  const data = grades.data;
+  
+  // The API returns an ObjectListPage containing UserGradeValue objects
+  // Each UserGradeValue has: { User: {...}, GradeValue: {...} | null }
+  let userGradeValues: any[] = [];
+  
+  // Handle different response structures
+  if (Array.isArray(data)) {
+    userGradeValues = data;
+  } else if (data && Array.isArray(data.Items)) {
+    userGradeValues = data.Items;
+  } else if (data && Array.isArray(data.Objects)) {
+    userGradeValues = data.Objects;
+  }
+  
+  // Transform UserGradeValue[] to GradeValue[] by extracting GradeValue and adding UserId
+  const gradeValues: GradeValue[] = [];
+  
+  for (const userGradeValue of userGradeValues) {
+    // Extract User and GradeValue from UserGradeValue
+    const user = userGradeValue.User;
+    const gradeValue = userGradeValue.GradeValue;
+    
+    // Skip if no grade value (ungraded)
+    if (!gradeValue) continue;
+    
+    // Extract UserId from User object
+    // User object can have Identifier (string D2LID) or UserId (number)
+    let userId: number | string | null = null;
+    if (user) {
+      if (user.Identifier !== undefined && user.Identifier !== null) {
+        // Identifier is typically a string D2LID
+        userId = user.Identifier;
+      } else if (user.UserId !== undefined && user.UserId !== null) {
+        userId = user.UserId;
+      } else if (user.Id !== undefined && user.Id !== null) {
+        userId = user.Id;
+      }
+    }
+    
+    // If we still don't have a userId, try to get it from the gradeValue itself (for bulk grade values)
+    if (userId === null && gradeValue.UserId !== undefined && gradeValue.UserId !== null) {
+      userId = gradeValue.UserId;
+    }
+    
+    // Create GradeValue with UserId attached
+    const gv: GradeValue = {
+      ...gradeValue,
+      UserId: userId !== null ? userId : gradeValue.UserId,
+      OrgUnitId: gradeValue.OrgUnitId || ou,
+      GradeObjectId: gradeValue.GradeObjectId || gradeValue.GradeObjectIdentifier || gradeObjectId
+    };
+    
+    gradeValues.push(gv);
+  }
+  
+  return gradeValues;
 }
 
 /**
@@ -281,8 +342,89 @@ export async function getAssignmentSubmissions(
   leVersion: string,
   assignmentId: number
 ): Promise<AssignmentSubmission[]> {
-  const submissions = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${assignmentId}/submissions/`);
-  return submissions.data;
+  const response = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${assignmentId}/submissions/`);
+  const entityDropboxes = Array.isArray(response.data) ? response.data : (response.data.Items || response.data.Objects || []);
+  
+  // Transform EntityDropbox[] to AssignmentSubmission[]
+  // Each EntityDropbox contains Entity (user info), Submissions[], and Feedback
+  const flatSubmissions: AssignmentSubmission[] = [];
+  
+  // Get classlist to look up usernames by UserId
+  let classlist: ClasslistUser[] = [];
+  try {
+    classlist = await getClasslist(ou, leVersion);
+  } catch (error) {
+    console.warn('Could not fetch classlist for username lookup:', error);
+  }
+  
+  // Create a map of UserId -> Username from classlist
+  const userIdToUsername = new Map<number, string>();
+  for (const user of classlist) {
+    if (user.UserId !== undefined && user.Username) {
+      userIdToUsername.set(user.UserId, user.Username);
+    } else if (user.Identifier !== undefined && user.Username) {
+      const idNum = typeof user.Identifier === 'string' ? Number(user.Identifier) : user.Identifier;
+      if (Number.isFinite(idNum)) {
+        userIdToUsername.set(idNum, user.Username);
+      }
+    }
+  }
+  
+  for (const entityDropbox of entityDropboxes) {
+    const entity = entityDropbox.Entity;
+    const entityId = entity?.EntityId;
+    const entityDisplayName = entity?.DisplayName || '';
+    
+    // Skip if not a User entity or no entity ID
+    if (!entity || entity.EntityType !== 'User' || !entityId) {
+      continue;
+    }
+    
+    // Convert entityId to number if it's a string
+    let userId: number | null = null;
+    if (typeof entityId === 'string') {
+      const parsed = Number(entityId);
+      if (Number.isFinite(parsed)) userId = parsed;
+    } else if (typeof entityId === 'number' && Number.isFinite(entityId)) {
+      userId = entityId;
+    }
+    
+    if (userId === null) continue;
+    
+    // Look up username from classlist
+    const username = userIdToUsername.get(userId) || '';
+    
+    // Get submissions for this entity
+    const submissions = entityDropbox.Submissions || [];
+    
+    for (const submission of submissions) {
+      const submittedBy = submission.SubmittedBy || {};
+      const submissionId = submission.Id;
+      const submissionDate = submission.SubmissionDate || '';
+      const files = submission.Files || [];
+      
+      // SubmittedBy.Id might be a username string, but we prefer classlist lookup
+      const submissionUsername = username || (typeof submittedBy.Id === 'string' ? submittedBy.Id : '');
+      
+      flatSubmissions.push({
+        SubmissionId: submissionId,
+        SubmissionNumber: submission.SubmissionNumber || 0,
+        UserId: userId, // Use EntityId from Entity (converted to number)
+        UserName: submissionUsername,
+        DisplayName: submittedBy.DisplayName || entityDisplayName,
+        SubmittedDate: submissionDate,
+        IsRetracted: submission.IsRetracted || false,
+        Files: files.map((f: any) => ({
+          FileId: f.FileId,
+          FileName: f.FileName,
+          FileSize: f.Size || f.FileSize || 0
+        })),
+        TextSubmission: submission.Comment?.Text || submission.TextSubmission
+      });
+    }
+  }
+  
+  return flatSubmissions;
 }
 
 /**

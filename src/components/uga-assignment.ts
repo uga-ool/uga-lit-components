@@ -1,10 +1,9 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, getGradebook, getGradeValues } from '../lib/api/d2l-client.js';
+import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, getGradebook, getGradeValues, getClasslist, getAssignmentSubmissions } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import { getItemType, getTypesArray, shouldIncludeItem, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
-import { exportGradesToGradebook, type GradeExport } from '../lib/api/gradebook-utils.js';
-import type { ApiVersions, MyItemsDue, Enrollment, DiscussionTopicWithForum } from '../types/d2l.js';
+import type { ApiVersions, MyItemsDue, Enrollment, DiscussionTopicWithForum, ClasslistUser, AssignmentSubmission, GradeValue } from '../types/d2l.js';
 
 interface AssignmentData {
   Name: string;
@@ -238,8 +237,37 @@ class UgaAssignment extends LitElement {
     }
   }
 
+  private csvEscape(value: unknown): string {
+    if (value === null || value === undefined) return '';
+    const s = String(value);
+    // Quote if needed and escape quotes by doubling them
+    if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+    return s;
+  }
+
+  private normalizeRole(role?: string): string {
+    return (role || '').toLowerCase().trim();
+  }
+
+  private isLikelyStudent(user: ClasslistUser): boolean {
+    const role = this.normalizeRole(user.ClasslistRoleDisplayName);
+    // Exclude common non-learner roles
+    if (role.includes('instructor') || role.includes('teacher') || role.includes('admin') || role.includes('designer') || role.includes('ta')) {
+      return false;
+    }
+    // Include common learner roles
+    if (role.includes('student') || role.includes('learner')) {
+      return true;
+    }
+    // Fallback: if we don't recognize the role, keep them (better to include than omit)
+    return true;
+  }
+
   /**
-   * Export existing grades from gradebook for an assignment
+   * Export a per-assignment CSV that lists all students and their gradebook value.
+   *
+   * Note: A submission does NOT automatically create a gradebook value. If a student submitted
+   * but hasn't been graded, they will appear with a blank/ungraded grade.
    */
   async exportGrades(assignment: AssignmentData): Promise<void> {
     if (!assignment.Id || !this.ou || !this.versions.le) {
@@ -255,51 +283,398 @@ class UgaAssignment extends LitElement {
     try {
       // Get gradebook to find the grade object for this assignment
       const gradebook = await getGradebook(this.ou, this.versions.le);
-      const gradeObject = gradebook.find(g => g.Name === assignment.Name);
+      console.log(`📚 Gradebook has ${gradebook.length} grade objects`);
+      console.log(`🔍 Looking for grade object matching: "${assignment.Name}"`);
+      
+      const gradeObject =
+        gradebook.find(g => g.Name === assignment.Name) ||
+        gradebook.find(g => (g.Name || '').trim().toLowerCase() === (assignment.Name || '').trim().toLowerCase());
 
       if (!gradeObject) {
+        console.warn(`❌ Grade object not found. Available grade objects:`, gradebook.map(g => g.Name));
         this.exportResults = {
           success: 0,
           failed: 0,
-          errors: [`Grade object "${assignment.Name}" not found in gradebook. Please create it first.`]
+          errors: [`Grade object "${assignment.Name}" not found in gradebook. Available: ${gradebook.map(g => g.Name).join(', ')}`]
         };
-        this.exportInProgress = false;
-        this.requestUpdate();
         return;
       }
 
-      // Get existing grades from gradebook
-      const existingGrades = await getGradeValues(this.ou, this.versions.le, gradeObject.GradeObjectId);
+      // Handle different property name formats (GradeObjectId vs gradeObjectId vs Id)
+      const gradeObjectId = (gradeObject as any).GradeObjectId || 
+                           (gradeObject as any).gradeObjectId || 
+                           (gradeObject as any).Id ||
+                           (gradeObject as any).id;
 
-      if (existingGrades.length === 0) {
+      if (!gradeObjectId) {
+        console.error(`❌ Grade object found but has no GradeObjectId:`, gradeObject);
+        console.error(`Available properties:`, Object.keys(gradeObject));
         this.exportResults = {
           success: 0,
           failed: 0,
-          errors: [`No grades found for "${assignment.Name}" in gradebook.`]
+          errors: [`Grade object "${assignment.Name}" found but has no GradeObjectId. Available properties: ${Object.keys(gradeObject).join(', ')}`]
         };
-        this.exportInProgress = false;
-        this.requestUpdate();
         return;
       }
 
-      // Convert to GradeExport format (grades are already in gradebook, so this is just for display/verification)
-      const grades: GradeExport[] = existingGrades.map(grade => ({
-        userId: grade.UserId,
-        pointsEarned: grade.PointsNumerator || 0,
-        pointsPossible: grade.PointsDenominator || gradeObject.MaxPoints || 100,
-        percentage: grade.PointsDenominator ? (grade.PointsNumerator / grade.PointsDenominator) * 100 : 0,
-        comments: grade.Comments?.Text || ''
-      }));
+      console.log(`✅ Found grade object: "${gradeObject.Name}" (ID: ${gradeObjectId})`);
 
-      // Export grades (this will update them, but since they're already there, it's essentially a sync operation)
-      const results = await exportGradesToGradebook(
-        this.ou,
-        this.versions.le,
-        gradeObject.GradeObjectId,
-        grades
-      );
+      // Fetch classlist (source of truth for "all students")
+      const classlist = await getClasslist(this.ou, this.versions.le);
+      const students = classlist.filter(u => this.isLikelyStudent(u));
 
-      this.exportResults = results;
+      // Fetch grade values (may be empty if nothing has been graded yet)
+      let gradeValues: GradeValue[] = [];
+      try {
+        gradeValues = await getGradeValues(this.ou, this.versions.le, gradeObjectId);
+        console.log(`📊 Found ${gradeValues.length} grade values for "${assignment.Name}"`);
+        if (gradeValues.length > 0) {
+          console.log('Sample grade value structure:', gradeValues[0]);
+          console.log('All grade value UserIds:', gradeValues.map(gv => ({
+            userId: gv.UserId,
+            userIdType: typeof gv.UserId,
+            pointsNumerator: gv.PointsNumerator,
+            pointsDenominator: gv.PointsDenominator
+          })));
+        }
+      } catch (e: any) {
+        console.warn('Unable to fetch grade values:', e?.message || e);
+      }
+      const gradeByUserId = new Map<number, GradeValue>();
+      const gradeByUsername = new Map<string, GradeValue>();
+      for (const gv of gradeValues) {
+        // Handle UserId as either number or string (D2L API can return both)
+        let userId: number | null = null;
+        if (gv.UserId !== undefined && gv.UserId !== null) {
+          if (typeof gv.UserId === 'string') {
+            const parsed = Number(gv.UserId);
+            if (Number.isFinite(parsed)) {
+              userId = parsed;
+            }
+          } else if (typeof gv.UserId === 'number' && Number.isFinite(gv.UserId)) {
+            userId = gv.UserId;
+          }
+        }
+        
+        if (userId !== null) {
+          gradeByUserId.set(userId, gv);
+        } else {
+          console.warn(`⚠️ Grade value has invalid UserId:`, gv);
+        }
+      }
+
+      // Fetch submissions (to show that a student submitted even if ungraded)
+      let submissions: AssignmentSubmission[] = [];
+      try {
+        submissions = await getAssignmentSubmissions(this.ou, this.versions.le, assignment.Id);
+        console.log(`📤 Found ${submissions.length} submissions for assignment "${assignment.Name}" (ID: ${assignment.Id})`);
+        if (submissions.length > 0) {
+          console.log('All submissions:', submissions.map(s => ({
+            userId: s.UserId,
+            username: s.UserName,
+            displayName: s.DisplayName,
+            submittedDate: s.SubmittedDate,
+            submissionNumber: s.SubmissionNumber
+          })));
+        }
+      } catch (e: any) {
+        console.warn('Unable to fetch assignment submissions:', e?.message || e);
+      }
+      const submissionByUserId = new Map<number, AssignmentSubmission>();
+      const submissionByUsername = new Map<string, AssignmentSubmission>();
+      for (const s of submissions) {
+        // Handle UserId as either number or string (D2L API can return both)
+        let userId: number | null = null;
+        if (s.UserId !== undefined && s.UserId !== null) {
+          if (typeof s.UserId === 'string') {
+            const parsed = Number(s.UserId);
+            if (Number.isFinite(parsed)) {
+              userId = parsed;
+            }
+          } else if (typeof s.UserId === 'number' && Number.isFinite(s.UserId)) {
+            userId = s.UserId;
+          }
+        }
+        
+        if (userId !== null) {
+          // Keep the latest submission by submission number
+          const existing = submissionByUserId.get(userId);
+          if (!existing || s.SubmissionNumber > existing.SubmissionNumber) {
+            submissionByUserId.set(userId, s);
+          }
+        } else {
+          console.warn(`⚠️ Submission has invalid UserId:`, s);
+        }
+        // Also index by username for fallback matching
+        if (s.UserName) {
+          submissionByUsername.set(s.UserName.toLowerCase(), s);
+        }
+      }
+
+      // Debug: Log user ID matching issues
+      console.log(`👥 Processing ${students.length} students from classlist`);
+      console.log(`📋 Classlist UserIds:`, students.map(u => ({ name: u.DisplayName, username: u.Username, userId: u.UserId, identifier: u.Identifier })));
+      console.log(`📤 Submission UserIds:`, submissions.map(s => ({ username: s.UserName, userId: s.UserId, displayName: s.DisplayName })));
+      console.log(`📊 Grade UserIds:`, gradeValues.map(g => ({ userId: g.UserId, points: `${g.PointsNumerator}/${g.PointsDenominator}` })));
+      
+      // Check for UserId mismatches
+      const classlistUserIds = new Set(students.map(u => u.UserId).filter(id => id !== undefined && id !== null));
+      const submissionUserIds = new Set(submissions.map(s => s.UserId));
+      const gradeUserIds = new Set(gradeValues.map(g => g.UserId));
+      
+      const submissionsNotInClasslist = Array.from(submissionUserIds).filter(id => !classlistUserIds.has(id));
+      const gradesNotInClasslist = Array.from(gradeUserIds).filter(id => !classlistUserIds.has(id));
+      
+      if (submissionsNotInClasslist.length > 0) {
+        console.warn(`⚠️ Found ${submissionsNotInClasslist.length} submission(s) from users not in classlist:`, submissionsNotInClasslist);
+        console.warn(`   These submissions:`, submissions.filter(s => submissionsNotInClasslist.includes(s.UserId)));
+      }
+      if (gradesNotInClasslist.length > 0) {
+        console.warn(`⚠️ Found ${gradesNotInClasslist.length} grade(s) for users not in classlist:`, gradesNotInClasslist);
+        console.warn(`   These grades:`, gradeValues.filter(g => gradesNotInClasslist.includes(g.UserId)));
+      }
+      
+      const studentsWithoutUserId = students.filter(u => !u.UserId && !u.Identifier);
+      if (studentsWithoutUserId.length > 0) {
+        console.warn(`⚠️ Found ${studentsWithoutUserId.length} students without UserId or Identifier:`, studentsWithoutUserId.map(u => u.DisplayName || u.Username));
+      }
+
+      const maxPoints = (gradeObject as any).MaxPoints ?? (gradeObject as any).maxPoints ?? '';
+
+      // Build CSV
+      const headers = [
+        'Display Name',
+        'Username',
+        'User ID',
+        'Role',
+        'Submitted',
+        'Submitted Date',
+        'Points Earned',
+        'Points Possible',
+        'Comments'
+      ];
+
+      const rows = students.map((u) => {
+        // Try UserId first, fallback to Identifier if UserId is missing
+        let userId: number | null = null;
+        if (u.UserId !== undefined && u.UserId !== null) {
+          userId = Number(u.UserId);
+          if (!Number.isFinite(userId)) userId = null;
+        } else if (u.Identifier !== undefined && u.Identifier !== null) {
+          const idNum = Number(u.Identifier);
+          if (Number.isFinite(idNum)) {
+            userId = idNum;
+          }
+        }
+
+        // Try to find grade and submission by UserId first
+        let gv = userId !== null ? gradeByUserId.get(userId) : undefined;
+        let sub = userId !== null ? submissionByUserId.get(userId) : undefined;
+
+        // Aggressive matching: try multiple strategies to find submission and grade
+        if (u.Username) {
+          const usernameLower = u.Username.toLowerCase();
+          
+          // Strategy 1: Try to find submission by username in the username map
+          if (!sub && submissionByUsername.has(usernameLower)) {
+            sub = submissionByUsername.get(usernameLower);
+            // If we found submission by username, update userId from submission and try to get grade
+            if (sub) {
+              // Handle submission UserId as either number or string
+              let submissionUserId: number | null = null;
+              if (typeof sub.UserId === 'string') {
+                const parsed = Number(sub.UserId);
+                if (Number.isFinite(parsed)) submissionUserId = parsed;
+              } else if (typeof sub.UserId === 'number' && Number.isFinite(sub.UserId)) {
+                submissionUserId = sub.UserId;
+              }
+              
+              // Use submission's UserId if it's different from classlist UserId
+              if (submissionUserId && (!userId || submissionUserId !== userId)) {
+                userId = submissionUserId;
+                // Now try to get grade with this UserId from submission
+                gv = gradeByUserId.get(userId);
+              } else if (submissionUserId && !gv) {
+                // If userIds match but we still don't have a grade, try again with the submission's userId
+                gv = gradeByUserId.get(submissionUserId);
+              }
+            }
+          }
+          
+          // Strategy 2: Search all submissions directly by username (more aggressive)
+          if (!sub) {
+            const matchingSubmissions = submissions.filter(s => {
+              if (!s.UserName) return false;
+              const subUsername = s.UserName.toLowerCase();
+              return subUsername === usernameLower || 
+                     subUsername.includes(usernameLower) || 
+                     usernameLower.includes(subUsername);
+            });
+            
+            if (matchingSubmissions.length > 0) {
+              // Use the most recent submission
+              sub = matchingSubmissions.reduce((latest, current) => {
+                return (current.SubmissionNumber || 0) > (latest.SubmissionNumber || 0) ? current : latest;
+              });
+              
+              // If we found a submission, try to get the grade using its UserId
+              if (sub && !gv) {
+                let submissionUserId: number | null = null;
+                if (typeof sub.UserId === 'string') {
+                  const parsed = Number(sub.UserId);
+                  if (Number.isFinite(parsed)) submissionUserId = parsed;
+                } else if (typeof sub.UserId === 'number' && Number.isFinite(sub.UserId)) {
+                  submissionUserId = sub.UserId;
+                }
+                if (submissionUserId !== null) {
+                  gv = gradeByUserId.get(submissionUserId);
+                  // Also update userId if we found a valid submission UserId
+                  if (!userId || submissionUserId !== userId) {
+                    userId = submissionUserId;
+                  }
+                }
+              }
+            }
+          }
+          
+          // Strategy 3: If we have a grade but no submission, search all submissions more aggressively
+          // This handles cases where the grade exists but submission wasn't matched
+          if (gv && !sub) {
+            // Try matching by username in all submissions
+            const matchingSubmissions = submissions.filter(s => {
+              if (!s.UserName) return false;
+              return s.UserName.toLowerCase() === usernameLower;
+            });
+            
+            if (matchingSubmissions.length > 0) {
+              // Use the most recent submission
+              sub = matchingSubmissions.reduce((latest, current) => {
+                return (current.SubmissionNumber || 0) > (latest.SubmissionNumber || 0) ? current : latest;
+              });
+            }
+            
+            // Also try matching by display name if username didn't work
+            if (!sub && u.DisplayName) {
+              const displayNameLower = u.DisplayName.toLowerCase();
+              const matchingByDisplayName = submissions.filter(s => {
+                if (!s.DisplayName) return false;
+                return s.DisplayName.toLowerCase() === displayNameLower ||
+                       s.DisplayName.toLowerCase().includes(displayNameLower) ||
+                       displayNameLower.includes(s.DisplayName.toLowerCase());
+              });
+              
+              if (matchingByDisplayName.length > 0) {
+                sub = matchingByDisplayName.reduce((latest, current) => {
+                  return (current.SubmissionNumber || 0) > (latest.SubmissionNumber || 0) ? current : latest;
+                });
+              }
+            }
+          }
+          
+          // Strategy 4: Also try to find grade by matching username in submissions (if we have submissions but no grade)
+          if (!gv && sub) {
+            // We already have the submission, so use its UserId to get the grade
+            let submissionUserId: number | null = null;
+            if (typeof sub.UserId === 'string') {
+              const parsed = Number(sub.UserId);
+              if (Number.isFinite(parsed)) submissionUserId = parsed;
+            } else if (typeof sub.UserId === 'number' && Number.isFinite(sub.UserId)) {
+              submissionUserId = sub.UserId;
+            }
+            if (submissionUserId !== null) {
+              gv = gradeByUserId.get(submissionUserId);
+            }
+          }
+        }
+
+        // Debug logging for specific user if needed
+        if (u.Username === 'cs78865' || (u.DisplayName && u.DisplayName.includes('Sparks'))) {
+          console.log(`🔍 Debug for ${u.DisplayName || u.Username}:`, {
+            classlistUserId: u.UserId,
+            classlistIdentifier: u.Identifier,
+            classlistUsername: u.Username,
+            resolvedUserId: userId,
+            hasGrade: !!gv,
+            hasSubmission: !!sub,
+            gradeValue: gv ? `${gv.PointsNumerator}/${gv.PointsDenominator}` : 'none',
+            submissionDate: sub?.SubmittedDate || 'none',
+            submissionUserId: sub?.UserId,
+            submissionUsername: sub?.UserName,
+            allSubmissionsForUser: submissions.filter(s => 
+              s.UserId === userId || 
+              (u.Username && s.UserName && s.UserName.toLowerCase() === u.Username.toLowerCase())
+            ).map(s => ({
+              userId: s.UserId,
+              username: s.UserName,
+              submittedDate: s.SubmittedDate,
+              submissionNumber: s.SubmissionNumber
+            })),
+            allGradesForUser: gradeValues.filter(g => 
+              g.UserId === userId
+            ).map(g => ({
+              userId: g.UserId,
+              points: `${g.PointsNumerator}/${g.PointsDenominator}`
+            }))
+          });
+        }
+
+        // Extract points - handle both number and string types, and null/undefined
+        let pointsEarned: string | number = '';
+        let pointsPossible: string | number = '';
+        
+        if (gv) {
+          // Handle PointsNumerator - can be number, string, or null/undefined
+          if (gv.PointsNumerator !== null && gv.PointsNumerator !== undefined) {
+            const num = typeof gv.PointsNumerator === 'string' ? Number(gv.PointsNumerator) : gv.PointsNumerator;
+            pointsEarned = Number.isFinite(num) ? num : '';
+          }
+          
+          // Handle PointsDenominator - can be number, string, or null/undefined
+          if (gv.PointsDenominator !== null && gv.PointsDenominator !== undefined) {
+            const den = typeof gv.PointsDenominator === 'string' ? Number(gv.PointsDenominator) : gv.PointsDenominator;
+            pointsPossible = Number.isFinite(den) ? den : '';
+          }
+        }
+        
+        // Calculate percent only if we have valid numbers for both
+        let percent: string | number = '';
+        if (typeof pointsEarned === 'number' && typeof pointsPossible === 'number' && pointsPossible > 0) {
+          percent = Math.round((pointsEarned / pointsPossible) * 10000) / 100;
+        }
+
+        // If student has a grade but no submission found, infer they submitted
+        // (you can't have a grade without submitting)
+        const hasSubmission = sub !== undefined || (gv !== undefined && (pointsEarned !== '' || pointsPossible !== ''));
+        const submissionDate = sub?.SubmittedDate || '';
+        
+        return [
+          this.csvEscape(u.DisplayName || ''),
+          this.csvEscape(u.Username || ''),
+          this.csvEscape(userId !== null ? userId : ''),
+          this.csvEscape(u.ClasslistRoleDisplayName || ''),
+          this.csvEscape(hasSubmission ? 'Yes' : 'No'),
+          this.csvEscape(submissionDate),
+          this.csvEscape(pointsEarned),
+          this.csvEscape(pointsPossible),
+          this.csvEscape(gv?.Comments?.Text || '')
+        ].join(',');
+      });
+
+      const csvContent = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+
+      const safeName = assignment.Name.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 80) || 'assignment';
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${safeName}-grades-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      this.exportResults = { success: students.length, failed: 0, errors: [] };
     } catch (error: any) {
       console.error('❌ Error exporting grades:', error);
       const errorMsg = error.message || 'Unknown error occurred during export';
@@ -326,6 +701,19 @@ class UgaAssignment extends LitElement {
     }
 
     try {
+      // Get total number of students from classlist
+      let totalStudents = 0;
+      try {
+        const classlist = await getClasslist(this.ou, this.versions.le);
+        // Count only students (role ID 195 is typically student, but we'll filter by role name)
+        totalStudents = classlist.filter(u => {
+          const roleName = (u.ClasslistRoleDisplayName || '').toLowerCase();
+          return roleName.includes('student') || u.RoleId === 195;
+        }).length;
+      } catch (error) {
+        console.warn('Could not fetch classlist for total student count:', error);
+      }
+
       // Collect all assignment data with grades
       const exportData: Array<{
         assignmentName: string;
@@ -335,6 +723,7 @@ class UgaAssignment extends LitElement {
         gradeObjectName?: string;
         maxPoints?: number;
         studentCount?: number;
+        classAverage?: number;
       }> = [];
 
       // Get gradebook to match assignments with grade objects
@@ -348,14 +737,46 @@ class UgaAssignment extends LitElement {
         const assignmentType = this.formatAssignmentType(assignment);
 
         // Try to find matching grade object
-        const gradeObject = gradebook.find(g => g.Name === assignment.Name);
+        const gradeObject =
+          gradebook.find(g => g.Name === assignment.Name) ||
+          gradebook.find(g => (g.Name || '').trim().toLowerCase() === (assignment.Name || '').trim().toLowerCase());
         
-        // Get student count from gradebook if grade object exists
+        // Get student count and calculate class average from gradebook if grade object exists
         let studentCount = 0;
+        let classAverage: number | null = null;
         if (gradeObject) {
           try {
-            const gradeValues = await getGradeValues(this.ou, this.versions.le, gradeObject.GradeObjectId);
+            const gradeObjectIdForExport = (gradeObject as any).GradeObjectId || 
+                                          (gradeObject as any).gradeObjectId || 
+                                          (gradeObject as any).Id ||
+                                          (gradeObject as any).id;
+            const gradeValues = gradeObjectIdForExport ? await getGradeValues(this.ou, this.versions.le, gradeObjectIdForExport) : [];
             studentCount = gradeValues.length;
+            
+            // Calculate class average percentage
+            if (gradeValues.length > 0) {
+              const validGrades: number[] = [];
+              for (const gv of gradeValues) {
+                // Only include grades with valid numerator and denominator
+                if (gv.PointsNumerator !== null && 
+                    gv.PointsNumerator !== undefined && 
+                    gv.PointsDenominator !== null && 
+                    gv.PointsDenominator !== undefined) {
+                  const numerator = typeof gv.PointsNumerator === 'string' ? Number(gv.PointsNumerator) : gv.PointsNumerator;
+                  const denominator = typeof gv.PointsDenominator === 'string' ? Number(gv.PointsDenominator) : gv.PointsDenominator;
+                  
+                  if (Number.isFinite(numerator) && Number.isFinite(denominator) && denominator > 0) {
+                    const percentage = (numerator / denominator) * 100;
+                    validGrades.push(percentage);
+                  }
+                }
+              }
+              
+              if (validGrades.length > 0) {
+                const sum = validGrades.reduce((acc, val) => acc + val, 0);
+                classAverage = Math.round((sum / validGrades.length) * 100) / 100; // Round to 2 decimal places
+              }
+            }
           } catch (error) {
             // Ignore errors getting grade values
           }
@@ -365,23 +786,25 @@ class UgaAssignment extends LitElement {
           assignmentName: assignment.Name,
           dueDate,
           type: assignmentType,
-          gradeObjectId: gradeObject?.GradeObjectId,
+          gradeObjectId: (gradeObject as any)?.GradeObjectId || (gradeObject as any)?.gradeObjectId || (gradeObject as any)?.Id || (gradeObject as any)?.id,
           gradeObjectName: gradeObject?.Name,
           maxPoints: gradeObject?.MaxPoints,
-          studentCount
+          studentCount,
+          classAverage: classAverage !== null ? classAverage : undefined
         });
       }
 
       // Generate CSV
-      const csvHeaders = ['Assignment Name', 'Due Date', 'Type', 'Grade Object ID', 'Grade Object Name', 'Max Points', 'Students Graded'];
+      const csvHeaders = ['Assignment Name', 'Due Date', 'Type', 'Grade Object ID', 'Max Points', 'Students Graded', 'Total Students', 'Class Average (%)'];
       const csvRows = exportData.map(row => [
         `"${row.assignmentName}"`,
         `"${row.dueDate}"`,
         `"${row.type}"`,
         row.gradeObjectId?.toString() || '',
-        `"${row.gradeObjectName || ''}"`,
         row.maxPoints?.toString() || '',
-        row.studentCount?.toString() || '0'
+        row.studentCount?.toString() || '0',
+        totalStudents.toString(),
+        row.classAverage !== undefined ? row.classAverage.toFixed(2) : ''
       ]);
 
       const csvContent = [
