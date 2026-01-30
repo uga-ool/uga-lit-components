@@ -166,11 +166,15 @@
   ]
 }</uga-code>
 
-      <h4>Example: <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer">footer-data.json</a></h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer">footer-demo.json</a></h4>
       <uga-code language="javascript">{
-  "link": "https://online.uga.edu/program-name",
-  "logo": "/shared/PublicFiles/images/program-logo.png"
+  "data": {
+    "link": "https://online.uga.edu",
+    "alt": "University of Georgia Online Learning Logo",
+    "imageSrc": "https://design.online.uga.edu/images/uga-logo.png"
+  }
 }</uga-code>
+      <p>Use <code>filename="footer-demo.json"</code> for local files. The <code>program</code> property loads from shared program templates when set.</p>
 
       <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note-data.json</a></h4>
       <uga-code language="javascript">{
