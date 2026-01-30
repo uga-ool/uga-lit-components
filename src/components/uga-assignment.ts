@@ -732,7 +732,7 @@ class UgaAssignment extends LitElement {
           this.csvEscape(submissionDate),
           this.csvEscape(pointsEarned),
           this.csvEscape(pointsPossible),
-          this.csvEscape(gv?.Comments?.Text || '')
+          this.csvEscape(gv?.Comments?.Content || '')
         ].join(',');
       });
 

@@ -1,0 +1,3 @@
+# uga-components.js is copied here by scripts/copy-uga-components.js
+# from uga-lit-components/dist/js/ when that repo is a sibling directory.
+# Otherwise copy dist/js/uga-components.js from uga-lit-components into this folder.

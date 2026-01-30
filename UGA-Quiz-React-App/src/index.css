@@ -1,0 +1,46 @@
+/* UGA Quiz React App - base styles */
+/* UGA design system is loaded via design.online.uga.edu/css/base.css in index.html */
+
+#root {
+  min-height: 100vh;
+}
+
+.app-header {
+  border-bottom: 3px solid #ba0c2f;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.app-header h1 {
+  color: #ba0c2f;
+  margin: 0;
+}
+
+.quiz-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.quiz-status {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-left: 4px solid #ba0c2f;
+  border-radius: 0 8px 8px 0;
+}
+
+.quiz-status.success {
+  border-left-color: #0a7c42;
+}
+
+.quiz-status.error {
+  border-left-color: #c41230;
+}
+
+.quiz-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background-color: #fff;
+}
