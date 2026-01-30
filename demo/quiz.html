@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Component Demo</title>
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+  <style>
+    .component-demo {
+      margin-bottom: 4rem;
+      padding: 2rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #ffffff;
+    }
+    .demo-description {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background-color: #f5f5f5;
+      border-left: 4px solid #ba0c2f;
+    }
+    .demo-example {
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background-color: #fafafa;
+      border: 1px dashed #ccc;
+    }
+    .demo-code {
+      margin-top: 1rem;
+    }
+    .demo-props {
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: #fff9e6;
+      border-left: 4px solid #ffc107;
+    }
+    .demo-props table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    .demo-props th,
+    .demo-props td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .demo-props th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+    h1 {
+      color: #ba0c2f;
+      border-bottom: 3px solid #ba0c2f;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #ba0c2f;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    pre {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="obj-container">
+    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
+    
+    <header class="util-margin-vert-lg">
+      <h1>Quiz Component</h1>
+    </header>
+
+    <section class="component-demo">
+      <div class="demo-description">
+        <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and completion tracking via gradebook integration.</p>
+        <p><strong>Use Case:</strong> Students can't take summative assessments until they've completed embedded formative quizzes (release conditions).</p>
+      </div>
+
+      <h2>Example: Load from D2L CSV Format</h2>
+      <div class="demo-description">
+        <p><strong>Import questions directly from D2L Brightspace CSV format.</strong> Export questions from D2L, save as CSV UTF-8, and load them into the quiz component. Supports Multiple Choice, True/False, Short Answer, and Matching question types.</p>
+        <p><strong>File Location:</strong> Upload the CSV file to your course content area in the same directory as your HTML page, or use the full path.</p>
+      </div>
+      <div class="demo-example">
+        <uga-quiz 
+          quiz-id="demo-quiz-csv"
+          quiz-title="Quiz from D2L CSV"
+          passing-score="70"
+          allow-retry="true"
+          max-attempts="3"
+          show-feedback="true"
+          type="csv"
+          filename="quiz-sample.csv"
+          grade-object-name="Formative Quiz 1">
+        </uga-quiz>
+      </div>
+
+      <div class="demo-code">
+        <h4>Basic Code:</h4>
+        <pre><code class="language-html">&lt;uga-quiz 
+  quiz-id="demo-quiz-csv"
+  quiz-title="Quiz from D2L CSV"
+  passing-score="70"
+  type="csv"
+  filename="quiz-sample.csv"&gt;
+&lt;/uga-quiz&gt;</code></pre>
+        
+        <h4 style="margin-top: 1.5rem;">With Gradebook Integration:</h4>
+        <pre><code class="language-html">&lt;uga-quiz 
+  quiz-id="demo-quiz-csv"
+  quiz-title="Quiz from D2L CSV"
+  passing-score="70"
+  type="csv"
+  filename="quiz-sample.csv"
+  grade-object-name="Formative Quiz 1"&gt;
+&lt;/uga-quiz&gt;</code></pre>
+        <p><strong>Note:</strong> The <code>grade-object-name</code> will be automatically created in the gradebook if it doesn't exist (requires instructor permissions). Results will be automatically saved to the gradebook when the quiz is submitted.</p>
+        
+        <h4 style="margin-top: 1.5rem;">With External API (Recommended for Students):</h4>
+        <pre><code class="language-html">&lt;uga-quiz 
+  quiz-id="demo-quiz-csv"
+  quiz-title="Quiz from D2L CSV"
+  passing-score="70"
+  type="csv"
+  filename="quiz-sample.csv"
+  grade-object-name="Formative Quiz 1"
+  api-endpoint="https://your-api.com/api/quiz/submit"&gt;
+&lt;/uga-quiz&gt;</code></pre>
+        <p><strong>Note:</strong> When <code>api-endpoint</code> is provided, quiz grades are submitted via an external API service instead of directly to D2L. This allows students to submit grades even without direct D2L write permissions. The API service can be set up in a separate project.</p>
+      </div>
+
+      <div class="demo-props">
+        <h4>D2L CSV Format Support</h4>
+        <p>The component supports importing questions from D2L Brightspace CSV format:</p>
+        <ul>
+          <li><strong>Multiple Choice (MC):</strong> Fully supported with option weights and feedback</li>
+          <li><strong>True/False (TF):</strong> Fully supported</li>
+          <li><strong>Short Answer (SA):</strong> Fully supported with multiple acceptable answers</li>
+          <li><strong>Matching (M):</strong> Fully supported</li>
+          <li><strong>Written Response (WR):</strong> Converted to Short Answer format</li>
+          <li><strong>Multi-Select (MS):</strong> Not yet supported (will be added in future)</li>
+          <li><strong>Ordering (O):</strong> Not yet supported (will be added in future)</li>
+        </ul>
+        <p><strong>How to use:</strong></p>
+        <ol>
+          <li>Export questions from D2L Brightspace in CSV format</li>
+          <li>Save the file as CSV UTF-8 encoding</li>
+          <li>Upload the CSV file to your eLC course files</li>
+          <li>Use <code>type="csv"</code> and <code>filename</code> attributes</li>
+        </ol>
+      </div>
+
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td><code>quiz-id</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>Unique identifier for the quiz (used for tracking attempts)</td>
+          </tr>
+          <tr>
+            <td><code>quiz-title</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>Title displayed at the top of the quiz</td>
+          </tr>
+          <tr>
+            <td><code>questions</code></td>
+            <td>string (JSON)</td>
+            <td>''</td>
+            <td>JSON string containing quiz questions (see format below)</td>
+          </tr>
+          <tr>
+            <td><code>type</code></td>
+            <td>'inline' | 'local' | 'csv'</td>
+            <td>'inline'</td>
+            <td>Load questions from inline JSON, JSON file, or D2L CSV file</td>
+          </tr>
+          <tr>
+            <td><code>filename</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>Filename if type='local' (JSON) or type='csv' (D2L CSV format). Use relative path if file is in same directory.</td>
+          </tr>
+          <tr>
+            <td><code>passing-score</code></td>
+            <td>number</td>
+            <td>70</td>
+            <td>Percentage required to pass (0-100)</td>
+          </tr>
+          <tr>
+            <td><code>allow-retry</code></td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Allow students to retake the quiz</td>
+          </tr>
+          <tr>
+            <td><code>max-attempts</code></td>
+            <td>number</td>
+            <td>3</td>
+            <td>Maximum number of retry attempts</td>
+          </tr>
+          <tr>
+            <td><code>show-feedback</code></td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Show immediate feedback after answering</td>
+          </tr>
+          <tr>
+            <td><code>randomize-questions</code></td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Randomize question order</td>
+          </tr>
+          <tr>
+            <td><code>time-limit</code></td>
+            <td>number</td>
+            <td>0</td>
+            <td>Time limit in minutes (0 = no limit)</td>
+          </tr>
+          <tr>
+            <td><code>auto-submit</code></td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Automatically submit when time expires</td>
+          </tr>
+          <tr>
+            <td><code>grade-object-name</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>Name of gradebook item for completion tracking. Will be created automatically if it doesn't exist (requires instructor permissions).</td>
+          </tr>
+          <tr>
+            <td><code>api-endpoint</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>External API endpoint for submitting grades (e.g., "https://your-api.com/api/quiz/submit"). If set, quiz grades will be submitted via this API instead of directly to D2L, allowing students to submit grades even without direct D2L write permissions.</td>
+          </tr>
+          <tr>
+            <td><code>allow-reset</code></td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Allow manual reset of all attempts (for instructors/admins). Shows reset button.</td>
+          </tr>
+          <tr>
+            <td><code>auto-create-grade-object</code></td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Automatically create the gradebook item if it doesn't exist. Requires instructor permissions.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="demo-props">
+        <h4>Resetting Quiz Attempts</h4>
+        <p>To allow a student to retake the quiz after reaching max attempts:</p>
+        <ol>
+          <li><strong>Option 1 - Reset Button:</strong> Add <code>allow-reset="true"</code> to show a reset button (instructor only)</li>
+          <li><strong>Option 2 - Clear Gradebook:</strong> Go to Gradebook → Find the grade item → Clear the student's grade entry</li>
+          <li><strong>Option 3 - Browser Console:</strong> Clear localStorage using browser console (see documentation)</li>
+        </ol>
+        <p><strong>Note:</strong> Both the gradebook entry AND localStorage must be cleared for a complete reset.</p>
+        <p>See <code>QUIZ_RESET_INSTRUCTIONS.md</code> for detailed reset instructions.</p>
+      </div>
+
+      <div class="demo-props">
+        <h4>Question JSON Format</h4>
+        <pre><code class="language-json">{
+  "questions": [
+    {
+      "id": "unique-question-id",
+      "type": "multiple-choice" | "true-false" | "matching" | "short-answer" | "fill-in-blank",
+      "question": "Question text",
+      "points": 10,
+      "options": ["Option 1", "Option 2", ...], // Required for multiple-choice, matching
+      "correctAnswer": 1, // Index for MC, boolean for T/F, string for SA, object for matching
+      "explanation": "Optional feedback text",
+      "caseSensitive": false // For short-answer and fill-in-blank
+    }
+  ]
+}</code></pre>
+      </div>
+
+      <div class="demo-props">
+        <h4>Question Types</h4>
+        <ul>
+          <li><strong>multiple-choice:</strong> <code>options</code> array, <code>correctAnswer</code> is index (0-based)</li>
+          <li><strong>true-false:</strong> <code>correctAnswer</code> is boolean (true/false)</li>
+          <li><strong>short-answer:</strong> <code>correctAnswer</code> is string, optional <code>caseSensitive</code></li>
+          <li><strong>fill-in-blank:</strong> Same as short-answer</li>
+          <li><strong>matching:</strong> <code>options</code> array, <code>correctAnswer</code> is object like <code>{"A": "Option 1", "B": "Option 2"}</code></li>
+        </ul>
+      </div>
+
+      <div class="demo-props">
+        <h4>Features</h4>
+        <ul>
+          <li>✅ Multiple question types (MC, T/F, Matching, Short Answer)</li>
+          <li>✅ Auto-grading with immediate feedback</li>
+          <li>✅ Gradebook integration for completion tracking</li>
+          <li>✅ Retry attempts with attempt limit</li>
+          <li>✅ Timer support with auto-submit</li>
+          <li>✅ Question randomization</li>
+          <li>✅ Progress tracking</li>
+          <li>✅ Detailed results review</li>
+        </ul>
+      </div>
+
+      <div class="demo-props">
+        <h4>Setup Requirements</h4>
+        <ol>
+          <li><strong>Gradebook Item (Auto-Created by Instructors):</strong> 
+            <ul>
+              <li>The gradebook item will be <strong>automatically created</strong> when an <strong>instructor/admin views the page</strong> (if <code>auto-create-grade-object="true"</code>, which is the default)</li>
+              <li>Max points will be set to match your quiz's total points</li>
+              <li>Type will be set to "Numeric"</li>
+              <li><strong>Important:</strong> Instructors should view the quiz page at least once before students take it, so the gradebook item is created</li>
+              <li>Students cannot create gradebook items (they don't have permissions), so auto-creation only works when instructors view the page</li>
+              <li>If auto-create fails or is disabled, you can manually create the gradebook item with the exact name specified in <code>grade-object-name</code></li>
+            </ul>
+          </li>
+          <li><strong>Export Questions:</strong> Export questions from D2L Brightspace in CSV format and save as CSV UTF-8.</li>
+          <li><strong>Upload Files:</strong> Upload the CSV file to your course content area (same directory as your HTML page).</li>
+          <li><strong>Course Context:</strong> Component must be used within an eLC course page (for API access and gradebook integration).</li>
+        </ol>
+      </div>
+      
+      <div class="demo-props">
+        <h4>Gradebook Integration</h4>
+        <p>When <code>grade-object-name</code> is provided, quiz results are automatically saved to the gradebook:</p>
+        <ul>
+          <li>✅ <strong>Auto-creates gradebook item</strong> when an instructor views the page (requires instructor permissions)</li>
+          <li>✅ Points earned and total points are saved</li>
+          <li>✅ <strong>External API Support:</strong> Use <code>api-endpoint</code> attribute to submit grades via an external API service, allowing students to submit grades even without direct D2L write permissions</li>
+          <li>✅ Percentage score is calculated</li>
+          <li>✅ Pass/fail status is recorded</li>
+          <li>✅ Completion timestamp and attempt number are included in comments</li>
+          <li>✅ Visual feedback shows save status (saving, success, or error)</li>
+        </ul>
+        <p><strong>Important Workflow:</strong></p>
+        <ol>
+          <li>Instructor creates the quiz page with <code>grade-object-name</code> set</li>
+          <li>Instructor views the page (this triggers auto-creation of the gradebook item)</li>
+          <li>Students can now take the quiz and their grades will be saved automatically</li>
+        </ol>
+        <p><strong>Note:</strong> If a student tries to take the quiz before the gradebook item exists, they'll see a clear error message asking them to contact their instructor.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Load the components bundle -->
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  
+  <script>
+    // Ensure axios is available (it's globally available in D2L, but add fallback for local testing)
+    if (typeof axios === 'undefined') {
+      window.axios = {
+        get: async (url) => {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw { response: { status: response.status, statusText: response.statusText } };
+          }
+          const data = await response.json();
+          return { data };
+        }
+      };
+    }
+  </script>
+</body>
+</html>

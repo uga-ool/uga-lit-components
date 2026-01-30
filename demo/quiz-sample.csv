@@ -1,0 +1,58 @@
+//Sample Quiz Questions in D2L Brightspace CSV Format
+//This file can be imported directly into uga-quiz component using type="csv"
+
+//MULTIPLE CHOICE QUESTION TYPE
+NewQuestion,MC,,
+ID,QUIZ-001,,
+Title,Sample Multiple Choice Question,,
+QuestionText,What is the capital of Georgia?,,
+Points,10,,
+Difficulty,1,,
+Option,100,Atlanta,,This is the correct answer!
+Option,0,Augusta,,Augusta is not the capital
+Option,0,Savannah,,Savannah is not the capital
+Option,0,Macon,,Macon is not the capital
+Hint,Think about the largest city in Georgia,,
+Feedback,Atlanta has been the capital since 1868.,,
+
+//TRUE / FALSE QUESTION TYPE
+NewQuestion,TF,,
+ID,QUIZ-002,,
+Title,Sample True/False Question,,
+QuestionText,The University of Georgia is located in Athens.,,
+Points,10,,
+Difficulty,1,,
+TRUE,100,Correct! UGA is indeed in Athens.,,
+FALSE,0,Incorrect. UGA is located in Athens, Georgia.,,
+Hint,Think about where UGA's main campus is located.,,
+Feedback,UGA's main campus is in Athens, Georgia.,,
+
+//SHORT ANSWER QUESTION TYPE
+NewQuestion,SA,,
+ID,QUIZ-003,,
+Title,Sample Short Answer Question,,
+QuestionText,What does the acronym 'LMS' stand for?,,
+Points,15,,
+Difficulty,2,,
+InputBox,1,40,,
+Answer,100,Learning Management System,,
+Answer,100,LMS,,
+Hint,Think about systems used for online learning.,,
+Feedback,LMS stands for Learning Management System.,,
+
+//MATCHING QUESTION TYPE
+NewQuestion,M,,
+ID,QUIZ-004,,
+Title,Sample Matching Question,,
+QuestionText,Match the assessment types with their descriptions:,,
+Points,20,,
+Difficulty,2,,
+Scoring,EquallyWeighted,,
+Choice,1,Formative,,
+Choice,2,Summative,,
+Choice,3,Diagnostic,,
+Match,1,Used during learning for feedback,,
+Match,2,Used at the end to evaluate learning,,
+Match,3,Used to measure specific skills,,
+Hint,Think about when each assessment type is used.,,
+Feedback,Formative = during learning, Summative = end evaluation, Diagnostic = skill measurement.,,

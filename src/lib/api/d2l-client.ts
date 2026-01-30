@@ -35,15 +35,20 @@ async function withRetry<T>(
       }
       
       const isRateLimit = error.response?.status === 429;
+      const isServerError = error.response?.status >= 500 && error.response?.status < 600;
       const isLastAttempt = attempt === maxRetries - 1;
       
-      if (isRateLimit && !isLastAttempt) {
-        // Rate limited - wait with exponential backoff
+      // Retry on rate limits or server errors (500, 502, 503, 504)
+      if ((isRateLimit || isServerError) && !isLastAttempt) {
         const delay = baseDelay * Math.pow(2, attempt);
         const retryAfter = error.response?.headers?.['retry-after'];
         const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : delay;
         
-        console.warn(`⚠️ Rate limited (429). Retrying in ${waitTime}ms (attempt ${attempt + 1}/${maxRetries})...`);
+        if (isRateLimit) {
+          console.warn(`⚠️ Rate limited (429). Retrying in ${waitTime}ms (attempt ${attempt + 1}/${maxRetries})...`);
+        } else if (isServerError) {
+          console.warn(`⚠️ Server error (${error.response?.status}). Retrying in ${waitTime}ms (attempt ${attempt + 1}/${maxRetries})...`);
+        }
         
         // Wait with abort support
         await new Promise<void>((resolve, reject) => {
@@ -61,7 +66,7 @@ async function withRetry<T>(
         continue;
       }
       
-      // Not rate limited, or last attempt - throw the error
+      // Not retryable, or last attempt - throw the error
       throw error;
     }
   }
@@ -83,14 +88,53 @@ export async function batchApiCalls<T>(calls: Array<() => Promise<T>>): Promise<
 /**
  * Get eLC API versions
  * Cached for 30 minutes (versions rarely change)
+ * Attempts to use newer API versions (1.82+) when available, falls back to D2L's reported LatestVersion
  * @returns Object mapping product codes to version numbers
  */
 export async function getVersions(): Promise<ApiVersions> {
   return cachedApiCall('versions', async () => {
     const apiVer = await withRetry(() => axios.get('/d2l/api/versions/'));
     const result: ApiVersions = {};
+    
+    // Preferred versions to try (newest first)
+    const preferredVersions: { [key: string]: string[] } = {
+      'le': ['1.91', '1.82'], // Learning Environment - try newest first
+      'lp': ['1.82', '1.75']  // Learning Platform - try newest first
+    };
+    
     for (let i in apiVer.data) {
-      result[apiVer.data[i].ProductCode] = apiVer.data[i].LatestVersion;
+      const productCode = apiVer.data[i].ProductCode;
+      const reportedVersion = apiVer.data[i].LatestVersion;
+      
+      // For LE and LP, try to use a newer version if available
+      if (preferredVersions[productCode]) {
+        let versionToUse = reportedVersion;
+        
+        // Check if any preferred version is supported
+        for (const preferredVersion of preferredVersions[productCode]) {
+          try {
+            const checkResponse = await axios.post('/d2l/api/versions/check', [{
+              ProductCode: productCode,
+              Version: preferredVersion
+            }]);
+            
+            if (checkResponse.data?.Supported === true || 
+                (checkResponse.data?.Versions?.[0]?.Supported === true)) {
+              versionToUse = preferredVersion;
+              console.log(`✅ Using API version ${preferredVersion} for ${productCode} (reported: ${reportedVersion})`);
+              break; // Use the first supported preferred version
+            }
+          } catch (error) {
+            // If version check fails, continue to next preferred version
+            continue;
+          }
+        }
+        
+        result[productCode] = versionToUse;
+      } else {
+        // For other product codes, use whatever D2L reports
+        result[productCode] = reportedVersion;
+      }
     }
     return result;
   }, 30 * 60 * 1000); // 30 minutes
@@ -601,11 +645,31 @@ export async function getGradebook(ou: string, leVersion: string): Promise<Grade
   return cachedApiCall(`gradebook:${ou}`, async () => {
     const gradebook = await withRetry(() => axios.get(`/d2l/api/le/${leVersion}/${ou}/grades/`));
     const data = gradebook.data;
-    // Some Brightspace tenants return arrays; others wrap in Items.
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.Items)) return data.Items;
-    if (data && Array.isArray(data.Objects)) return data.Objects;
-    return [];
+    
+    // Some Brightspace tenants return arrays; others wrap in Items or Objects
+    let items: any[] = [];
+    if (Array.isArray(data)) {
+      items = data;
+    } else if (data && Array.isArray(data.Items)) {
+      items = data.Items;
+    } else if (data && Array.isArray(data.Objects)) {
+      items = data.Objects;
+    }
+    
+    // Validate that all items have required GradeObjectId
+    const validItems = items.filter((item: any) => {
+      if (!item.GradeObjectId && item.Id) {
+        // Some D2L instances use 'Id' instead of 'GradeObjectId'
+        item.GradeObjectId = item.Id;
+      }
+      return item.GradeObjectId !== undefined && item.GradeObjectId !== null;
+    });
+    
+    if (validItems.length < items.length) {
+      console.warn(`⚠️ Filtered out ${items.length - validItems.length} gradebook items missing GradeObjectId`);
+    }
+    
+    return validItems;
   });
 }
 
@@ -804,6 +868,86 @@ export async function getBulkGradeValues(
  * @param gradeValue - Grade value to update
  * @returns Updated grade value
  */
+/**
+ * Create a new grade object (gradebook item)
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param gradeObjectData - Grade object data to create
+ * @returns Created grade object
+ */
+export async function createGradeObject(
+  ou: string,
+  leVersion: string,
+  gradeObjectData: {
+    Name: string;
+    ShortName?: string;
+    Type: number; // 1 = Numeric, 2 = Pass/Fail, 3 = Selectbox, 4 = Text
+    MaxPoints?: number;
+    CanExceedMaxPoints?: boolean;
+    IsBonus?: boolean;
+    ExcludeFromFinalGrade?: boolean;
+    CategoryId?: number; // 0 for no category
+    GradeSchemeId?: number | null;
+    Description?: {
+      Content: string;
+      Type: 'Html' | 'Text';
+    };
+  }
+): Promise<GradeObject> {
+  logApiVersionWarning(leVersion, 'createGradeObject');
+  
+  const token = await getXsrfToken();
+  
+  // Prepare grade object payload (don't include Id field)
+  const payload: any = {
+    Name: gradeObjectData.Name,
+    Type: gradeObjectData.Type,
+    CategoryId: gradeObjectData.CategoryId ?? 0,
+  };
+  
+  if (gradeObjectData.ShortName) {
+    payload.ShortName = gradeObjectData.ShortName;
+  }
+  
+  if (gradeObjectData.MaxPoints !== undefined) {
+    payload.MaxPoints = gradeObjectData.MaxPoints;
+  }
+  
+  if (gradeObjectData.CanExceedMaxPoints !== undefined) {
+    payload.CanExceedMaxPoints = gradeObjectData.CanExceedMaxPoints;
+  }
+  
+  if (gradeObjectData.IsBonus !== undefined) {
+    payload.IsBonus = gradeObjectData.IsBonus;
+  }
+  
+  if (gradeObjectData.ExcludeFromFinalGrade !== undefined) {
+    payload.ExcludeFromFinalGrade = gradeObjectData.ExcludeFromFinalGrade;
+  }
+  
+  if (gradeObjectData.GradeSchemeId !== undefined) {
+    payload.GradeSchemeId = gradeObjectData.GradeSchemeId;
+  }
+  
+  // Description must use RichTextInput format: { Content: "...", Type: "Html" }
+  if (gradeObjectData.Description) {
+    payload.Description = {
+      Content: gradeObjectData.Description.Content,
+      Type: gradeObjectData.Description.Type
+    };
+  }
+  
+  const response = await withRetry(() => 
+    axios.post(
+      `/d2l/api/le/${leVersion}/${ou}/grades/`,
+      payload,
+      { headers: { "X-Csrf-Token": token } }
+    )
+  );
+  
+  return response.data;
+}
+
 export async function updateGradeValue(
   ou: string,
   leVersion: string,
@@ -811,13 +955,30 @@ export async function updateGradeValue(
   userId: number,
   gradeValue: Partial<GradeValue>
 ): Promise<GradeValue> {
-  const token = await getXsrfToken();
-  const grade = await axios.put(
-    `/d2l/api/le/${leVersion}/${ou}/grades/${gradeObjectId}/values/${userId}`,
-    gradeValue,
-    { headers: { "X-Csrf-Token": token } }
-  );
-  return grade.data;
+  logApiVersionWarning(leVersion, 'updateGradeValue');
+  
+  // Validate inputs
+  if (!ou || !leVersion || !gradeObjectId || !userId || !gradeValue) {
+    throw new Error(`Invalid parameters for updateGradeValue: ou=${ou}, leVersion=${leVersion}, gradeObjectId=${gradeObjectId}, userId=${userId}`);
+  }
+  
+  // Use withRetry to handle transient server errors (500, 502, 503, 504)
+  const updateFn = async (): Promise<GradeValue> => {
+    // Get token inside retry function to ensure fresh token on each attempt
+    const token = await getXsrfToken();
+    if (!token) {
+      throw new Error('Failed to get XSRF token');
+    }
+    
+    const url = `/d2l/api/le/${leVersion}/${ou}/grades/${gradeObjectId}/values/${userId}`;
+    const response = await axios.put(url, gradeValue, { 
+      headers: { "X-Csrf-Token": token } 
+    });
+    
+    return response.data;
+  };
+  
+  return withRetry(updateFn, 3, 2000); // 3 retries with 2 second base delay (exponential backoff)
 }
 
 /**

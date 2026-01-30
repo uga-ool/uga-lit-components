@@ -472,6 +472,156 @@ console.log(x);
       </div>
     </section>
 
+    <!-- Quiz Component -->
+    <section class="component-demo" id="quiz-demo">
+      <h2>Quiz Component</h2>
+      <div class="demo-description">
+        <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and completion tracking via gradebook integration. Perfect for release conditions - students can't take summative assessments until they've completed embedded formative quizzes.</p>
+      </div>
+      <div class="demo-example">
+        <uga-quiz 
+          quiz-id="demo-quiz-main"
+          quiz-title="Sample Formative Quiz"
+          passing-score="70"
+          allow-retry="true"
+          max-attempts="3"
+          show-feedback="true"
+          questions='{
+            "questions": [
+              {
+                "id": "q1",
+                "type": "multiple-choice",
+                "question": "What is 2 + 2?",
+                "points": 10,
+                "options": ["3", "4", "5", "6"],
+                "correctAnswer": 1,
+                "explanation": "Basic addition: 2 + 2 = 4"
+              },
+              {
+                "id": "q2",
+                "type": "true-false",
+                "question": "The capital of Georgia is Atlanta.",
+                "points": 10,
+                "correctAnswer": true,
+                "explanation": "Atlanta has been the capital of Georgia since 1868."
+              },
+              {
+                "id": "q3",
+                "type": "short-answer",
+                "question": "What is the largest planet in our solar system?",
+                "points": 10,
+                "correctAnswer": "Jupiter",
+                "caseSensitive": false,
+                "explanation": "Jupiter is the largest planet."
+              }
+            ]
+          }'>
+        </uga-quiz>
+      </div>
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td><code>quiz-id</code></td>
+            <td>String</td>
+            <td>Unique identifier for the quiz (used for tracking attempts)</td>
+          </tr>
+          <tr>
+            <td><code>quiz-title</code></td>
+            <td>String</td>
+            <td>Title displayed at the top of the quiz</td>
+          </tr>
+          <tr>
+            <td><code>questions</code></td>
+            <td>String (JSON)</td>
+            <td>JSON string containing quiz questions</td>
+          </tr>
+          <tr>
+            <td><code>passing-score</code></td>
+            <td>Number</td>
+            <td>Percentage required to pass (0-100, default: 70)</td>
+          </tr>
+          <tr>
+            <td><code>allow-retry</code></td>
+            <td>Boolean</td>
+            <td>Allow students to retake the quiz (default: true)</td>
+          </tr>
+          <tr>
+            <td><code>max-attempts</code></td>
+            <td>Number</td>
+            <td>Maximum number of retry attempts (default: 3)</td>
+          </tr>
+          <tr>
+            <td><code>show-feedback</code></td>
+            <td>Boolean</td>
+            <td>Show immediate feedback after answering (default: true)</td>
+          </tr>
+          <tr>
+            <td><code>time-limit</code></td>
+            <td>Number</td>
+            <td>Time limit in minutes (0 = no limit, default: 0)</td>
+          </tr>
+          <tr>
+            <td><code>grade-object-name</code></td>
+            <td>String</td>
+            <td>Name of gradebook item for completion tracking (must exist in gradebook)</td>
+          </tr>
+          <tr>
+            <td><code>type</code></td>
+            <td>'inline' | 'local' | 'csv'</td>
+            <td>Load questions from inline JSON, JSON file, or D2L CSV file (default: 'inline')</td>
+          </tr>
+          <tr>
+            <td><code>filename</code></td>
+            <td>String</td>
+            <td>Filename for 'local' (JSON) or 'csv' (D2L CSV format) type</td>
+          </tr>
+        </table>
+      </div>
+      <div class="demo-code">
+        <h4>Basic Usage (Inline JSON)</h4>
+        <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="Formative Quiz"
+  passing-score="70"
+  questions='{"questions": [...]}'&gt;
+&lt;/uga-quiz&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Load from D2L CSV Format</h4>
+        <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="Quiz from D2L"
+  type="csv"
+  filename="/content/enforced4/3519736-LITComponentsDevSite/quiz-sample.csv"&gt;
+&lt;/uga-quiz&gt;</uga-code>
+        <p><strong>Note:</strong> Export questions from D2L Brightspace in CSV format, save as CSV UTF-8, and upload to your course files. Update the <code>filename</code> path to match your file location.</p>
+        
+        <h4 style="margin-top: 1.5rem;">Load from JSON File</h4>
+        <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="Quiz from JSON"
+  type="local"
+  filename="/content/enforced4/3519736-LITComponentsDevSite/quiz-demo.json"&gt;
+&lt;/uga-quiz&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">With Timer and Gradebook Tracking</h4>
+        <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="Timed Quiz"
+  passing-score="80"
+  time-limit="10"
+  auto-submit="true"
+  grade-object-name="Formative Quiz 1"
+  questions='{"questions": [...]}'&gt;
+&lt;/uga-quiz&gt;</uga-code>
+      </div>
+    </section>
+
     <!-- Instructor Card Component -->
     <section class="component-demo" id="instructor-card-demo">
       <h2>Instructor Card Component</h2>

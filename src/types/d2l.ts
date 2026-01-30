@@ -163,12 +163,12 @@ export interface GradeValue {
   WeightedNumerator?: number | null;
   WeightedDenominator?: number | null;
   Comments?: {
-    Text: string;
-    Html: string;
+    Content: string;
+    Type: 'Text' | 'Html';
   };
   PrivateComments?: {
-    Text: string;
-    Html: string;
+    Content: string;
+    Type: 'Text' | 'Html';
   };
   LastModified?: string | null; // UTCDateTime
   LastModifiedBy?: string | null; // D2LID
