@@ -2,7 +2,7 @@
 // Centralized API calls used across multiple components
 
 import axios from 'axios';
-import { cachedApiCall } from './api-cache.js';
+import { cachedApiCall, clearCache } from './api-cache.js';
 import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost, MyItemsDue, GradeObject, GradeValue, AssignmentSubmission } from '../../types/d2l.js';
 
 /**
@@ -417,6 +417,50 @@ export async function getAssignment(ou: string, leVersion: string, assignmentId:
     const assignment = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${assignmentId}/`);
     return assignment.data;
   }
+}
+
+/**
+ * Payload for creating a Dropbox (assignment) folder
+ */
+export interface CreateDropboxFolderPayload {
+  Name: string;
+  SubmissionType?: number; // 0=File, 1=Text, 4=File or Text
+  DropboxType?: number;    // 1=Group, 2=Individual
+  CategoryId?: number | null;
+  IsHidden?: boolean;
+}
+
+/**
+ * Create a Dropbox (assignment) folder in a course.
+ * Requires dropbox:folders:write (instructors typically have this).
+ *
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param payload - Folder name and options
+ * @returns The created Assignment (DropboxFolder)
+ */
+export async function createDropboxFolder(
+  ou: string,
+  leVersion: string,
+  payload: CreateDropboxFolderPayload
+): Promise<Assignment> {
+  logApiVersionWarning(leVersion, 'createDropboxFolder');
+  const token = await getXsrfToken();
+  if (!token) throw new Error('Failed to get XSRF token');
+  const body = {
+    Name: payload.Name,
+    SubmissionType: payload.SubmissionType ?? 0, // File
+    DropboxType: payload.DropboxType ?? 2,       // Individual
+    CategoryId: payload.CategoryId ?? null,
+    IsHidden: payload.IsHidden ?? false
+  };
+  const response = await axios.post(
+    `/d2l/api/le/${leVersion}/${ou}/dropbox/folders/`,
+    body,
+    { headers: { 'X-Csrf-Token': token } }
+  );
+  clearCache(`assignments:${ou}`);
+  return response.data;
 }
 
 /**
@@ -1335,6 +1379,94 @@ export async function downloadSubmissionFile(
     `/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${assignmentId}/submissions/${submissionId}/files/${fileId}/`,
     { responseType: 'blob' }
   );
+  return response.data;
+}
+
+/**
+ * Submit a file to the current user's dropbox (assignment folder).
+ * Used to collect quiz results or other data as a file submission.
+ * Requires dropbox:folders:write (students typically have submit permission for assignments).
+ *
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param folderId - Dropbox (assignment) folder ID
+ * @param comment - Submission comment (RichText: Text and/or Html)
+ * @param fileName - Display name for the submitted file
+ * @param fileContent - File content as string (e.g. JSON or text)
+ * @param contentType - MIME type for the file (default application/json)
+ * @returns The created submission (EntityDropbox) or throws on error
+ */
+export async function submitToDropbox(
+  ou: string,
+  leVersion: string,
+  folderId: number,
+  comment: { Text?: string; Html?: string },
+  fileName: string,
+  fileContent: string,
+  contentType: string = 'application/json'
+): Promise<unknown> {
+  logApiVersionWarning(leVersion, 'submitToDropbox');
+  const token = await getXsrfToken();
+  if (!token) {
+    throw new Error('Failed to get XSRF token');
+  }
+  const boundary = '----D2LSubmitBoundary' + Math.random().toString(36).slice(2);
+  const commentJson = JSON.stringify({
+    Text: comment.Text ?? '',
+    Html: comment.Html ?? comment.Text ?? ''
+  });
+  const bodyParts: string[] = [
+    `--${boundary}\r\nContent-Type: application/json\r\n\r\n${commentJson}\r\n`,
+    `--${boundary}\r\nContent-Type: ${contentType}\r\nContent-Disposition: file; filename="${fileName.replace(/"/g, '\\"')}"\r\n\r\n${fileContent}\r\n`,
+    `--${boundary}--\r\n`
+  ];
+  const body = bodyParts.join('');
+  const url = `/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${folderId}/submissions/mysubmissions/`;
+  const response = await axios.post(url, body, {
+    headers: {
+      'Content-Type': `multipart/mixed; boundary=${boundary}`,
+      'X-Csrf-Token': token
+    }
+  });
+  return response.data;
+}
+
+/**
+ * Submit only a comment to the current user's dropbox (assignment folder).
+ * Use for assignments with "Text submission" where file uploads are not allowed.
+ * The comment Text/Html should contain the full quiz result (e.g. JSON) for audits.
+ * Requires dropbox:folders:write (students typically have submit permission for assignments).
+ *
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param folderId - Dropbox (assignment) folder ID
+ * @param comment - Submission comment (RichText: Text and/or Html); include full data for text submissions
+ * @returns The created submission (EntityDropbox) or throws on error
+ */
+export async function submitToDropboxCommentOnly(
+  ou: string,
+  leVersion: string,
+  folderId: number,
+  comment: { Text?: string; Html?: string }
+): Promise<unknown> {
+  logApiVersionWarning(leVersion, 'submitToDropboxCommentOnly');
+  const token = await getXsrfToken();
+  if (!token) {
+    throw new Error('Failed to get XSRF token');
+  }
+  const boundary = '----D2LSubmitBoundary' + Math.random().toString(36).slice(2);
+  const commentJson = JSON.stringify({
+    Text: comment.Text ?? '',
+    Html: comment.Html ?? comment.Text ?? ''
+  });
+  const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${commentJson}\r\n--${boundary}--\r\n`;
+  const url = `/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${folderId}/submissions/mysubmissions/`;
+  const response = await axios.post(url, body, {
+    headers: {
+      'Content-Type': `multipart/mixed; boundary=${boundary}`,
+      'X-Csrf-Token': token
+    }
+  });
   return response.data;
 }
 

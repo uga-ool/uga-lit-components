@@ -1,5 +1,5 @@
-// D2L/Brightspace utility functions
-// Helper functions for working with D2L data
+// eLC (D2L/Brightspace) utility functions
+// Helper functions for working with eLC data
 
 /**
  * Get the current course/OU ID from the URL
@@ -57,7 +57,7 @@ export function getCourse(): string | null {
   }
 
   // Method 4: Parse from folder structure in URL
-  // Typical D2L URL structure: /d2l/le/content/123456/...
+  // Typical eLC URL structure: /d2l/le/content/123456/...
   // But be careful - this might be a content folder ID, not a course ID
   if (ou === null && pathSegments.length > 5) {
     // Look for content, home, or course-related paths
@@ -78,7 +78,7 @@ export function getCourse(): string | null {
     }
   }
 
-  // Method 5: Try to get from D2L global object if available
+  // Method 5: Try to get from eLC global object (window.D2L) if available
   if (typeof window !== 'undefined' && (window as any).D2L?.LearnerExperience?.Context?.orgUnitId) {
     const d2lOu = String((window as any).D2L.LearnerExperience.Context.orgUnitId);
     if (d2lOu) return d2lOu;
@@ -89,7 +89,7 @@ export function getCourse(): string | null {
 
 /**
  * Transform date string to a more readable format
- * @param dateString - ISO date string from D2L API
+ * @param dateString - ISO date string from eLC API
  * @returns Formatted date string
  */
 export function transformDate(dateString: string): string {
@@ -113,8 +113,8 @@ export function transformDate(dateString: string): string {
 }
 
 /**
- * Check if code is running inside Brightspace/D2L
- * @returns true if in Brightspace environment
+ * Check if code is running inside eLC (Brightspace/D2L)
+ * @returns true if in eLC environment
  */
 export function inBrightspace(): boolean {
   return !!window?.D2L?.LearnerExperience || /brightspace|d2l/i.test(location.hostname);
