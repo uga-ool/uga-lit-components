@@ -1,11 +1,11 @@
-// CSV parser for D2L Brightspace question import format
-// Converts D2L CSV format to uga-quiz JSON format
+// CSV parser for eLC question import format
+// Converts eLC CSV format to uga-quiz JSON format
 
 import type { QuizQuestion } from '../../components/uga-quiz.js';
 import { QuestionType } from '../../components/uga-quiz.js';
 
 /**
- * D2L CSV question types mapping
+ * eLC CSV question types mapping (D2L-compatible format)
  */
 enum D2LQuestionType {
   WR = 'WR', // Written Response
@@ -114,7 +114,7 @@ function parseCSV(csvContent: string): CSVRow[] {
 }
 
 /**
- * Convert D2L question type to uga-quiz question type
+ * Convert eLC CSV question type to uga-quiz question type
  */
 function convertQuestionType(d2lType: D2LQuestionType): QuestionType {
   switch (d2lType) {
@@ -124,17 +124,20 @@ function convertQuestionType(d2lType: D2LQuestionType): QuestionType {
       return QuestionType.TRUE_FALSE;
     case D2LQuestionType.M:
       return QuestionType.MATCHING;
+    case D2LQuestionType.MS:
+      return QuestionType.MULTI_SELECT;
+    case D2LQuestionType.O:
+      return QuestionType.ORDERING;
     case D2LQuestionType.SA:
     case D2LQuestionType.WR:
       return QuestionType.SHORT_ANSWER;
     default:
-      // For MS (Multi-Select) and O (Ordering), we'll convert to multiple choice for now
       return QuestionType.MULTIPLE_CHOICE;
   }
 }
 
 /**
- * Convert D2L question to uga-quiz format
+ * Convert eLC CSV question to uga-quiz format
  */
 function convertQuestion(d2lQuestion: CurrentQuestion): QuizQuestion | null {
   if (!d2lQuestion.type || !d2lQuestion.questionText) {
@@ -182,7 +185,7 @@ function convertQuestion(d2lQuestion: CurrentQuestion): QuizQuestion | null {
       
     case D2LQuestionType.TF:
       // True/False: check which has weight 100
-      // In D2L CSV: TRUE,100,feedback means TRUE is correct
+      // In eLC CSV: TRUE,100,feedback means TRUE is correct
       //             FALSE,100,feedback means FALSE is correct
       if (d2lQuestion.trueFeedback !== undefined && d2lQuestion.trueFeedback !== null) {
         // TRUE is correct (has weight 100)
@@ -223,6 +226,30 @@ function convertQuestion(d2lQuestion: CurrentQuestion): QuizQuestion | null {
       correctAnswer = matchingAnswer;
       break;
       
+    case D2LQuestionType.MS:
+      // Multi-Select: options with weight >= 100 are correct (indices)
+      if (!d2lQuestion.options || d2lQuestion.options.length === 0) {
+        return null;
+      }
+      options = d2lQuestion.options.map(opt => opt.text);
+      const correctIndices: number[] = [];
+      for (let i = 0; i < d2lQuestion.options.length; i++) {
+        if (d2lQuestion.options[i].weight >= 100) {
+          correctIndices.push(i);
+        }
+      }
+      correctAnswer = correctIndices.sort((a, b) => a - b);
+      break;
+      
+    case D2LQuestionType.O:
+      // Ordering: items are in correct order (Item rows); correctAnswer = [0, 1, 2, ...]
+      if (!d2lQuestion.items || d2lQuestion.items.length === 0) {
+        return null;
+      }
+      options = d2lQuestion.items.map(item => item.text);
+      correctAnswer = options.map((_, i) => i);
+      break;
+      
     case D2LQuestionType.SA:
     case D2LQuestionType.WR:
       // Short Answer / Written Response: use first answer (weight 100) or answerKey
@@ -238,7 +265,6 @@ function convertQuestion(d2lQuestion: CurrentQuestion): QuizQuestion | null {
       break;
       
     default:
-      // Multi-Select and Ordering not fully supported yet
       return null;
   }
   
@@ -264,7 +290,7 @@ function convertQuestion(d2lQuestion: CurrentQuestion): QuizQuestion | null {
 }
 
 /**
- * Parse D2L CSV format and convert to uga-quiz JSON format
+ * Parse eLC CSV format and convert to uga-quiz JSON format
  */
 export function parseD2LCSV(csvContent: string): { questions: QuizQuestion[] } {
   const rows = parseCSV(csvContent);

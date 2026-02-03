@@ -1,38 +1,39 @@
-//Sample Quiz Questions in D2L Brightspace CSV Format
-//This file can be imported directly into uga-quiz component using type="csv"
+// Sample Quiz – All Question Types (eLC CSV Format)
+// Use with uga-quiz: type="csv" filename="quiz-sample.csv"
+// Supports: Multiple Choice, True/False, Short Answer, Matching, Multi-Select, Ordering
 
-//MULTIPLE CHOICE QUESTION TYPE
+// 1. MULTIPLE CHOICE (MC)
 NewQuestion,MC,,
 ID,QUIZ-001,,
-Title,Sample Multiple Choice Question,,
+Title,Multiple Choice,,
 QuestionText,What is the capital of Georgia?,,
 Points,10,,
 Difficulty,1,,
-Option,100,Atlanta,,This is the correct answer!
-Option,0,Augusta,,Augusta is not the capital
-Option,0,Savannah,,Savannah is not the capital
-Option,0,Macon,,Macon is not the capital
-Hint,Think about the largest city in Georgia,,
-Feedback,Atlanta has been the capital since 1868.,,
+Option,100,Atlanta,,Correct! Atlanta has been the capital since 1868.
+Option,0,Augusta,,Augusta is not the capital.
+Option,0,Savannah,,Savannah is not the capital.
+Option,0,Macon,,Macon is not the capital.
+Hint,Think about the largest city in Georgia.,,
+Feedback,Atlanta has been the state capital since 1868.,,
 
-//TRUE / FALSE QUESTION TYPE
+// 2. TRUE / FALSE (TF)
 NewQuestion,TF,,
 ID,QUIZ-002,,
-Title,Sample True/False Question,,
+Title,True/False,,
 QuestionText,The University of Georgia is located in Athens.,,
 Points,10,,
 Difficulty,1,,
-TRUE,100,Correct! UGA is indeed in Athens.,,
-FALSE,0,Incorrect. UGA is located in Athens, Georgia.,,
-Hint,Think about where UGA's main campus is located.,,
-Feedback,UGA's main campus is in Athens, Georgia.,,
+TRUE,100,Correct! UGA's main campus is in Athens.,,
+FALSE,0,Incorrect. UGA is located in Athens Georgia.,,
+Hint,Think about where UGA's main campus is.,,
+Feedback,UGA's main campus is in Athens Georgia.,,
 
-//SHORT ANSWER QUESTION TYPE
+// 3. SHORT ANSWER (SA)
 NewQuestion,SA,,
 ID,QUIZ-003,,
-Title,Sample Short Answer Question,,
-QuestionText,What does the acronym 'LMS' stand for?,,
-Points,15,,
+Title,Short Answer,,
+QuestionText,What does the acronym LMS stand for?,,
+Points,10,,
 Difficulty,2,,
 InputBox,1,40,,
 Answer,100,Learning Management System,,
@@ -40,12 +41,12 @@ Answer,100,LMS,,
 Hint,Think about systems used for online learning.,,
 Feedback,LMS stands for Learning Management System.,,
 
-//MATCHING QUESTION TYPE
+// 4. MATCHING (M)
 NewQuestion,M,,
 ID,QUIZ-004,,
-Title,Sample Matching Question,,
-QuestionText,Match the assessment types with their descriptions:,,
-Points,20,,
+Title,Matching,,
+QuestionText,Match the assessment type with its description:,,
+Points,15,,
 Difficulty,2,,
 Scoring,EquallyWeighted,,
 Choice,1,Formative,,
@@ -54,5 +55,33 @@ Choice,3,Diagnostic,,
 Match,1,Used during learning for feedback,,
 Match,2,Used at the end to evaluate learning,,
 Match,3,Used to measure specific skills,,
-Hint,Think about when each assessment type is used.,,
-Feedback,Formative = during learning, Summative = end evaluation, Diagnostic = skill measurement.,,
+Hint,Consider when each type is used.,,
+Feedback,Formative=during learning; Summative=end; Diagnostic=skills.,,
+
+// 5. MULTI-SELECT (MS) – options with weight 100 are correct
+NewQuestion,MS,,
+ID,QUIZ-005,,
+Title,Multi-Select,,
+QuestionText,Which of the following are primary colors? (Select all that apply.),,
+Points,15,,
+Difficulty,2,,
+Option,100,Red,,Correct. Red is a primary color.
+Option,0,Yellow,,Incorrect. Yellow is a primary in RYB but we use Red and Blue here.
+Option,100,Blue,,Correct. Blue is a primary color.
+Option,0,Green,,Incorrect. Green is a secondary color.
+Hint,Think about red, blue, and yellow.,,
+Feedback,Primary colors (RYB) are Red, Blue, and Yellow.,,
+
+// 6. ORDERING (O) – Item rows in correct order
+NewQuestion,O,,
+ID,QUIZ-006,,
+Title,Ordering,,
+QuestionText,Put these steps in the correct order for submitting an assignment in eLC:,,
+Points,15,,
+Difficulty,2,,
+Item,Open the Assignments tool,,,
+Item,Find the correct assignment,,,
+Item,Upload or create your file,,,
+Item,Click Submit,,,
+Hint,Think about the usual workflow.,,
+Feedback,Order: Open Assignments → Find assignment → Upload/create file → Submit.,,

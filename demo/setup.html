@@ -98,8 +98,8 @@
       <p>If you maintain a separate testing location, swap the script path to <code>/shared/ugaonline/dev/js/uga-components.js</code>.</p>
 
       <h3>2. Create Data Files (for components that need them)</h3>
-      <p>Some components load data from JSON files. Upload these to D2L course files and reference them by the full file path.</p>
-      <p><strong>How to find the file path in D2L:</strong></p>
+      <p>Many components load data from JSON files; the <strong>Quiz</strong> component uses <strong>CSV</strong>. Upload files to eLC course files and reference them by the full file path (or relative path if in the same directory as your HTML).</p>
+      <p><strong>How to find the file path in eLC:</strong></p>
       <ol>
         <li>Go to <strong>Content</strong> → <strong>Manage Files</strong> (or <strong>Course Admin</strong> → <strong>Manage Files</strong>)</li>
         <li>Upload your JSON file</li>
@@ -107,7 +107,7 @@
         <li>The path will look like: <code>/content/enforced/12345-123456/your-file.json</code></li>
         <li>Use this full path in your component's <code>filename</code> attribute</li>
       </ol>
-      <p><strong>Note:</strong> JSON files don't display visually in D2L - they're loaded by components in the background for configuration purposes.</p>
+      <p><strong>Note:</strong> JSON files don't display visually in eLC - they're loaded by components in the background for configuration purposes.</p>
 
       <h4>Example: <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">accordion-data.json</a></h4>
       <uga-code language="javascript">{
@@ -166,11 +166,15 @@
   ]
 }</uga-code>
 
-      <h4>Example: <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer">footer-data.json</a></h4>
+      <h4>Example: <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer">footer-demo.json</a></h4>
       <uga-code language="javascript">{
-  "link": "https://online.uga.edu/program-name",
-  "logo": "/shared/PublicFiles/images/program-logo.png"
+  "data": {
+    "link": "https://online.uga.edu",
+    "alt": "University of Georgia Online Learning Logo",
+    "imageSrc": "https://design.online.uga.edu/images/uga-logo.png"
+  }
 }</uga-code>
+      <p>Use <code>filename="footer-demo.json"</code> for local files. The <code>program</code> property loads from shared program templates when set.</p>
 
       <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note-data.json</a></h4>
       <uga-code language="javascript">{
@@ -191,6 +195,9 @@
   ]
 }</uga-code>
 
+      <h4>Quiz component: CSV (not JSON)</h4>
+      <p>The <strong>uga-quiz</strong> component loads questions from an eLC-format CSV file. Use <code>type="csv"</code> and <code>filename</code> pointing to your CSV. <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Download quiz-sample.csv (Google Drive)</a> for a sample with all six question types. Save as CSV UTF-8; upload to eLC and set the path in <code>filename</code>. See the <a href="quiz.html">Quiz demo</a> for full usage.</p>
+
       <h3>3. Component-Specific Setup</h3>
       
       <h4>eLC API Components</h4>
@@ -198,6 +205,7 @@
       <ul>
         <li><strong>uga-assignment</strong> - Displays assignments, discussions, quizzes, and content with due dates from the current eLC course. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment,discussion"</code>). Supports grade export when <code>enable-export</code> is set.</li>
         <li><strong>uga-duedate</strong> - Displays due dates for assignments, discussions, quizzes, and content in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment"</code>).</li>
+        <li><strong>uga-quiz</strong> - Embed formative quizzes; loads questions from a CSV file (<code>type="csv"</code>, <code>filename</code>). Can submit results to an eLC assignment. See <a href="quiz.html">Quiz demo</a> and <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a>.</li>
         <li><strong>uga-instructor-note</strong> - Visible only to instructors (uses eLC role checking)</li>
         <li><strong>uga-rating</strong> - Stores ratings in eLC forums</li>
       </ul>
@@ -240,6 +248,7 @@
       <ul>
         <li>Verify JSON file paths are correct relative to Public Files</li>
         <li>Check JSON syntax is valid (use a JSON validator)</li>
+        <li>For <strong>uga-quiz</strong>: use a CSV file (not JSON), save as CSV UTF-8, and set <code>type="csv"</code> and <code>filename</code> to the file path</li>
         <li>Ensure files are uploaded to the correct location in eLC</li>
       </ul>
 
