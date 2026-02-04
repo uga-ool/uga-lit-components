@@ -7,8 +7,6 @@
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
   <style>
     .component-demo {
@@ -106,9 +104,8 @@
     <header class="util-margin-vert-lg">
       <h1>UGA Lit Components Demo</h1>
       <div class="intro">
-        <p><strong>Welcome to the UGA Lit Components demonstration page.</strong></p>
-        <p>This page showcases all available Lit web components designed for use in UGA's Brightspace (D2L) environment. Each component includes a live example, description, available properties, and sample code.</p>
-        <p><strong>Note:</strong> Some components require D2L API access and will display placeholder data in this demo environment.</p>
+        <p><strong>UGA Lit Components Demo</strong></p>
+        <p>This page showcases all available Lit web components for UGA's eLC environment. Each component includes a live example, properties, and sample code.</p>
       </div>
     </header>
 
@@ -141,6 +138,9 @@
       <h2>Accordion Component</h2>
       <div class="demo-description">
         <p><strong>Creates expandable/collapsible content sections.</strong> Great for FAQs, course modules, or organizing large amounts of content.</p>
+        <p><strong>Example data file:</strong> Download
+          <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>accordion-demo.json</code></a>
+          to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
         <uga-accordion type="local" filename="accordion-demo.json"></uga-accordion>
@@ -180,6 +180,9 @@
       <h2>Tabs Component</h2>
       <div class="demo-description">
         <p><strong>Creates tabbed content sections.</strong> Ideal for organizing related content that users can switch between without leaving the page.</p>
+        <p><strong>Example data file:</strong> Download
+          <a href="https://drive.google.com/file/d/1a4rAQHgJCY8Z6u-dRpQ4fp8yibmDLm78/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>tabs-demo.json</code></a>
+          to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
         <uga-tabs type="local" filename="tabs-demo.json"></uga-tabs>
@@ -219,6 +222,9 @@
       <h2>Slideshow Component</h2>
       <div class="demo-description">
         <p><strong>Creates an image slideshow with navigation controls.</strong> Perfect for visual content, step-by-step instructions, or image galleries.</p>
+        <p><strong>Example data file:</strong> Download
+          <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>slideshow-demo.json</code></a>
+          to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
         <uga-slideshow filename="slideshow-demo.json" imageheight="400"></uga-slideshow>
@@ -254,17 +260,19 @@
     </div>
 
     <!-- Video Component -->
+    <!-- Single Video Section -->
     <section class="component-demo" id="video-demo">
-      <h2>Video Component</h2>
+      <h2>Single Video</h2>
       <div class="demo-description">
-        <p><strong>Embeds Kaltura videos with customizable player.</strong> Supports single videos, playlists, and optional rating integration. Logo/watermark is hidden by default.</p>
+        <p><strong>Embeds a single Kaltura video with customizable player.</strong> Use this method when you have one video to display. Logo/watermark is hidden by default.</p>
       </div>
+
       <div class="demo-example">
-        <uga-video videoid="1_abc123de" playerid="57494843"></uga-video>
-        <p><em>Note: Replace videoid with actual Kaltura video ID</em></p>
+        <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
       </div>
+
       <div class="demo-props">
-        <h4>Properties</h4>
+        <h4>Properties for Single Video</h4>
         <table>
           <tr>
             <th>Property</th>
@@ -274,22 +282,12 @@
           <tr>
             <td>videoid</td>
             <td>string</td>
-            <td>Kaltura video entry ID</td>
+            <td>Kaltura video entry ID (required)</td>
           </tr>
           <tr>
             <td>playerid</td>
             <td>string</td>
             <td>Kaltura player ID (default: 1574196844)</td>
-          </tr>
-          <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>Data source type for multiple videos: 'local' or 'program'</td>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>JSON file for multiple videos</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -298,14 +296,71 @@
           </tr>
         </table>
       </div>
+
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-video videoid="1_abc123de" playerid="1574196844"&gt;&lt;/uga-video&gt;
+        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="1574196844"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
-&lt;uga-video videoid="1_abc123de" includerating="true"&gt;&lt;/uga-video&gt;
+&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+      </div>
+    </section>
 
-&lt;!-- Multiple videos from file --&gt;
-&lt;uga-video type="local" filename="videos.json"&gt;&lt;/uga-video&gt;</uga-code>
+    <!-- Multiple Videos Section -->
+    <section class="component-demo">
+      <h2>Multiple Videos from JSON File</h2>
+      <div class="demo-description">
+        <p><strong>Embeds multiple Kaltura videos from a JSON data file.</strong> Use this method when you want to load multiple videos from a single JSON file. Perfect for course playlists or module video collections.</p>
+        <p><strong>Example data file:</strong> Download
+          <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos-demo.json</code></a>
+          to modify and upload it to your course files.</p>
+      </div>
+
+      <div class="demo-example">
+        <uga-video type="local" filename="videos-demo.json"></uga-video>
+      </div>
+
+      <div class="demo-props">
+        <h4>Properties for Multiple Videos</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>type</td>
+            <td>string</td>
+            <td>Data source type: 'local' or 'program' (required)</td>
+          </tr>
+          <tr>
+            <td>filename</td>
+            <td>string</td>
+            <td>Name of the JSON data file (required)</td>
+          </tr>
+          <tr>
+            <td>program</td>
+            <td>string</td>
+            <td>Program identifier (for program type)</td>
+          </tr>
+          <tr>
+            <td>playerid</td>
+            <td>string</td>
+            <td>Kaltura player ID (default: 1574196844)</td>
+          </tr>
+          <tr>
+            <td>includerating</td>
+            <td>boolean</td>
+            <td>Add rating component below video</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="demo-code">
+        <uga-code language="markup">&lt;!-- Multiple videos from file --&gt;
+&lt;uga-video type="local" filename="videos-demo.json"&gt;&lt;/uga-video&gt;
+
+&lt;!-- With custom player ID --&gt;
+&lt;uga-video type="local" filename="videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -367,7 +422,7 @@ console.log(x);
     <section class="component-demo" id="rating-demo">
       <h2>Rating Component</h2>
       <div class="demo-description">
-        <p><strong>Collects user ratings for content.</strong> Integrates with D2L forums to store feedback. Useful for video ratings, resource evaluations, etc.</p>
+        <p><strong>Collects user ratings for content.</strong> Integrates with eLC forums to store feedback. Useful for video ratings, resource evaluations, etc.</p>
       </div>
       <div class="demo-example">
         <uga-rating 
@@ -376,7 +431,6 @@ console.log(x);
           contentname="Introduction Video"
           contentplatform="kaltura">
         </uga-rating>
-        <p><em>Note: Requires D2L API access to submit ratings</em></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -418,11 +472,134 @@ console.log(x);
       </div>
     </section>
 
+    <!-- Quiz Component -->
+    <section class="component-demo" id="quiz-demo">
+      <h2>Quiz Component</h2>
+      <div class="demo-description">
+        <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking. Perfect for release conditions - students can't take summative assessments until they've completed embedded formative quizzes.</p>
+        <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-folder-id</code> to test.</p>
+      </div>
+      <div class="demo-example">
+        <uga-quiz 
+          quiz-id="demo-quiz-main"
+          quiz-title="Sample Formative Quiz"
+          passing-score="70"
+          allow-retry="true"
+          max-attempts="3"
+          show-feedback="true"
+          type="csv"
+          filename="quiz-sample.csv">
+        </uga-quiz>
+        <p></p>
+        <p class="util-margin-top-md util-font-size-sm"><strong>Grade sync (instructor only):</strong> <uga-quiz-grade-sync dropbox-folder-id="0"></uga-quiz-grade-sync></p>
+        <p></p>
+      </div>
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td><code>quiz-id</code></td>
+            <td>String</td>
+            <td>Unique identifier for the quiz (used for tracking attempts)</td>
+          </tr>
+          <tr>
+            <td><code>quiz-title</code></td>
+            <td>String</td>
+            <td>Title displayed at the top of the quiz</td>
+          </tr>
+          <tr>
+            <td><code>passing-score</code></td>
+            <td>Number</td>
+            <td>Percentage required to pass (0-100, default: 70)</td>
+          </tr>
+          <tr>
+            <td><code>allow-retry</code></td>
+            <td>Boolean</td>
+            <td>Allow students to retake the quiz (default: true)</td>
+          </tr>
+          <tr>
+            <td><code>max-attempts</code></td>
+            <td>Number</td>
+            <td>Maximum number of retry attempts (default: 3)</td>
+          </tr>
+          <tr>
+            <td><code>show-feedback</code></td>
+            <td>Boolean</td>
+            <td>Show immediate feedback after answering (default: true)</td>
+          </tr>
+          <tr>
+            <td><code>time-limit</code></td>
+            <td>Number</td>
+            <td>Time limit in minutes (0 = no limit, default: 0)</td>
+          </tr>
+          <tr>
+            <td><code>type</code></td>
+            <td>'csv'</td>
+            <td>Load questions from eLC CSV file</td>
+          </tr>
+          <tr>
+            <td><code>filename</code></td>
+            <td>String</td>
+            <td>Path to the eLC CSV file (e.g. <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a>)</td>
+          </tr>
+        </table>
+      </div>
+      <div class="demo-code">
+        <h4>Basic Usage (eLC CSV)</h4>
+        <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="Formative Quiz"
+  passing-score="70"
+  type="csv"
+  filename="quiz-sample.csv"&gt;
+&lt;/uga-quiz&gt;</uga-code>
+        <p><strong>Note:</strong> <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Download quiz-sample.csv (Google Drive)</a>. Export questions from eLC in CSV format, save as CSV UTF-8, and upload to your course files. Update <code>filename</code> to match your file path.</p>
+        
+        <h4 style="margin-top: 1.5rem;">With Timer and Assignment Submission</h4>
+        <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="Timed Quiz"
+  passing-score="80"
+  time-limit="10"
+  auto-submit="true"
+  type="csv"
+  filename="quiz-sample.csv"
+  dropbox-assignment-name="Quiz Demo"&gt;
+&lt;/uga-quiz&gt;</uga-code>
+      </div>
+    </section>
+
+    <!-- Instructor Card Component -->
+    <section class="component-demo" id="instructor-card-demo">
+      <h2>Instructor Card Component</h2>
+      <div class="demo-description">
+        <p><strong>Displays an instructor profile card with photo and name.</strong> Automatically detects the course from the URL and finds the instructor from the classlist. Works for students, instructors, and admins.</p>
+      </div>
+      <div class="demo-example">
+        <uga-instructor-card></uga-instructor-card>
+      </div>
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <p>This component has no required properties. It automatically detects the course and loads instructor information.</p>
+      </div>
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-instructor-card&gt;&lt;/uga-instructor-card&gt;</uga-code>
+      </div>
+    </section>
+
     <!-- Circles Component -->
     <section class="component-demo" id="circles-demo">
       <h2>Circles Component</h2>
       <div class="demo-description">
         <p><strong>Displays circular figures with captions.</strong> Perfect for statistics, progress indicators, or visual data representation.</p>
+        <p><strong>Example data file:</strong> Download
+          <a href="https://drive.google.com/file/d/1M4Yqk_cgFMzCftXe1Whw8ytyH6ShyiCA/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>circles-demo.json</code></a>
+          to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
         <uga-circles type="local" filename="circles-demo.json"></uga-circles>
@@ -461,11 +638,11 @@ console.log(x);
     <section class="component-demo" id="assignment-demo">
       <h2>Assignment Component</h2>
       <div class="demo-description">
-        <p><strong>Displays assignment details from D2L.</strong> Shows instructions, due dates, availability, and rubric information automatically pulled from the course.</p>
+        <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
+        <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can download a per-assignment CSV that lists all students, submission status, and the current gradebook value (blank if not graded yet).</p>
       </div>
       <div class="demo-example">
-        <uga-assignment name="Module 1 Assignment"></uga-assignment>
-        <p><em>Note: Requires D2L API access to load assignment data</em></p>
+        <uga-assignment></uga-assignment>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -476,14 +653,37 @@ console.log(x);
             <th>Description</th>
           </tr>
           <tr>
-            <td>name</td>
-            <td>string</td>
-            <td>Name of the assignment in D2L</td>
+            <td><code>types</code></td>
+            <td>String</td>
+            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
+          </tr>
+          <tr>
+            <td><code>enable-export</code></td>
+            <td>Boolean</td>
+            <td>Enable grade export features for instructors. When enabled, instructors see "Export Grades" (per-assignment roster CSV) and "Export All Assignments (CSV)" (course summary). Default: <code>false</code></td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-assignment name="Module 1 Assignment"&gt;&lt;/uga-assignment&gt;</uga-code>
+        <h4>Basic Usage</h4>
+        <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
+        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
+&lt;uga-assignment types="assignment"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show assignments and discussions --&gt;
+&lt;uga-assignment types="assignment,discussion"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show only discussions --&gt;
+&lt;uga-assignment types="discussion"&gt;&lt;/uga-assignment&gt;</uga-code>
+
+        <h4 style="margin-top: 1.5rem;">Enable Grade Export</h4>
+        <uga-code language="markup">&lt;!-- Enable grade export for instructors --&gt;
+&lt;uga-assignment enable-export&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Combine with type filtering --&gt;
+&lt;uga-assignment types="assignment" enable-export&gt;&lt;/uga-assignment&gt;</uga-code>
       </div>
     </section>
 
@@ -500,7 +700,6 @@ console.log(x);
       </div>
       <div class="demo-example">
         <uga-return-to-top></uga-return-to-top>
-        <p><em>Scroll down to see the button appear in the bottom right corner</em></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -515,10 +714,13 @@ console.log(x);
     <section class="component-demo" id="footer-demo">
       <h2>Footer Component</h2>
       <div class="demo-description">
-        <p><strong>Displays a branded footer.</strong> Can be customized per program with logo and link.</p>
+        <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file. Customization happens via the JSON file in eLC. By default, loads from local course files using the <code>filename</code> property.</p>
+        <p><strong>Example data file:</strong> The <code>filename</code> must match the file exactly. Download
+          <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>
+          to modify and upload to your course files.</p>
       </div>
       <div class="demo-example">
-        <uga-footer type="local" filename="footer-demo.json" imagefile="logo.png"></uga-footer>
+        <uga-footer filename="footer-demo.json"></uga-footer>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -529,29 +731,28 @@ console.log(x);
             <th>Description</th>
           </tr>
           <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>Data source type: 'local' or 'program'</td>
-          </tr>
-          <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file (for local type)</td>
-          </tr>
-          <tr>
-            <td>imagefile</td>
-            <td>string</td>
-            <td>Name of logo image file</td>
+            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>). Not needed when using <code>program</code>.</td>
           </tr>
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Program identifier (for program type)</td>
+            <td>Program identifier; if not provided, defaults to local file mode.</td>
+          </tr>
+          <tr>
+            <td>imagefile</td>
+            <td>string</td>
+            <td>Name of logo image file (optional; used when JSON doesn't include imageSrc, or for program type)</td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-footer type="local" filename="footer.json" imagefile="logo.png"&gt;&lt;/uga-footer&gt;</uga-code>
+        <h4>Basic Usage (Local File)</h4>
+        <uga-code language="markup">&lt;uga-footer filename="footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
+        <uga-code language="markup">&lt;uga-footer program="program-name" imagefile="logo.png"&gt;&lt;/uga-footer&gt;</uga-code>
       </div>
     </section>
 
@@ -564,11 +765,13 @@ console.log(x);
     <section class="component-demo" id="instructor-note-demo">
       <h2>Instructor Note Component</h2>
       <div class="demo-description">
-        <p><strong>Displays notes visible only to instructors.</strong> Uses D2L role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
+        <p><strong>Displays notes visible only to instructors.</strong> Uses eLC role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
+        <p><strong>Example data file:</strong> Download
+          <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note-demo.html</code></a>
+          to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
         <uga-instructor-note type="local" filename="instructor-note-demo.html"></uga-instructor-note>
-        <p><em>Note: Only visible to users with instructor role in D2L</em></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -604,11 +807,10 @@ console.log(x);
     <section class="component-demo" id="duedate-demo">
       <h2>Due Date Component</h2>
       <div class="demo-description">
-        <p><strong>Displays assignment due date from D2L.</strong> Automatically pulls and formats the due date for a specific assignment.</p>
+        <p><strong>Displays due dates for assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays all items with due dates in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
       </div>
       <div class="demo-example">
-        <uga-duedate name="Module 1 Assignment"></uga-duedate>
-        <p><em>Note: Requires D2L API access to load due date</em></p>
+        <uga-duedate></uga-duedate>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -619,116 +821,30 @@ console.log(x);
             <th>Description</th>
           </tr>
           <tr>
-            <td>name</td>
-            <td>string</td>
-            <td>Name of the assignment in D2L</td>
+            <td><code>types</code></td>
+            <td>String</td>
+            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-duedate name="Module 1 Assignment"&gt;&lt;/uga-duedate&gt;</uga-code>
+        <h4>Basic Usage</h4>
+        <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
+        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
+&lt;uga-duedate types="assignment"&gt;&lt;/uga-duedate&gt;
+
+&lt;!-- Show assignments and discussions --&gt;
+&lt;uga-duedate types="assignment,discussion"&gt;&lt;/uga-duedate&gt;
+
+&lt;!-- Show only discussions --&gt;
+&lt;uga-duedate types="discussion"&gt;&lt;/uga-duedate&gt;</uga-code>
       </div>
     </section>
 
-    <!-- Module Feedback Component -->
-    <section class="component-demo" id="module-feedback-demo">
-      <h2>Module Feedback Component</h2>
-      <div class="demo-description">
-        <p><strong>Embeds Qualtrics feedback survey.</strong> Automatically passes the page URL to the survey for context.</p>
-      </div>
-      <div class="demo-example">
-        <uga-module-feedback></uga-module-feedback>
-        <p><em>Note: Requires Qualtrics survey configuration</em></p>
-      </div>
-      <div class="demo-props">
-        <h4>Properties</h4>
-        <p>No properties required - automatically captures page URL for survey context.</p>
-      </div>
-      <div class="demo-code">
-        <uga-code language="markup">&lt;uga-module-feedback&gt;&lt;/uga-module-feedback&gt;</uga-code>
-      </div>
-    </section>
+    
 
-    <!-- Setup Instructions -->
-    <div class="category-header">
-      <h2 id="setup" style="margin: 0; color: white;">Setup & Usage</h2>
-    </div>
-
-    <section class="component-demo">
-      <h2>How to Use These Components in D2L</h2>
-      
-      <h3>1. Upload the Bundle</h3>
-      <uga-code language="markup">Upload dist/js/uga-components.js to:
-D2L → Content → Manage Files → Public Files → /shared/PublicFiles/</uga-code>
-
-      <h3>2. Add to Your Page</h3>
-      <uga-code language="markup">&lt;!-- Your components --&gt;
-&lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
-&lt;uga-video videoid="1_abc123de"&gt;&lt;/uga-video&gt;
-
-&lt;!-- Load bundle at end of page --&gt;
-&lt;script type="module" src="/shared/PublicFiles/uga-components.js"&gt;&lt;/script&gt;</uga-code>
-
-      <h3>3. Create Data Files (for components that need them)</h3>
-      <p>Some components load data from JSON files. Upload these to Public Files and reference them by filename.</p>
-
-      <h4>Example: accordion-data.json</h4>
-      <uga-code language="javascript">{
-  "title": "Course FAQ",
-  "data": [
-    {
-      "title": "How do I submit assignments?",
-      "body": "&lt;p&gt;Go to the Assignments page and click Submit.&lt;/p&gt;"
-    },
-    {
-      "title": "When are office hours?",
-      "body": "&lt;p&gt;Tuesday and Thursday, 2-4 PM EST.&lt;/p&gt;"
-    }
-  ]
-}</uga-code>
-
-      <h4>Example: tabs-data.json</h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "title": "Overview",
-      "body": "&lt;p&gt;This module covers...&lt;/p&gt;"
-    },
-    {
-      "title": "Learning Objectives",
-      "body": "&lt;ul&gt;&lt;li&gt;Objective 1&lt;/li&gt;&lt;/ul&gt;"
-    }
-  ]
-}</uga-code>
-
-      <h4>Example: circles-data.json</h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "figure": "85%",
-      "caption": "Pass Rate"
-    },
-    {
-      "figure": "150",
-      "caption": "Students Enrolled"
-    }
-  ]
-}</uga-code>
-
-      <h3>4. Testing Locally</h3>
-      <uga-code language="bash">npm run dev    # Start development server
-npm run build  # Build production bundle
-npm run preview # Preview production build</uga-code>
-
-    </section>
-
-    <!-- Footer -->
-    <div style="margin-top: 4rem; padding-top: 2rem; border-top: 2px solid #ba0c2f;">
-      <p style="text-align: center; color: #666;">
-        <strong>UGA Lit Components Demo</strong><br>
-        Version 1.0 | University of Georgia Online Learning
-      </p>
-    </div>
 
     <!-- Return to Top Button -->
     <uga-return-to-top></uga-return-to-top>
@@ -736,31 +852,15 @@ npm run preview # Preview production build</uga-code>
   </div>
 
   <!-- Load the components bundle -->
-  <script type="module" src="/shared/ugaonline/dev/js/uga-components.js"></script>
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
   
-  <!-- Mock axios for demo (since we're not in D2L) -->
   <script>
     if (typeof axios === 'undefined') {
       window.axios = {
         get: async (url) => {
-          console.log('Mock axios GET:', url);
-          try {
-            const response = await fetch(url);
-            const data = await response.json();
-            return { data };
-          } catch (error) {
-            console.error('Error fetching:', url, error);
-            throw error;
-          }
-        },
-        post: async (url, data) => {
-          console.log('Mock axios POST:', url, data);
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
-          return { data: await response.json() };
+          const response = await fetch(url);
+          const data = await response.json();
+          return { data };
         }
       };
     }

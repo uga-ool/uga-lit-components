@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Component Demo</title>
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+  <style>
+    .component-demo {
+      margin-bottom: 4rem;
+      padding: 2rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .component-demo h1,
+    .component-demo h2,
+    .component-demo h3,
+    .component-demo h4 {
+      font-family: inherit;
+    }
+    .demo-description {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background-color: #f5f5f5;
+      border-left: 4px solid #ba0c2f;
+    }
+    .demo-example {
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background-color: #fafafa;
+      border: 1px dashed #ccc;
+    }
+    .demo-code {
+      margin-top: 1rem;
+    }
+    .demo-props {
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: #fff9e6;
+      border-left: 4px solid #ffc107;
+    }
+    .demo-props table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    .demo-props th,
+    .demo-props td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .demo-props th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+    h1 {
+      color: #ba0c2f;
+      border-bottom: 3px solid #ba0c2f;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #ba0c2f;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    pre {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .obj-container {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .obj-container h1,
+    .obj-container h2,
+    .obj-container h3,
+    .obj-container h4 {
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="obj-container">
+    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
+    
+    <header class="util-margin-vert-lg">
+      <h1>Quiz Component</h1>
+    </header>
+
+    <section class="component-demo">
+      <div class="demo-description">
+        <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, multi-select, ordering, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
+        <p><strong>Use Case:</strong> Students can't take summative assessments until they've completed embedded formative quizzes (release conditions).</p>
+      </div>
+
+      <h2>Demo: All Question Types and Features</h2>
+      <div class="demo-description">
+        <p><strong>This demo uses <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a></strong>, which includes all six question types: Multiple Choice, True/False, Short Answer, Matching, Multi-Select, and Ordering. The quiz below has all features enabled: timer (10 min with auto-submit), question randomization, retries, immediate feedback, and submission to the eLC assignment <strong>Quiz Demo 2</strong>.</p>
+        <p><strong>File location:</strong> <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Download quiz-sample.csv </a>. Place it in the same directory as your HTML (or set <code>filename</code> to the correct path).</p>
+      </div>
+      <div class="demo-example">
+        <uga-quiz
+          quiz-id="demo-quiz-csv"
+          quiz-title="Quiz: All Types &amp; Features"
+          passing-score="70"
+          allow-retry="true"
+          max-attempts="3"
+          show-feedback="true"
+          randomize-questions="true"
+          time-limit="10"
+          auto-submit="true"
+          type="csv"
+          filename="quiz-sample.csv"
+          dropbox-assignment-name="Quiz Demo 2">
+        </uga-quiz>
+        <p></p>
+        <uga-instructor-note type="local" filename="quiz-sync-note.html"></uga-instructor-note>
+        <p></p>
+      </div>
+
+      <div class="demo-code">
+        <h4>Basic (CSV, no timer):</h4>
+        <pre><code class="language-html">&lt;uga-quiz 
+  quiz-id="demo-quiz"
+  quiz-title="My Quiz"
+  passing-score="70"
+  type="csv"
+  filename="quiz-sample.csv"&gt;
+&lt;/uga-quiz&gt;</code></pre>
+        
+        <h4 style="margin-top: 1.5rem;">With assignment submission:</h4>
+        <pre><code class="language-html">&lt;uga-quiz 
+  quiz-id="demo-quiz"
+  quiz-title="My Quiz"
+  passing-score="70"
+  type="csv"
+  filename="quiz-sample.csv"
+          dropbox-assignment-name="Quiz Demo 2"&gt;
+&lt;/uga-quiz&gt;
+&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;&lt;/uga-quiz-grade-sync&gt;
+&lt;!-- or use dropbox-folder-id="12345" with the assignment URL db= value --&gt;</code></pre>
+
+        <h4 style="margin-top: 1.5rem;">All features (timer, auto-submit, randomize):</h4>
+        <pre><code class="language-html">&lt;uga-quiz 
+  quiz-id="demo-quiz"
+  quiz-title="Quiz: All Types &amp; Features"
+  passing-score="70"
+  allow-retry="true"
+  max-attempts="3"
+  show-feedback="true"
+  randomize-questions="true"
+  time-limit="10"
+  auto-submit="true"
+  type="csv"
+  filename="quiz-sample.csv"
+          dropbox-assignment-name="Quiz Demo 2"&gt;
+&lt;/uga-quiz&gt;</code></pre>
+        <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot; When synced, the most recent grade overwrites any current grade for each student.</p>
+      </div>
+
+      <div class="demo-props">
+        <h4>eLC CSV Format Support</h4>
+        <p>The file <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a> includes one question of each type (MC, TF, SA, M, MS, O). The component supports importing from eLC CSV format:</p>
+        <ul>
+          <li><strong>Multiple Choice (MC):</strong> Fully supported with option weights and feedback</li>
+          <li><strong>True/False (TF):</strong> Fully supported</li>
+          <li><strong>Short Answer (SA):</strong> Fully supported with multiple acceptable answers</li>
+          <li><strong>Matching (M):</strong> Fully supported</li>
+          <li><strong>Written Response (WR):</strong> Converted to Short Answer format</li>
+          <li><strong>Multi-Select (MS):</strong> Fully supported (options with weight 100 are correct)</li>
+          <li><strong>Ordering (O):</strong> Fully supported (Item rows define options in correct order)</li>
+        </ul>
+        <p><strong>How to use:</strong></p>
+        <ol>
+          <li>Export questions from eLC in CSV format</li>
+          <li>Save the file as CSV UTF-8 encoding</li>
+          <li>Upload the CSV file to your eLC course files</li>
+          <li>Use <code>type="csv"</code> and <code>filename</code> attributes</li>
+        </ol>
+      </div>
+
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td><code>quiz-id</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>Unique identifier for the quiz (used for tracking attempts)</td>
+          </tr>
+          <tr>
+            <td><code>quiz-title</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>Title displayed at the top of the quiz</td>
+          </tr>
+          <tr>
+            <td><code>type</code></td>
+            <td>'csv'</td>
+            <td>'csv'</td>
+            <td>Load questions from eLC CSV file</td>
+          </tr>
+          <tr>
+            <td><code>filename</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>Path to the eLC CSV file. Use relative path (e.g. <code>quiz-sample.csv</code>) if the file is in the same directory as your HTML.</td>
+          </tr>
+          <tr>
+            <td><code>passing-score</code></td>
+            <td>number</td>
+            <td>70</td>
+            <td>Percentage required to pass (0-100)</td>
+          </tr>
+          <tr>
+            <td><code>allow-retry</code></td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Allow students to retake the quiz</td>
+          </tr>
+          <tr>
+            <td><code>max-attempts</code></td>
+            <td>number</td>
+            <td>3</td>
+            <td>Maximum number of retry attempts</td>
+          </tr>
+          <tr>
+            <td><code>show-feedback</code></td>
+            <td>boolean</td>
+            <td>true</td>
+            <td>Show immediate feedback after answering</td>
+          </tr>
+          <tr>
+            <td><code>randomize-questions</code></td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Randomize question order</td>
+          </tr>
+          <tr>
+            <td><code>time-limit</code></td>
+            <td>number</td>
+            <td>0</td>
+            <td>Time limit in minutes (0 = no limit)</td>
+          </tr>
+          <tr>
+            <td><code>auto-submit</code></td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Automatically submit when time expires</td>
+          </tr>
+          <tr>
+            <td><code>dropbox-folder-id</code></td>
+            <td>number</td>
+            <td>0</td>
+            <td>eLC assignment (folder) ID. If set, each quiz completion is submitted to that assignment for audits and tracking. Use an assignment with <strong>All submissions are kept</strong>. See docs/D2L_QUIZ_DROPBOX.md.</td>
+          </tr>
+          <tr>
+            <td><code>dropbox-assignment-name</code></td>
+            <td>string</td>
+            <td>''</td>
+            <td>Name of the eLC assignment (e.g. &quot;Quiz Demo 2&quot;). The <strong>instructor</strong> creates this assignment in eLC (Assignments) and <strong>makes it visible</strong>; if hidden, the component cannot find it and submissions fail. Use the exact assignment title here. See docs/D2L_QUIZ_DROPBOX.md.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="demo-props">
+        <h4>Question Types (in CSV)</h4>
+        <ul>
+          <li><strong>multiple-choice:</strong> <code>options</code> array, <code>correctAnswer</code> is index (0-based)</li>
+          <li><strong>multi-select:</strong> <code>options</code> array, <code>correctAnswer</code> is array of indices, e.g. <code>[0, 2]</code></li>
+          <li><strong>ordering:</strong> <code>options</code> array (items in correct order), <code>correctAnswer</code> is <code>[0, 1, 2, ...]</code>. User arranges with up/down.</li>
+          <li><strong>true-false:</strong> <code>correctAnswer</code> is boolean (true/false)</li>
+          <li><strong>short-answer:</strong> <code>correctAnswer</code> is string, optional <code>caseSensitive</code></li>
+          <li><strong>fill-in-blank:</strong> Same as short-answer</li>
+          <li><strong>matching:</strong> <code>options</code> array, <code>correctAnswer</code> is object like <code>{"A": "Option 1", "B": "Option 2"}</code></li>
+        </ul>
+      </div>
+
+      <div class="demo-props">
+        <h4>Features</h4>
+        <ul>
+          <li>✅ Multiple question types (MC, Multi-Select, Ordering, T/F, Matching, Short Answer)</li>
+          <li>✅ Auto-grading with immediate feedback</li>
+          <li>✅ Assignment submission for tracking (instructor creates assignment in eLC)</li>
+          <li>✅ Retry attempts with attempt limit</li>
+          <li>✅ Timer support with auto-submit</li>
+          <li>✅ Question randomization</li>
+          <li>✅ Progress tracking</li>
+          <li>✅ Detailed results review</li>
+        </ul>
+      </div>
+
+      <div class="demo-props">
+        <h4>Automating submission to the gradebook (instructor)</h4>
+        <p>Instructors can send quiz results from the assignment into the eLC gradebook in one step:</p>
+        <ol>
+          <li><strong>In eLC:</strong> Create the assignment (e.g. Quiz Demo 2), make it visible, set <strong>Text or File</strong> and <strong>All submissions are kept</strong>. In the assignment’s <strong>Grade</strong> (or <strong>Evaluation &amp; Feedback</strong>) settings, <strong>link the assignment to a grade item</strong> in the gradebook (e.g. create or select a grade item so the assignment is tied to that column).</li>
+          <li><strong>Get the assignment folder ID:</strong> In eLC, open the assignment; the URL contains <code>db=</code> followed by a number (e.g. <code>db=12345</code>). That number is the <strong>dropbox folder ID</strong>.</li>
+          <li><strong>In your content:</strong> Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;&lt;/uga-quiz-grade-sync&gt;</code> below the quiz (use the same assignment name as the quiz’s <code>dropbox-assignment-name</code>). Alternatively use <code>dropbox-folder-id="<em>12345</em>"</code> with the folder ID from the assignment URL (<code>db=...</code>). This component is visible only to instructors.</li>
+          <li><strong>When you want to update grades:</strong> Open the page as an instructor and click <strong>Sync quiz grades to gradebook</strong>. The component reads all quiz submissions from that assignment and writes each student’s score into the linked grade item. <strong>The most recent grade overwrites any current grade</strong> for each student. Run it whenever new submissions have come in.</li>
+        </ol>
+        <p>There is no separate eLC setting to “automate” this—the one-click sync button is the automation. Students never write to the gradebook; only instructors trigger the sync.</p>
+      </div>
+
+      <div class="demo-props">
+        <h4>Setup Requirements</h4>
+        <ol>
+          <li><strong>Assignment:</strong> Instructor creates an assignment in eLC (Assignments) with the same name as <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;). <strong>Make the assignment visible</strong> to students (if hidden, submissions will not pass through). Set <strong>All submissions are kept</strong>. See docs/D2L_QUIZ_DROPBOX.md.</li>
+          <li><strong>Questions:</strong> Use the provided <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a> (all six question types, Google Drive) or export from eLC in CSV format and save as CSV UTF-8.</li>
+          <li><strong>Upload Files:</strong> Place the CSV in your course content area (same directory as your HTML page, or set <code>filename</code> to the path).</li>
+          <li><strong>Course Context:</strong> Component must be used within an eLC course page (for API access and assignment submission).</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <!-- Load the components bundle -->
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  
+  <script>
+    // Ensure axios is available (it's globally available in eLC, but add fallback for local testing)
+    if (typeof axios === 'undefined') {
+      window.axios = {
+        get: async (url) => {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw { response: { status: response.status, statusText: response.statusText } };
+          }
+          const data = await response.json();
+          return { data };
+        }
+      };
+    }
+  </script>
+</body>
+</html>

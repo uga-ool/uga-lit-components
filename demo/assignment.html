@@ -71,7 +71,7 @@
 </head>
 <body>
   <div class="obj-container">
-    <a href="index.html" class="back-link">← Back to All Components</a>
+    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
     
     <header class="util-margin-vert-lg">
       <h1>Assignment Component</h1>
@@ -79,12 +79,20 @@
 
     <section class="component-demo">
       <div class="demo-description">
-        <p><strong>Displays assignment details from D2L.</strong> Shows instructions, due dates, availability, and rubric information automatically pulled from the course.</p>
+        <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
+        <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can download a CSV for an assignment that lists <strong>all students</strong>, whether they submitted, and their current gradebook value (blank if not graded yet).</p>
       </div>
 
       <div class="demo-example">
-        <uga-assignment name="Module 1 Assignment"></uga-assignment>
-        <p><em>Note: Requires D2L API access to load assignment data</em></p>
+        <uga-assignment></uga-assignment>
+        
+      </div>
+
+      <div class="demo-example" style="margin-top: 2rem;">
+        <h4>With Grade Export Enabled (Instructor View)</h4>
+        <p><strong>Note:</strong> Grade export features are only visible to instructors. Students will see the standard assignment list.</p>
+        <uga-assignment enable-export></uga-assignment>
+        <p><em>When <code>enable-export</code> is set, instructors see "Export Grades" buttons for each assignment. Clicking it downloads a per-assignment CSV (all students + submission status + gradebook value). The "Export All Assignments (CSV)" button exports a course-level summary of assignments and gradebook metadata.</em></p>
       </div>
 
       <div class="demo-props">
@@ -96,21 +104,73 @@
             <th>Description</th>
           </tr>
           <tr>
-            <td>name</td>
-            <td>string</td>
-            <td>Name of the assignment in D2L</td>
+            <td><code>types</code></td>
+            <td>String</td>
+            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
+          </tr>
+          <tr>
+            <td><code>enable-export</code></td>
+            <td>Boolean</td>
+            <td>Enable grade export features for instructors. When enabled, instructors see "Export Grades" (per-assignment roster CSV) and "Export All Assignments (CSV)" (course summary). Default: <code>false</code></td>
           </tr>
         </table>
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-assignment name="Module 1 Assignment"&gt;&lt;/uga-assignment&gt;</uga-code>
+        <h4>Basic Usage</h4>
+        <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
+        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
+&lt;uga-assignment types="assignment"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show assignments and discussions --&gt;
+&lt;uga-assignment types="assignment,discussion"&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Show only discussions --&gt;
+&lt;uga-assignment types="discussion"&gt;&lt;/uga-assignment&gt;</uga-code>
+
+        <h4 style="margin-top: 1.5rem;">Enable Grade Export</h4>
+        <uga-code language="markup">&lt;!-- Enable grade export for instructors --&gt;
+&lt;uga-assignment enable-export&gt;&lt;/uga-assignment&gt;
+
+&lt;!-- Combine with type filtering --&gt;
+&lt;uga-assignment types="assignment" enable-export&gt;&lt;/uga-assignment&gt;</uga-code>
+
+        <h4 style="margin-top: 1.5rem;">How Grade Export Works</h4>
+        <p><strong>Grade Export Feature:</strong></p>
+        <ol>
+          <li><strong>Instructor enables export</strong> - Set <code>enable-export</code> attribute on the component. This makes export buttons visible to instructors only.</li>
+          <li><strong>Export individual assignment grades</strong> - Click "Export Grades" button next to any assignment. This:
+            <ul>
+              <li>Finds the grade object in the gradebook that matches the assignment name</li>
+              <li>Loads the classlist to include every student</li>
+              <li>Loads submissions to mark who submitted</li>
+              <li>Loads gradebook values (if any) and leaves blanks for ungraded work</li>
+              <li>Downloads a per-assignment CSV</li>
+            </ul>
+          </li>
+          <li><strong>Export all assignments summary</strong> - Click "Export All Assignments (CSV)" button at the top. This:
+            <ul>
+              <li>Creates a CSV file with all assignments</li>
+              <li>Includes assignment name, due date, type, grade object ID, max points, and student count</li>
+              <li>Downloads the CSV file automatically</li>
+            </ul>
+          </li>
+        </ol>
+        
+        <p><strong>Important Notes:</strong></p>
+        <ul>
+          <li><strong>Grade objects must exist</strong> - The assignment must have a corresponding grade object in the D2L gradebook. The component matches assignments to grade objects by name.</li>
+          <li><strong>Export reads existing grades</strong> - The export feature reads grades that already exist in the gradebook. It does not create new grades or autograde submissions.</li>
+          <li><strong>Instructor-only feature</strong> - Students will not see the export buttons, only the standard assignment list.</li>
+        </ul>
       </div>
     </section>
 
     <uga-return-to-top></uga-return-to-top>
   </div>
 
-  <script type="module" src="/shared/ugaonline/dev/js/uga-components.js"></script>
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 </body>
 </html>

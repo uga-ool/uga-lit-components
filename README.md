@@ -1,21 +1,24 @@
-# UGA Brightspace Lit Components
+# UGA eLC Lit Components
 
-This repository contains a collection of reusable **Lit web components** designed for use within the **University of Georgia’s Brightspace (D2L)** learning environment.
+This repository contains a collection of reusable **Lit web components** designed for use within the **University of Georgia's eLC** learning environment.
 
-The project has been modernized to use **Vite** for development and builds, and to bundle all components into a **single optimized JavaScript file** (`uga-components.js`) that can be easily uploaded to Brightspace Public Files.
+The project has been modernized to use **Vite** for development and builds, and to bundle all components into a **single optimized JavaScript file** (`uga-components.js`) that can be easily uploaded to eLC Public Files.
 
 ---
 
-## � Recent Updates (November 2025)
+## 📋 Recent Updates (January 2026)
 
-### What's New
+### What's New in v3.0
 
-- **🎨 Demo System Restructured**: 15 individual component demo pages + comprehensive navigation gallery
-- **🎬 Enhanced Kaltura Video**: Logo hiding, improved player lifecycle, eliminated scrollbar issues
+- **🎨 eLC Rebranding Complete**: All references updated from "D2L (Brightspace)" to "eLC" (eLearning Commons)
+- **📁 Dual Index Structure**: `index.html` and `index-all-in-one.html` for flexible demo navigation
+- **📦 Google Drive Integration**: Example JSON files available via Google Drive links with consistent formatting
+- **🔗 TOC Auto-ID Generation**: Headings without IDs are automatically linkable
+- **📚 Enhanced Documentation**: Updated QUICK_START.md with clear file structure explanations
+- **🎬 Kaltura Video Enhancement**: Logo hiding, improved player lifecycle, eliminated scrollbar issues
 - **📂 Accordion Refactored**: Direct axios pattern, better error handling, TypeScript improvements
 - **🗂️ TOC Filtering**: Now scans h2/h3 only for cleaner navigation
-- **📘 New Setup Guide**: Comprehensive `demo/setup.html` with troubleshooting and best practices
-- **🐛 Critical Fixes**: Accordion icons, footer logo paths, axios error handling
+- **🐛 TypeScript Fixes**: Resolved type mismatches in assignment and duedate components
 
 👉 **See [CHANGELOG.md](./CHANGELOG.md) for complete details**
 
@@ -28,6 +31,9 @@ The project has been modernized to use **Vite** for development and builds, and 
 - **Modern tooling:**  
   Uses [Vite](https://vitejs.dev/) for fast builds and optimized output.
 
+- **TypeScript throughout:**  
+  All components converted from `.js` to `.ts` for improved maintainability, error prevention, and better tooling support in large-scale, team-based development environments.
+
 - **Enhanced demo system:**  
   Individual demo pages for each component + comprehensive navigation gallery.
 
@@ -38,10 +44,10 @@ The project has been modernized to use **Vite** for development and builds, and 
   All components built on the latest stable version of [Lit](https://lit.dev/).
 
 - **Light DOM by default:**  
-  Components render into the light DOM with `createRenderRoot() { return this; }` to work seamlessly inside Brightspace content.
+  Components render into the light DOM with `createRenderRoot() { return this; }` to work seamlessly inside eLC content.
 
-- **Brightspace-ready:**  
-  Designed for easy integration via Public Files with `<script type="module">`.
+- **eLC-ready:**  
+  Designed for easy integration via eLC Public Files with `<script type="module">`.
 
 ---
 
@@ -50,16 +56,14 @@ The project has been modernized to use **Vite** for development and builds, and 
 ```
 uga-lit-components/
 ├── demo/                         # Demo pages and sample data
-│   ├── index.html                # Navigation gallery with all components
+│   ├── index-all-in-one.html     # Comprehensive all-in-one demo page
 │   ├── setup.html                # Comprehensive setup & usage guide
 │   ├── accordion.html            # Individual component demo pages
 │   ├── video.html                # (one for each component)
 │   ├── toc.html
-│   ├── ...                       # (15 demo pages total)
-│   ├── index-all-in-one.html     # Original unified demo (preserved)
-│   ├── QUICK_START.md            # Quick start guide
-│   ├── README.md                 # Demo documentation
-│   └── *.json                    # Sample data files
+│   ├── ...                       # (14 individual component pages)
+│   ├── QUICK_START.md            # Quick start guide for demo system
+│   └── *.json                    # Sample data files (also on Google Drive)
 ├── src/
 │   ├── all.ts                    # Entry point: eagerly imports all components
 │   ├── components/               # Individual Lit web components
@@ -91,7 +95,7 @@ uga-lit-components/
 
 ## 🎨 Styling Convention: Light DOM
 
-All components use **Light DOM** rendering (`createRenderRoot() { return this; }`) for seamless integration inside Brightspace content pages. This means:
+All components use **Light DOM** rendering (`createRenderRoot() { return this; }`) for seamless integration inside eLC content pages. This means:
 
 - Component styles either:
   1. Link to the shared UGA design system: `<link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />`
@@ -121,27 +125,14 @@ All components use **Light DOM** rendering (`createRenderRoot() { return this; }
 
    ```bash
    npm run dev
-   # Open http://localhost:5173/demo/index.html
+   # Open http://localhost:5173/demo/index-all-in-one.html
    ```
 
 3. **Explore individual components:**
-   - Navigate through the demo gallery at `demo/index.html`
-   - Each component has its own dedicated demo page
+   - View comprehensive demo at `demo/index-all-in-one.html`
+   - Each component has its own dedicated demo page (14 individual pages)
+   - Access via eLC side navigation for easy browsing
    - Review `demo/setup.html` for deployment instructions
-
-### Installation
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/uga-ool/uga-lit-components.git
-   cd uga-lit-components
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
 
 ### Development
 
@@ -161,7 +152,7 @@ Create the production bundle:
 npm run build
 ```
 
-This generates `dist/js/uga-components.js` — the single file to upload to Brightspace Public Files.
+This generates `dist/js/uga-components.js` — the single file to upload to eLC Public Files.
 
 ### Preview
 
@@ -175,24 +166,31 @@ npm run preview
 
 ## 📦 Components Overview
 
-The repository includes 14 pre-built components:
+The repository includes 15 pre-built components:
 
-| Component               | Purpose                                                 |
-| ----------------------- | ------------------------------------------------------- |
-| **uga-accordion**       | Collapsible accordion sections with expand/collapse all |
-| **uga-assignment**      | Display assignment details (due date, type, rubrics)    |
-| **uga-circles**         | Display data in circular badge format                   |
-| **uga-code**            | Syntax-highlighted code blocks with copy button         |
-| **uga-duedate**         | Show assignment due date                                |
-| **uga-footer**          | Site footer with branding                               |
-| **uga-instructor-note** | Instructor-only notes (hidden from students)            |
-| **uga-module-feedback** | Embed Qualtrics feedback form                           |
-| **uga-rating**          | Collect feedback/ratings on content                     |
-| **uga-return-to-top**   | Fixed button to scroll to top                           |
-| **uga-slideshow**       | Image carousel with navigation                          |
-| **uga-tabs**            | Tab navigation interface                                |
-| **uga-toc**             | Auto-generated table of contents                        |
-| **uga-video**           | Embed Kaltura or YouTube videos with logo control       |
+| Component                 | Purpose                                                                                                                     |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **uga-accordion**         | Collapsible accordion sections with expand/collapse all                                                                     |
+| **uga-assignment**        | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property.             |
+| **uga-circles**           | Display data in circular badge format                                                                                       |
+| **uga-code**              | Syntax-highlighted code blocks with copy button                                                                             |
+| **uga-duedate**           | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property. |
+| **uga-footer**            | Site footer with branding                                                                                                   |
+| **uga-instructor-note**   | Instructor-only notes (hidden from students)                                                                                |
+| **uga-quiz**              | Embed formative quizzes (CSV); submit results to an eLC assignment; supports timers, retries, and immediate feedback       |
+| **uga-quiz-grade-sync**   | Instructor-only: sync quiz submissions from an assignment to the linked grade item (use with uga-quiz)                    |
+| **uga-rating**            | Collect feedback/ratings on content                                                                                         |
+| **uga-return-to-top**     | Fixed button to scroll to top                                                                                               |
+| **uga-slideshow**         | Image carousel with navigation                                                                                              |
+| **uga-tabs**              | Tab navigation interface                                                                                                    |
+| **uga-toc**               | Auto-generated table of contents                                                                                            |
+| **uga-video**             | Embed Kaltura or YouTube videos with logo control                                                                           |
+
+---
+
+### Note: Module Feedback moved to React
+
+The previous `uga-module-feedback` web component has been removed from this bundle. Module feedback is now implemented using React and maintained separately. If you need the module feedback functionality, use the React-based solution provided by the team and do not reference `uga-module-feedback` in eLC pages.
 
 ---
 
@@ -203,7 +201,7 @@ The `uga-video` component uses **KalturaPlayer script injection** for full contr
 **Key Features:**
 
 - ✅ Kaltura logo/watermark completely hidden via UI config
-- ✅ No scrollbar issues - uses direct DOM container instead of iframe
+- ✅ No scrollbar issues — uses direct DOM container instead of iframe
 - ✅ Full player lifecycle management with cleanup
 - ✅ Script caching to avoid multiple loads
 - ✅ Proper aspect ratio handling (16:9 default)
@@ -226,7 +224,7 @@ const kalturaPlayer = KalturaPlayer.setup({
 });
 ```
 
-**Usage in Brightspace:**
+**Usage in eLC:**
 
 ```html
 <uga-video videoid="1_abc123de" playerid="57494843" includerating="false">
@@ -241,7 +239,7 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 ---
 
-## 🚀 Deploying to Brightspace
+## 🚀 Deploying to eLC
 
 1. **Build the bundle:**
 
@@ -249,17 +247,17 @@ const kalturaPlayer = KalturaPlayer.setup({
    npm run build
    ```
 
-2. **Upload to Brightspace Public Files:**
+2. **Upload to eLC Public Files:**
 
-   - Navigate to: Course → Course Administration → Files
-   - Upload `dist/js/uga-components.js` to `/shared/PublicFiles/`
+- Navigate to: **eLC → Content → Manage Files → Public Files**
+- Upload `dist/js/uga-components.js` to `/shared/PublicFiles/` (or `/shared/ugaonline/dev/js/` for testing)
 
 3. **Add to Content Pages:**
 
    ```html
    <!-- Your content and components -->
    <uga-accordion type="local" filename="accordion-data.json"></uga-accordion>
-   <uga-video host="kaltura" videoid="abc123"></uga-video>
+   <uga-video videoid="1_abc123de"></uga-video>
 
    <!-- Load all components -->
    <script type="module" src="/shared/PublicFiles/uga-components.js"></script>
@@ -311,9 +309,9 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 | File                              | Purpose                                               |
 | --------------------------------- | ----------------------------------------------------- |
-| `demo/index.html`                 | Navigation gallery showing all components             |
+| `demo/index-all-in-one.html`      | Comprehensive all-in-one demo showing all components  |
 | `demo/setup.html`                 | Comprehensive setup, usage, and troubleshooting guide |
-| `demo/[component].html`           | Individual component demo pages (15 total)            |
+| `demo/[component].html`           | Individual component demo pages (15 total, including quiz.html) |
 | `src/all.ts`                      | Entry point; eagerly imports all components           |
 | `src/components/*.ts`             | Individual component implementations                  |
 | `src/lib/api/d2l-client.ts`       | Centralized D2L API methods                           |
@@ -328,16 +326,17 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 ## 🐛 Troubleshooting
 
-| Problem                           | Solution                                                                     |
-| --------------------------------- | ---------------------------------------------------------------------------- |
-| Component not appearing in bundle | Ensure it's in `src/components/` with `.ts` extension                        |
-| Styles not applying               | Add `<link rel="stylesheet" href="...base.css" />` if using UGA classes      |
-| **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**          |
-| Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors         |
-| D2L API 404 errors                | Verify course ID (`ou`) is correct and API version matches                   |
-| `axios` is undefined              | Ensure code runs in Brightspace environment (axios is globally available)    |
-| TOC showing too many items        | Component now scans h2/h3 only - check if you need h4 headings in navigation |
-| Data files not loading            | Verify JSON paths are correct and files are uploaded to Public Files         |
+| Problem                           | Solution                                                                                      |
+| --------------------------------- | --------------------------------------------------------------------------------------------- |
+| Component not appearing in bundle | Ensure it's in `src/components/` with `.ts` extension                                         |
+| Styles not applying               | Add `<link rel="stylesheet" href="...base.css" />` if using UGA classes                       |
+| **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**                           |
+| Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                          |
+| D2L API 404 errors                | Verify course ID (`ou`) is correct and API version matches                                    |
+| `axios` is undefined              | Ensure code runs in eLC environment (axios is globally available)                             |
+| TOC showing too many items        | Component now scans h2/h3 only - check if you need h4 headings in navigation                  |
+| TOC links not working             | Component now auto-generates IDs for headings without them                                    |
+| Data files not loading            | Download example files from Google Drive links in demo pages, then upload to eLC Public Files |
 
 ### Important Notes
 
@@ -349,17 +348,38 @@ const kalturaPlayer = KalturaPlayer.setup({
 <html lang="en" class="js"></html>
 ```
 
-This enables UGA CSS pseudo-element styles (`.js .cmp-accordion__button::after`) for the expand/collapse icons.
+This enables UGA CSS pseudo-element styles (`.js .cmp-accordion__button::after`) for the expand/collapse icons. Without this class, accordion icons will not display.
+
+**Impact:** All pages with accordion components need this update.
 
 #### Table of Contents Behavior
 
-The `uga-toc` component now scans **h2 and h3 headings only** (changed from h1-h4). This provides cleaner navigation by excluding h4 property tables and other minor headings.
+The `uga-toc` component now scans **h2 and h3 headings only** (changed from h1-h4). This provides cleaner navigation by excluding h4 property tables and other minor headings. The component also auto-generates IDs for headings without them, ensuring all h2/h3 headings are navigable even if they lack manual IDs.
+
+**Action:** No code changes required, but review TOC output to ensure it meets your needs.
+
+### Troubleshooting Common Issues
+
+**Problem:** Accordion icons not showing  
+**Solution:** Add `class="js"` to `<html>` tag
+
+**Problem:** TOC showing too many items  
+**Solution:** Component now filters to h2/h3 only - this is expected behavior
+
+**Problem:** Video not loading  
+**Solution:** Check browser console for errors, verify Kaltura video ID
+
+**Problem:** Demo pages not loading  
+**Solution:** Run `npm install` and `npm run dev`, then try again
+
+**Problem:** Multiple video players not initializing  
+**Solution:** Ensure you're using the latest build - unique component IDs prevent container conflicts
 
 ### More Help
 
-- Review `demo/setup.html` for comprehensive troubleshooting
+- Review `demo/setup.html` for comprehensive troubleshooting and deployment instructions
 - Check individual component demo pages for usage examples
-- See `CHANGELOG.md` for recent changes and migration notes
+- See `CHANGELOG.md` for complete change history
 
 ---
 

@@ -1,11 +1,9 @@
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { getVersions, getUser, getForums, getTopics, getXsrfToken, createForum, createTopic, createPost } from '../lib/api/d2l-client.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import axios from 'axios';
+import { getVersions, getUser, getForums, getTopics, getPostsPaged, getXsrfToken, createForum, createTopic, createPost, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
-import type { ApiVersions } from '../types/d2l.js';
-
-// Axios is available globally in Brightspace
-declare const axios: any;
+import type { ApiVersions, DiscussionPost } from '../types/d2l.js';
 
 
 interface RatingOption {
@@ -23,7 +21,7 @@ interface CurrentUser {
 @customElement('uga-rating')
 class UgaRating extends LitElement {
 
-  // Light DOM: render into the page directly (D2L-friendly)
+  // Light DOM: render into the page directly (eLC-friendly)
   createRenderRoot() {
     return this;
   }
@@ -59,6 +57,8 @@ class UgaRating extends LitElement {
   private selected: string | null = null;
   private contentTitle = '';
   private domain: string | null = null;
+  @state() private loading = false;
+  private abortController: AbortController | null = null;
 
   constructor() {
     super();
@@ -83,6 +83,7 @@ class UgaRating extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+    this.abortController = new AbortController();
     
     if (this.forumId === null && this.forumName === null) {
       this.forumName = "Content Ratings";
@@ -100,27 +101,113 @@ class UgaRating extends LitElement {
 
     const versions = await getVersions();
     this.addVersions(versions);
+    
+    // Check API versions for deprecation warnings
+    if (this.versions.le) {
+      logApiVersionWarning(this.versions.le, 'getForums');
+      logApiVersionWarning(this.versions.le, 'getTopics');
+      logApiVersionWarning(this.versions.le, 'getPostsPaged');
+    }
+    if (this.versions.lp) {
+      logApiVersionWarning(this.versions.lp, 'getUser');
+    }
 
     const whoAmI = await getUser(this.versions.lp);
     this.addWhoAmI(whoAmI);
 
     if (this.forumId === null) {
-      const forums = await getForums(this.ou, this.versions.le);
-      this.findForum(forums);
+      try {
+        const forums = await getForums(this.ou, this.versions.le);
+        this.findForum(forums);
+      } catch (error: any) {
+        console.error('Error fetching forums:', error);
+        this.error = true;
+        this.errorMessage = `Failed to fetch forums: ${error.message || 'Unknown error'}`;
+        return;
+      }
+      
+      // Create forum if it doesn't exist
+      if (this.forumId === null && this.forumName) {
+        try {
+          if (this.token === null) {
+            await this.getToken();
+          }
+          if (this.token !== null) {
+            const forum = await createForum(this.ou, this.versions.le, this.forumName, '');
+            this.forumId = forum.ForumId.toString();
+          }
+        } catch (error: any) {
+          console.error('Error creating forum:', error);
+          this.error = true;
+          this.errorMessage = `Failed to create rating forum: ${error.message || 'Unknown error'}`;
+          return;
+        }
+      }
     }
 
     if (this.topicId === null && this.forumId) {
-      const topics = await getTopics(this.ou, this.versions.le, parseInt(this.forumId, 10));
-      this.findTopic(topics);
+      try {
+        const topics = await getTopics(this.ou, this.versions.le, parseInt(this.forumId, 10));
+        this.findTopic(topics);
+      } catch (error: any) {
+        console.error('Error fetching topics:', error);
+        this.error = true;
+        this.errorMessage = `Failed to fetch topics: ${error.message || 'Unknown error'}`;
+        return;
+      }
+      
+      // Create topic if it doesn't exist
+      if (this.topicId === null && this.topicName) {
+        try {
+          if (this.token === null) {
+            await this.getToken();
+          }
+          if (this.token !== null) {
+            const topic = await createTopic(this.ou, this.versions.le, parseInt(this.forumId, 10), this.topicName, '');
+            this.topicId = topic.TopicId.toString();
+          }
+        } catch (error: any) {
+          console.error('Error creating topic:', error);
+          this.error = true;
+          this.errorMessage = `Failed to create rating topic: ${error.message || 'Unknown error'}`;
+          return;
+        }
+      }
     }
 
     if (this.topicId === null || this.forumId === null) {
       this.error = true;
+      if (!this.errorMessage) {
+        this.errorMessage = 'Failed to initialize rating system';
+      }
     } else {
-      const postsRoute = "/d2l/api/le/" + this.versions.le + "/" + this.ou + "/discussions/forums/" + this.forumId + "/topics/" + this.topicId + "/posts/";
-      const posts = await this.makeGetRequest(postsRoute);
-      this.findPost(posts);
+      try {
+        // Use paged posts endpoint for better performance
+        const posts = await getPostsPaged(
+          this.ou,
+          this.versions.le,
+          parseInt(this.forumId, 10),
+          parseInt(this.topicId, 10),
+          { pageSize: 200 }
+        );
+        this.findPost(posts);
+      } catch (error: any) {
+        // Don't show error if request was aborted (component unmounted)
+        if (error.message === 'Request aborted' || this.abortController?.signal.aborted) {
+          return;
+        }
+        console.error('Error fetching posts:', error);
+        // Don't set error state here - allow component to continue
+        // Posts might not exist yet, which is fine
+      }
     }
+  }
+  
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    // Cancel all in-flight requests
+    this.abortController?.abort();
+    this.abortController = null;
   }
 
   async getToken(): Promise<void> {
@@ -165,13 +252,17 @@ class UgaRating extends LitElement {
     }
   }
 
-  findPost(postData: any): void {
-    for (let i in postData) {
-      if (!postData[i]["IsDeleted"] && postData[i]["PostingUserId"] === this.currentUser.userId) {
-        let reviewedContentId = postData[i]['Subject'].split("|")[0];
+  findPost(postData: DiscussionPost[]): void {
+    for (const post of postData) {
+      // Type-safe access to post properties
+      const postAny = post as any;
+      if (!postAny.IsDeleted && postAny.PostingUserId === this.currentUser.userId) {
+        const subject: string = postAny.Subject || '';
+        const parts = subject.split('|').map((s: string) => s.trim());
+        const reviewedContentId = parts.length > 0 ? parts[parts.length - 1] : '';
         if (this.contentId === reviewedContentId) {
           this.reviewExists = true;
-          this.postId = postData[i]["PostId"];
+          this.postId = postAny.PostId?.toString() || null;
           return;
         }
       }
@@ -190,45 +281,100 @@ class UgaRating extends LitElement {
    */
 
   async submitRating(): Promise<void> {
-
     if (this.selected === null || this.selected === '0') {
       this.error = true;
       this.errorMessage = 'Please select a rating';
       this.requestUpdate();
-    } else {
+      return;
+    }
+    
+    this.loading = true;
+    this.error = false;
+    this.errorMessage = null;
+    
+    // Optimistic update - show success immediately
+    const previousReviewExists = this.reviewExists;
+    this.reviewExists = true;
+    this.requestUpdate();
+    
+    try {
       const rating = this.selected;
-      const feedbackField = this.shadowRoot?.querySelector('#feedback-field') as HTMLInputElement;
-      const feedback = feedbackField?.value || '';
-      const result = rating.concat(feedback);
+      const feedbackField = this.querySelector('#feedback-field') as HTMLInputElement;
+      const feedback = (feedbackField?.value || '').trim();
+      const label = this.options.find(o => o.value === rating)?.text || '';
+      const result = label ? `${rating} ${label} - ${feedback}` : `${rating} - ${feedback}`;
 
       if (this.ou === null) {
         this.ou = getCourse();
       }
-
-      const route = "/d2l/api/le/" + this.versions.le + "/" + this.ou + "/discussions/forums/" + this.forumId + "/topics/" + this.topicId + "/posts/";
+      
+      if (!this.ou || !this.forumId || !this.topicId) {
+        throw new Error('Missing required information to submit rating');
+      }
 
       const data = {
-          "ParentPostId": null,
-          "Subject": this.contentId + "|" + this.contentType + "|" + this.contentName + "|" + this.contentPlatform,
-          "Message": { "Content": result, "Type": "Text" },
-          "IsAnonymous": false
+        "ParentPostId": null,
+        // New subject format: "{contentName} | {contentId}"
+        "Subject": `${this.contentName} | ${this.contentId}`,
+        "Message": { "Content": result, "Type": "Text" },
+        "IsAnonymous": false
       };
       
       if (this.token === null) {
-          await this.getToken();
+        await this.getToken();
       }
 
-      if (this.token !== null) {
-          const postData = await this.makePostRequest(route, data);
-          // const postCheck = await this.makeGetRequest(route)
-          if (postData.ThreadId > 0) { // Make sure we get post data back with a thread ID
-            this.reviewExists = true;
-            this.requestUpdate();
-          } else {
-            this.error = true;
-            this.errorMessage = "An error occurred saving your response. Please try again in a few minutes.";
-          }
+      // Get token if needed (createPost will get it if not provided)
+      if (this.token === null) {
+        await this.getToken();
       }
+      
+      // Create post - createPost handles token internally if not provided
+      const postData = await createPost(
+        this.ou,
+        this.versions.le,
+        parseInt(this.forumId, 10),
+        parseInt(this.topicId, 10),
+        data.Subject,
+        result,
+        {
+          xsrfToken: this.token || undefined,
+          isAnonymous: false
+        }
+      );
+      
+      // Check if post was created successfully
+      // DiscussionPost should have PostId and ThreadId properties
+      // Accept any truthy PostId or ThreadId value (including 0, which is valid)
+      const hasPostId = postData && typeof postData === 'object' && 'PostId' in postData;
+      const hasThreadId = postData && typeof postData === 'object' && 'ThreadId' in postData;
+      
+      if (hasPostId || hasThreadId) {
+        // Success - optimistic update was correct
+        this.error = false;
+        this.postId = postData.PostId?.toString() || null;
+        console.log('✅ Rating submitted successfully:', { postId: postData.PostId, threadId: postData.ThreadId });
+      } else {
+        // Rollback optimistic update
+        this.reviewExists = previousReviewExists;
+        console.error('❌ Unexpected post response structure:', {
+          postData,
+          hasPostId,
+          hasThreadId,
+          type: typeof postData,
+          keys: postData ? Object.keys(postData) : 'null/undefined'
+        });
+        throw new Error("Post was created but response was unexpected. Please refresh and try again.");
+      }
+    } catch (error: any) {
+      // Rollback optimistic update on error
+      this.reviewExists = previousReviewExists;
+      console.error('Error submitting rating:', error);
+      this.error = true;
+      this.errorMessage = error.response?.data?.Message || error.message || 'An error occurred saving your response. Please try again in a few minutes.';
+    } finally {
+      this.loading = false;
+      this.requestUpdate();
     }
   }
 
@@ -257,8 +403,8 @@ class UgaRating extends LitElement {
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
       <form class="util-background-light-gray util-pad-all-sm util-pad-all-md@sm util-pad-all-lg@md util-display-none@print">
         <fieldset>
-            <legend class="cmp-heading-5 util-margin-bottom-sm util-text-center util-full-width">Leave feedback for ${this.name}</legend>
-            ${this.error ? html`<p class="util-text-center util-color-red">${this.errorMessage}</p>`: html``}
+            <legend class="cmp-heading-5 util-margin-bottom-sm util-text-center util-full-width">Leave feedback for ${this.contentName}</legend>
+            ${this.error ? html`<p class="util-text-center util-color-red" role="alert">${this.errorMessage}</p>`: html``}
             <div class="obj-grid obj-grid--gap-md@md">
               <div class="obj-grid__full obj-grid__half@md">
                 <div class="cmp-form-select">  
@@ -268,7 +414,7 @@ class UgaRating extends LitElement {
                       How beneficial was this video for your learning?
                   </label>                  
                   <div class="">
-                      <select id="rating-select" class="cmp-form-select__dropdown" @change=${this.changeRating}>
+                      <select id="rating-select" class="cmp-form-select__dropdown" @change=${this.changeRating} ?disabled=${this.loading}>
                         ${this.options.map(option => html`
                           <option value="${option.value}">${option.text}</option>
                         `)}
@@ -286,7 +432,7 @@ class UgaRating extends LitElement {
                   <div class="">
                     <div class="util-position-relative">
                       <input id="feedback-field" class="cmp-form-field__input" type="search"
-                        placeholder="Leave a Comment (Optional)" />
+                        placeholder="Leave a Comment (Optional)" ?disabled=${this.loading} />
                     </div>
                   </div>
                 </div>
@@ -296,8 +442,8 @@ class UgaRating extends LitElement {
           <div class="obj-grid obj-grid--gap-md@sm util-margin-top-md">
             <div class="obj-grid__full obj-grid__quarter@md">
                 <button class="cmp-button
-                  cmp-button--full-width" id="submitButton" type="button" @click="${this.submitRating}">
-                  Submit Feedback
+                  cmp-button--full-width" id="submitButton" type="button" @click="${this.submitRating}" ?disabled=${this.loading}>
+                  ${this.loading ? 'Submitting...' : 'Submit Feedback'}
                 </button>
             </div>
           </div>

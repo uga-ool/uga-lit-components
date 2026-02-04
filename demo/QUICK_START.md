@@ -2,17 +2,17 @@
 
 ## What You Just Got
 
-A comprehensive demo system with **15 dedicated pages** showcasing all UGA Lit components:
+A comprehensive demo system with **17 dedicated pages** showcasing all UGA Lit components:
 
-- ✅ **Navigation gallery** (`index.html`) with component cards organized by category
-- ✅ **Individual demo pages** for each component with live examples
-- ✅ **Setup guide** (`setup.html`) with deployment instructions and troubleshooting
+- ✅ **Main demo page** (`index-all-in-one.html`) - Comprehensive all-in-one scrollable demo with all components
+- ✅ **15 individual demo pages** - One per component (including Quiz), perfect for eLC side navigation
+- ✅ **Setup guide** (`setup.html`) - Deployment instructions and troubleshooting
 - ✅ **Property documentation** tables for every component
 - ✅ **Copy-paste ready** code snippets
-- ✅ **Sample data files** for testing
-- ✅ **Auto-generated table of contents** on main page
+- ✅ **Sample data files** with Google Drive links for easy sharing
+- ✅ **Auto-generated table of contents** on main pages
 
-## Recent Updates (November 2025)
+## Recent Updates (January 2026)
 
 ### What's New
 
@@ -28,26 +28,26 @@ A comprehensive demo system with **15 dedicated pages** showcasing all UGA Lit c
 
 ```
 demo/
-├── index.html                    # Main navigation gallery
-├── setup.html                    # Setup & usage guide (NEW)
-├── accordion.html                # Individual component demos
-├── assignment.html
-├── circles.html
+├── index-all-in-one.html        # Main comprehensive demo (all components)
+├── setup.html                    # Setup & usage guide
+├── accordion.html                # Individual component demos (14 pages)
+├── assignment.html               #   Each shows one component in detail
+├── circles.html                  #   Perfect for eLC side navigation
 ├── code.html
 ├── duedate.html
 ├── footer.html
 ├── instructor-note.html
 ├── module-feedback.html
+├── quiz.html
+├── quiz-sync-note.html
 ├── rating.html
 ├── return-to-top.html
 ├── slideshow.html
 ├── tabs.html
 ├── toc.html
 ├── video.html
-├── index-all-in-one.html        # Original unified demo (preserved)
-├── README.md                     # Detailed documentation
 ├── QUICK_START.md               # This file
-├── accordion-demo.json           # Sample data files
+├── accordion-demo.json           # Sample data files (available on Google Drive)
 ├── tabs-demo.json
 ├── circles-demo.json
 ├── slideshow-demo.json
@@ -63,11 +63,11 @@ demo/
 npm run dev
 ```
 
-Then open: `http://localhost:5173/demo/index.html`
+Then open: `http://localhost:5173/demo/index-all-in-one.html`
 
 **Navigate the demos:**
 
-- Main gallery: `http://localhost:5173/demo/index.html`
+- Main demo: `http://localhost:5173/demo/index-all-in-one.html`
 - Individual component: `http://localhost:5173/demo/accordion.html`
 - Setup guide: `http://localhost:5173/demo/setup.html`
 
@@ -78,37 +78,46 @@ npm run build
 npm run preview
 ```
 
-Then open: `http://localhost:4173/demo/index.html`
+Then open: `http://localhost:4173/demo/index-all-in-one.html`
 
 ## Demo System Navigation
 
-### Main Gallery (`index.html`)
+### Main Demo Pages
 
-- Browse all components organized by category
-- Click component cards to view individual demos
-- Includes comprehensive table of contents
-- Links to setup guide and documentation
+**`index-all-in-one.html`** - Main comprehensive demo page:
 
-### Individual Component Pages
+- Comprehensive scrollable demo with all 14 components
+- Organized by category (Content, Media, Interactive, Navigation, Instructor Tools)
+- Auto-generated table of contents for quick navigation
+- Live examples, property tables, and code snippets for each component
+- Setup instructions at the bottom
+
+### Individual Component Pages (14 files)
 
 Each component has a dedicated demo page:
 
-- Live working example
-- Complete property documentation
-- Sample code snippets
-- "Back to All Components" navigation link
+- **One component focus** - Single live example without distraction
+- **Complete documentation** - Property tables and code samples
+- **eLC-friendly** - Perfect for linking from eLC side navigation
+- **"Back to All Components" link** - Returns to index-all-in-one.html
+
+**When to use:**
+
+- Link directly from eLC course navigation
+- Share specific component examples with instructional designers
+- Test one component in isolation
 
 ### Setup Guide (`setup.html`)
 
 Comprehensive guide covering:
 
-- D2L deployment steps
+- eLC deployment steps
 - Data file creation examples
 - Component-specific setup notes
 - Troubleshooting common issues
 - Best practices and file organization
 
-## Use in D2L (Brightspace)
+## Use in eLC
 
 ### Step 1: Build
 
@@ -116,29 +125,44 @@ Comprehensive guide covering:
 npm run build
 ```
 
-This creates `dist/js/uga-components.js`
+This creates `dist/js/uga-components.js` (~113 kB, 37 kB gzipped)
 
-### Step 2: Upload to D2L
+### Step 2: Upload to eLC
 
-Go to: **D2L → Content → Manage Files → Public Files**
+Go to: **eLC → Content → Manage Files → Public Files**
 
 Upload:
 
-- `dist/js/uga-components.js`
-- All `demo/*.json` and `demo/*.html` files
+- `dist/js/uga-components.js` (required - the component bundle)
+- Demo pages you want to use (optional - for reference or direct linking)
+- Sample JSON files (optional - customize and upload as needed)
 
-### Step 3: Copy Demo HTML to D2L Content Page
+### Step 3: Create eLC Content Page
 
-1. Open `demo/index.html` in a text editor
-2. Copy the entire `<body>` content (everything inside `<body>...</body>`)
-3. In D2L, create a new Content page
+**Option A: Full Component Showcase** (use `index-all-in-one.html` content)
+
+1. Open `demo/index-all-in-one.html` in a text editor
+2. Copy the entire `<body>` content
+3. In eLC, create a new Content page
 4. Switch to HTML editor
 5. Paste the content
-6. Make sure the script tag points to: `/shared/PublicFiles/uga-components.js`
+6. Update script path to: `/shared/PublicFiles/uga-components.js`
+
+**Option B: Individual Component** (use specific demo page)
+
+1. Open desired demo page (e.g., `demo/accordion.html`)
+2. Copy the `<body>` content
+3. Follow steps 3-6 from Option A
+
+**Option C: Custom Page** (build from scratch)
+
+1. Use code snippets from any demo page
+2. Add component tags as needed
+3. Load bundle at end: `<script type="module" src="/shared/PublicFiles/uga-components.js"></script>`
 
 ### Step 4: Update Data File Paths
 
-In the D2L HTML editor, update file paths to:
+In the eLC HTML editor, update file paths to:
 
 ```html
 <uga-accordion
@@ -151,26 +175,36 @@ In the D2L HTML editor, update file paths to:
 
 ### Components That Need Data Files
 
-- `<uga-accordion>` - accordion-demo.json
-- `<uga-tabs>` - tabs-demo.json
-- `<uga-circles>` - circles-demo.json
-- `<uga-slideshow>` - slideshow-demo.json
-- `<uga-footer>` - footer-demo.json
-- `<uga-instructor-note>` - instructor-note-demo.html
+**Download example files from Google Drive links in the demo pages, then customize:**
+
+- `<uga-accordion>` - accordion-demo.json (expandable/collapsible sections)
+- `<uga-tabs>` - tabs-demo.json (tabbed content navigation)
+- `<uga-circles>` - circles-demo.json (circular statistics/figures)
+- `<uga-slideshow>` - slideshow-demo.json (image carousel with controls)
+- `<uga-footer>` - footer-demo.json (branded footer with logo)
+- `<uga-instructor-note>` - instructor-note-demo.html (instructor-only notes)
+
+**All example files include:**
+
+- Complete JSON structure
+- Sample data you can modify
+- Comments explaining each field
+- Ready to upload to eLC Public Files
 
 ### Components That Work Standalone
 
-- `<uga-toc>` - Auto-generates from page headings
-- `<uga-return-to-top>` - No configuration needed
-- `<uga-code>` - Add code inline or via filename attribute
+- `<uga-toc>` - Auto-generates from h2/h3 headings on page
+- `<uga-return-to-top>` - Smooth scroll button (appears after scrolling)
+- `<uga-code>` - Syntax-highlighted code with copy button
 
-### Components That Need D2L API
+### Components That Need eLC API
 
-- `<uga-video>` - Needs Kaltura video ID
-- `<uga-assignment>` - Needs D2L assignment name
-- `<uga-duedate>` - Needs D2L assignment name
-- `<uga-rating>` - Works in D2L environment
-- `<uga-module-feedback>` - Works in D2L environment
+- `<uga-video>` - Kaltura video ID required (hides logo by default)
+- `<uga-assignment>` - Displays assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property (default: all types).
+- `<uga-duedate>` - Displays due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property (default: all types).
+- `<uga-quiz>` - Embed formative quizzes (CSV); submit results to an eLC assignment. See [Quiz demo](quiz.html) and quiz-sample.csv.
+- `<uga-quiz-grade-sync>` - Instructor-only: sync quiz submissions to the linked grade item. Use `dropbox-assignment-name` (e.g. "Quiz Demo 2") or `dropbox-folder-id`. Place below the quiz or inside `uga-instructor-note`.
+- `<uga-rating>` - Collects user ratings via eLC forums
 
 ## Customization Tips
 
@@ -198,7 +232,7 @@ Follow the JSON structure in the sample files:
 <!-- Course overview with mixed components -->
 <uga-toc></uga-toc>
 <uga-accordion type="local" filename="module-overview.json"></uga-accordion>
-<uga-video videoid="1_abc123" includerating="true"></uga-video>
+<uga-video videoid="1_icw0df6y" includerating="true"></uga-video>
 <uga-circles type="local" filename="course-stats.json"></uga-circles>
 <uga-return-to-top></uga-return-to-top>
 
@@ -213,14 +247,14 @@ Follow the JSON structure in the sample files:
 4. **Copy-Paste Ready** - Code samples work as-is
 5. **Complete Documentation** - Properties, descriptions, use cases
 6. **Sample Data** - Working JSON files for testing
-7. **D2L Ready** - Designed for easy migration to Brightspace
+7. **eLC Ready** - Designed for seamless eLC deployment
 
 ## Next Steps
 
 1. **Test Locally** - Run `npm run dev` and view the demo
 2. **Customize** - Edit sample data files to match your needs
 3. **Build** - Run `npm run build` when ready
-4. **Upload to D2L** - Follow the D2L upload steps above
+4. **Upload to eLC** - Follow the eLC upload steps above
 5. **Create Content** - Start building course pages with components!
 
 ## Troubleshooting
@@ -239,7 +273,7 @@ Follow the JSON structure in the sample files:
 
 - Check JSON file paths are correct
 - Validate JSON syntax at jsonlint.com
-- Ensure files are uploaded to D2L Public Files
+- Ensure files are uploaded to eLC Public Files
 
 **"Styles look wrong"**
 
@@ -276,7 +310,7 @@ The table of contents component now scans **h2 and h3 headings only** (previousl
 - **Setup Guide**: `/demo/setup.html` - Comprehensive deployment and troubleshooting
 - **Main README**: `/README.md` - Project overview and architecture
 - **Changelog**: `/CHANGELOG.md` - Recent updates and migration notes
-- **Demo Gallery**: `/demo/index.html` - All components with navigation
+- **Demo Gallery**: `/demo/index-all-in-one.html` - All components with navigation
 - **Individual Demos**: `/demo/[component].html` - Dedicated component pages
 - **Copilot instructions**: `/.github/copilot-instructions.md` - Development guidelines
 - **Component source**: `/src/components/*.ts` - Implementation details
@@ -288,15 +322,15 @@ The table of contents component now scans **h2 and h3 headings only** (previousl
 3. **Copy-Paste Ready** - Code samples work as-is
 4. **Complete Documentation** - Properties, examples, troubleshooting
 5. **Sample Data Included** - Working JSON files for immediate testing
-6. **D2L Ready** - Designed for seamless Brightspace deployment
+6. **eLC Ready** - Designed for seamless eLC deployment
 7. **Progressive Enhancement** - Works locally and in production
 
 ---
 
 **You're all set!** 🎉
 
-1. Browse the demo gallery: `npm run dev` → `http://localhost:5173/demo/index.html`
+1. Browse the demo gallery: `npm run dev` → `http://localhost:5173/demo/index-all-in-one.html`
 2. Review setup guide: `/demo/setup.html`
 3. Test individual components: Click cards in the gallery
 4. Check changelog: `/CHANGELOG.md` for recent updates
-5. Build for D2L: `npm run build` when ready to deploy
+5. Build for eLC: `npm run build` when ready to deploy

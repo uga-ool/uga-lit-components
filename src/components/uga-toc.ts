@@ -22,34 +22,47 @@ export class UGATableOfContents extends LitElement {
 
   private buildTOC(): void {
     // Since we're not using shadow DOM, grab the element from the light DOM
-    const tocList = this.querySelector('#toc-list');
-    const headings = document.querySelectorAll('h2, h3');
-    const idMap = new Map<string, boolean>();
-    const currentLists: { [key: number]: HTMLUListElement | null } = { 1: tocList as HTMLUListElement };
+    const tocList = this.querySelector('#toc-list') as HTMLUListElement | null;
+    if (!tocList) return;
+    const headings = Array.from(document.querySelectorAll('h2, h3')) as HTMLHeadingElement[];
+    const usedIds = new Set<string>();
+    // Seed with any existing IDs to guarantee uniqueness
+    headings.forEach(h => { if (h.id) usedIds.add(h.id); });
+    let rootLevel: number | null = null;
+    const currentLists: { [key: number]: HTMLUListElement | null } = { 1: tocList };
 
     headings.forEach(heading => {
-      // Ensure each heading has a unique ID
-      if (!heading.id) {
-        let baseId = heading.textContent
-          .trim()
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, '');
-        let uniqueId = baseId;
-        let counter = 1;
-
-        while (idMap.has(uniqueId)) {
-          uniqueId = `${baseId}-${counter}`;
-          counter++;
-        }
-        idMap.set(uniqueId, true);
-        heading.id = uniqueId;
+      // Skip the TOC's own heading to prevent self-reference
+      if (heading.closest('#table-of-contents')) {
+        return;
       }
 
       // Create a link to each heading
-      const level = parseInt(heading.tagName[1]);
+      const level = parseInt(heading.tagName[1]); // Get the heading level (1-6)
+      // Ensure heading has an id; generate slug if missing
+      if (!heading.id) {
+        const base = (heading.textContent || 'section')
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-');
+        let slug = base || 'section';
+        let i = 2;
+        while (usedIds.has(slug) || document.getElementById(slug)) {
+          slug = `${base}-${i++}`;
+        }
+        heading.id = slug;
+        usedIds.add(slug);
+      }
+      
+      // Set root level based on first heading
+      if (rootLevel === null) {
+        rootLevel = level;
+        currentLists[level] = tocList as HTMLUListElement;
+      }
+
       const listItem = document.createElement('li');
-	  listItem.className = "util-margin-vert-sm";
+      listItem.className = "util-margin-vert-sm";
       const link = document.createElement('a');
       link.href = `#${heading.id}`;
       link.textContent = heading.textContent;
@@ -64,25 +77,40 @@ export class UGATableOfContents extends LitElement {
         }
       });
 
-      // Reset child lists from current level down
-      for (let i = level; i <= 4; i++) {
+      // Clear deeper nested lists when we go back to a higher level
+      for (let i = level + 1; i <= 6; i++) {
         if (currentLists[i]) {
-          currentLists[i] = null;
+          delete currentLists[i];
         }
       }
 
-      // Create a new nested <ul> if needed
-      if (!currentLists[level]) {
-        const parentLevel = level - 1;
-        const parentList = currentLists[parentLevel] || (tocList as HTMLUListElement);
-        const newList = document.createElement('ul');
-        parentList.appendChild(newList);
-        currentLists[level] = newList;
+      // If this is the root level, append directly to root list
+      if (level === rootLevel) {
+        currentLists[rootLevel].appendChild(listItem);
       }
+      // If this is a deeper level, create nested lists as needed
+      else if (level > rootLevel) {
+        // Find the closest parent level that exists
+        let parentLevel = level - 1;
+        while (parentLevel >= rootLevel && !currentLists[parentLevel]) {
+          parentLevel--;
+        }
 
-      const targetList = currentLists[level];
-      if (targetList) {
-        targetList.appendChild(listItem);
+        // Create nested list if it doesn't exist for this level
+        if (!currentLists[level]) {
+          const newList = document.createElement('ul');
+          // Append to the last item of the parent level
+          const parentList = currentLists[parentLevel];
+          if (parentList && parentList.lastElementChild) {
+            parentList.lastElementChild.appendChild(newList);
+            currentLists[level] = newList;
+          }
+        }
+
+        // Append the list item to the appropriate level
+        if (currentLists[level]) {
+          currentLists[level].appendChild(listItem);
+        }
       }
     });
   }

@@ -6,7 +6,7 @@ import { customElement } from 'lit/decorators.js';
 class UgaReturnToTop extends LitElement {
   static styles = css``;
 
-  // Light DOM: render into the page directly (D2L-friendly)
+  // Light DOM: render into the page directly (eLC-friendly)
   createRenderRoot() {
     return this;
   }
