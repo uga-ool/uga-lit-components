@@ -108,11 +108,59 @@ class UgaQuiz extends LitElement {
     // Ensure quizId has a default value if not set
     if (!this.quizId || this.quizId.trim() === '') {
       if (this.quizTitle) {
-        this.quizId = `quiz-${this.quizTitle.toLowerCase().replace(/\s+/g, '-')}`;
+        // Generate stable quizId from quizTitle (normalized for consistency)
+        const normalizedTitle = this.quizTitle.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        this.quizId = `quiz-${normalizedTitle}`;
+        
+        // Store this mapping persistently so the same quizTitle always gets the same quizId
+        // This ensures attempt tracking works correctly across page loads
+        const userId = this.currentUser?.Identifier || 'anonymous';
+        const quizIdMappingKey = `uga-quiz-id-mapping-${normalizedTitle}-${userId}`;
+        const storedQuizId = localStorage.getItem(quizIdMappingKey);
+        
+        if (storedQuizId) {
+          // Use the stored quizId to maintain consistency with previous attempts
+          this.quizId = storedQuizId;
+          console.log(`ℹ️ quizId generated from quizTitle, using stored ID for consistency: "${this.quizId}"`);
+        } else {
+          // Store this quizId so future loads use the same ID
+          localStorage.setItem(quizIdMappingKey, this.quizId);
+          console.log(`ℹ️ quizId generated from quizTitle and stored: "${this.quizId}"`);
+        }
       } else {
-        this.quizId = `quiz-${Date.now()}`;
+        // No quizTitle - this is an error case, but generate a stable ID based on component context
+        // Use a hash of the component's outerHTML or a stable identifier
+        const userId = this.currentUser?.Identifier || 'anonymous';
+        const fallbackKey = `uga-quiz-fallback-id-${userId}`;
+        const storedFallbackId = localStorage.getItem(fallbackKey);
+        
+        if (storedFallbackId) {
+          this.quizId = storedFallbackId;
+          console.log(`ℹ️ quizId was empty (no quizTitle), using stored fallback: "${this.quizId}"`);
+        } else {
+          // Last resort: generate from timestamp but store it persistently
+          this.quizId = `quiz-${Date.now()}`;
+          localStorage.setItem(fallbackKey, this.quizId);
+          console.warn(`⚠️ quizId was empty and no quizTitle provided. Generated: "${this.quizId}". Set quiz-id attribute explicitly for proper attempt tracking.`);
+        }
       }
-      console.log(`ℹ️ quizId was empty, generated default: "${this.quizId}"`);
+    } else {
+      // quizId is explicitly set - ensure it's stored for consistency checking
+      if (this.quizTitle) {
+        const userId = this.currentUser?.Identifier || 'anonymous';
+        const normalizedTitle = this.quizTitle.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        const quizIdMappingKey = `uga-quiz-id-mapping-${normalizedTitle}-${userId}`;
+        const storedQuizId = localStorage.getItem(quizIdMappingKey);
+        
+        if (storedQuizId && storedQuizId !== this.quizId) {
+          // Conflict: quizTitle maps to a different quizId - use the stored one for attempt consistency
+          console.warn(`⚠️ quizId "${this.quizId}" conflicts with stored ID "${storedQuizId}" for quizTitle "${this.quizTitle}". Using stored ID for attempt tracking consistency.`);
+          this.quizId = storedQuizId;
+        } else if (!storedQuizId) {
+          // Store the mapping
+          localStorage.setItem(quizIdMappingKey, this.quizId);
+        }
+      }
     }
     
     console.log('🔍 uga-quiz component initialized:', { quizId: this.quizId, quizTitle: this.quizTitle || '(not set)' });
@@ -324,6 +372,15 @@ class UgaQuiz extends LitElement {
     this.isSubmitted = false;
     this.results = null;
     this.attemptCount++;
+
+    // Save attempt count immediately when quiz starts (not just on submission)
+    // This ensures attempts are tracked even if the user doesn't complete the quiz
+    const userId = this.currentUser?.Identifier || 'anonymous';
+    const storageKey = `uga-quiz-attempts-${this.quizId}-${userId}`;
+    localStorage.setItem(storageKey, JSON.stringify({
+      attemptCount: this.attemptCount,
+      lastStarted: new Date().toISOString()
+    }));
 
     // Start timer if time limit is set
     if (this.timeLimit > 0) {
