@@ -3,7 +3,7 @@
 
 import axios from 'axios';
 import { cachedApiCall, clearCache } from './api-cache.js';
-import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost, MyItemsDue, GradeObject, GradeValue, AssignmentSubmission } from '../../types/d2l.js';
+import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost, MyItemsDue, GradeObject, GradeValue, AssignmentSubmission, DropboxFolder, EntityDropbox } from '../../types/d2l.js';
 
 /**
  * Retry wrapper for API calls that handles rate limiting (429 errors)
@@ -383,19 +383,27 @@ export async function getUser(lpVersion: string): Promise<User> {
 }
 
 /**
+ * Clear the assignments cache for a course (e.g. before submit so folder list is fresh).
+ */
+export function clearAssignmentsCache(ou: string): void {
+  clearCache(`assignments:${ou}`);
+}
+
+/**
  * Get assignments for a course
  * Cached for 2 minutes (assignments change frequently)
  * @param ou - Organization unit (course) ID
  * @param leVersion - Learning Environment API version
- * @returns Array of assignments
+ * @returns Array of assignments (dropbox folders)
  */
 export async function getAssignments(ou: string, leVersion: string): Promise<Assignment[]> {
   // Check for deprecated API version
   logApiVersionWarning(leVersion, 'getAssignments');
   
   return cachedApiCall(`assignments:${ou}`, async () => {
-    const assignments = await withRetry(() => axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/`));
-    return assignments.data;
+    const res = await withRetry(() => axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/`));
+    const raw = res.data;
+    return Array.isArray(raw) ? raw : (raw?.Items ?? []);
   });
 }
 
@@ -417,6 +425,32 @@ export async function getAssignment(ou: string, leVersion: string, assignmentId:
     const assignment = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${assignmentId}/`);
     return assignment.data;
   }
+}
+
+/**
+ * Get a single dropbox folder by ID (includes GradeItemId for quiz grade sync).
+ */
+export async function getDropboxFolder(
+  ou: string,
+  leVersion: string,
+  folderId: number
+): Promise<DropboxFolder> {
+  const res = await axios.get(`/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${folderId}`);
+  return res.data;
+}
+
+/**
+ * Get all submissions for a dropbox folder (returns raw EntityDropbox[] for quiz comment parsing).
+ */
+export async function getDropboxSubmissions(
+  ou: string,
+  leVersion: string,
+  folderId: number,
+  activeOnly: boolean = true
+): Promise<EntityDropbox[]> {
+  const url = `/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${folderId}/submissions/`;
+  const res = await axios.get(url, { params: { activeOnly } });
+  return Array.isArray(res.data) ? res.data : res.data?.Items ?? [];
 }
 
 /**

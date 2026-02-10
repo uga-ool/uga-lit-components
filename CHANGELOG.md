@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-01-09
 
+### ✅ Quiz & Grade Sync (Quiz Demo 2)
+
+- **Quiz submission and grade sync confirmed working** with eLC assignment "Quiz Demo 2" and linked grade item
+- **uga-quiz-grade-sync** supports **dropbox-assignment-name** (e.g. "Quiz Demo 2") as well as **dropbox-folder-id** for resolving the assignment
+- Grade export now scales quiz points to the grade item's **MaxPoints** and sends the correct D2L **IncomingGradeValue** payload (Numeric type), resolving 400 errors when updating grades
+- **Documentation and demos updated**: README components table, `docs/D2L_QUIZ_DROPBOX.md`, `demo/setup.html`, `demo/QUICK_START.md`; instructions aligned on making the assignment visible, Text or File submissions, and using dropbox-assignment-name or dropbox-folder-id
+
 ### 🎨 Branding Updates
 
 - **Rebranded all D2L/Brightspace references to eLC** across components, demos, and documentation

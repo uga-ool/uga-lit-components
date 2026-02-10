@@ -2,10 +2,10 @@
 
 ## What You Just Got
 
-A comprehensive demo system with **16 dedicated pages** showcasing all UGA Lit components:
+A comprehensive demo system with **17 dedicated pages** showcasing all UGA Lit components:
 
 - ✅ **Main demo page** (`index-all-in-one.html`) - Comprehensive all-in-one scrollable demo with all components
-- ✅ **14 individual demo pages** - One per component, perfect for eLC side navigation
+- ✅ **15 individual demo pages** - One per component (including Quiz), perfect for eLC side navigation
 - ✅ **Setup guide** (`setup.html`) - Deployment instructions and troubleshooting
 - ✅ **Property documentation** tables for every component
 - ✅ **Copy-paste ready** code snippets
@@ -38,6 +38,8 @@ demo/
 ├── footer.html
 ├── instructor-note.html
 ├── module-feedback.html
+├── quiz.html
+├── quiz-sync-note.html
 ├── rating.html
 ├── return-to-top.html
 ├── slideshow.html
@@ -180,7 +182,7 @@ In the eLC HTML editor, update file paths to:
 - `<uga-circles>` - circles-demo.json (circular statistics/figures)
 - `<uga-slideshow>` - slideshow-demo.json (image carousel with controls)
 - `<uga-footer>` - footer-demo.json (branded footer with logo)
-- `<uga-instructor-note>` - instructor-note-demo.json (instructor-only notes)
+- `<uga-instructor-note>` - instructor-note-demo.html (instructor-only notes)
 
 **All example files include:**
 
@@ -200,6 +202,8 @@ In the eLC HTML editor, update file paths to:
 - `<uga-video>` - Kaltura video ID required (hides logo by default)
 - `<uga-assignment>` - Displays assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property (default: all types).
 - `<uga-duedate>` - Displays due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property (default: all types).
+- `<uga-quiz>` - Embed formative quizzes (CSV); submit results to an eLC assignment. See [Quiz demo](quiz.html) and quiz-sample.csv.
+- `<uga-quiz-grade-sync>` - Instructor-only: sync quiz submissions to the linked grade item. Use `dropbox-assignment-name` (e.g. "Quiz Demo 2") or `dropbox-folder-id`. Place below the quiz or inside `uga-instructor-note`.
 - `<uga-rating>` - Collects user ratings via eLC forums
 
 ## Customization Tips

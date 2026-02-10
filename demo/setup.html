@@ -206,8 +206,19 @@
         <li><strong>uga-assignment</strong> - Displays assignments, discussions, quizzes, and content with due dates from the current eLC course. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment,discussion"</code>). Supports grade export when <code>enable-export</code> is set.</li>
         <li><strong>uga-duedate</strong> - Displays due dates for assignments, discussions, quizzes, and content in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment"</code>).</li>
         <li><strong>uga-quiz</strong> - Embed formative quizzes; loads questions from a CSV file (<code>type="csv"</code>, <code>filename</code>). Can submit results to an eLC assignment. See <a href="quiz.html">Quiz demo</a> and <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a>.</li>
+        <li><strong>uga-quiz-grade-sync</strong> - Instructor-only button to sync quiz submissions to the gradebook. Place below the quiz (or inside an instructor note); set <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;) or <code>dropbox-folder-id</code> to the assignment folder ID.</li>
         <li><strong>uga-instructor-note</strong> - Visible only to instructors (uses eLC role checking)</li>
         <li><strong>uga-rating</strong> - Stores ratings in eLC forums</li>
+      </ul>
+
+      <h4>Quiz &amp; Grade Sync</h4>
+      <p>For the quiz and automatic grade sync:</p>
+      <ul>
+        <li>Create an assignment in eLC to receive quiz submissions (e.g. <strong>Quiz Demo 2</strong>).</li>
+        <li><strong>Make the assignment visible</strong> to students (e.g. in Assignments → assignment → Edit → Restrictions). If the assignment is hidden, the quiz component cannot find it and submissions will not pass through.</li>
+        <li>Set the assignment to allow <strong>Text or File</strong> submissions so it can accept the quiz result (submitted as text/JSON or as a .json file).</li>
+        <li>Link the assignment to a grade item in the gradebook so the sync button can push grades. When synced, the most recent grade overwrites any current grade for each student.</li>
+        <li>Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot;</li>
       </ul>
 
       <h4>Assignment & Due Date Components - Type Filtering</h4>

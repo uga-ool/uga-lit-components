@@ -62,6 +62,14 @@ export interface Assignment {
   EndDate: string | null;
 }
 
+/** Dropbox folder (assignment) with GradeItemId for quiz grade sync */
+export interface DropboxFolder {
+  Id: number;
+  Name: string;
+  GradeItemId: number | null;
+  Assessment?: { ScoreDenominator?: number | null } | null;
+}
+
 export interface MyItemsDue {
   Id?: number;
   ItemId?: number;

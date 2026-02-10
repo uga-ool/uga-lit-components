@@ -23,7 +23,8 @@ In eLC:
 3. Under **Submission & Completion**:
    - **Submissions**: choose **All submissions are kept** so every quiz attempt is recorded for audits and tracking.
    - **Submission Type**: **File submission** or **File or Text** (recommended for a downloadable JSON file), or **Text submission** (the component will send the full result in the submission comment).
-4. Save. To use by ID, note the **assignment (folder) ID** from the URL or API.
+4. **Make the assignment visible** to students (e.g. under **Restrictions** or **Visibility**). If the assignment is hidden, the quiz component cannot find it in the API and student submissions will not pass through.
+5. Save. To use by ID, note the **assignment (folder) ID** from the URL or API.
 
 To get the folder ID: open the assignment, then check the URL or use the API:
 
@@ -46,7 +47,18 @@ To get the folder ID: open the assignment, then check the URL or use the API:
 
 **By ID:** set **dropbox-folder-id** to the assignment’s folder ID (e.g. `12345678`) instead of **dropbox-assignment-name**.
 
-You can link the assignment to a grade item in eLC (Assignments → Edit → Grade) if you want to grade submissions manually.
+### 3. Automating submission to the gradebook (instructor)
+
+To push quiz results from the assignment into the eLC gradebook without manual entry:
+
+1. **Link the assignment to a grade item** in eLC: open the assignment → **Edit** → **Grade** (or **Evaluation & Feedback** → **Grade**). Create or select a grade item so the assignment is tied to that gradebook column.
+2. **Add the grade-sync component** to the same content page as the quiz (e.g. inside an instructor note or below the quiz):  
+   `<uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"></uga-quiz-grade-sync>`  
+   or `<uga-quiz-grade-sync dropbox-folder-id="FOLDER_ID"></uga-quiz-grade-sync>`  
+   Use **dropbox-assignment-name** (exact assignment title) or **dropbox-folder-id** (from the assignment URL `db=...`). This component is visible only to instructors.
+3. **Run the sync:** When logged in as an instructor, open the page and click **Sync quiz grades to gradebook**. The component reads all quiz submissions for that assignment and writes each student’s score into the linked grade item. **When synced, the most recent submission grade overwrites any current grade** for that student in that grade item. Run it whenever new submissions have come in.
+
+There is no separate eLC setting to automate this—the one-click sync is the automation. Only instructors can run it; students do not write to the gradebook.
 
 ## What gets submitted
 
@@ -88,5 +100,6 @@ Scope used: **dropbox:folders:write** (same as “submit to assignment”). Stud
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Audits and tracking           | Instructor creates assignment in eLC with **All submissions are kept**; set `dropbox-assignment-name` or `dropbox-folder-id` on the quiz.                |
 | Point quiz at your assignment | Use `dropbox-assignment-name="Quiz Demo"` (exact title) or `dropbox-folder-id` with the folder ID. Students only submit; they do not create assignments. |
+| **Automate grades in gradebook** | Link the assignment to a grade item in eLC; add `<uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2">` (or `dropbox-folder-id="FOLDER_ID"`) below the quiz; instructors click **Sync quiz grades to gradebook** to push scores from submissions into the gradebook. The most recent grade overwrites any current grade per student. |
 | Text submission assignment    | Supported: full result is sent in the submission comment.                                                                                                |
-| File submission assignment    | Supported: comment + JSON file attached.                                                                                                                 |
+| File submission assignment   | Supported: comment + JSON file attached.                                                                                                                 |

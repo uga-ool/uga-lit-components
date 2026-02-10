@@ -105,11 +105,11 @@
 
       <h2>Demo: All Question Types and Features</h2>
       <div class="demo-description">
-        <p><strong>This demo uses <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a></strong>, which includes all six question types: Multiple Choice, True/False, Short Answer, Matching, Multi-Select, and Ordering. The quiz below has all features enabled: timer (10 min with auto-submit), question randomization, retries, immediate feedback, and assignment submission.</p>
+        <p><strong>This demo uses <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a></strong>, which includes all six question types: Multiple Choice, True/False, Short Answer, Matching, Multi-Select, and Ordering. The quiz below has all features enabled: timer (10 min with auto-submit), question randomization, retries, immediate feedback, and submission to the eLC assignment <strong>Quiz Demo 2</strong>.</p>
         <p><strong>File location:</strong> <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Download quiz-sample.csv </a>. Place it in the same directory as your HTML (or set <code>filename</code> to the correct path).</p>
       </div>
       <div class="demo-example">
-        <uga-quiz 
+        <uga-quiz
           quiz-id="demo-quiz-csv"
           quiz-title="Quiz: All Types &amp; Features"
           passing-score="70"
@@ -121,8 +121,11 @@
           auto-submit="true"
           type="csv"
           filename="quiz-sample.csv"
-          dropbox-assignment-name="Quiz Demo">
+          dropbox-assignment-name="Quiz Demo 2">
         </uga-quiz>
+        <p></p>
+        <uga-instructor-note type="local" filename="quiz-sync-note.html"></uga-instructor-note>
+        <p></p>
       </div>
 
       <div class="demo-code">
@@ -142,8 +145,10 @@
   passing-score="70"
   type="csv"
   filename="quiz-sample.csv"
-  dropbox-assignment-name="Quiz Demo"&gt;
-&lt;/uga-quiz&gt;</code></pre>
+          dropbox-assignment-name="Quiz Demo 2"&gt;
+&lt;/uga-quiz&gt;
+&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;&lt;/uga-quiz-grade-sync&gt;
+&lt;!-- or use dropbox-folder-id="12345" with the assignment URL db= value --&gt;</code></pre>
 
         <h4 style="margin-top: 1.5rem;">All features (timer, auto-submit, randomize):</h4>
         <pre><code class="language-html">&lt;uga-quiz 
@@ -158,9 +163,9 @@
   auto-submit="true"
   type="csv"
   filename="quiz-sample.csv"
-  dropbox-assignment-name="Quiz Demo"&gt;
+          dropbox-assignment-name="Quiz Demo 2"&gt;
 &lt;/uga-quiz&gt;</code></pre>
-        <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo&quot;) in eLC (Assignments) with <strong>All submissions are kept</strong>. Results are submitted to that assignment.</p>
+        <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot; When synced, the most recent grade overwrites any current grade for each student.</p>
       </div>
 
       <div class="demo-props">
@@ -269,7 +274,7 @@
             <td><code>dropbox-assignment-name</code></td>
             <td>string</td>
             <td>''</td>
-            <td>Name of the eLC assignment (e.g. &quot;Quiz Demo&quot;). The <strong>instructor</strong> creates this assignment in eLC (Assignments); students only submit to it. Use the exact assignment title here so the component finds it by name. See docs/D2L_QUIZ_DROPBOX.md.</td>
+            <td>Name of the eLC assignment (e.g. &quot;Quiz Demo 2&quot;). The <strong>instructor</strong> creates this assignment in eLC (Assignments) and <strong>makes it visible</strong>; if hidden, the component cannot find it and submissions fail. Use the exact assignment title here. See docs/D2L_QUIZ_DROPBOX.md.</td>
           </tr>
         </table>
       </div>
@@ -302,9 +307,21 @@
       </div>
 
       <div class="demo-props">
+        <h4>Automating submission to the gradebook (instructor)</h4>
+        <p>Instructors can send quiz results from the assignment into the eLC gradebook in one step:</p>
+        <ol>
+          <li><strong>In eLC:</strong> Create the assignment (e.g. Quiz Demo 2), make it visible, set <strong>Text or File</strong> and <strong>All submissions are kept</strong>. In the assignment’s <strong>Grade</strong> (or <strong>Evaluation &amp; Feedback</strong>) settings, <strong>link the assignment to a grade item</strong> in the gradebook (e.g. create or select a grade item so the assignment is tied to that column).</li>
+          <li><strong>Get the assignment folder ID:</strong> In eLC, open the assignment; the URL contains <code>db=</code> followed by a number (e.g. <code>db=12345</code>). That number is the <strong>dropbox folder ID</strong>.</li>
+          <li><strong>In your content:</strong> Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;&lt;/uga-quiz-grade-sync&gt;</code> below the quiz (use the same assignment name as the quiz’s <code>dropbox-assignment-name</code>). Alternatively use <code>dropbox-folder-id="<em>12345</em>"</code> with the folder ID from the assignment URL (<code>db=...</code>). This component is visible only to instructors.</li>
+          <li><strong>When you want to update grades:</strong> Open the page as an instructor and click <strong>Sync quiz grades to gradebook</strong>. The component reads all quiz submissions from that assignment and writes each student’s score into the linked grade item. <strong>The most recent grade overwrites any current grade</strong> for each student. Run it whenever new submissions have come in.</li>
+        </ol>
+        <p>There is no separate eLC setting to “automate” this—the one-click sync button is the automation. Students never write to the gradebook; only instructors trigger the sync.</p>
+      </div>
+
+      <div class="demo-props">
         <h4>Setup Requirements</h4>
         <ol>
-          <li><strong>Assignment:</strong> Instructor creates an assignment in eLC (Assignments) with the same name as <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo&quot;). Set <strong>All submissions are kept</strong>. See docs/D2L_QUIZ_DROPBOX.md.</li>
+          <li><strong>Assignment:</strong> Instructor creates an assignment in eLC (Assignments) with the same name as <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;). <strong>Make the assignment visible</strong> to students (if hidden, submissions will not pass through). Set <strong>All submissions are kept</strong>. See docs/D2L_QUIZ_DROPBOX.md.</li>
           <li><strong>Questions:</strong> Use the provided <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a> (all six question types, Google Drive) or export from eLC in CSV format and save as CSV UTF-8.</li>
           <li><strong>Upload Files:</strong> Place the CSV in your course content area (same directory as your HTML page, or set <code>filename</code> to the path).</li>
           <li><strong>Course Context:</strong> Component must be used within an eLC course page (for API access and assignment submission).</li>

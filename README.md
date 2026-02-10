@@ -166,23 +166,25 @@ npm run preview
 
 ## 📦 Components Overview
 
-The repository includes 14 pre-built components:
+The repository includes 15 pre-built components:
 
-| Component               | Purpose                                                                                                                     |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **uga-accordion**       | Collapsible accordion sections with expand/collapse all                                                                     |
-| **uga-assignment**      | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property.           |
-| **uga-circles**         | Display data in circular badge format                                                                                       |
-| **uga-code**            | Syntax-highlighted code blocks with copy button                                                                             |
-| **uga-duedate**         | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property. |
-| **uga-footer**          | Site footer with branding                                                                                                   |
-| **uga-instructor-note** | Instructor-only notes (hidden from students)                                                                                |
-| **uga-rating**          | Collect feedback/ratings on content                                                                                         |
-| **uga-return-to-top**   | Fixed button to scroll to top                                                                                               |
-| **uga-slideshow**       | Image carousel with navigation                                                                                              |
-| **uga-tabs**            | Tab navigation interface                                                                                                    |
-| **uga-toc**             | Auto-generated table of contents                                                                                            |
-| **uga-video**           | Embed Kaltura or YouTube videos with logo control                                                                           |
+| Component                 | Purpose                                                                                                                     |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **uga-accordion**         | Collapsible accordion sections with expand/collapse all                                                                     |
+| **uga-assignment**        | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property.             |
+| **uga-circles**           | Display data in circular badge format                                                                                       |
+| **uga-code**              | Syntax-highlighted code blocks with copy button                                                                             |
+| **uga-duedate**           | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property. |
+| **uga-footer**            | Site footer with branding                                                                                                   |
+| **uga-instructor-note**   | Instructor-only notes (hidden from students)                                                                                |
+| **uga-quiz**              | Embed formative quizzes (CSV); submit results to an eLC assignment; supports timers, retries, and immediate feedback       |
+| **uga-quiz-grade-sync**   | Instructor-only: sync quiz submissions from an assignment to the linked grade item (use with uga-quiz)                    |
+| **uga-rating**            | Collect feedback/ratings on content                                                                                         |
+| **uga-return-to-top**     | Fixed button to scroll to top                                                                                               |
+| **uga-slideshow**         | Image carousel with navigation                                                                                              |
+| **uga-tabs**              | Tab navigation interface                                                                                                    |
+| **uga-toc**               | Auto-generated table of contents                                                                                            |
+| **uga-video**             | Embed Kaltura or YouTube videos with logo control                                                                           |
 
 ---
 
@@ -222,7 +224,7 @@ const kalturaPlayer = KalturaPlayer.setup({
 });
 ```
 
-**Usage in Brightspace:**
+**Usage in eLC:**
 
 ```html
 <uga-video videoid="1_abc123de" playerid="57494843" includerating="false">
@@ -309,7 +311,7 @@ const kalturaPlayer = KalturaPlayer.setup({
 | --------------------------------- | ----------------------------------------------------- |
 | `demo/index-all-in-one.html`      | Comprehensive all-in-one demo showing all components  |
 | `demo/setup.html`                 | Comprehensive setup, usage, and troubleshooting guide |
-| `demo/[component].html`           | Individual component demo pages (14 total)            |
+| `demo/[component].html`           | Individual component demo pages (15 total, including quiz.html) |
 | `src/all.ts`                      | Entry point; eagerly imports all components           |
 | `src/components/*.ts`             | Individual component implementations                  |
 | `src/lib/api/d2l-client.ts`       | Centralized D2L API methods                           |

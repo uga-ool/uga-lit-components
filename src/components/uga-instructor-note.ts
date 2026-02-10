@@ -73,11 +73,15 @@ class UgaInstructorNote extends LitElement {
             throwOnNotFound: false
           });
           
-          if (enrollmentData) {
+          if (enrollmentData && enrollmentData.OrgUnit?.Id?.toString() === this.ou) {
             this.enrollment = enrollmentData.Role?.Name || 'Student';
           } else {
-            // No enrollment found - default to showing note (better to show than hide)
-            console.warn(`Could not find enrollment for course ${this.ou}, defaulting to show instructor note`);
+            // No enrollment for this course (or fallback was for a different course) - show note so instructors don't lose access
+            if (enrollmentData) {
+              console.warn(`Enrollment returned for different course (${enrollmentData.OrgUnit?.Id}), defaulting to show instructor note for ou ${this.ou}`);
+            } else {
+              console.warn(`Could not find enrollment for course ${this.ou}, defaulting to show instructor note`);
+            }
             this.enrollment = 'Instructor'; // Default to instructor to show the note
           }
         } catch (error: any) {
@@ -156,7 +160,7 @@ class UgaInstructorNote extends LitElement {
       <div class="obj-grid">
         <div class="obj-grid__full util-background-odyssey util-text-center util-pad-all-md">
           <h1 class="cmp-heading-5">Instructor Note</h1>
-          <p>${unsafeHTML(this.text)}</p>
+          <div class="instructor-note-content">${unsafeHTML(this.text)}</div>
         </div>
       </div>
       `;

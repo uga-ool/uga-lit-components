@@ -477,6 +477,7 @@ console.log(x);
       <h2>Quiz Component</h2>
       <div class="demo-description">
         <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking. Perfect for release conditions - students can't take summative assessments until they've completed embedded formative quizzes.</p>
+        <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-folder-id</code> to test.</p>
       </div>
       <div class="demo-example">
         <uga-quiz 
@@ -489,6 +490,9 @@ console.log(x);
           type="csv"
           filename="quiz-sample.csv">
         </uga-quiz>
+        <p></p>
+        <p class="util-margin-top-md util-font-size-sm"><strong>Grade sync (instructor only):</strong> <uga-quiz-grade-sync dropbox-folder-id="0"></uga-quiz-grade-sync></p>
+        <p></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -763,7 +767,7 @@ console.log(x);
       <div class="demo-description">
         <p><strong>Displays notes visible only to instructors.</strong> Uses eLC role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
         <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note-demo.html</code></a>
           to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
