@@ -52,6 +52,7 @@ demo/
 ├── circles-demo.json
 ├── slideshow-demo.json
 ├── footer-demo.json
+├── quiz-sample.json
 └── instructor-note-demo.html
 ```
 
@@ -177,6 +178,7 @@ In the eLC HTML editor, update file paths to:
 
 **Download example files from Google Drive links in the demo pages, then customize:**
 
+- `<uga-quiz>` - quiz-sample.json, quiz10.json, or quiz20.json. Create a JSON file with a `questions` array. Set `type="local"` and `filename="your-file.json"` on the component. See [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the full format.
 - `<uga-accordion>` - accordion-demo.json (expandable/collapsible sections)
 - `<uga-tabs>` - tabs-demo.json (tabbed content navigation)
 - `<uga-circles>` - circles-demo.json (circular statistics/figures)
@@ -202,7 +204,7 @@ In the eLC HTML editor, update file paths to:
 - `<uga-video>` - Kaltura video ID required (hides logo by default)
 - `<uga-assignment>` - Displays assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property (default: all types).
 - `<uga-duedate>` - Displays due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property (default: all types).
-- `<uga-quiz>` - Embed formative quizzes (CSV); submit results to an eLC assignment. See [Quiz demo](quiz.html) and quiz-sample.csv.
+- `<uga-quiz>` - Embed formative quizzes; loads questions from a JSON file. Use `type="local"` and `filename="your-quiz.json"`. The JSON file must have a `questions` array; see [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the format. Sample files: quiz-sample.json (all 6 types), quiz10.json, quiz20.json. Can submit results to an eLC assignment. See [Quiz demo](quiz.html).
 - `<uga-quiz-grade-sync>` - Instructor-only: sync quiz submissions to the linked grade item. Use `dropbox-assignment-name` (e.g. "Quiz Demo 2") or `dropbox-folder-id`. Place below the quiz or inside `uga-instructor-note`.
 - `<uga-rating>` - Collects user ratings via eLC forums
 

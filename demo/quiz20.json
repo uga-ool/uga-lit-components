@@ -1,0 +1,69 @@
+{
+  "questions": [
+    {
+      "id": "Quiz-001",
+      "type": "multiple-choice",
+      "question": "There are no unrecorded fixed assets in use",
+      "points": 1,
+      "options": ["Completeness", "Existence", "Accuracy", "Realizable value"],
+      "correctAnswer": 0
+    },
+    {
+      "id": "Quiz-002",
+      "type": "multiple-choice",
+      "question": "The company has valid title to the assets owned",
+      "points": 1,
+      "options": ["Rights and obligations", "Existence", "Accuracy, valuation, and allocation", "Realizable value"],
+      "correctAnswer": 0
+    },
+    {
+      "id": "Quiz-003",
+      "type": "multiple-choice",
+      "question": "Details of PP&E agree with the general ledger",
+      "points": 1,
+      "options": ["Detail tie-in", "Accuracy", "Accuracy, valuation, and allocation", "Realizable value"],
+      "correctAnswer": 0
+    },
+    {
+      "id": "Quiz-004",
+      "type": "multiple-choice",
+      "question": "Fixed assets physically exist and are being used for the intended purpose",
+      "points": 1,
+      "options": ["Existence", "Occurrence", "Accuracy, valuation, and allocation", "Realizable value"],
+      "correctAnswer": 0,
+      "explanation": "Remember, when dealing with account balances, the audit objective is existence, not occurrence"
+    },
+    {
+      "id": "Quiz-005",
+      "type": "multiple-choice",
+      "question": "Fixed asset accounts have been properly adjusted for declines in historical cost",
+      "points": 1,
+      "options": ["Realizable value", "Accuracy", "Accuracy, valuation, and allocation", "Completeness"],
+      "correctAnswer": 0
+    },
+    {
+      "id": "Quiz-006",
+      "type": "multiple-choice",
+      "question": "The company has a contractual right for use of assets leased",
+      "points": 1,
+      "options": ["Rights and obligations", "Existence", "Accuracy", "Completeness"],
+      "correctAnswer": 0
+    },
+    {
+      "id": "Quiz-007",
+      "type": "multiple-choice",
+      "question": "Cash disbursements and/or accrual cutoff for PP&E items are proper",
+      "points": 1,
+      "options": ["Cutoff", "Completeness", "Accuracy", "Existence"],
+      "correctAnswer": 0
+    },
+    {
+      "id": "Quiz-008",
+      "type": "multiple-choice",
+      "question": "Expense accounts do not contain amounts that should have been capitalized",
+      "points": 1,
+      "options": ["Classification", "Accuracy", "Realizable value", "Completeness"],
+      "correctAnswer": 0
+    }
+  ]
+}

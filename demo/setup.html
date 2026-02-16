@@ -195,8 +195,10 @@
   ]
 }</uga-code>
 
-      <h4>Quiz component: CSV (not JSON)</h4>
-      <p>The <strong>uga-quiz</strong> component loads questions from an eLC-format CSV file. Use <code>type="csv"</code> and <code>filename</code> pointing to your CSV. <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Download quiz-sample.csv (Google Drive)</a> for a sample with all six question types. Save as CSV UTF-8; upload to eLC and set the path in <code>filename</code>. See the <a href="quiz.html">Quiz demo</a> for full usage.</p>
+      <h4>Quiz component: JSON file</h4>
+      <p>The <strong>uga-quiz</strong> component loads questions from a JSON file. Use <code>type="local"</code> and <code>filename</code> pointing to your JSON file.</p>
+      <p><strong>JSON format:</strong> The file must have a top-level <code>questions</code> array. Each question has <code>id</code>, <code>type</code>, <code>question</code>, <code>points</code>, <code>correctAnswer</code>, and optionally <code>options</code>, <code>explanation</code>, <code>caseSensitive</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the full format and examples.</p>
+      <p><strong>Steps:</strong> (1) Create a JSON file with a <code>questions</code> array (use quiz-sample.json, quiz10.json, or quiz20.json as templates). (2) Upload the file to the same folder as your HTML or to eLC Public Files. (3) Set <code>type="local"</code> and <code>filename="your-file.json"</code> on the quiz component. Use a relative path (e.g. <code>quiz-sample.json</code>) if the file is in the same folder, or a full path (e.g. <code>/shared/PublicFiles/quiz-sample.json</code>) for Public Files. See the <a href="quiz.html">Quiz demo</a> for full usage.</p>
 
       <h3>3. Component-Specific Setup</h3>
       
@@ -205,7 +207,7 @@
       <ul>
         <li><strong>uga-assignment</strong> - Displays assignments, discussions, quizzes, and content with due dates from the current eLC course. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment,discussion"</code>). Supports grade export when <code>enable-export</code> is set.</li>
         <li><strong>uga-duedate</strong> - Displays due dates for assignments, discussions, quizzes, and content in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment"</code>).</li>
-        <li><strong>uga-quiz</strong> - Embed formative quizzes; loads questions from a CSV file (<code>type="csv"</code>, <code>filename</code>). Can submit results to an eLC assignment. See <a href="quiz.html">Quiz demo</a> and <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a>.</li>
+        <li><strong>uga-quiz</strong> - Embed formative quizzes; loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>). Can submit results to an eLC assignment. See <a href="quiz.html">Quiz demo</a> and <code>quiz-sample.json</code>.</li>
         <li><strong>uga-quiz-grade-sync</strong> - Instructor-only button to sync quiz submissions to the gradebook. Place below the quiz (or inside an instructor note); set <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;) or <code>dropbox-folder-id</code> to the assignment folder ID.</li>
         <li><strong>uga-instructor-note</strong> - Visible only to instructors (uses eLC role checking)</li>
         <li><strong>uga-rating</strong> - Stores ratings in eLC forums</li>
@@ -218,8 +220,19 @@
         <li><strong>Make the assignment visible</strong> to students (e.g. in Assignments → assignment → Edit → Restrictions). If the assignment is hidden, the quiz component cannot find it and submissions will not pass through.</li>
         <li>Set the assignment to allow <strong>Text or File</strong> submissions so it can accept the quiz result (submitted as text/JSON or as a .json file).</li>
         <li>Link the assignment to a grade item in the gradebook so the sync button can push grades. When synced, the most recent grade overwrites any current grade for each student.</li>
-        <li>Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot;</li>
+        <li>Place the grade sync component below the quiz (or inside an instructor note). Use <code>&lt;uga-instructor-note type="local" filename="quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</code> to wrap the sync button, or place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) directly below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot;</li>
       </ul>
+      <p><strong>Example with instructor note wrapper:</strong></p>
+      <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="My Quiz"
+  passing-score="70"
+  type="local"
+  filename="quiz-sample.json"
+  dropbox-assignment-name="Quiz Demo 2"&gt;
+&lt;/uga-quiz&gt;
+&lt;uga-instructor-note type="local" filename="quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+      <p>The instructor note file (<code>quiz-sync-note.html</code>) contains the grade sync component. See <a href="quiz-sync-note.html">quiz-sync-note.html</a> for the file content.</p>
 
       <h4>Assignment & Due Date Components - Type Filtering</h4>
       <p>Both <strong>uga-assignment</strong> and <strong>uga-duedate</strong> support filtering by item type:</p>
@@ -259,7 +272,7 @@
       <ul>
         <li>Verify JSON file paths are correct relative to Public Files</li>
         <li>Check JSON syntax is valid (use a JSON validator)</li>
-        <li>For <strong>uga-quiz</strong>: use a CSV file (not JSON), save as CSV UTF-8, and set <code>type="csv"</code> and <code>filename</code> to the file path</li>
+        <li>For <strong>uga-quiz</strong>: create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>), upload it, then set <code>type="local"</code> and <code>filename</code> to the file path (relative if same folder, or full path like <code>/shared/PublicFiles/your-quiz.json</code>)</li>
         <li>Ensure files are uploaded to the correct location in eLC</li>
       </ul>
 
@@ -290,7 +303,7 @@
     <div style="margin-top: 4rem; padding-top: 2rem; border-top: 2px solid #ba0c2f;">
       <p style="text-align: center; color: #666;">
         <strong>UGA Lit Components Setup Guide</strong><br>
-        Version 3.0 | University of Georgia | UGA Online
+        Version 4.0 | University of Georgia | UGA Online
       </p>
     </div>
 

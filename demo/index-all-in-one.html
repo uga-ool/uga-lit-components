@@ -476,8 +476,8 @@ console.log(x);
     <section class="component-demo" id="quiz-demo">
       <h2>Quiz Component</h2>
       <div class="demo-description">
-        <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking. Perfect for release conditions - students can't take summative assessments until they've completed embedded formative quizzes.</p>
-        <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-folder-id</code> to test.</p>
+        <p><strong>Embed formative quizzes directly in content pages.</strong> Loads questions from a JSON file: set <code>type="local"</code> and <code>filename="your-quiz.json"</code>. The JSON file must have a <code>questions</code> array—see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format. Supports multiple question types (multiple choice, true/false, matching, short answer, multi-select, ordering), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
+        <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-assignment-name</code> (or <code>dropbox-folder-id</code>) to test.</p>
       </div>
       <div class="demo-example">
         <uga-quiz 
@@ -485,13 +485,14 @@ console.log(x);
           quiz-title="Sample Formative Quiz"
           passing-score="70"
           allow-retry="true"
-          max-attempts="3"
+          max-attempts="99"
           show-feedback="true"
-          type="csv"
-          filename="quiz-sample.csv">
+          type="local"
+          filename="quiz-sample.json"
+          dropbox-assignment-name="Quiz Demo 2">
         </uga-quiz>
         <p></p>
-        <p class="util-margin-top-md util-font-size-sm"><strong>Grade sync (instructor only):</strong> <uga-quiz-grade-sync dropbox-folder-id="0"></uga-quiz-grade-sync></p>
+        <uga-instructor-note type="local" filename="quiz-sync-note.html"></uga-instructor-note>
         <p></p>
       </div>
       <div class="demo-props">
@@ -539,26 +540,38 @@ console.log(x);
           </tr>
           <tr>
             <td><code>type</code></td>
-            <td>'csv'</td>
-            <td>Load questions from eLC CSV file</td>
+            <td>'local'</td>
+            <td>Load questions from JSON file (use with <code>filename</code>)</td>
           </tr>
           <tr>
             <td><code>filename</code></td>
             <td>String</td>
-            <td>Path to the eLC CSV file (e.g. <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a>)</td>
+            <td>Path to the JSON file. Use relative path (e.g. <code>quiz-sample.json</code>) if same folder as HTML, or full path (e.g. <code>/shared/PublicFiles/quiz-sample.json</code>) for eLC Public Files. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format.</td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <h4>Basic Usage (eLC CSV)</h4>
+        <h4>Basic Usage (JSON file)</h4>
         <uga-code language="markup">&lt;uga-quiz 
   quiz-id="quiz-1"
   quiz-title="Formative Quiz"
   passing-score="70"
-  type="csv"
-  filename="quiz-sample.csv"&gt;
+  type="local"
+  filename="quiz-sample.json"&gt;
 &lt;/uga-quiz&gt;</uga-code>
-        <p><strong>Note:</strong> <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Download quiz-sample.csv (Google Drive)</a>. Export questions from eLC in CSV format, save as CSV UTF-8, and upload to your course files. Update <code>filename</code> to match your file path.</p>
+        <p><strong>Note:</strong> Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>). Upload to the same folder as your HTML or to eLC Public Files. Set <code>type="local"</code> and <code>filename</code> to the file path (relative or full).</p>
+        
+        <h4 style="margin-top: 1.5rem;">With Assignment Submission</h4>
+        <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="My Quiz"
+  passing-score="70"
+  type="local"
+  filename="quiz-sample.json"
+  dropbox-assignment-name="Quiz Demo 2"&gt;
+&lt;/uga-quiz&gt;
+&lt;uga-instructor-note type="local" filename="quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+        <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. The instructor note contains the grade sync component. When synced, the most recent grade overwrites any current grade for each student.</p>
         
         <h4 style="margin-top: 1.5rem;">With Timer and Assignment Submission</h4>
         <uga-code language="markup">&lt;uga-quiz 
@@ -567,10 +580,12 @@ console.log(x);
   passing-score="80"
   time-limit="10"
   auto-submit="true"
-  type="csv"
-  filename="quiz-sample.csv"
-  dropbox-assignment-name="Quiz Demo"&gt;
-&lt;/uga-quiz&gt;</uga-code>
+  type="local"
+  filename="quiz-sample.json"
+  dropbox-assignment-name="Quiz Demo 2"&gt;
+&lt;/uga-quiz&gt;
+&lt;uga-instructor-note type="local" filename="quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+        <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot; When synced, the most recent grade overwrites any current grade for each student.</p>
       </div>
     </section>
 

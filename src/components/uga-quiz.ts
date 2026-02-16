@@ -70,7 +70,7 @@ class UgaQuiz extends LitElement {
   @property({ type: String, attribute: 'dropbox-assignment-name' }) dropboxAssignmentName = ''; // Name of existing assignment to submit to (instructor creates it in eLC)
   @property({ type: Number }) passingScore = 70; // Percentage required to pass
   @property({ type: Boolean }) allowRetry = true;
-  @property({ type: Number }) maxAttempts = 3; // Maximum retry attempts
+  @property({ type: Number, attribute: 'max-attempts' }) maxAttempts = 3; // Maximum retry attempts
   @property({ type: Boolean }) showFeedback = true; // Show immediate feedback
   @property({ type: Boolean }) allowReset = false; // Reset button removed; kept for API compatibility
   @property({ type: Boolean }) randomizeQuestions = false;
@@ -818,6 +818,7 @@ class UgaQuiz extends LitElement {
     this.isStarted = false;
     this.isSubmitted = false;
     this.results = null;
+    this.completionStatus = 'not-started';
     this.currentQuestionIndex = 0;
     this.responses = {};
     this.dropboxSaveStatus = 'idle';
