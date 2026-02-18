@@ -1466,6 +1466,58 @@ export async function submitToDropbox(
 }
 
 /**
+ * Get the current user's submission for a dropbox folder.
+ * Uses GET /submissions/mysubmissions/ - students can read their own submissions with dropbox:folders:read.
+ * Prefer this over getUserSubmission when fetching for the current user (better permission semantics).
+ *
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param folderId - Dropbox (assignment) folder ID
+ * @returns The current user's submission or null
+ */
+export async function getMySubmission(
+  ou: string,
+  leVersion: string,
+  folderId: number
+): Promise<AssignmentSubmission | null> {
+  try {
+    const url = `/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${folderId}/submissions/mysubmissions/`;
+    const response = await withRetry(() => axios.get(url));
+    const raw = response.data;
+    // API returns array of EntityDropbox for current user's submissions to this folder
+    const items = Array.isArray(raw) ? raw : (raw?.Items ?? [raw].filter(Boolean));
+    const entityDropbox = items[0];
+    if (!entityDropbox?.Submissions?.length) return null;
+    const submissions = entityDropbox.Submissions;
+    const latest = submissions.reduce((a: any, b: any) =>
+      (b.SubmissionNumber || 0) > (a.SubmissionNumber || 0) ? b : a
+    );
+    const feedback = entityDropbox.Feedback;
+    return {
+      SubmissionId: latest.Id,
+      SubmissionNumber: latest.SubmissionNumber || 0,
+      UserId: 0,
+      UserName: '',
+      DisplayName: '',
+      SubmittedDate: latest.SubmissionDate || '',
+      IsRetracted: latest.IsRetracted || false,
+      Files: (latest.Files || []).map((f: any) => ({
+        FileId: f.FileId,
+        FileName: f.FileName,
+        FileSize: f.Size || f.FileSize || 0
+      })),
+      TextSubmission: latest.Comment?.Text || latest.TextSubmission,
+      FeedbackScore: feedback?.Score,
+      IsGraded: feedback?.IsGraded || false,
+      FeedbackText: feedback?.Feedback?.Text || feedback?.Feedback?.Html
+    };
+  } catch (error: any) {
+    if (error.response?.status === 404) return null;
+    throw error;
+  }
+}
+
+/**
  * Submit only a comment to the current user's dropbox (assignment folder).
  * Use for assignments with "Text submission" where file uploads are not allowed.
  * The comment Text/Html should contain the full quiz result (e.g. JSON) for audits.

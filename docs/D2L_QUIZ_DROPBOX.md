@@ -1,6 +1,8 @@
 # Using an eLC Assignment to Collect Quiz Submissions (Audits & Tracking)
 
-The **uga-quiz** component sends each quiz completion to an eLC **Assignment** (Dropbox). Use an assignment with **All submissions are kept** (unlimited uploads) so every attempt is recorded for audits and tracking by students and teachers.
+The **uga-quiz** component is a **standalone Lit component** used as embedded HTML. It has **no association with eLC’s native quiz tool**; it is a custom formative quiz that lives in HTML content. When results need to be recorded, they are submitted to an eLC **Assignment** (Dropbox).
+
+Use an assignment with **All submissions are kept** (unlimited uploads) so every attempt is recorded for audits and tracking by students and teachers.
 
 **Quiz questions:** The quiz loads questions from a JSON file. Set `type="local"` and `filename="your-quiz.json"` on the component. See [QUIZ_JSON_FORMAT.md](QUIZ_JSON_FORMAT.md) for the JSON format and usage.
 
@@ -109,6 +111,20 @@ If a student completes a quiz but their submission does not appear in the assign
 4. **Check the completion screen** – After submitting, the quiz shows "✓ Results submitted to assignment" on success, or "✗ Could not submit to assignment" with an error message on failure. Ask the student what they saw.
 
 5. **Use `dropbox-folder-id` if name lookup fails** – Open the assignment in eLC; the URL contains `db=` followed by the folder ID. Set `dropbox-folder-id="12345"` (use the actual ID) instead of `dropbox-assignment-name` to bypass name lookup.
+
+## Troubleshooting: Feedback not showing after quiz
+
+If students complete a quiz but see "Quiz Already Completed" without the question review (✓/✗ per question):
+
+1. **Add `quiz-id`, `quiz-title`, or `filename`** – The component needs a stable ID to save and load results. You can use any of:
+   - `quiz-id` (explicit, recommended)
+   - `quiz-title` (derives ID from normalized title)
+   - `filename` (derives ID from the JSON filename, e.g. `quiz10.json` → `quiz10`)
+   Without any of these, the component falls back to a generated ID that can differ between loads, so saved feedback may not be found.
+
+2. **Set `show-feedback="true"`** – The question review only appears when this attribute is set (it defaults to true, but ensure it is not overridden).
+
+3. **Check the browser console** – Look for messages like "quizId was empty (no quizTitle)" or "Could not persist quiz results to localStorage". These indicate the cause.
 
 ## Summary
 

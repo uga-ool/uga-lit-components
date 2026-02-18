@@ -177,7 +177,7 @@ The repository includes 15 pre-built components:
 | **uga-duedate**           | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property. |
 | **uga-footer**            | Site footer with branding                                                                                                   |
 | **uga-instructor-note**   | Instructor-only notes (hidden from students)                                                                                |
-| **uga-quiz**              | Embed formative quizzes; loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>); submit results to an eLC assignment; supports timers, retries, and immediate feedback. See [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) for JSON format. |
+| **uga-quiz**              | Standalone embedded HTML quiz (no eLC native quiz association); loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>); optionally submits results to an eLC assignment; supports timers, retries, and immediate feedback. See [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) for JSON format. |
 | **uga-quiz-grade-sync**   | Instructor-only: sync quiz submissions from an assignment to the linked grade item (use with uga-quiz)                    |
 | **uga-rating**            | Collect feedback/ratings on content                                                                                         |
 | **uga-return-to-top**     | Fixed button to scroll to top                                                                                               |
