@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixed Assets Quiz</title>
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <style>
+    .obj-container {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .obj-container h1 {
+      color: #ba0c2f;
+      border-bottom: 3px solid #ba0c2f;
+      padding-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="obj-container">
+    <header>
+      <h1>Fixed Assets & PP&E Quiz</h1>
+    </header>
+
+    <section>
+      <uga-quiz
+        passing-score="70"
+        allow-retry="true"
+        max-attempts="99"
+        show-feedback="true"
+        randomize-questions="true"
+        randomize-answers="true"  
+        type="local"
+        filename="quiz20.json"
+        dropbox-assignment-name="Quiz 20">
+      </uga-quiz>
+    </section>
+    <p></p>
+    <uga-instructor-note type="local" filename="quiz-sync-note.html"></uga-instructor-note>
+    <p></p>
+  </div>
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+</body>
+</html>

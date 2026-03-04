@@ -1,0 +1,62 @@
+{
+  "questions": [
+    {
+      "id": "QUIZ-001",
+      "type": "multiple-choice",
+      "question": "What is the capital of Georgia?",
+      "points": 10,
+      "options": ["Atlanta", "Augusta", "Savannah", "Macon"],
+      "correctAnswer": 0,
+      "explanation": "Atlanta has been the state capital since 1868."
+    },
+    {
+      "id": "QUIZ-002",
+      "type": "true-false",
+      "question": "The University of Georgia is located in Athens.",
+      "points": 10,
+      "options": ["True", "False"],
+      "correctAnswer": 0,
+      "explanation": "UGA's main campus is in Athens Georgia."
+    },
+    {
+      "id": "QUIZ-003",
+      "type": "short-answer",
+      "question": "What does the acronym LMS stand for?",
+      "points": 10,
+      "correctAnswer": "Learning Management System",
+      "explanation": "LMS stands for Learning Management System.",
+      "caseSensitive": false
+    },
+    {
+      "id": "QUIZ-004",
+      "type": "matching",
+      "question": "Match the assessment type with its description:",
+      "points": 15,
+      "options": ["Used during learning for feedback", "Used at the end to evaluate learning", "Used to measure specific skills"],
+      "correctAnswer": {
+        "Formative": "Used during learning for feedback",
+        "Summative": "Used at the end to evaluate learning",
+        "Diagnostic": "Used to measure specific skills"
+      },
+      "explanation": "Formative=during learning; Summative=end; Diagnostic=skills."
+    },
+    {
+      "id": "QUIZ-005",
+      "type": "multi-select",
+      "question": "Which of the following are primary colors? (Select all that apply.)",
+      "points": 15,
+      "options": ["Red", "Yellow", "Blue", "Green"],
+      "correctAnswer": [0, 2],
+      "explanation": "Primary colors (RYB) are Red, Blue, and Yellow."
+    },
+    {
+      "id": "QUIZ-006",
+      "type": "ordering",
+      "question": "Put these steps in the correct order for submitting an assignment in eLC:",
+      "points": 15,
+      "options": ["Open the Assignments tool", "Find the correct assignment", "Upload or create your file", "Click Submit"],
+      "correctAnswer": [0, 1, 2, 3],
+      "explanation": "Order: Open Assignments → Find assignment → Upload/create file → Submit."
+    }
+  ]
+}

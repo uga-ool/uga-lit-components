@@ -214,6 +214,25 @@ All features would require:
 - `uga-video` - Video embedding (already exists, but doesn't handle LTI quizzes)
 - `uga-rating` - Feedback collection (similar pattern for quiz responses)
 
+## Future Project List
+
+Broader institutional projects and ideas for future development, beyond eLC component feature requests.
+
+### Academic Operations
+- **Course transfer equivalency processing** — Extracting transcript data, matching internal courses, updating student databases
+- **HR policy and student handbook chat bots**
+- **Transcript processing assistance for departments**
+
+### Teaching & Learning
+- **Virtual TA assistants** for 24/7 student support
+- **Faculty tech support agents** that pull from multiple IT knowledge bases
+
+### Student Services
+- **Email coaching for student workers** — Feedback without (re)writing for them
+- **Knowledge base creators** that research and compile topic materials
+
+---
+
 ## References
 
 - D2L API Documentation: https://docs.valence.desire2learn.com/

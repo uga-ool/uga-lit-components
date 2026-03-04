@@ -334,6 +334,7 @@ export function parseD2LCSV(csvContent: string): { questions: QuizQuestion[] } {
         currentQuestion.title = col1;
         break;
       case 'QuestionText':
+      case 'QuestionsText':
         currentQuestion.questionText = col1;
         break;
       case 'Points':

@@ -285,3 +285,94 @@ export interface UserGradeValue {
   };
   GradeValue: GradeValue | null; // null if ungraded
 }
+
+/**
+ * Course-wide analytics types for module consumption tracking
+ */
+export interface CourseAnalytics {
+  modules: ModuleAnalytics[];
+  overall: OverallStats;
+}
+
+export interface ModuleAnalytics {
+  moduleId: number;
+  moduleName: string;
+  contentStats?: {
+    totalTopics: number;
+    completedTopics: number;
+    completionRate: number;
+    totalViews: number;
+    uniqueViewers: number;
+  };
+  assignmentStats?: {
+    totalAssignments: number;
+    submittedAssignments: number;
+    submissionRate: number;
+    averageScore: number;
+    totalSubmissions: number;
+  };
+  discussionStats?: {
+    totalTopics: number;
+    totalPosts: number;
+    participatingStudents: number;
+    averagePostsPerStudent: number;
+  };
+  quizStats?: {
+    totalQuizzes: number;
+    completedQuizzes: number;
+    completionRate: number;
+    averageScore: number;
+    totalAttempts: number;
+  };
+  objectivesStats?: {
+    totalObjectives: number;
+    completedObjectives: number;
+  };
+  loginStats?: {
+    totalLogins: number;
+  };
+  gradesStats?: {
+    averageGrade: number;
+    gradedCount: number;
+  };
+}
+
+export interface OverallStats {
+  totalModules: number;
+  totalStudents: number;
+  contentStats?: {
+    totalTopics: number;
+    totalCompletions: number;
+    overallCompletionRate: number;
+    /** When set (from aggregate API), use for "X of Y possible" display instead of totalTopics * totalStudents */
+    totalRequired?: number;
+  };
+  assignmentStats?: {
+    totalAssignments: number;
+    totalSubmissions: number;
+    overallSubmissionRate: number;
+    overallAverageScore: number;
+  };
+  discussionStats?: {
+    totalTopics: number;
+    totalPosts: number;
+    participatingStudents: number;
+  };
+  quizStats?: {
+    totalQuizzes: number;
+    totalAttempts: number;
+    overallCompletionRate: number;
+    overallAverageScore: number;
+  };
+  objectivesStats?: {
+    totalObjectives: number;
+    completedObjectives: number;
+  };
+  loginStats?: {
+    totalLogins: number;
+  };
+  gradesStats?: {
+    averageGrade: number;
+    gradedCount: number;
+  };
+}

@@ -5,6 +5,9 @@ import axios from 'axios';
 import { cachedApiCall, clearCache } from './api-cache.js';
 import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, DiscussionForum, DiscussionTopic, DiscussionPost, MyItemsDue, GradeObject, GradeValue, AssignmentSubmission, DropboxFolder, EntityDropbox } from '../../types/d2l.js';
 
+// Re-export cachedApiCall for convenience
+export { cachedApiCall, clearCache } from './api-cache.js';
+
 /**
  * Retry wrapper for API calls that handles rate limiting (429 errors)
  * Supports AbortController for request cancellation
@@ -14,7 +17,7 @@ import type { ApiVersions, ClasslistUser, Enrollment, User, Assignment, Discussi
  * @param signal - Optional AbortSignal for request cancellation
  * @returns Promise that resolves with the function result
  */
-async function withRetry<T>(
+export async function withRetry<T>(
   fn: () => Promise<T>,
   maxRetries: number = 3,
   baseDelay: number = 1000,
@@ -96,10 +99,10 @@ export async function getVersions(): Promise<ApiVersions> {
     const apiVer = await withRetry(() => axios.get('/d2l/api/versions/'));
     const result: ApiVersions = {};
     
-    // Preferred versions to try (newest first)
+    // Preferred versions to try (newest first). LP 1.82+ required for getUser (obsolete 1.57 in LMS v20.26.1)
     const preferredVersions: { [key: string]: string[] } = {
-      'le': ['1.91', '1.82'], // Learning Environment - try newest first
-      'lp': ['1.82', '1.75']  // Learning Platform - try newest first
+      'le': ['1.91', '1.82'],   // Learning Environment - try newest first
+      'lp': ['1.91', '1.82', '1.75']  // Learning Platform - 1.82+ for getUser
     };
     
     for (let i in apiVer.data) {
@@ -370,6 +373,48 @@ export async function getEnrollment(
 }
 
 /**
+ * Get competencies/objectives structure for a course
+ * Used to count learning objectives (ObjectTypeId === 2)
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @returns Competency structure with Objects array
+ */
+export async function getCompetenciesStructure(ou: string, leVersion: string): Promise<{ Objects?: Array<{ Id: number; ObjectTypeId: number; Name?: string; ChildrenPage?: { Objects?: unknown[] } }> }> {
+  logApiVersionWarning(leVersion, 'getCompetenciesStructure');
+  const cacheKey = `competencies:${ou}`;
+  return cachedApiCall(cacheKey, async () => {
+    const res = await withRetry(() => axios.get(`/d2l/api/le/${leVersion}/${ou}/competencies/structure/?depth=10&pageSize=100`));
+    return res.data || {};
+  }, 10 * 60 * 1000); // 10 min cache
+}
+
+/**
+ * Get login/logging records for a date range
+ * Used for student login history (filter by student UserIds in caller)
+ * @param lpVersion - Learning Platform API version
+ * @param dateRangeStart - ISO date string
+ * @param dateRangeEnd - ISO date string
+ * @returns Array of log entries
+ */
+export async function getLoginLogs(
+  lpVersion: string,
+  dateRangeStart: string,
+  dateRangeEnd: string
+): Promise<Array<{ UserId?: number; MessageTimestamp?: string; MessageType?: string }>> {
+  logApiVersionWarning(lpVersion, 'getLoginLogs');
+  const params = new URLSearchParams();
+  params.append('daterangestart', dateRangeStart);
+  params.append('daterangeend', dateRangeEnd);
+  const url = `/d2l/api/lp/${lpVersion}/logging/?${params.toString()}`;
+  const res = await withRetry(() => axios.get(url));
+  const data = res.data;
+  if (Array.isArray(data)) return data;
+  if (data?.Items) return data.Items;
+  if (data?.Objects) return data.Objects;
+  return [];
+}
+
+/**
  * Get current user information
  * @param lpVersion - Learning Platform API version
  * @returns User details
@@ -380,6 +425,20 @@ export async function getUser(lpVersion: string): Promise<User> {
   
   const whoAmI = await withRetry(() => axios.get(`/d2l/api/lp/${lpVersion}/users/whoami`));
   return whoAmI.data;
+}
+
+/**
+ * Get current user ID (Identifier) for the logged-in user.
+ * @param lpVersion - Learning Platform API version
+ * @returns User ID string or null if not available
+ */
+export async function getCurrentUserId(lpVersion: string): Promise<string | null> {
+  try {
+    const user = await getUser(lpVersion);
+    return user?.Identifier ? String(user.Identifier) : null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -1463,6 +1522,58 @@ export async function submitToDropbox(
     }
   });
   return response.data;
+}
+
+/**
+ * Get the current user's submission for a dropbox folder.
+ * Uses GET /submissions/mysubmissions/ - students can read their own submissions with dropbox:folders:read.
+ * Prefer this over getUserSubmission when fetching for the current user (better permission semantics).
+ *
+ * @param ou - Organization unit (course) ID
+ * @param leVersion - Learning Environment API version
+ * @param folderId - Dropbox (assignment) folder ID
+ * @returns The current user's submission or null
+ */
+export async function getMySubmission(
+  ou: string,
+  leVersion: string,
+  folderId: number
+): Promise<AssignmentSubmission | null> {
+  try {
+    const url = `/d2l/api/le/${leVersion}/${ou}/dropbox/folders/${folderId}/submissions/mysubmissions/`;
+    const response = await withRetry(() => axios.get(url));
+    const raw = response.data;
+    // API returns array of EntityDropbox for current user's submissions to this folder
+    const items = Array.isArray(raw) ? raw : (raw?.Items ?? [raw].filter(Boolean));
+    const entityDropbox = items[0];
+    if (!entityDropbox?.Submissions?.length) return null;
+    const submissions = entityDropbox.Submissions;
+    const latest = submissions.reduce((a: any, b: any) =>
+      (b.SubmissionNumber || 0) > (a.SubmissionNumber || 0) ? b : a
+    );
+    const feedback = entityDropbox.Feedback;
+    return {
+      SubmissionId: latest.Id,
+      SubmissionNumber: latest.SubmissionNumber || 0,
+      UserId: 0,
+      UserName: '',
+      DisplayName: '',
+      SubmittedDate: latest.SubmissionDate || '',
+      IsRetracted: latest.IsRetracted || false,
+      Files: (latest.Files || []).map((f: any) => ({
+        FileId: f.FileId,
+        FileName: f.FileName,
+        FileSize: f.Size || f.FileSize || 0
+      })),
+      TextSubmission: latest.Comment?.Text || latest.TextSubmission,
+      FeedbackScore: feedback?.Score,
+      IsGraded: feedback?.IsGraded || false,
+      FeedbackText: feedback?.Feedback?.Text || feedback?.Feedback?.Html
+    };
+  } catch (error: any) {
+    if (error.response?.status === 404) return null;
+    throw error;
+  }
 }
 
 /**

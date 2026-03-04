@@ -1,0 +1,40 @@
+{
+  "questions": [
+    {
+      "id": "QUIZ-001",
+      "type": "multiple-choice",
+      "question": "All recorded receivable accounts are real",
+      "points": 10,
+      "options": ["Existence", "Accuracy", "Completeness", "Rights and obligations"],
+      "correctAnswer": 0,
+      "explanation": "Correct!"
+    },
+    {
+      "id": "QUIZ-002",
+      "type": "multiple-choice",
+      "question": "Receivables are carried at the net realizable value",
+      "points": 10,
+      "options": ["Accuracy, valuation, and allocation", "Completeness", "Accuracy", "Classification"],
+      "correctAnswer": 0,
+      "explanation": "Remember, when dealing with account balances, the full management assertion is accuracy, valuation, and allocation"
+    },
+    {
+      "id": "QUIZ-003",
+      "type": "multiple-choice",
+      "question": "All receivables are recorded",
+      "points": 10,
+      "options": ["Completeness", "Classification", "Accuracy, valuation, and allocation", "Rights and obligations"],
+      "correctAnswer": 0,
+      "explanation": "Correct!"
+    },
+    {
+      "id": "QUIZ-004",
+      "type": "multiple-choice",
+      "question": "The entity has rights to the receivables",
+      "points": 10,
+      "options": ["Rights and obligations", "Completeness", "Existence", "Accuracy"],
+      "correctAnswer": 0,
+      "explanation": "Correct!"
+    }
+  ]
+}

@@ -2,8 +2,10 @@ import { LitElement, html } from 'lit';
 import type { PropertyValues } from 'lit';
 import axios from 'axios';
 import { customElement, property } from 'lit/decorators.js';
-import { getVersions, getClasslist } from '../lib/api/d2l-client.js';
-import { getCourse } from '../lib/api/d2l-utils.js';
+import { getVersions, getClasslist, getCurrentUserId } from '../lib/api/d2l-client.js';
+import { getCourse, getTopicId } from '../lib/api/d2l-utils.js';
+import { completeContentTopic } from '../lib/api/d2l-client-content.js';
+import { sendVideoEvent } from '../lib/api/video-analytics-client.js';
 import { loadData } from '../lib/data/data-loader.js';
 import type { ApiVersions, ClasslistUser } from '../types/d2l.js';
 import './uga-rating.js';
@@ -25,6 +27,7 @@ class UgaVideo extends LitElement {
   @property({ type: Array }) videos: string[] = [];
   @property({ type: Boolean }) includeRating = false;
   @property({ type: String }) name = '';
+  @property({ type: String, attribute: 'topic-id' }) topicId = '';
 
   private uiconfid = '';
   private domain: string | null = null;
@@ -32,6 +35,10 @@ class UgaVideo extends LitElement {
   private playerInstances: Map<string, any> = new Map();
   private videoNames: Map<string, string> = new Map();
   private componentId: string = `video_${Math.random().toString(36).substr(2, 9)}`;
+  private completedTopics: Set<string> = new Set();
+  private lastTimeUpdateSent: Map<string, number> = new Map();
+  private readonly TIME_UPDATE_THROTTLE_MS = 30000;
+  private analyticsContext: { userId: string | null; leVersion: string; lpVersion: string } | null = null;
 
   createRenderRoot() {
     return this;
@@ -41,7 +48,7 @@ class UgaVideo extends LitElement {
     super.connectedCallback();
     this.ou = getCourse();
 
-    if (this.playerid === "") {  // If no playerid is specified, then we use the standard player. 
+    if (this.playerid === "") {  // If no playerid is specified, then we use the standard player.
       this.playerid = "1574196844";
       this.uiconfid = "57494843"; // this value is different for the standard player, but matches the playerid in other players. 40170611
     } else {
@@ -49,70 +56,78 @@ class UgaVideo extends LitElement {
     }
 
     if (this.videoid !== "") {  // If the videoid is specified, then use that videoid to generate the player. This is the most simple scenario.
-
-        this.videos.push(this.videoid);  // Have to push to array to account for cases where a file loads multiple videos for an instructor.
-        this.loaded = true;
-        this.requestUpdate();
-
+      this.videos.push(this.videoid);  // Have to push to array to account for cases where a file loads multiple videos for an instructor.
+      this.loaded = true;
+      this.requestUpdate();
     } else {  // If we enter this loop, then no videoid was specified and we have to retrieve it via a json file
+      this.getDataFile().then(() => { // Get the data file
+        const videoData = this.videodata?.data;
 
-        this.getDataFile().then(() => { // Get the data file
-            const videoData = this.videodata?.data;
-
-            // Check if videoData is an array (simple structure - accessible to all)
-            if (Array.isArray(videoData)) {
-              // Simple array structure: just use all videos
-              for (let i = 0; i < videoData.length; i++) {
-                this.videos.push(videoData[i]);
-              }
-              this.loaded = true;
-              this.requestUpdate();
-            } else if (videoData && typeof videoData === 'object') {
-              // Username-based structure (for backwards compatibility)
-              getVersions().then((versions) => { // Get API versions
-                this.addVersions(versions);
-                
-                if (!this.ou) {
-                  this.loaded = true;
-                  this.requestUpdate();
-                  return;
-                }
-
-                getClasslist(this.ou, this.versions.le).then((classlist) => { // Get the classlist
-
-                  for (let i in classlist) {
-                    if (classlist[i].Username in videoData && classlist[i].RoleId === 195) { // Check to see if the user from the classlist is an instructor and is in the video list
-                      for (let video in videoData[classlist[i].Username]) {  // Iterate over all videos listed for the identified instructor
-                        this.videos.push(videoData[classlist[i].Username][video]);  // Add the videos to the this.videos array
-                      }
-                    }
-                  }
-
-                  this.loaded = true;
-                  this.requestUpdate();
-
-                }).catch((error) => {
-                  console.error('Failed to get classlist:', error);
-                  this.loaded = true;
-                  this.requestUpdate();
-                }); // End Get Classlist
-              }).catch((error) => {
-                console.error('Failed to get API versions:', error);
-                this.loaded = true;
-                this.requestUpdate();
-              }); // End Get Versions
-            } else {
-              console.error('Invalid video data structure:', videoData);
-              this.loaded = true;
-              this.requestUpdate();
-            }
-        }).catch((error) => {
-          console.error('Failed to load video data file:', error);
+        // Check if videoData is an array (simple structure - accessible to all)
+        if (Array.isArray(videoData)) {
+          // Simple array structure: just use all videos
+          for (let i = 0; i < videoData.length; i++) {
+            this.videos.push(videoData[i]);
+          }
           this.loaded = true;
           this.requestUpdate();
-        }); // End Get Data File
+        } else if (videoData && typeof videoData === 'object') {
+          // Username-based structure (for backwards compatibility)
+          getVersions().then((versions) => { // Get API versions
+            this.addVersions(versions);
+
+            if (!this.ou) {
+              this.loaded = true;
+              this.requestUpdate();
+              return;
+            }
+
+            getClasslist(this.ou, this.versions.le).then((classlist) => { // Get the classlist
+              for (let i in classlist) {
+                if (classlist[i].Username in videoData && classlist[i].RoleId === 195) { // Check to see if the user from the classlist is an instructor and is in the video list
+                  for (let video in videoData[classlist[i].Username]) {  // Iterate over all videos listed for the identified instructor
+                    this.videos.push(videoData[classlist[i].Username][video]);  // Add the videos to the this.videos array
+                  }
+                }
+              }
+
+              this.loaded = true;
+              this.requestUpdate();
+            }).catch((error) => {
+              console.error('Failed to get classlist:', error);
+              this.loaded = true;
+              this.requestUpdate();
+            }); // End Get Classlist
+          }).catch((error) => {
+            console.error('Failed to get API versions:', error);
+            this.loaded = true;
+            this.requestUpdate();
+          }); // End Get Versions
+        } else {
+          console.error('Invalid video data structure:', videoData);
+          this.loaded = true;
+          this.requestUpdate();
+        }
+      }).catch((error) => {
+        console.error('Failed to load video data file:', error);
+        this.loaded = true;
+        this.requestUpdate();
+      }); // End Get Data File
     }
-    
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    for (const [videoId, player] of this.playerInstances) {
+      try {
+        if (player && typeof player.destroy === 'function') {
+          player.destroy();
+        }
+      } catch (_) {
+        // ignore
+      }
+    }
+    this.playerInstances.clear();
   }
 
   async getDataFile(): Promise<void> {
@@ -202,10 +217,88 @@ class UgaVideo extends LitElement {
 
       kalturaPlayer.loadMedia({ entryId: videoId });
       this.playerInstances.set(videoId, kalturaPlayer);
+
+      this.attachVideoAnalyticsListeners(kalturaPlayer, videoId);
     } catch (error) {
       console.error(`Failed to initialize Kaltura player for video ${videoId}:`, error);
       // If initialization fails, don't retry to avoid infinite loops
     }
+  }
+
+  /**
+   * Attach event listeners for D2L completion and custom analytics backend.
+   */
+  private attachVideoAnalyticsListeners(player: any, videoId: string): void {
+    const EventCore = player?.Event?.Core || {};
+    const eventMap: Array<{ key: string; name: string }> = [
+      { key: 'PLAY', name: 'play' },
+      { key: 'PAUSE', name: 'pause' },
+      { key: 'ENDED', name: 'ended' },
+      { key: 'TIME_UPDATE', name: 'timeupdate' },
+    ];
+
+    for (const { key, name } of eventMap) {
+      const eventName = EventCore[key] || name;
+      player.addEventListener(eventName, (ev: any) => this.handleVideoEvent(player, videoId, name, ev));
+    }
+  }
+
+  private async getAnalyticsContext(): Promise<{ userId: string | null; leVersion: string; lpVersion: string }> {
+    if (this.analyticsContext) return this.analyticsContext;
+    try {
+      const versions = await getVersions();
+      const leVersion = versions.le || '';
+      const lpVersion = versions.lp || '';
+      const userId = await getCurrentUserId(lpVersion);
+      this.analyticsContext = { userId, leVersion, lpVersion };
+      return this.analyticsContext;
+    } catch (_) {
+      return { userId: null, leVersion: '', lpVersion: '' };
+    }
+  }
+
+  private async handleVideoEvent(
+    player: any,
+    videoId: string,
+    eventType: string,
+    ev: any
+  ): Promise<void> {
+    const currentTime = player?.currentTime ?? ev?.payload?.currentTime ?? 0;
+    const duration = player?.duration ?? ev?.payload?.duration ?? 0;
+    const percentWatched = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+    const topicId = getTopicId(this.topicId);
+    const ou = this.ou;
+    const ctx = await this.getAnalyticsContext();
+
+    sendVideoEvent({
+      entryId: videoId,
+      topicId: topicId ?? undefined,
+      ou: ou ?? undefined,
+      userId: ctx.userId ?? undefined,
+      eventType,
+      timestamp: new Date().toISOString(),
+      currentTime,
+      duration,
+      percentWatched,
+    }).catch(() => {});
+
+    if (eventType === 'timeupdate') {
+      const last = this.lastTimeUpdateSent.get(videoId) ?? 0;
+      if (Date.now() - last < this.TIME_UPDATE_THROTTLE_MS) return;
+      this.lastTimeUpdateSent.set(videoId, Date.now());
+    }
+
+    const completionKey = `${videoId}:${topicId ?? 'none'}`;
+    if (this.completedTopics.has(completionKey)) return;
+
+    const shouldComplete = eventType === 'ended' || (eventType === 'timeupdate' && percentWatched >= 80);
+    if (!shouldComplete || !topicId || !ou || !ctx.userId || !ctx.leVersion) return;
+
+    this.completedTopics.add(completionKey);
+    completeContentTopic(ou, ctx.leVersion, topicId, ctx.userId).catch(() => {
+      this.completedTopics.delete(completionKey);
+    });
   }
 
   /**
@@ -290,10 +383,30 @@ class UgaVideo extends LitElement {
 
   youtubeCode(videoId: string) {
     const embedCode = html`
-    <div class="cmp-video util-margin-top-lg">
-        <iframe class="cmp-video__embed" width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-    ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.name} contentPlatform="youtube"></uga-rating>`:html``}
+      <style>
+        .cmp-video__youtube-container {
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          background: #000;
+        }
+        .cmp-video__youtube-container iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+        }
+      </style>
+      <div class="cmp-video util-margin-top-lg">
+        <div class="cmp-video__youtube-container">
+          <iframe
+            class="cmp-video__embed"
+            src="https://www.youtube.com/embed/${videoId}"
+            title="${this.name || `YouTube video ${videoId}`}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+      ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.name} contentPlatform="youtube"></uga-rating>` : html``}
     `;
     return embedCode;
   }
@@ -335,10 +448,15 @@ class UgaVideo extends LitElement {
   }
 
   updated(changedProperties: PropertyValues<this>): void {
-    // Initialize players after DOM is updated when videos are loaded
-    if ((changedProperties.has('loaded') || changedProperties.has('videos')) && this.loaded && this.videos.length > 0) {
+    // Initialize Kaltura players only when host is Kaltura (YouTube uses iframe, no init needed)
+    const isKaltura = this.host === '' || this.host.toLowerCase() === 'kaltura';
+    if (
+      isKaltura &&
+      (changedProperties.has('loaded') || changedProperties.has('videos')) &&
+      this.loaded &&
+      this.videos.length > 0
+    ) {
       this.updateComplete.then(() => {
-        // Initialize all videos that haven't been initialized yet
         this.videos.forEach((videoId) => {
           if (!this.playerInstances.has(videoId)) {
             const containerId = `kaltura_player_${this.componentId}_${videoId}`;

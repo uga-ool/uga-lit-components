@@ -52,6 +52,7 @@ demo/
 ├── circles-demo.json
 ├── slideshow-demo.json
 ├── footer-demo.json
+├── quiz-sample.json
 └── instructor-note-demo.html
 ```
 
@@ -129,7 +130,7 @@ This creates `dist/js/uga-components.js` (~113 kB, 37 kB gzipped)
 
 ### Step 2: Upload to eLC
 
-Go to: **eLC → Content → Manage Files → Public Files**
+Deploy the bundle so it is available at **`/shared/ugaonline/js/uga-components.js`** (production path used by instructional designers). Upload location may be eLC Manage Files or your institution’s shared storage; ensure the final URL is `/shared/ugaonline/js/uga-components.js`.
 
 Upload:
 
@@ -146,7 +147,7 @@ Upload:
 3. In eLC, create a new Content page
 4. Switch to HTML editor
 5. Paste the content
-6. Update script path to: `/shared/PublicFiles/uga-components.js`
+6. Update script path to: `/shared/ugaonline/js/uga-components.js` (production path for instructional designers)
 
 **Option B: Individual Component** (use specific demo page)
 
@@ -158,7 +159,7 @@ Upload:
 
 1. Use code snippets from any demo page
 2. Add component tags as needed
-3. Load bundle at end: `<script type="module" src="/shared/PublicFiles/uga-components.js"></script>`
+3. Load bundle at end: `<script type="module" src="/shared/ugaonline/js/uga-components.js"></script>`
 
 ### Step 4: Update Data File Paths
 
@@ -177,6 +178,7 @@ In the eLC HTML editor, update file paths to:
 
 **Download example files from Google Drive links in the demo pages, then customize:**
 
+- `<uga-quiz>` - quiz-sample.json, quiz10.json, or quiz20.json. Create a JSON file with a `questions` array. Set `type="local"` and `filename="your-file.json"` on the component. See [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the full format.
 - `<uga-accordion>` - accordion-demo.json (expandable/collapsible sections)
 - `<uga-tabs>` - tabs-demo.json (tabbed content navigation)
 - `<uga-circles>` - circles-demo.json (circular statistics/figures)
@@ -202,7 +204,7 @@ In the eLC HTML editor, update file paths to:
 - `<uga-video>` - Kaltura video ID required (hides logo by default)
 - `<uga-assignment>` - Displays assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property (default: all types).
 - `<uga-duedate>` - Displays due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property (default: all types).
-- `<uga-quiz>` - Embed formative quizzes (CSV); submit results to an eLC assignment. See [Quiz demo](quiz.html) and quiz-sample.csv.
+- `<uga-quiz>` - Embed formative quizzes; loads questions from a JSON file. Use `type="local"` and `filename="your-quiz.json"`. The JSON file must have a `questions` array; see [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the format. Sample files: quiz-sample.json (all 6 types), quiz10.json, quiz20.json. Can submit results to an eLC assignment. See [Quiz demo](quiz.html).
 - `<uga-quiz-grade-sync>` - Instructor-only: sync quiz submissions to the linked grade item. Use `dropbox-assignment-name` (e.g. "Quiz Demo 2") or `dropbox-folder-id`. Place below the quiz or inside `uga-instructor-note`.
 - `<uga-rating>` - Collects user ratings via eLC forums
 
@@ -236,7 +238,7 @@ Follow the JSON structure in the sample files:
 <uga-circles type="local" filename="course-stats.json"></uga-circles>
 <uga-return-to-top></uga-return-to-top>
 
-<script type="module" src="/shared/PublicFiles/uga-components.js"></script>
+<script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 ```
 
 ## What Makes This Structure Good?

@@ -254,6 +254,64 @@
       </div>
     </section>
 
+    <!-- Image Component -->
+    <section class="component-demo" id="image-demo">
+      <h2>Image Component</h2>
+      <div class="demo-description">
+        <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Based on instructional designer patterns with UGA brand styling.</p>
+      </div>
+      <div class="demo-example">
+        <uga-image
+          src="/content/enforced4/3519736-LITComponentsDevSite/images/demo_image.jpg"
+          alt="Sample image for demonstration"
+          caption="Click the image to expand and use zoom controls to view details."
+        ></uga-image>
+      </div>
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>src</td>
+            <td>string</td>
+            <td>Image URL (required)</td>
+          </tr>
+          <tr>
+            <td>alt</td>
+            <td>string</td>
+            <td>Alternative text for accessibility (required)</td>
+          </tr>
+          <tr>
+            <td>caption</td>
+            <td>string</td>
+            <td>Caption displayed below the image</td>
+          </tr>
+          <tr>
+            <td>max-width</td>
+            <td>string</td>
+            <td>Max width of container (default: 450px)</td>
+          </tr>
+          <tr>
+            <td>border-radius</td>
+            <td>number</td>
+            <td>Border radius in pixels (default: 15)</td>
+          </tr>
+          <tr>
+            <td>border-color</td>
+            <td>string</td>
+            <td>Border color (default: #ba0c2f)</td>
+          </tr>
+        </table>
+      </div>
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-image src="Images/005.jpg" alt="Description of image" caption="Optional caption text"&gt;&lt;/uga-image&gt;</uga-code>
+      </div>
+    </section>
+
     <!-- Media Components Category -->
     <div class="category-header">
       <h2 id="media-components" style="margin: 0; color: white;">Media Components</h2>
@@ -302,6 +360,22 @@
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+      </div>
+    </section>
+
+    <!-- YouTube Video Section -->
+    <section class="component-demo">
+      <h2>YouTube Videos</h2>
+      <div class="demo-description">
+        <p><strong>Embed YouTube videos</strong> with <code>host="youtube"</code> and the video ID from the URL (e.g., <code>yx3bxPfbdRM</code> from youtube.com/watch?v=yx3bxPfbdRM).</p>
+      </div>
+
+      <div class="demo-example">
+        <uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"></uga-video>
+      </div>
+
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -476,8 +550,8 @@ console.log(x);
     <section class="component-demo" id="quiz-demo">
       <h2>Quiz Component</h2>
       <div class="demo-description">
-        <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking. Perfect for release conditions - students can't take summative assessments until they've completed embedded formative quizzes.</p>
-        <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-folder-id</code> to test.</p>
+        <p><strong>Embed formative quizzes directly in content pages.</strong> Loads questions from a JSON file: set <code>type="local"</code> and <code>filename="your-quiz.json"</code>. The JSON file must have a <code>questions</code> array—see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format. Supports multiple question types (multiple choice, true/false, matching, short answer, multi-select, ordering), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
+        <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-assignment-name</code> (or <code>dropbox-folder-id</code>) to test.</p>
       </div>
       <div class="demo-example">
         <uga-quiz 
@@ -485,13 +559,14 @@ console.log(x);
           quiz-title="Sample Formative Quiz"
           passing-score="70"
           allow-retry="true"
-          max-attempts="3"
+          max-attempts="99"
           show-feedback="true"
-          type="csv"
-          filename="quiz-sample.csv">
+          type="local"
+          filename="quiz-sample.json"
+          dropbox-assignment-name="Quiz Demo 2">
         </uga-quiz>
         <p></p>
-        <p class="util-margin-top-md util-font-size-sm"><strong>Grade sync (instructor only):</strong> <uga-quiz-grade-sync dropbox-folder-id="0"></uga-quiz-grade-sync></p>
+        <uga-instructor-note type="local" filename="quiz-sync-note.html"></uga-instructor-note>
         <p></p>
       </div>
       <div class="demo-props">
@@ -539,26 +614,38 @@ console.log(x);
           </tr>
           <tr>
             <td><code>type</code></td>
-            <td>'csv'</td>
-            <td>Load questions from eLC CSV file</td>
+            <td>'local'</td>
+            <td>Load questions from JSON file (use with <code>filename</code>)</td>
           </tr>
           <tr>
             <td><code>filename</code></td>
             <td>String</td>
-            <td>Path to the eLC CSV file (e.g. <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">quiz-sample.csv</a>)</td>
+            <td>Path to the JSON file. Use relative path (e.g. <code>quiz-sample.json</code>) if same folder as HTML, or full path (e.g. <code>/shared/PublicFiles/quiz-sample.json</code>) for eLC Public Files. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format.</td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <h4>Basic Usage (eLC CSV)</h4>
+        <h4>Basic Usage (JSON file)</h4>
         <uga-code language="markup">&lt;uga-quiz 
   quiz-id="quiz-1"
   quiz-title="Formative Quiz"
   passing-score="70"
-  type="csv"
-  filename="quiz-sample.csv"&gt;
+  type="local"
+  filename="quiz-sample.json"&gt;
 &lt;/uga-quiz&gt;</uga-code>
-        <p><strong>Note:</strong> <a href="https://drive.google.com/file/d/117iqfNnOtkxh351XjLjzWIWMDBBt0Pd_/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Download quiz-sample.csv (Google Drive)</a>. Export questions from eLC in CSV format, save as CSV UTF-8, and upload to your course files. Update <code>filename</code> to match your file path.</p>
+        <p><strong>Note:</strong> Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>). Upload to the same folder as your HTML or to eLC Public Files. Set <code>type="local"</code> and <code>filename</code> to the file path (relative or full).</p>
+        
+        <h4 style="margin-top: 1.5rem;">With Assignment Submission</h4>
+        <uga-code language="markup">&lt;uga-quiz 
+  quiz-id="quiz-1"
+  quiz-title="My Quiz"
+  passing-score="70"
+  type="local"
+  filename="quiz-sample.json"
+  dropbox-assignment-name="Quiz Demo 2"&gt;
+&lt;/uga-quiz&gt;
+&lt;uga-instructor-note type="local" filename="quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+        <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. The instructor note contains the grade sync component. When synced, the most recent grade overwrites any current grade for each student.</p>
         
         <h4 style="margin-top: 1.5rem;">With Timer and Assignment Submission</h4>
         <uga-code language="markup">&lt;uga-quiz 
@@ -567,10 +654,79 @@ console.log(x);
   passing-score="80"
   time-limit="10"
   auto-submit="true"
-  type="csv"
-  filename="quiz-sample.csv"
-  dropbox-assignment-name="Quiz Demo"&gt;
-&lt;/uga-quiz&gt;</uga-code>
+  type="local"
+  filename="quiz-sample.json"
+  dropbox-assignment-name="Quiz Demo 2"&gt;
+&lt;/uga-quiz&gt;
+&lt;uga-instructor-note type="local" filename="quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+        <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot; When synced, the most recent grade overwrites any current grade for each student.</p>
+      </div>
+    </section>
+
+    <!-- Course Analytics Component -->
+    <section class="component-demo" id="course-analytics-demo">
+      <h2>Course Analytics Component</h2>
+      <div class="demo-description">
+        <p><strong>Course-wide analytics aggregating data from content, assignments, discussions, and quizzes.</strong> Shows module-level consumption statistics and comparisons. Instructor-only component that provides insights into student engagement across course modules.</p>
+        <p><a href="course-analytics.html">Open full Course Analytics demo</a> — includes detailed usage examples and property documentation.</p>
+      </div>
+      <div class="demo-example">
+        <uga-course-analytics></uga-course-analytics>
+      </div>
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td><code>show-content-stats</code></td>
+            <td>Boolean</td>
+            <td>true</td>
+            <td>Show content view/completion statistics</td>
+          </tr>
+          <tr>
+            <td><code>show-assignments</code></td>
+            <td>Boolean</td>
+            <td>true</td>
+            <td>Show assignment submission statistics</td>
+          </tr>
+          <tr>
+            <td><code>show-discussions</code></td>
+            <td>Boolean</td>
+            <td>true</td>
+            <td>Show discussion participation statistics</td>
+          </tr>
+          <tr>
+            <td><code>show-quizzes</code></td>
+            <td>Boolean</td>
+            <td>true</td>
+            <td>Show quiz completion statistics</td>
+          </tr>
+          <tr>
+            <td><code>compare-modules</code></td>
+            <td>Boolean</td>
+            <td>true</td>
+            <td>Enable module comparison view with visual indicators</td>
+          </tr>
+        </table>
+      </div>
+      <div class="demo-code">
+        <h4>Basic Usage</h4>
+        <uga-code language="markup">&lt;uga-course-analytics&gt;&lt;/uga-course-analytics&gt;</uga-code>
+        
+        <h4 style="margin-top: 1.5rem;">Customized Example</h4>
+        <uga-code language="markup">&lt;uga-course-analytics 
+  show-content-stats="true"
+  show-assignments="true"
+  show-discussions="false"
+  show-quizzes="false"
+  compare-modules="true"&gt;
+&lt;/uga-course-analytics&gt;</uga-code>
+        <p><strong>Note:</strong> This component is instructor-only and will not display for students. It aggregates data from multiple eLC APIs, so loading may take several seconds for large courses. The component shows overall course statistics and a module comparison table with color-coded indicators for performance relative to course averages.</p>
       </div>
     </section>
 
@@ -738,12 +894,12 @@ console.log(x);
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Program identifier; if not provided, defaults to local file mode.</td>
+            <td>Program name with underscores (e.g. "School_of_Social_Work"); when set, logo is loaded from <code>/shared/ugaonline/templates/msw/img/</code> with the same name (e.g. "School_of_Social_Work.png").</td>
           </tr>
           <tr>
             <td>imagefile</td>
             <td>string</td>
-            <td>Name of logo image file (optional; used when JSON doesn't include imageSrc, or for program type)</td>
+            <td>Optional. Logo filename when using <code>program</code>; if omitted, defaults to program name (spaces→underscores) + <code>.png</code>. For local mode, used when JSON doesn't include imageSrc.</td>
           </tr>
         </table>
       </div>
@@ -752,7 +908,8 @@ console.log(x);
         <uga-code language="markup">&lt;uga-footer filename="footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
-        <uga-code language="markup">&lt;uga-footer program="program-name" imagefile="logo.png"&gt;&lt;/uga-footer&gt;</uga-code>
+        <p>Store the program logo at <code>/shared/ugaonline/templates/msw/img/</code> using underscores in the filename (e.g. <code>School_of_Social_Work.png</code>).</p>
+        <uga-code language="markup">&lt;uga-footer program="School_of_Social_Work"&gt;&lt;/uga-footer&gt;</uga-code>
       </div>
     </section>
 
@@ -851,8 +1008,11 @@ console.log(x);
 
   </div>
 
-  <!-- Load the components bundle -->
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <!-- Video analytics: disabled when using Kaltura analytics only -->
+  <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
+  <script>
+    (function(){var s=document.createElement('script');s.type='module';s.src=window.location.hostname==='localhost'?'/dist/js/uga-components.js':'/shared/ugaonline/js/uga-components.js';document.body.appendChild(s);})();
+  </script>
   
   <script>
     if (typeof axios === 'undefined') {

@@ -91,10 +91,10 @@
 
       <div class="demo-example">
         <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
-        <p><em>Note: Replace videoid with actual Kaltura video ID</em></p>
+        <p><em>Using video ID 1_icw0df6y (Faculty Profile)</em></p>
       </div>
 
-      <div class="demo-props">
+      <div class="demo-props"> 
         <h4>Properties for Single Video</h4>
         <table>
           <tr>
@@ -125,6 +125,58 @@
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+      </div>
+    </section>
+
+    <!-- YouTube Video Section -->
+    <section class="component-demo">
+      <h2>YouTube Videos</h2>
+      <div class="demo-description">
+        <p><strong>Embed YouTube videos</strong> by setting <code>host="youtube"</code> and providing the video ID from the YouTube URL. For example, <code>https://www.youtube.com/watch?v=yx3bxPfbdRM</code> uses video ID <code>yx3bxPfbdRM</code>.</p>
+      </div>
+
+      <div class="demo-example">
+        <uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"></uga-video>
+        <p><em>YouTube video: YouTube Demo</em></p>
+      </div>
+
+      <div class="demo-props">
+        <h4>Properties for YouTube Videos</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>host</td>
+            <td>string</td>
+            <td>Must be <code>"youtube"</code> for YouTube videos</td>
+          </tr>
+          <tr>
+            <td>videoid</td>
+            <td>string</td>
+            <td>YouTube video ID from the URL (e.g., <code>yx3bxPfbdRM</code> from youtube.com/watch?v=yx3bxPfbdRM)</td>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>string</td>
+            <td>Optional display name for the video (used in ratings and accessibility)</td>
+          </tr>
+          <tr>
+            <td>includerating</td>
+            <td>boolean</td>
+            <td>Add rating component below video</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="demo-code">
+        <uga-code language="markup">&lt;!-- Basic YouTube embed --&gt;
+&lt;uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"&gt;&lt;/uga-video&gt;
+
+&lt;!-- With rating --&gt;
+&lt;uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -191,6 +243,11 @@
     <uga-return-to-top></uga-return-to-top>
   </div>
 
+  <!-- Video analytics: disabled when using Kaltura analytics only (no custom backend) -->
+  <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
+  <!-- Video analytics: required for event collection. For local dev, run: cd template-manager/api && npm run dev -->
+  <!-- For D2L, uncomment and set to your deployed backend URL: -->
+  <!-- <script>window.UGA_VIDEO_ANALYTICS_URL = 'https://YOUR-API-SERVER/api/video-analytics/events';</script> -->
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 </body>
 </html>

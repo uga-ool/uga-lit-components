@@ -1,7 +1,7 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import axios from 'axios';
-import { getVersions, getUser, getEnrollment, getAssignments, clearAssignmentsCache, submitToDropbox, submitToDropboxCommentOnly, logApiVersionWarning } from '../lib/api/d2l-client.js';
+import { getVersions, getUser, getEnrollment, getAssignments, clearAssignmentsCache, submitToDropbox, submitToDropboxCommentOnly, getMySubmission, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import { parseD2LCSV } from '../lib/data/csv-parser.js';
 import type { ApiVersions, User, Enrollment } from '../types/d2l.js';
@@ -69,11 +69,12 @@ class UgaQuiz extends LitElement {
   @property({ type: Number, attribute: 'dropbox-folder-id' }) dropboxFolderId = 0; // eLC Dropbox (assignment) folder ID to submit quiz result as a file
   @property({ type: String, attribute: 'dropbox-assignment-name' }) dropboxAssignmentName = ''; // Name of existing assignment to submit to (instructor creates it in eLC)
   @property({ type: Number }) passingScore = 70; // Percentage required to pass
-  @property({ type: Boolean }) allowRetry = true;
-  @property({ type: Number }) maxAttempts = 3; // Maximum retry attempts
-  @property({ type: Boolean }) showFeedback = true; // Show immediate feedback
+  @property({ type: Boolean, attribute: 'allow-retry' }) allowRetry = true;
+  @property({ type: Number, attribute: 'max-attempts' }) maxAttempts = 3; // Maximum retry attempts
+  @property({ type: Boolean, attribute: 'show-feedback' }) showFeedback = true; // Show immediate feedback
   @property({ type: Boolean }) allowReset = false; // Reset button removed; kept for API compatibility
-  @property({ type: Boolean }) randomizeQuestions = false;
+  @property({ type: Boolean, attribute: 'randomize-questions' }) randomizeQuestions = false;
+  @property({ type: Boolean, attribute: 'randomize-answers' }) randomizeAnswers = false; // Randomize answer order within each question
   @property({ type: Number, attribute: 'time-limit' }) timeLimit = 0; // Time limit in minutes (0 = no limit)
   @property({ type: Boolean, attribute: 'auto-submit' }) autoSubmit = false; // Auto-submit when time expires
   @property({ type: String }) type: 'local' | 'inline' | 'csv' = 'inline'; // Load from file (JSON/CSV) or inline JSON
@@ -93,6 +94,13 @@ class UgaQuiz extends LitElement {
   @state() private completionStatus: 'not-started' | 'in-progress' | 'completed' | 'passed' | 'failed' = 'not-started';
   @state() private dropboxSaveStatus: 'idle' | 'success' | 'error' = 'idle';
   @state() private dropboxErrorMessage: string | null = null;
+  @state() private jsonTitle = ''; // Title from JSON file (takes precedence over quiz-title attribute)
+  @state() private feedbackLoadStatus: 'idle' | 'loading' | 'loaded' | 'failed' = 'idle';
+  @state() private fetchedFeedback: { results: QuizResult; responses: Record<string, unknown> } | null = null;
+
+  private get displayTitle(): string {
+    return this.jsonTitle || this.quizTitle || 'Quiz';
+  }
 
   private versions: ApiVersions = {};
   private ou: string | null = null;
@@ -127,21 +135,29 @@ class UgaQuiz extends LitElement {
           localStorage.setItem(quizIdMappingKey, this.quizId);
           console.log(`ℹ️ quizId generated from quizTitle and stored: "${this.quizId}"`);
         }
+      } else if (this.filename?.trim()) {
+        // No quizTitle - derive stable quizId from filename (e.g. quiz10.json -> quiz-quiz10)
+        const base = this.filename.replace(/\.(json|csv)$/i, '').replace(/[^a-z0-9_-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'quiz';
+        this.quizId = base.startsWith('quiz') ? base : `quiz-${base}`;
+        console.log(`ℹ️ quizId derived from filename: "${this.quizId}"`);
       } else {
-        // No quizTitle - this is an error case, but generate a stable ID based on component context
-        // Use a hash of the component's outerHTML or a stable identifier
-        const userId = this.currentUser?.Identifier || 'anonymous';
-        const fallbackKey = `uga-quiz-fallback-id-${userId}`;
-        const storedFallbackId = localStorage.getItem(fallbackKey);
-        
+        // No quizTitle, no filename - use path-based fallback (currentUser is null here)
+        const pathKey = typeof window !== 'undefined' && window.location?.pathname
+          ? `uga-quiz-fallback-id-path-${window.location.pathname}`
+          : null;
+        const storedFallbackId = (pathKey && localStorage.getItem(pathKey)) || localStorage.getItem('uga-quiz-fallback-id-anonymous');
         if (storedFallbackId) {
           this.quizId = storedFallbackId;
-          console.log(`ℹ️ quizId was empty (no quizTitle), using stored fallback: "${this.quizId}"`);
+          console.log(`ℹ️ quizId was empty (no quizTitle, no filename), using stored fallback: "${this.quizId}"`);
         } else {
-          // Last resort: generate from timestamp but store it persistently
           this.quizId = `quiz-${Date.now()}`;
-          localStorage.setItem(fallbackKey, this.quizId);
-          console.warn(`⚠️ quizId was empty and no quizTitle provided. Generated: "${this.quizId}". Set quiz-id attribute explicitly for proper attempt tracking.`);
+          console.warn(`⚠️ quizId was empty (no quizTitle, no filename). Generated: "${this.quizId}". Add quiz-id, quiz-title, or filename for reliable feedback.`);
+        }
+        try {
+          if (pathKey) localStorage.setItem(pathKey, this.quizId);
+          localStorage.setItem('uga-quiz-fallback-id-anonymous', this.quizId);
+        } catch {
+          // ignore
         }
       }
     } else {
@@ -226,6 +242,15 @@ class UgaQuiz extends LitElement {
       // Load quiz questions (this should always work)
       await this.loadQuestions();
 
+      // Restore previous completion results so feedback is shown when user returns to the page
+      this.restorePreviousResults();
+
+      // If still no results but we have attempts, try fetching from assignment (handles iframe/storage issues)
+      if (!this.results && this.showFeedback && this.attemptCount > 0 && this.dropboxAssignmentName?.trim()) {
+        const ok = await this.fetchFeedbackFromAssignment();
+        if (ok) this.fetchedFeedback = { results: this.results!, responses: this.responses };
+      }
+
     } catch (error: any) {
       if (error.message === 'Request aborted' || this.abortController?.signal.aborted) {
         return;
@@ -279,6 +304,9 @@ class UgaQuiz extends LitElement {
       try {
         const response = await axios.get(this.filename);
         const data = response.data;
+        if (data && typeof data.title === 'string' && data.title.trim()) {
+          this.jsonTitle = data.title.trim();
+        }
         questionsData = Array.isArray(data.questions) ? data.questions : (Array.isArray(data) ? data : []);
         
         if (questionsData.length === 0) {
@@ -297,6 +325,9 @@ class UgaQuiz extends LitElement {
       // Parse inline JSON
       try {
         const parsed = JSON.parse(this.questions);
+        if (parsed && typeof parsed.title === 'string' && parsed.title.trim()) {
+          this.jsonTitle = parsed.title.trim();
+        }
         questionsData = Array.isArray(parsed.questions) ? parsed.questions : (Array.isArray(parsed) ? parsed : []);
         
         if (questionsData.length === 0) {
@@ -320,9 +351,34 @@ class UgaQuiz extends LitElement {
       }
     }
 
-    // Randomize if requested
+    // Randomize questions if requested
     if (this.randomizeQuestions) {
       questionsData = this.shuffleArray([...questionsData]);
+    }
+
+    // Randomize answers within each question if requested
+    if (this.randomizeAnswers) {
+      questionsData = questionsData.map(q => {
+        if (q.options && (q.type === QuestionType.MULTIPLE_CHOICE || q.type === QuestionType.MULTI_SELECT || q.type === QuestionType.TRUE_FALSE)) {
+          // Create shuffled options and map correctAnswer to new index
+          const shuffledIndices = this.shuffleArray(q.options.map((_, i) => i));
+          const shuffledOptions = shuffledIndices.map(i => q.options![i]);
+          
+          // Map correctAnswer to new position
+          let newCorrectAnswer: any;
+          if (q.type === QuestionType.MULTIPLE_CHOICE || q.type === QuestionType.TRUE_FALSE) {
+            const oldIndex = typeof q.correctAnswer === 'number' ? q.correctAnswer : parseInt(String(q.correctAnswer), 10);
+            newCorrectAnswer = shuffledIndices.indexOf(oldIndex);
+          } else if (q.type === QuestionType.MULTI_SELECT && Array.isArray(q.correctAnswer)) {
+            newCorrectAnswer = (q.correctAnswer as number[]).map(oldIdx => shuffledIndices.indexOf(oldIdx)).sort((a, b) => a - b);
+          } else {
+            newCorrectAnswer = q.correctAnswer;
+          }
+          
+          return { ...q, options: shuffledOptions, correctAnswer: newCorrectAnswer };
+        }
+        return q;
+      });
     }
 
     this.parsedQuestions = questionsData;
@@ -361,6 +417,282 @@ class UgaQuiz extends LitElement {
         console.warn('Could not parse stored attempt data:', error);
       }
     }
+  }
+
+  /**
+   * Restore last completion results from localStorage so feedback is shown when user returns to the page.
+   * Called after loadQuestions so parsedQuestions exists.
+   * Tries specific keys first, then scans for any key matching the quizId (handles userId mismatches).
+   */
+  private restorePreviousResults(): void {
+    if (!this.showFeedback) return;
+    const persisted = this.getPersistedResults();
+    if (persisted) {
+      this.results = persisted.results;
+      this.completionStatus = persisted.results.passed ? 'passed' : 'failed';
+      this.responses = persisted.responses || {};
+      this.isSubmitted = true;
+      this.isStarted = true;
+      this.dropboxSaveStatus = 'idle';
+      this.dropboxErrorMessage = null;
+    }
+  }
+
+  /**
+   * Parse the human-readable "Responses:" section from a submission comment.
+   * Format: "  • Quiz-001: Option text" or "  • Quiz-001:\n    • Option A"
+   */
+  private parseResponsesFromCommentText(commentText: string): { responses: Record<string, unknown>; totalPoints?: number; pointsEarned?: number; percentage?: number; passed?: boolean } | null {
+    const responses: Record<string, unknown> = {};
+    const respIdx = commentText.toLowerCase().indexOf('responses:');
+    if (respIdx < 0) return null;
+    const section = commentText.slice(respIdx);
+    const lines = section.split(/\r?\n/);
+    let currentQ: string | null = null;
+    for (const line of lines) {
+      const bulletMatch = line.match(/^\s*[•\-]\s*([^:]+):\s*(.*)$/);
+      if (bulletMatch) {
+        const qId = bulletMatch[1].trim();
+        const val = bulletMatch[2].trim();
+        if (this.parsedQuestions.some(q => q.id === qId)) {
+          currentQ = qId;
+          if (val) {
+            const q = this.parsedQuestions.find(qq => qq.id === qId);
+            const idx = q?.options?.findIndex(o => o === val);
+            responses[qId] = idx >= 0 ? idx : val;
+          }
+        }
+      } else if (currentQ && line.match(/^\s{2,}[•\-]\s/)) {
+        const subMatch = line.match(/^\s+[•\-]\s*(.+)$/);
+        if (subMatch) {
+          const val = subMatch[1].trim();
+          const q = this.parsedQuestions.find(qq => qq.id === currentQ);
+          if (q?.type === QuestionType.MULTI_SELECT || q?.type === QuestionType.ORDERING) {
+            const arr = (responses[currentQ!] as number[]) || [];
+            const idx = q.options?.findIndex(o => o === val);
+            if (idx >= 0) arr.push(idx);
+            responses[currentQ!] = arr;
+          }
+        }
+      }
+    }
+    if (Object.keys(responses).length === 0) return null;
+    const scoreMatch = commentText.match(/Score:\s*(\d+)\s*\/\s*(\d+)/);
+    const totalPoints = scoreMatch ? parseInt(scoreMatch[2], 10) : undefined;
+    const pointsEarned = scoreMatch ? parseInt(scoreMatch[1], 10) : undefined;
+    const passedMatch = commentText.match(/Status:\s*(Passed|Failed)/i);
+    const passed = passedMatch ? passedMatch[1].toLowerCase() === 'passed' : undefined;
+    return { responses, totalPoints, pointsEarned, percentage: totalPoints && pointsEarned != null ? (pointsEarned / totalPoints) * 100 : undefined, passed };
+  }
+
+  private rebuildAttemptsFromResponses(responses: Record<string, unknown>): QuizAttempt[] {
+    const attempts: QuizAttempt[] = [];
+    for (const q of this.parsedQuestions) {
+      attempts.push(this.gradeQuestion(q, responses[q.id]));
+    }
+    return attempts;
+  }
+
+  /**
+   * Fetch feedback from the assignment submission when localStorage/sessionStorage fails (e.g. iframe/origin).
+   * Parses the ---UGA_QUIZ_FULL_JSON--- block or the human-readable Responses section from the submission comment.
+   */
+  private async fetchFeedbackFromAssignment(): Promise<boolean> {
+    if (!this.showFeedback || !this.ou || !this.versions.le || !this.dropboxAssignmentName?.trim()) {
+      if (this.showFeedback && this.attemptCount > 0) {
+        console.warn('[uga-quiz] Cannot fetch feedback: missing dropbox-assignment-name, ou, or le version. Set dropbox-assignment-name to the exact eLC assignment title.');
+      }
+      return false;
+    }
+    try {
+      clearAssignmentsCache(this.ou);
+      const folders = await getAssignments(this.ou, this.versions.le);
+      const want = this.dropboxAssignmentName.trim();
+      const list = (folders as { Name?: string; Id?: number }[]) || [];
+      const folder = list.find((f) => f.Name?.trim() === want) || list.find((f) => f.Name?.trim().toLowerCase() === want.toLowerCase());
+      if (!folder?.Id) {
+        console.warn('[uga-quiz] Cannot fetch feedback: assignment "' + want + '" not found. Available:', list.map((f) => f.Name).filter(Boolean));
+        return false;
+      }
+      // Use getMySubmission (mysubmissions GET) - students can read their own submissions
+      const userSub = await getMySubmission(this.ou, this.versions.le, folder.Id);
+      const commentText = userSub?.TextSubmission ?? '';
+      let data: { attempts?: Array<{ questionId: string; isCorrect: boolean; pointsEarned: number }>; responses?: Record<string, unknown>; totalPoints?: number; pointsEarned?: number; percentage?: number; passed?: boolean } | null = null;
+
+      if (!commentText || commentText.length < 10) {
+        console.warn('[uga-quiz] Cannot fetch feedback: submission comment empty or too short. (Student may lack permission to read own submission, or submission format differs.)');
+        return false;
+      }
+      const idx = commentText.indexOf('---UGA_QUIZ_FULL_JSON---');
+      const jsonStr = idx >= 0 ? commentText.slice(idx + 24).trim() : '';
+      if (jsonStr) {
+        try {
+          data = JSON.parse(jsonStr) as typeof data;
+        } catch {
+          // ignore
+        }
+      }
+      if (!data?.attempts || !data?.responses) {
+        data = this.parseResponsesFromCommentText(commentText);
+      }
+      if (!data?.responses) {
+        console.warn('[uga-quiz] Cannot fetch feedback: could not parse responses from submission comment.');
+        return false;
+      }
+      const attempts = data.attempts ?? this.rebuildAttemptsFromResponses(data.responses);
+      if (!attempts.length) return false;
+      const totalPoints = data.totalPoints ?? this.parsedQuestions.reduce((s, q) => s + q.points, 0);
+      const pointsEarned = data.pointsEarned ?? attempts.reduce((s, a) => s + (a.pointsEarned ?? 0), 0);
+      const percentage = data.percentage ?? (totalPoints > 0 ? (pointsEarned / totalPoints) * 100 : 0);
+      this.results = {
+        totalPoints,
+        pointsEarned,
+        percentage,
+        passed: data.passed ?? percentage >= this.passingScore,
+        attempts,
+        completedAt: new Date().toISOString()
+      };
+      this.responses = data.responses || {};
+      this.completionStatus = this.results.passed ? 'passed' : 'failed';
+      this.isSubmitted = true;
+      this.isStarted = true;
+      this.dropboxSaveStatus = 'idle';
+      this.dropboxErrorMessage = null;
+      return true;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      console.warn('[uga-quiz] Fetch feedback failed:', msg, status ? `(HTTP ${status})` : '');
+      return false;
+    }
+  }
+
+  /**
+   * Load persisted results from localStorage (synchronous). Used when we might show "Quiz Already Completed"
+   * but want to display feedback from a previous completion.
+   * Tries specific keys first, then scans for any key matching the quizId pattern (handles userId mismatches).
+   */
+  private static readonly COOKIE_KEY = 'uqa_r';
+  private static readonly COOKIE_MAX_AGE = 300; // 5 min
+
+  /** Read results from cookie (survives iframe document replacement when same-origin). */
+  private getPersistedResultsFromCookie(): { results: QuizResult; responses: Record<string, unknown> } | null {
+    try {
+      if (typeof document === 'undefined' || !document.cookie) return null;
+      const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + UgaQuiz.COOKIE_KEY + '=([^;]*)'));
+      const val = match?.[1];
+      if (!val) return null;
+      const data = JSON.parse(decodeURIComponent(val)) as { results: QuizResult; responses: Record<string, unknown>; ts: number };
+      if (!data?.results?.attempts || Date.now() - (data.ts || 0) > UgaQuiz.COOKIE_MAX_AGE * 1000) return null;
+      const ourIds = new Set(this.parsedQuestions.map(q => q.id));
+      const storedIds = new Set(data.results.attempts.map((a: { questionId: string }) => a.questionId));
+      if (ourIds.size > 0 && ourIds.size === storedIds.size && [...ourIds].every(id => storedIds.has(id))) {
+        console.debug('[uga-quiz] Restored feedback from cookie (document replacement fallback)');
+        return { results: data.results, responses: data.responses || {} };
+      }
+    } catch {
+      /* ignore */
+    }
+    return null;
+  }
+
+  /** Scan a Storage (localStorage or sessionStorage) for persisted results. */
+  private getPersistedResultsFromStorage(storage: Storage): { results: QuizResult; responses: Record<string, unknown> } | null {
+    const ourIds = new Set(this.parsedQuestions.map(q => q.id));
+    if (ourIds.size > 0) {
+      try {
+        for (let i = 0; i < storage.length; i++) {
+          const key = storage.key(i);
+          if (key && key.startsWith('uga-quiz-results-')) {
+            const resultsStored = storage.getItem(key);
+            if (!resultsStored) continue;
+            try {
+              const data = JSON.parse(resultsStored);
+              if (!data.results?.attempts || (data.completionStatus !== 'passed' && data.completionStatus !== 'failed')) continue;
+              const storedIds = new Set(data.results.attempts.map((a: { questionId: string }) => a.questionId));
+              const match = ourIds.size === storedIds.size && [...ourIds].every(id => storedIds.has(id));
+              if (match) return { results: data.results, responses: data.responses || {} };
+            } catch {
+              // ignore
+            }
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+    const prefix = `uga-quiz-results-${this.quizId}-`;
+    const userIds = [this.currentUser?.Identifier, 'anonymous'].filter(Boolean) as string[];
+    if (userIds.length === 0) userIds.push('anonymous');
+    for (const userId of userIds) {
+      const resultsStored = storage.getItem(prefix + userId);
+      if (!resultsStored) continue;
+      try {
+        const data = JSON.parse(resultsStored);
+        if (data.results && (data.completionStatus === 'passed' || data.completionStatus === 'failed')) {
+          return { results: data.results, responses: data.responses || {} };
+        }
+      } catch {
+        // ignore
+      }
+    }
+    try {
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (key && key.startsWith(prefix)) {
+          const resultsStored = storage.getItem(key);
+          if (resultsStored) {
+            try {
+              const data = JSON.parse(resultsStored);
+              if (data.results && (data.completionStatus === 'passed' || data.completionStatus === 'failed')) {
+                return { results: data.results, responses: data.responses || {} };
+              }
+            } catch {
+              // ignore
+            }
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  }
+
+  private getPersistedResults(): { results: QuizResult; responses: Record<string, unknown> } | null {
+    const tryPending = (useTop: boolean) => {
+      try {
+        const pending = useTop && typeof window !== 'undefined' && window.top
+          ? (window.top as any).__ugaQuizPendingResults
+          : (globalThis as any).__ugaQuizPendingResults;
+        const data = pending as { results: QuizResult; responses: Record<string, unknown>; ts: number } | undefined;
+        if (data && Date.now() - data.ts < 60000) {
+          const ourIds = new Set(this.parsedQuestions.map(q => q.id));
+          const storedIds = new Set(data.results?.attempts?.map((a: { questionId: string }) => a.questionId) ?? []);
+          if (ourIds.size > 0 && ourIds.size === storedIds.size && [...ourIds].every(id => storedIds.has(id))) {
+            if (useTop) console.debug('[uga-quiz] Restored feedback from window.top (iframe replacement fallback)');
+            return { results: data.results, responses: data.responses || {} };
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+      return null;
+    };
+    const fromTop = tryPending(true);
+    if (fromTop) return fromTop;
+    const fromGlobal = tryPending(false);
+    if (fromGlobal) return fromGlobal;
+    const fromCookie = this.getPersistedResultsFromCookie();
+    if (fromCookie) return fromCookie;
+    // Try sessionStorage first (same-tab refresh; can work when localStorage has iframe/origin issues)
+    try {
+      const fromSession = this.getPersistedResultsFromStorage(sessionStorage);
+      if (fromSession) return fromSession;
+    } catch {
+      // ignore
+    }
+    return this.getPersistedResultsFromStorage(localStorage);
   }
 
   /**
@@ -578,31 +910,104 @@ class UgaQuiz extends LitElement {
       this.isSubmitted = true;
       this.completionStatus = passed ? 'passed' : 'failed';
 
+      // Persist results IMMEDIATELY so feedback is shown when user returns to the page.
+      // Do this before dropbox submit so we don't lose data if that fails.
+      const userId = this.currentUser?.Identifier || 'anonymous';
+      const resultsPayload = {
+        completionStatus: this.completionStatus,
+        results: this.results,
+        responses: this.responses,
+        dropboxSaveStatus: this.dropboxSaveStatus,
+        dropboxErrorMessage: this.dropboxErrorMessage,
+        timestamp: new Date().toISOString()
+      };
+      try {
+        const storageKey = `uga-quiz-attempts-${this.quizId}-${userId}`;
+        const resultsKey = `uga-quiz-results-${this.quizId}-${userId}`;
+        const resultsStr = JSON.stringify(resultsPayload);
+        localStorage.setItem(storageKey, JSON.stringify({ attemptCount: this.attemptCount, lastCompleted: new Date().toISOString() }));
+        localStorage.setItem(resultsKey, resultsStr);
+        sessionStorage.setItem(resultsKey, resultsStr);
+      } catch (storageErr: any) {
+        console.warn('⚠️ Could not persist quiz results:', storageErr?.message || storageErr);
+      }
+
+      // Store in window.top (survives iframe replacement) and globalThis (same-doc re-mount)
+      const pending = { quizId: this.quizId, results: this.results, responses: this.responses, ts: Date.now() };
+      try {
+        (globalThis as any).__ugaQuizPendingResults = pending;
+      } catch {
+        /* ignore */
+      }
+      try {
+        if (typeof window !== 'undefined' && window.top) {
+          (window.top as any).__ugaQuizPendingResults = pending;
+        }
+      } catch {
+        /* ignore - cross-origin iframe */
+      }
+
+      // Cookie fallback (survives iframe document replacement when same-origin; ~4KB limit)
+      try {
+        if (typeof document !== 'undefined' && document.cookie !== undefined) {
+          const cookiePayload = { results: this.results, responses: this.responses, ts: Date.now() };
+          const str = encodeURIComponent(JSON.stringify(cookiePayload));
+          if (str.length < 3800) {
+            document.cookie = `${UgaQuiz.COOKIE_KEY}=${str}; path=/; max-age=${UgaQuiz.COOKIE_MAX_AGE}; SameSite=Lax`;
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+
+      // Render feedback immediately; don't block on dropbox submit (avoids losing feedback if submit triggers reload)
+      this.requestUpdate();
+
       // Submit quiz result to eLC assignment if dropbox-folder-id or dropbox-assignment-name is set
       const useDropbox = (this.dropboxFolderId && this.ou && this.versions.le) ||
         (this.dropboxAssignmentName?.trim() && this.ou && this.versions.le);
       if (useDropbox) {
-        try {
-          await this.saveToDropbox(pointsEarned, totalPoints, passed);
-          this.dropboxSaveStatus = 'success';
-          this.dropboxErrorMessage = null;
-          console.log('✅ Quiz result submitted to assignment');
-        } catch (err: any) {
-          const msg = err?.message || String(err);
-          console.warn('⚠️ Assignment submission failed:', msg);
-          this.dropboxSaveStatus = 'error';
-          this.dropboxErrorMessage = msg.includes('not found')
-            ? `The assignment "${this.dropboxAssignmentName || 'for submissions'}" was not found. Your instructor must create this assignment in eLC (Assignments) with the same name; then you can submit again.`
-            : msg;
-        }
+        this.saveToDropbox(pointsEarned, totalPoints, passed)
+          .then(() => {
+            this.dropboxSaveStatus = 'success';
+            this.dropboxErrorMessage = null;
+            console.log('✅ Quiz result submitted to assignment');
+            try {
+              const resultsKey = `uga-quiz-results-${this.quizId}-${userId}`;
+              const stored = localStorage.getItem(resultsKey);
+              if (stored) {
+                const data = JSON.parse(stored);
+                data.dropboxSaveStatus = 'success';
+                data.dropboxErrorMessage = null;
+                localStorage.setItem(resultsKey, JSON.stringify(data));
+              }
+            } catch {
+              /* ignore */
+            }
+            this.requestUpdate();
+          })
+          .catch((err: any) => {
+            const msg = err?.message || String(err);
+            console.warn('⚠️ Assignment submission failed:', msg);
+            this.dropboxSaveStatus = 'error';
+            this.dropboxErrorMessage = msg.includes('not found')
+              ? `The assignment "${this.dropboxAssignmentName || 'for submissions'}" was not found. Your instructor must create this assignment in eLC (Assignments) with the same name; then you can submit again.`
+              : msg;
+            try {
+              const resultsKey = `uga-quiz-results-${this.quizId}-${userId}`;
+              const stored = localStorage.getItem(resultsKey);
+              if (stored) {
+                const data = JSON.parse(stored);
+                data.dropboxSaveStatus = 'error';
+                data.dropboxErrorMessage = this.dropboxErrorMessage;
+                localStorage.setItem(resultsKey, JSON.stringify(data));
+              }
+            } catch {
+              /* ignore */
+            }
+            this.requestUpdate();
+          });
       }
-
-      // Save attempt count
-      const storageKey = `uga-quiz-attempts-${this.quizId}-${this.currentUser?.Identifier || 'anonymous'}`;
-      localStorage.setItem(storageKey, JSON.stringify({
-        attemptCount: this.attemptCount,
-        lastCompleted: new Date().toISOString()
-      }));
 
     } catch (error: any) {
       console.error('Error submitting quiz:', error);
@@ -766,10 +1171,11 @@ class UgaQuiz extends LitElement {
     if (!folderId) return;
     const percentage = totalPoints > 0 ? (pointsEarned / totalPoints) * 100 : 0;
     const userId = this.currentEnrollment?.User?.Identifier ?? this.currentUser?.Identifier;
+    const attempts = this.results?.attempts ?? [];
     const payload = {
       quizId: this.quizId,
-      quizTitle: this.quizTitle || this.quizId,
-      gradeObjectName: '', // Quiz results go to assignment only; no gradebook save
+      quizTitle: this.displayTitle,
+      gradeObjectName: '',
       pointsEarned: Math.round(pointsEarned),
       totalPoints,
       percentage: Math.round(percentage * 10) / 10,
@@ -778,18 +1184,24 @@ class UgaQuiz extends LitElement {
       timestamp: new Date().toISOString(),
       userId: userId ?? null,
       displayName: this.currentUser?.DisplayName ?? this.currentEnrollment?.User?.DisplayName ?? null,
-      responses: this.responses
+      responses: this.responses,
+      attempts
     };
     const fileName = `quiz-result-${this.quizId}-attempt-${this.attemptCount}.json`;
     const jsonStr = JSON.stringify(payload, null, 2);
-    const summaryLine = `${this.quizTitle || this.quizId}: ${pointsEarned}/${totalPoints} (${percentage.toFixed(1)}%) – ${passed ? 'Passed' : 'Failed'} – Attempt ${this.attemptCount}`;
+    const summaryLine = `${this.displayTitle}: ${pointsEarned}/${totalPoints} (${percentage.toFixed(1)}%) – ${passed ? 'Passed' : 'Failed'} – Attempt ${this.attemptCount}`;
     const comment = this.formatSubmissionComment(payload, summaryLine, percentage);
+    // Append parseable JSON for feedback recovery when localStorage fails (e.g. iframe/origin)
+    const commentWithJson = {
+      Text: (comment.Text || '') + '\n---UGA_QUIZ_FULL_JSON---\n' + jsonStr,
+      Html: comment.Html
+    };
     try {
       await submitToDropbox(
         this.ou,
         this.versions.le,
         folderId,
-        comment,
+        commentWithJson,
         fileName,
         jsonStr,
         'application/json'
@@ -798,7 +1210,7 @@ class UgaQuiz extends LitElement {
       // If assignment is "Text submission" only, file upload may be rejected; retry with comment only
       const status = err.response?.status;
       if ((status === 400 || status === 415 || status === 422) && err.response?.data) {
-        await submitToDropboxCommentOnly(this.ou, this.versions.le, folderId, comment);
+        await submitToDropboxCommentOnly(this.ou, this.versions.le, folderId, commentWithJson);
       } else {
         throw err;
       }
@@ -815,9 +1227,38 @@ class UgaQuiz extends LitElement {
       return;
     }
 
+    // Re-randomize questions if requested
+    if (this.randomizeQuestions) {
+      this.parsedQuestions = this.shuffleArray([...this.parsedQuestions]);
+    }
+
+    // Re-randomize answers if requested
+    if (this.randomizeAnswers) {
+      this.parsedQuestions = this.parsedQuestions.map(q => {
+        if (q.options && (q.type === QuestionType.MULTIPLE_CHOICE || q.type === QuestionType.MULTI_SELECT || q.type === QuestionType.TRUE_FALSE)) {
+          const shuffledIndices = this.shuffleArray(q.options.map((_, i) => i));
+          const shuffledOptions = shuffledIndices.map(i => q.options![i]);
+          
+          let newCorrectAnswer: any;
+          if (q.type === QuestionType.MULTIPLE_CHOICE || q.type === QuestionType.TRUE_FALSE) {
+            const oldIndex = typeof q.correctAnswer === 'number' ? q.correctAnswer : parseInt(String(q.correctAnswer), 10);
+            newCorrectAnswer = shuffledIndices.indexOf(oldIndex);
+          } else if (q.type === QuestionType.MULTI_SELECT && Array.isArray(q.correctAnswer)) {
+            newCorrectAnswer = (q.correctAnswer as number[]).map(oldIdx => shuffledIndices.indexOf(oldIdx)).sort((a, b) => a - b);
+          } else {
+            newCorrectAnswer = q.correctAnswer;
+          }
+          
+          return { ...q, options: shuffledOptions, correctAnswer: newCorrectAnswer };
+        }
+        return q;
+      });
+    }
+
     this.isStarted = false;
     this.isSubmitted = false;
     this.results = null;
+    this.completionStatus = 'not-started';
     this.currentQuestionIndex = 0;
     this.responses = {};
     this.dropboxSaveStatus = 'idle';
@@ -827,12 +1268,21 @@ class UgaQuiz extends LitElement {
     for (const q of this.parsedQuestions) {
       if (q.type === QuestionType.MATCHING) {
         this.responses[q.id] = {};
+      } else if (q.type === QuestionType.MULTI_SELECT) {
+        this.responses[q.id] = [];
+      } else if (q.type === QuestionType.ORDERING && q.options?.length) {
+        this.responses[q.id] = this.shuffleArray(q.options.map((_, i) => i));
       } else {
         this.responses[q.id] = '';
       }
     }
 
     this.errorMessage = null;
+
+    // Clear persisted results so we don't show old feedback on next visit
+    const userId = this.currentUser?.Identifier || 'anonymous';
+    localStorage.removeItem(`uga-quiz-results-${this.quizId}-${userId}`);
+
     this.requestUpdate();
   }
 
@@ -850,6 +1300,7 @@ class UgaQuiz extends LitElement {
     const storageKey = `uga-quiz-attempts-${this.quizId}-${userId}`;
     
     localStorage.removeItem(storageKey);
+    localStorage.removeItem(`uga-quiz-results-${this.quizId}-${userId}`);
     this.attemptCount = 0;
     
     // Reset component state
@@ -911,10 +1362,13 @@ class UgaQuiz extends LitElement {
   /**
    * Render question based on type
    */
-  private renderQuestion(question: QuizQuestion): unknown {
-    const currentAnswer = this.responses[question.id];
-    const attempt = this.results?.attempts.find(a => a.questionId === question.id);
-    const showFeedback = this.isSubmitted && this.showFeedback && attempt;
+  private renderQuestion(question: QuizQuestion, forceShowFeedback: boolean = false, overrideResults?: QuizResult | null, overrideResponses?: Record<string, unknown>): unknown {
+    const responses = overrideResponses ?? this.responses;
+    const results = overrideResults ?? this.results;
+    const currentAnswer = responses[question.id];
+    const attempt = results?.attempts.find(a => a.questionId === question.id);
+    // Show feedback if: (1) quiz is submitted AND showFeedback is enabled AND attempt exists, OR (2) forceShowFeedback is true
+    const showFeedback = (this.isSubmitted && this.showFeedback && attempt) || (forceShowFeedback && this.showFeedback && attempt);
 
     switch (question.type) {
       case QuestionType.MULTIPLE_CHOICE:
@@ -1190,20 +1644,106 @@ class UgaQuiz extends LitElement {
       `;
     }
 
-    // Show completion status if already completed
-    if (this.completionStatus === 'passed' || this.completionStatus === 'failed') {
+    // Show completion summary when we don't have full results in memory.
+    // Also treat attemptCount > 0 as "completed" so we can try to load feedback from assignment when storage fails.
+    const showCompletedBlock = ((this.completionStatus === 'passed' || this.completionStatus === 'failed') || (this.attemptCount > 0 && this.showFeedback)) && !this.results;
+    if (showCompletedBlock) {
+      const persisted = this.showFeedback ? this.getPersistedResults() : null;
+      if (persisted) {
+        const { results: res, responses: resp } = persisted;
+        return html`
+          <div class="quiz-container">
+            <div class="quiz-results" style="max-width: 800px; margin: 2rem auto; padding: 2rem; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+              <div class="quiz-score ${res.passed ? 'passed' : 'failed'}">
+                Score: ${res.pointsEarned}/${res.totalPoints} (${res.percentage.toFixed(1)}%)
+              </div>
+              <p style="text-align: center; font-size: 1.2rem;">
+                ${res.passed ? '✓ Passed!' : '✗ Failed'}
+              </p>
+              <p style="text-align: center;">Passing score: ${this.passingScore}%</p>
+              <h4>Question Review</h4>
+              <p style="margin-bottom: 1rem; color: #666;">✓ = correct, ✗ = incorrect</p>
+              ${this.parsedQuestions.map((q, index) => {
+                const attempt = res.attempts.find(a => a.questionId === q.id);
+                const isCorrect = attempt?.isCorrect ?? false;
+                const answerText = this.responseToDisplayText(q, resp[q.id]);
+                return html`
+                  <div class="quiz-question" style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #e0e0e0; border-radius: 4px; background: ${isCorrect ? '#f1f8e9' : '#ffebee'};">
+                    <p style="margin: 0 0 0.5rem 0;"><strong>${isCorrect ? '✓' : '✗'}</strong> <strong>Question ${index + 1}:</strong> ${q.question}</p>
+                    <p style="margin: 0.25rem 0;"><strong>Your Answer:</strong> ${answerText || '—'}</p>
+                    <p style="margin: 0.25rem 0;"><strong>Points:</strong> ${attempt?.pointsEarned ?? 0}/${q.points}</p>
+                    ${this.renderQuestion(q, true, res, resp)}
+                  </div>
+                `;
+              })}
+              ${this.allowRetry && this.attemptCount < this.maxAttempts
+                ? html`<button class="quiz-button quiz-button-primary" @click=${this.resetQuiz} style="margin-top: 1rem; width: 100%;">
+                    Retake Quiz (Attempt ${this.attemptCount + 1}/${this.maxAttempts})
+                  </button>`
+                : this.attemptCount >= this.maxAttempts ? html`<p class="quiz-info">Maximum attempts reached.</p>` : ''
+              }
+            </div>
+          </div>
+        `;
+      }
+      // Retry restore and fetch from assignment when about to show minimal view
+      if (this.showFeedback && this.feedbackLoadStatus === 'idle') {
+        this.feedbackLoadStatus = 'loading';
+        queueMicrotask(() => {
+          this.restorePreviousResults();
+          if (this.results) {
+            this.feedbackLoadStatus = 'idle';
+            this.requestUpdate();
+            return;
+          }
+          this.fetchFeedbackFromAssignment().then((ok) => {
+            if (ok) {
+              this.fetchedFeedback = { results: this.results!, responses: this.responses };
+              this.feedbackLoadStatus = 'loaded';
+            } else {
+              this.feedbackLoadStatus = 'failed';
+            }
+            this.requestUpdate();
+          });
+        });
+      }
+      const res = this.fetchedFeedback?.results;
+      const resp = this.fetchedFeedback?.responses ?? {};
       return html`
         <div class="quiz-container">
-          <div class="quiz-completed">
+          <div class="quiz-completed" style="max-width: 800px; margin: 0 auto;">
             <h3>Quiz Already Completed</h3>
             <p>You have already completed this quiz.</p>
             ${this.completionStatus === 'passed' 
               ? html`<p class="quiz-status passed">Status: Passed ✓</p>`
               : html`<p class="quiz-status failed">Status: Failed ✗</p>`
             }
+            ${this.feedbackLoadStatus === 'loading' ? html`<p style="margin: 1rem 0; color: #666;">Loading feedback…</p>` : ''}
+            ${this.feedbackLoadStatus === 'failed' ? html`
+              <p style="margin: 1rem 0; color: #666;">Could not load feedback from assignment.</p>
+              <button class="quiz-button" @click=${() => { this.feedbackLoadStatus = 'idle'; this.fetchedFeedback = null; this.requestUpdate(); }}>Retry loading feedback</button>
+            ` : ''}
+            ${res && resp && Object.keys(resp).length > 0 ? html`
+              <div style="margin-top: 2rem; text-align: left; border-top: 1px solid #ddd; padding-top: 1.5rem;">
+                <h4>Question Review</h4>
+                <p style="margin-bottom: 1rem; color: #666;">✓ = correct, ✗ = incorrect</p>
+                ${this.parsedQuestions.map((q, index) => {
+                  const attempt = res.attempts.find(a => a.questionId === q.id);
+                  const isCorrect = attempt?.isCorrect ?? false;
+                  const answerText = this.responseToDisplayText(q, resp[q.id]);
+                  return html`
+                    <div class="quiz-question" style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #e0e0e0; border-radius: 4px; background: ${isCorrect ? '#f1f8e9' : '#ffebee'};">
+                      <p style="margin: 0 0 0.5rem 0;"><strong>${isCorrect ? '✓' : '✗'}</strong> <strong>Question ${index + 1}:</strong> ${q.question}</p>
+                      <p style="margin: 0.25rem 0;"><strong>Your Answer:</strong> ${answerText || '—'}</p>
+                      <p style="margin: 0.25rem 0;"><strong>Points:</strong> ${attempt?.pointsEarned ?? 0}/${q.points}</p>
+                    </div>
+                  `;
+                })}
+              </div>
+            ` : ''}
             ${this.allowRetry && this.attemptCount < this.maxAttempts
-              ? html`<button class="quiz-button" @click=${this.resetQuiz}>Retake Quiz</button>`
-              : html`<p class="quiz-info">Maximum attempts reached.</p>`
+              ? html`<button class="quiz-button" @click=${this.resetQuiz} style="margin-top: 1rem;">Retake Quiz</button>`
+              : this.attemptCount >= this.maxAttempts ? html`<p class="quiz-info">Maximum attempts reached.</p>` : ''
             }
           </div>
         </div>
@@ -1215,7 +1755,7 @@ class UgaQuiz extends LitElement {
       return html`
         <div class="quiz-container">
           <div class="quiz-start">
-            <h3>${this.quizTitle || 'Quiz'}</h3>
+            <h3>${this.displayTitle}</h3>
             <div class="quiz-info">
               <p><strong>Questions:</strong> ${this.parsedQuestions.length}</p>
               <p><strong>Total Points:</strong> ${this.parsedQuestions.reduce((sum, q) => sum + q.points, 0)}</p>
@@ -1224,7 +1764,10 @@ class UgaQuiz extends LitElement {
               ${this.allowRetry ? html`<p><strong>Max Attempts:</strong> ${this.maxAttempts}</p>` : html`<p><strong>Attempts:</strong> 1 (no retries)</p>`}
               ${this.attemptCount > 0 ? html`<p><strong>Previous Attempts:</strong> ${this.attemptCount}</p>` : ''}
             </div>
-            <button class="quiz-button quiz-button-primary" @click=${this.startQuiz}>Start Quiz</button>
+            ${this.attemptCount < this.maxAttempts || !this.allowRetry
+              ? html`<button class="quiz-button quiz-button-primary" @click=${this.startQuiz}>Start Quiz</button>`
+              : html`<p class="quiz-info">Maximum attempts reached. You cannot start this quiz again.</p>`
+            }
           </div>
         </div>
       `;
@@ -1525,7 +2068,7 @@ class UgaQuiz extends LitElement {
 
       <div class="quiz-container">
         <div class="quiz-header">
-          <div class="quiz-title">${this.quizTitle || 'Quiz'}</div>
+          <div class="quiz-title">${this.displayTitle}</div>
           ${this.timeLimit > 0 ? html`<div class="quiz-timer" role="timer" aria-live="polite">Time remaining: ${this.formatTime(this.timeRemaining)}</div>` : ''}
         </div>
 
@@ -1581,24 +2124,29 @@ class UgaQuiz extends LitElement {
               </div>
             ` : ''}
 
-            <h4>Question Review:</h4>
+            ${this.showFeedback ? html`
+            <h4>Question Review</h4>
+            <p style="margin-bottom: 1rem; color: #666;">✓ = correct, ✗ = incorrect</p>
             ${this.parsedQuestions.map((q, index) => {
               const attempt = this.results?.attempts.find(a => a.questionId === q.id);
+              const isCorrect = attempt?.isCorrect ?? false;
+              const answerText = this.responseToDisplayText(q, this.responses[q.id]);
               return html`
-                <div class="quiz-question">
-                  <p><strong>Question ${index + 1}:</strong> ${q.question}</p>
-                  <p><strong>Your Answer:</strong> ${JSON.stringify(this.responses[q.id])}</p>
-                  <p><strong>Points:</strong> ${attempt?.pointsEarned || 0}/${q.points}</p>
-                  ${this.renderQuestion(q)}
+                <div class="quiz-question" style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #e0e0e0; border-radius: 4px; background: ${isCorrect ? '#f1f8e9' : '#ffebee'};">
+                  <p style="margin: 0 0 0.5rem 0;"><strong>${isCorrect ? '✓' : '✗'}</strong> <strong>Question ${index + 1}:</strong> ${q.question}</p>
+                  <p style="margin: 0.25rem 0;"><strong>Your Answer:</strong> ${answerText || '—'}</p>
+                  <p style="margin: 0.25rem 0;"><strong>Points:</strong> ${attempt?.pointsEarned ?? 0}/${q.points}</p>
+                  ${this.renderQuestion(q, true)}
                 </div>
               `;
             })}
+            ` : ''}
 
             ${this.allowRetry && this.attemptCount < this.maxAttempts
               ? html`<button class="quiz-button quiz-button-primary" @click=${this.resetQuiz} style="margin-top: 1rem; width: 100%;">
                   Retake Quiz (Attempt ${this.attemptCount + 1}/${this.maxAttempts})
                 </button>`
-              : html`<p class="quiz-info">Maximum attempts reached.</p>`
+              : this.attemptCount >= this.maxAttempts ? html`<p class="quiz-info">Maximum attempts reached.</p>` : ''
             }
           </div>
         `}
