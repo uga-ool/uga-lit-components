@@ -43,6 +43,7 @@ interface FooterResponse {
  * Paths are relative to the domain root (leading slash added if missing).
  */
 const PROGRAM_IMAGE_PATHS: Record<string, string> = {
+  Accounting: '/shared/ugaonline/templates/acct/img/logo.png',
   School_of_Social_Work: '/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png',
   // Add other programs as addresses are available:
   // Terry_College_of_Business: '/shared/ugaonline/templates/msw/img/...',
