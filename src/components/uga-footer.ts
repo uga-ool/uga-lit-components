@@ -38,6 +38,17 @@ interface FooterResponse {
   data: FooterData;
 }
 
+/**
+ * Program-specific logo image paths. Add entries as addresses become available.
+ * Paths are relative to the domain root (leading slash added if missing).
+ */
+const PROGRAM_IMAGE_PATHS: Record<string, string> = {
+  School_of_Social_Work: '/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png',
+  // Add other programs as addresses are available:
+  // Terry_College_of_Business: '/shared/ugaonline/templates/msw/img/...',
+  // Franklin_College_of_Arts_and_Sciences: '/shared/ugaonline/templates/msw/img/...',
+};
+
 class UgaFooter extends LitElement {
   @property({ type: String }) filename = '';
   @property({ type: String }) imagefile = '';
@@ -131,10 +142,25 @@ class UgaFooter extends LitElement {
       
       this.loaded = true;
     } catch (error: any) {
-      const msg = error?.response?.status === 404
-        ? `File not found: ${this.filename}. Upload it to the same folder as this page, or use the full path (e.g. /content/enforced/COURSE_ID/.../footer-demo-copy.json).`
-        : (error?.message || 'Failed to load footer data');
-      this.loadError = msg;
+      const requestedUrl = error?.response?.config?.url ?? '';
+      // When program is set, show program logo even if program JSON is missing (e.g. footer.json not yet uploaded)
+      if (this.program) {
+        const customPath = PROGRAM_IMAGE_PATHS[this.program];
+        const programImgBase = '/shared/ugaonline/templates/msw/img';
+        const imageName = this.imagefile || this.programNameToImageFilename(this.program);
+        const logoUrl = customPath
+          ? (customPath.startsWith('/') ? customPath : `/${customPath}`)
+          : `${programImgBase}/${encodeURIComponent(imageName)}`;
+        this.footerData = {
+          logo: { link: '#', alt: this.program.replace(/_/g, ' '), imageSrc: logoUrl }
+        };
+        this.loadError = null;
+      } else {
+        const msg = error?.response?.status === 404
+          ? `File not found: ${this.filename || requestedUrl || 'program JSON'}. If the file is in the same folder as this page, use filename="footer-demo.json" (or your JSON filename); otherwise use the full path (e.g. /content/enforced/COURSE_ID/.../footer-demo.json).`
+          : (error?.message || 'Failed to load footer data');
+        this.loadError = msg;
+      }
       console.error('Failed to load footer data:', error);
       console.error('Filename:', this.filename);
       this.loaded = true; // Set to true to prevent infinite loop
@@ -173,6 +199,17 @@ class UgaFooter extends LitElement {
     };
 
     return icons[iconName.toLowerCase()] || '';
+  }
+
+  /**
+   * For Program Template method: derive image filename from program name.
+   * Images are stored at shared/ugaonline/templates/msw/img. Spaces in the program name
+   * are converted to underscores for the filename (e.g. "UGA Graduate School" → "UGA_Graduate_School.png").
+   */
+  private programNameToImageFilename(programName: string): string {
+    if (!programName || !programName.trim()) return 'logo.png';
+    const name = programName.trim().replace(/\s+/g, '_');
+    return name.includes('.') ? name : `${name}.png`;
   }
 
   render() {
@@ -214,13 +251,22 @@ class UgaFooter extends LitElement {
     const { logo, navigation, copyright, social } = this.footerData;
 
     // Determine logo image source
+    // Program Template: images live at shared/ugaonline/templates/msw/img; filename from program name
     let logoImageSrc = '';
     let logoImageSrcSet = '';
     let logoVerticalImageSrc = '';
     
     if (logo) {
-      if (this.program && this.imagefile) {
-        logoImageSrc = `/shared/ugaonline/templates/${this.program}/img/${this.imagefile}`;
+      if (this.program) {
+        // Use program-specific path if defined, otherwise derive from program name
+        const customPath = PROGRAM_IMAGE_PATHS[this.program];
+        if (customPath) {
+          logoImageSrc = customPath.startsWith('/') ? customPath : `/${customPath}`;
+        } else {
+          const programImgBase = '/shared/ugaonline/templates/msw/img';
+          const imageName = this.imagefile || this.programNameToImageFilename(this.program);
+          logoImageSrc = `${programImgBase}/${encodeURIComponent(imageName)}`;
+        }
       } else if (logo.imageSrc) {
         logoImageSrc = logo.imageSrc;
       } else if (this.imagefile) {

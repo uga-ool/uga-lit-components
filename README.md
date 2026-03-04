@@ -130,7 +130,7 @@ All components use **Light DOM** rendering (`createRenderRoot() { return this; }
 
 3. **Explore individual components:**
    - View comprehensive demo at `demo/index-all-in-one.html`
-   - Each component has its own dedicated demo page (14 individual pages)
+   - Each component has its own dedicated demo page (16 individual pages)
    - Access via eLC side navigation for easy browsing
    - Review `demo/setup.html` for deployment instructions
 
@@ -166,25 +166,26 @@ npm run preview
 
 ## 📦 Components Overview
 
-The repository includes 15 pre-built components:
+The repository includes 16 pre-built components:
 
-| Component                 | Purpose                                                                                                                     |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **uga-accordion**         | Collapsible accordion sections with expand/collapse all                                                                     |
-| **uga-assignment**        | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property.             |
-| **uga-circles**           | Display data in circular badge format                                                                                       |
-| **uga-code**              | Syntax-highlighted code blocks with copy button                                                                             |
-| **uga-duedate**           | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property. |
-| **uga-footer**            | Site footer with branding                                                                                                   |
-| **uga-instructor-note**   | Instructor-only notes (hidden from students)                                                                                |
-| **uga-quiz**              | Standalone embedded HTML quiz (no eLC native quiz association); loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>); optionally submits results to an eLC assignment; supports timers, retries, and immediate feedback. See [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) for JSON format. |
-| **uga-quiz-grade-sync**   | Instructor-only: sync quiz submissions from an assignment to the linked grade item (use with uga-quiz)                    |
-| **uga-rating**            | Collect feedback/ratings on content                                                                                         |
-| **uga-return-to-top**     | Fixed button to scroll to top                                                                                               |
-| **uga-slideshow**         | Image carousel with navigation                                                                                              |
-| **uga-tabs**              | Tab navigation interface                                                                                                    |
-| **uga-toc**               | Auto-generated table of contents                                                                                            |
-| **uga-video**             | Embed Kaltura or YouTube videos with logo control                                                                           |
+| Component                | Purpose                                                                                                                                                                                                                                                                                                                           |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **uga-accordion**        | Collapsible accordion sections with expand/collapse all                                                                                                                                                                                                                                                                           |
+| **uga-assignment**       | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property.                                                                                                                                                                                                                 |
+| **uga-circles**          | Display data in circular badge format                                                                                                                                                                                                                                                                                             |
+| **uga-code**             | Syntax-highlighted code blocks with copy button                                                                                                                                                                                                                                                                                   |
+| **uga-course-analytics** | Course-wide analytics aggregating data from content, assignments, discussions, and quizzes. Shows module-level consumption statistics and comparisons. Instructor-only.                                                                                                                                                           |
+| **uga-duedate**          | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property.                                                                                                                                                                                                       |
+| **uga-footer**           | Site footer with branding                                                                                                                                                                                                                                                                                                         |
+| **uga-instructor-note**  | Instructor-only notes (hidden from students)                                                                                                                                                                                                                                                                                      |
+| **uga-quiz**             | Standalone embedded HTML quiz (no eLC native quiz association); loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>); optionally submits results to an eLC assignment; supports timers, retries, and immediate feedback. See [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) for JSON format. |
+| **uga-quiz-grade-sync**  | Instructor-only: sync quiz submissions from an assignment to the linked grade item (use with uga-quiz)                                                                                                                                                                                                                            |
+| **uga-rating**           | Collect feedback/ratings on content                                                                                                                                                                                                                                                                                               |
+| **uga-return-to-top**    | Fixed button to scroll to top                                                                                                                                                                                                                                                                                                     |
+| **uga-slideshow**        | Image carousel with navigation                                                                                                                                                                                                                                                                                                    |
+| **uga-tabs**             | Tab navigation interface                                                                                                                                                                                                                                                                                                          |
+| **uga-toc**              | Auto-generated table of contents                                                                                                                                                                                                                                                                                                  |
+| **uga-video**            | Embed Kaltura or YouTube videos with logo control                                                                                                                                                                                                                                                                                 |
 
 ---
 
@@ -227,7 +228,7 @@ const kalturaPlayer = KalturaPlayer.setup({
 **Usage in eLC:**
 
 ```html
-<uga-video videoid="1_abc123de" playerid="57494843" includerating="false">
+<uga-video videoid="1_icw0df6y" playerid="57494843" includerating="false">
 </uga-video>
 ```
 
@@ -236,6 +237,24 @@ const kalturaPlayer = KalturaPlayer.setup({
 ```html
 <uga-video type="local" filename="videos.json"></uga-video>
 ```
+
+**Video Analytics (Capture):**
+
+When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` blocked), the component captures playback events locally and sends them to:
+
+1. **D2L Content Completions** – Marks the topic complete when the video is watched (ended or 80%+).
+2. **Custom backend** – Sends play, pause, ended, and throttled timeupdate events for detailed analytics.
+
+**Configuration:**
+
+- **In D2L (eLC):** Set `window.UGA_VIDEO_ANALYTICS_URL` _before_ loading the component script. The default `/api/video-analytics/events` resolves to D2L's server and returns 404—analytics will not work without this. Example: `<script>window.UGA_VIDEO_ANALYTICS_URL = 'https://your-api-server.edu/api/video-analytics/events';</script>`
+- **Kaltura analytics only:** If you use Kaltura's built-in analytics (no custom backend), set `window.UGA_VIDEO_ANALYTICS_DISABLED = true` before loading to avoid 404 errors from failed event sends.
+- **Local dev:** The Vite dev server proxies `/api/video-analytics` to localhost:3001. Run `cd template-manager/api && npm run dev` so the backend is available.
+- Add `topic-id` when embedding in content: `<uga-video videoid="1_icw0df6y" topic-id="12345">` for reliable topic association. Otherwise, topic is parsed from the page URL.
+
+**Backend:** The template-manager API (`template-manager/api/server.js`) includes `POST /api/video-analytics/events` and `GET /api/video-analytics/aggregate`. Deploy it to a server accessible from eLC and enable CORS for your D2L domain (e.g. `ugatest2.view.usg.edu`). Course analytics reads from this backend when available.
+
+**D2L scope:** Ensure your LTI/app registration includes `content:completions:write` for the D2L completion flow.
 
 ---
 
@@ -250,17 +269,17 @@ const kalturaPlayer = KalturaPlayer.setup({
 2. **Upload to eLC Public Files:**
 
 - Navigate to: **eLC → Content → Manage Files → Public Files**
-- Upload `dist/js/uga-components.js` to `/shared/PublicFiles/` (or `/shared/ugaonline/dev/js/` for testing)
+- Upload `dist/js/uga-components.js` to `/shared/ugaonline/js/` for production (instructional designers use this path in eLC)
 
 3. **Add to Content Pages:**
 
    ```html
    <!-- Your content and components -->
    <uga-accordion type="local" filename="accordion-data.json"></uga-accordion>
-   <uga-video videoid="1_abc123de"></uga-video>
+   <uga-video videoid="1_icw0df6y"></uga-video>
 
    <!-- Load all components -->
-   <script type="module" src="/shared/PublicFiles/uga-components.js"></script>
+   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
    ```
 
 ---
@@ -307,36 +326,44 @@ const kalturaPlayer = KalturaPlayer.setup({
 
 ## 📋 Key Files
 
-| File                              | Purpose                                               |
-| --------------------------------- | ----------------------------------------------------- |
-| `demo/index-all-in-one.html`      | Comprehensive all-in-one demo showing all components  |
-| `demo/setup.html`                 | Comprehensive setup, usage, and troubleshooting guide |
-| `demo/[component].html`           | Individual component demo pages (15 total, including quiz.html) |
-| `src/all.ts`                      | Entry point; eagerly imports all components           |
-| `src/components/*.ts`             | Individual component implementations                  |
-| `src/lib/api/d2l-client.ts`       | Centralized D2L API methods                           |
-| `src/lib/api/d2l-utils.ts`        | Helper utilities (getCourse, transformDate, etc.)     |
-| `src/lib/data/data-loader.ts`     | JSON file loader (local & program-specific)           |
-| `src/types/d2l.ts`                | TypeScript types for D2L API responses                |
-| `vite.config.ts`                  | Build configuration (single-file bundle)              |
-| `.github/copilot-instructions.md` | AI agent instructions for development                 |
-| `CHANGELOG.md`                    | Version history and recent updates                    |
+| File                              | Purpose                                                                                   |
+| --------------------------------- | ----------------------------------------------------------------------------------------- |
+| `demo/index-all-in-one.html`      | Comprehensive all-in-one demo showing all components                                      |
+| `demo/setup.html`                 | Comprehensive setup, usage, and troubleshooting guide                                     |
+| `demo/[component].html`           | Individual component demo pages (16 total, including quiz.html and course-analytics.html) |
+| `src/all.ts`                      | Entry point; eagerly imports all components                                               |
+| `src/components/*.ts`             | Individual component implementations                                                      |
+| `src/lib/api/d2l-client.ts`       | Centralized D2L API methods                                                               |
+| `src/lib/api/d2l-utils.ts`        | Helper utilities (getCourse, transformDate, etc.)                                         |
+| `src/lib/data/data-loader.ts`     | JSON file loader (local & program-specific)                                               |
+| `src/types/d2l.ts`                | TypeScript types for D2L API responses                                                    |
+| `vite.config.ts`                  | Build configuration (single-file bundle)                                                  |
+| `.github/copilot-instructions.md` | AI agent instructions for development                                                     |
+| `CHANGELOG.md`                    | Version history and recent updates                                                        |
 
 ---
 
 ## 🐛 Troubleshooting
 
-| Problem                           | Solution                                                                                      |
-| --------------------------------- | --------------------------------------------------------------------------------------------- |
-| Component not appearing in bundle | Ensure it's in `src/components/` with `.ts` extension                                         |
-| Styles not applying               | Add `<link rel="stylesheet" href="...base.css" />` if using UGA classes                       |
-| **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**                           |
-| Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                          |
-| D2L API 404 errors                | Verify course ID (`ou`) is correct and API version matches                                    |
-| `axios` is undefined              | Ensure code runs in eLC environment (axios is globally available)                             |
-| TOC showing too many items        | Component now scans h2/h3 only - check if you need h4 headings in navigation                  |
-| TOC links not working             | Component now auto-generates IDs for headings without them                                    |
-| Data files not loading            | Download example files from Google Drive links in demo pages, then upload to eLC Public Files |
+| Problem                           | Solution                                                                                           |
+| --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Component not appearing in bundle | Ensure it's in `src/components/` with `.ts` extension                                              |
+| Styles not applying               | Add `<link rel="stylesheet" href="...base.css" />` if using UGA classes                            |
+| **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**                                |
+| Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                               |
+| Video analytics not collected     | In D2L: set `window.UGA_VIDEO_ANALYTICS_URL` before loading; deploy template-manager API with CORS |
+
+### Troubleshooting video analytics URL
+
+1. **Enable debug mode** – Add before the component script: `window.UGA_VIDEO_ANALYTICS_DEBUG = true;` Then open the browser console and play a video. You'll see the endpoint being used and whether events succeed.
+2. **Check the warning** – If you see `[UGA video analytics] Using default /api/video-analytics/events...`, the URL is not configured. Add `window.UGA_VIDEO_ANALYTICS_URL = 'https://your-backend/api/video-analytics/events';` before the script.
+3. **Verify in Network tab** – Filter for `video-analytics` or `events`. Look for POST requests to your backend. 404 = wrong URL or backend not deployed. CORS errors = backend needs to allow your D2L domain.
+4. **Test the backend** – Visit `https://your-backend/api/video-analytics/events` (or your root) to confirm the server is reachable.
+   | D2L API 404 errors | Verify course ID (`ou`) is correct and API version matches |
+   | `axios` is undefined | Ensure code runs in eLC environment (axios is globally available) |
+   | TOC showing too many items | Component now scans h2/h3 only - check if you need h4 headings in navigation |
+   | TOC links not working | Component now auto-generates IDs for headings without them |
+   | Data files not loading | Download example files from Google Drive links in demo pages, then upload to eLC Public Files |
 
 ### Important Notes
 

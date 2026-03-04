@@ -88,6 +88,52 @@ export function getCourse(): string | null {
 }
 
 /**
+ * Get the current content topic ID from URL or attribute.
+ * Try attribute first (instructors set topic-id when embedding), then parse from URL.
+ * @param topicIdAttr - Optional topic-id attribute from uga-video
+ * @returns Topic ID string or null if not found
+ */
+export function getTopicId(topicIdAttr?: string): string | null {
+  if (topicIdAttr && String(topicIdAttr).trim()) {
+    return String(topicIdAttr).trim();
+  }
+
+  const url = typeof window !== 'undefined' ? window.location : { href: '', search: '', hash: '' };
+  const searchParams = new URLSearchParams(url.search);
+
+  if (searchParams.has('topicId')) {
+    const id = searchParams.get('topicId');
+    if (id) return id;
+  }
+
+  const hash = url.hash || '';
+  if (hash) {
+    const hashParams = new URLSearchParams(hash.substring(1));
+    if (hashParams.has('topicId')) {
+      const id = hashParams.get('topicId');
+      if (id) return id;
+    }
+  }
+
+  const pathSegments = (url.href || '').split('/');
+  const lastSegment = pathSegments[pathSegments.length - 1] || '';
+  if (lastSegment.includes('?')) {
+    const [, queryPart] = lastSegment.split('?');
+    const segmentParams = new URLSearchParams(queryPart);
+    if (segmentParams.has('topicId')) {
+      const id = segmentParams.get('topicId');
+      if (id) return id;
+    }
+  }
+
+  if (typeof window !== 'undefined' && (window as any).D2L?.LearnerExperience?.Context?.topicId) {
+    return String((window as any).D2L.LearnerExperience.Context.topicId);
+  }
+
+  return null;
+}
+
+/**
  * Transform date string to a more readable format
  * @param dateString - ISO date string from eLC API
  * @returns Formatted date string

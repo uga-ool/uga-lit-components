@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Component Demo</title>
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+  <style>
+    .component-demo {
+      margin-bottom: 4rem;
+      padding: 2rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #ffffff;
+    }
+    .demo-description {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background-color: #f5f5f5;
+      border-left: 4px solid #ba0c2f;
+    }
+    .demo-example {
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background-color: #fafafa;
+      border: 1px dashed #ccc;
+    }
+    .demo-code {
+      margin-top: 1rem;
+    }
+    .demo-props {
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: #fff9e6;
+      border-left: 4px solid #ffc107;
+    }
+    .demo-props table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    .demo-props th,
+    .demo-props td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .demo-props th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+    h1 {
+      color: #ba0c2f;
+      border-bottom: 3px solid #ba0c2f;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #ba0c2f;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="obj-container">
+    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
+
+    <header class="util-margin-vert-lg">
+      <h1>Image Component</h1>
+    </header>
+
+    <section class="component-demo">
+      <div class="demo-description">
+        <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Based on instructional designer patterns with UGA brand styling.</p>
+        <p><strong>Image path:</strong> Use the full path from D2L Manage Files (right-click file → Copy Path). Example: <code>/content/enforced4/COURSE_ID/images/your-image.jpg</code></p>
+      </div>
+
+      <div class="demo-example">
+        <uga-image
+          src="/content/enforced4/3519736-LITComponentsDevSite/images/demo_image.jpg"
+          alt="Sample image for demonstration"
+          caption="Scatterplot of two highly correlated variables (length and width). One vector is drawn through the centroid along the long axis of the data cloud (first principal component), with a second vector drawn perpendicular to it (second principal component)."
+        ></uga-image>
+      </div>
+
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>src</td>
+            <td>string</td>
+            <td>Image URL (required)</td>
+          </tr>
+          <tr>
+            <td>alt</td>
+            <td>string</td>
+            <td>Alternative text for accessibility (required)</td>
+          </tr>
+          <tr>
+            <td>caption</td>
+            <td>string</td>
+            <td>Caption displayed below the image</td>
+          </tr>
+          <tr>
+            <td>max-width</td>
+            <td>string</td>
+            <td>Max width of container (default: 450px)</td>
+          </tr>
+          <tr>
+            <td>border-radius</td>
+            <td>number</td>
+            <td>Border radius in pixels (default: 15)</td>
+          </tr>
+          <tr>
+            <td>border-color</td>
+            <td>string</td>
+            <td>Border color (default: #ba0c2f UGA red)</td>
+          </tr>
+          <tr>
+            <td>border-width</td>
+            <td>number</td>
+            <td>Border width in pixels (default: 2)</td>
+          </tr>
+          <tr>
+            <td>padding</td>
+            <td>number</td>
+            <td>Container padding in pixels (default: 15)</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-image
+  src="/content/enforced4/3519736-LITComponentsDevSite/images/demo_image.jpg"
+  alt="Scatterplot of Width (y-axis) versus Length (x-axis). The points form a tight cluster trending upward."
+  caption="Scatterplot of two highly correlated variables with principal component vectors."
+&gt;&lt;/uga-image&gt;</uga-code>
+      </div>
+    </section>
+
+    <uga-return-to-top></uga-return-to-top>
+  </div>
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+</body>
+</html>

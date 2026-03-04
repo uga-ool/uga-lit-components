@@ -130,7 +130,7 @@ This creates `dist/js/uga-components.js` (~113 kB, 37 kB gzipped)
 
 ### Step 2: Upload to eLC
 
-Go to: **eLC → Content → Manage Files → Public Files**
+Deploy the bundle so it is available at **`/shared/ugaonline/js/uga-components.js`** (production path used by instructional designers). Upload location may be eLC Manage Files or your institution’s shared storage; ensure the final URL is `/shared/ugaonline/js/uga-components.js`.
 
 Upload:
 
@@ -147,7 +147,7 @@ Upload:
 3. In eLC, create a new Content page
 4. Switch to HTML editor
 5. Paste the content
-6. Update script path to: `/shared/PublicFiles/uga-components.js`
+6. Update script path to: `/shared/ugaonline/js/uga-components.js` (production path for instructional designers)
 
 **Option B: Individual Component** (use specific demo page)
 
@@ -159,7 +159,7 @@ Upload:
 
 1. Use code snippets from any demo page
 2. Add component tags as needed
-3. Load bundle at end: `<script type="module" src="/shared/PublicFiles/uga-components.js"></script>`
+3. Load bundle at end: `<script type="module" src="/shared/ugaonline/js/uga-components.js"></script>`
 
 ### Step 4: Update Data File Paths
 
@@ -238,7 +238,7 @@ Follow the JSON structure in the sample files:
 <uga-circles type="local" filename="course-stats.json"></uga-circles>
 <uga-return-to-top></uga-return-to-top>
 
-<script type="module" src="/shared/PublicFiles/uga-components.js"></script>
+<script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 ```
 
 ## What Makes This Structure Good?

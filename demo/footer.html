@@ -91,14 +91,21 @@
 
     <section class="component-demo">
       <div class="demo-description">
-        <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file. Customization happens via the JSON file in eLC. By default, loads from local course files using the <code>filename</code> property.</p>
-        <p><strong>Example data file:</strong> The <code>filename</code> must match the file exactly. Download
+        <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file or a program-specific footer image stored in public files.</p>
+        <p><strong>eLC setup:</strong> Load the component bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. Upload <code>footer-demo.json</code> to your course files. If the file is in the same folder as this page, use <code>filename="footer-demo.json"</code>; otherwise use the full path (e.g. <code>/content/enforced/COURSE_ID/.../footer-demo.json</code>). For the School of Social Work footer, use <code>program="School_of_Social_Work"</code>; logo images live at <code>/shared/ugaonline/templates/msw/img/</code>.</p>
+        <p><strong>Example data file:</strong> Download
           <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>
           to modify and upload to your course files.</p>
       </div>
 
       <div class="demo-example">
+        <h4 style="margin-top: 0; margin-bottom: 1rem;">Default footer (course file JSON)</h4>
+        <p style="margin: 0 0 0.5rem 0; font-size: 0.9em; color: #555;">When the file is stored locally in the course files (same folder as this page), use the filename only.</p>
         <uga-footer filename="footer-demo.json"></uga-footer>
+      </div>
+      <div class="demo-example">
+        <h4 style="margin-top: 0; margin-bottom: 1rem;">School of Social Work footer (program template)</h4>
+        <uga-footer program="School_of_Social_Work"></uga-footer>
       </div>
 
       <div class="demo-props">
@@ -112,27 +119,51 @@
           <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>). Not needed when using <code>program</code>.</td>
+            <td>Name of the JSON data file (required for local/course files). When the file is in the same folder as the page, use the filename only, e.g. <code>filename="footer-demo.json"</code>; otherwise use the full path. Not needed when using <code>program</code>.</td>
           </tr>
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Program identifier; if not provided, defaults to local file mode.</td>
+            <td>Program name with underscores (e.g. "School_of_Social_Work"); when set, footer uses Program Template. Logo image is loaded from <code>/shared/ugaonline/templates/msw/img/</code> with the same name (e.g. "School_of_Social_Work.png").</td>
           </tr>
           <tr>
             <td>imagefile</td>
             <td>string</td>
-            <td>Name of logo image file (optional; used when JSON doesn't include imageSrc, or for program type)</td>
+            <td>Optional. Logo image filename when using <code>program</code>; if omitted, the image filename is the program name (with spaces converted to underscores) plus <code>.png</code>. For local mode, used when JSON doesn't include imageSrc.</td>
           </tr>
         </table>
       </div>
 
       <div class="demo-code">
-        <h4>Basic Usage (Local File)</h4>
+        <h4>Basic usage (course file)</h4>
+        <p>When the JSON file is in the same folder as the page: <code>filename="footer-demo.json"</code>. Otherwise use the full path to the file.</p>
         <uga-code language="markup">&lt;uga-footer filename="footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
-        <uga-code language="markup">&lt;uga-footer program="program-name" imagefile="logo.png"&gt;&lt;/uga-footer&gt;</uga-code>
+        <p>Program footers are stored in public files. Use the same program name with <code>program=</code> (spaces are converted to underscores for the image path).</p>
+        <uga-code language="markup">&lt;uga-footer program="School_of_Social_Work"&gt;&lt;/uga-footer&gt;</uga-code>
+        <h4 style="margin-top: 1.5rem;">Program-specific logo paths (configured in component)</h4>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>School_of_Social_Work</strong>: <code>/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png</code></li>
+          <li><em>Other programs: add to PROGRAM_IMAGE_PATHS in uga-footer.ts as addresses become available</em></li>
+        </ul>
+        <h4 style="margin-top: 1.5rem;">Program names (use with <code>program=</code>)</h4>
+        <ul style="margin-top: 0.5rem;">
+          <li>Terry_College_of_Business</li>
+          <li>Franklin_College_of_Arts_and_Sciences</li>
+          <li>School_of_Public_and_International_Affairs</li>
+          <li>Grady_College_of_Journalism_and_Mass_Communication</li>
+          <li>College_of_Agricultural_and_Environmental_Sciences</li>
+          <li>School_of_Computing</li>
+          <li>Warnell_School_of_Forestry_and_Natural_Resources</li>
+          <li>School_of_Social_Work</li>
+          <li>Odum_School_of_Ecology</li>
+          <li>College_of_Engineering</li>
+          <li>UGA_Graduate_School</li>
+          <li>School_of_Law</li>
+          <li>College_of_Veterinary_Medicine</li>
+          <li>College_of_Pharmacy</li>
+        </ul>
       </div>
     </section>
 
@@ -140,18 +171,6 @@
   </div>
 
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
-
-  <script>
-    if (typeof axios === 'undefined') {
-      window.axios = {
-        get: async (url) => {
-          const response = await fetch(url);
-          const data = await response.json();
-          return { data };
-        }
-      };
-    }
-  </script>
 </body>
 
 </html>

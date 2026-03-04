@@ -5,7 +5,7 @@ Be concise and make edits that follow the repository's existing structure and co
 ## Overview
 
 - This repository produces a single ES module bundle of Lit web components for UGA's Brightspace (D2L).
-- Key goal: build `dist/js/uga-components.js` (single file) and upload it to Brightspace Public Files for use via `<script type="module">`.
+- Key goal: build `dist/js/uga-components.js` (single file) and deploy to eLC at `/shared/ugaonline/js/uga-components.js` for use via `<script type="module">`.
 
 ## Key Files & Entry Points
 
@@ -219,7 +219,7 @@ npm run build
 
 ```html
 <uga-banner message="Welcome to the course!" variant="success"></uga-banner>
-<script type="module" src="/shared/PublicFiles/uga-components.js"></script>
+<script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 ```
 
 ## Example: Adding a Component That Fetches D2L Data

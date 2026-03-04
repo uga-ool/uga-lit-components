@@ -2,3 +2,6 @@ node_modules/
 dist/
 .vscode/
 .DS_Store
+
+# Kaltura credentials - never commit
+kaltura-secrets.ts
