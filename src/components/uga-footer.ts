@@ -38,16 +38,30 @@ interface FooterResponse {
   data: FooterData;
 }
 
+/** Display names for program codes (used in logo alt text). */
+const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
+  acct: 'Accounting',
+  cvle: 'Civil & Environmental Engineering',
+  datascience: 'Data Science',
+  envgeology: 'Environmental Geology',
+  general: 'General',
+  highered: 'Higher Education',
+  msw: 'Master of Social Work',
+  ool: 'Online Learning',
+  publichealth: 'Public Health',
+};
+
 /**
- * Program-specific logo image paths. Add entries as addresses become available.
- * Paths are relative to the domain root (leading slash added if missing).
+ * Program-specific logo image paths. Keys are abbreviated program codes.
+ * Template data: /shared/ugaonline/templates/{program}/data/footer.json
+ * Programs without a logo (cvle, datascience, highered, publichealth) are not listed.
  */
 const PROGRAM_IMAGE_PATHS: Record<string, string> = {
-  Accounting: '/shared/ugaonline/templates/acct/img/logo.png',
-  School_of_Social_Work: '/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png',
-  // Add other programs as addresses are available:
-  // Terry_College_of_Business: '/shared/ugaonline/templates/msw/img/...',
-  // Franklin_College_of_Arts_and_Sciences: '/shared/ugaonline/templates/msw/img/...',
+  acct: '/shared/ugaonline/templates/acct/img/logo.png',
+  envgeology: '/shared/ugaonline/templates/envgeology/img/logo.png',
+  general: '/shared/ugaonline/templates/general/img/logo.svg',
+  msw: '/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png',
+  ool: '/shared/ugaonline/templates/ool/img/logo.png',
 };
 
 class UgaFooter extends LitElement {
@@ -147,13 +161,13 @@ class UgaFooter extends LitElement {
       // When program is set, show program logo even if program JSON is missing (e.g. footer.json not yet uploaded)
       if (this.program) {
         const customPath = PROGRAM_IMAGE_PATHS[this.program];
-        const programImgBase = '/shared/ugaonline/templates/msw/img';
+        const programImgBase = `/shared/ugaonline/templates/${this.program}/img`;
         const imageName = this.imagefile || this.programNameToImageFilename(this.program);
         const logoUrl = customPath
           ? (customPath.startsWith('/') ? customPath : `/${customPath}`)
           : `${programImgBase}/${encodeURIComponent(imageName)}`;
         this.footerData = {
-          logo: { link: '#', alt: this.program.replace(/_/g, ' '), imageSrc: logoUrl }
+          logo: { link: '#', alt: PROGRAM_DISPLAY_NAMES[this.program] || this.program.replace(/_/g, ' '), imageSrc: logoUrl }
         };
         this.loadError = null;
       } else {
@@ -203,9 +217,8 @@ class UgaFooter extends LitElement {
   }
 
   /**
-   * For Program Template method: derive image filename from program name.
-   * Images are stored at shared/ugaonline/templates/msw/img. Spaces in the program name
-   * are converted to underscores for the filename (e.g. "UGA Graduate School" → "UGA_Graduate_School.png").
+   * For Program Template method: derive image filename from program code.
+   * When no custom path is set, images are loaded from shared/ugaonline/templates/{program}/img/.
    */
   private programNameToImageFilename(programName: string): string {
     if (!programName || !programName.trim()) return 'logo.png';
@@ -264,7 +277,7 @@ class UgaFooter extends LitElement {
         if (customPath) {
           logoImageSrc = customPath.startsWith('/') ? customPath : `/${customPath}`;
         } else {
-          const programImgBase = '/shared/ugaonline/templates/msw/img';
+          const programImgBase = `/shared/ugaonline/templates/${this.program}/img`;
           const imageName = this.imagefile || this.programNameToImageFilename(this.program);
           logoImageSrc = `${programImgBase}/${encodeURIComponent(imageName)}`;
         }

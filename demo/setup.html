@@ -174,7 +174,7 @@
     "imageSrc": "https://design.online.uga.edu/images/uga-logo.png"
   }
 }</uga-code>
-      <p>Use <code>filename="footer-demo.json"</code> for local files. The <code>program</code> property loads from shared program templates when set. Program logos live at <code>/shared/ugaonline/templates/msw/img/</code> using underscores in the filename (e.g. <code>School_of_Social_Work.png</code>). A full list of program names is on the <a href="footer.html">Footer demo</a> page.</p>
+      <p>Use <code>filename="footer-demo.json"</code> for local files. The <code>program</code> property uses an abbreviated program code (e.g. <code>msw</code>, <code>acct</code>) and loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. A full list of program codes and logo paths is on the <a href="footer.html">Footer demo</a> page.</p>
 
       <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note-data.json</a></h4>
       <uga-code language="javascript">{
