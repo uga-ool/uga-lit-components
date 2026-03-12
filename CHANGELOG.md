@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-01-09
 
+### uga-footer — Abbreviated program codes
+
+- **Program attribute now uses abbreviated codes** (e.g. `msw`, `acct`, `envgeology`, `general`, `ool`) instead of full names
+- Template data path: `/shared/ugaonline/templates/{program}/data/footer.json`; logo paths configured per program in component
+- Programs with logo: **acct**, **envgeology**, **general**, **msw**, **ool**. Programs without footer logo: cvle, datascience, highered, publichealth
+- Added `PROGRAM_DISPLAY_NAMES` for accessible logo alt text. Docs updated in `footer.html`, `setup.html`, `index-all-in-one.html`
+
 ### ✅ Quiz & Grade Sync (Quiz Demo 2)
 
 - **Quiz submission and grade sync confirmed working** with eLC assignment "Quiz Demo 2" and linked grade item
