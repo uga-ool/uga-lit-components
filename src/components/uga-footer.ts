@@ -44,6 +44,7 @@ const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
   cvle: 'Civil & Environmental Engineering',
   datascience: 'Data Science',
   envgeology: 'Environmental Geology',
+  fanr: 'Warnell School of Forestry and Natural Resources',
   general: 'General',
   highered: 'Higher Education',
   msw: 'Master of Social Work',
@@ -54,14 +55,18 @@ const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
 /**
  * Program-specific logo image paths. Keys are abbreviated program codes.
  * Template data: /shared/ugaonline/templates/{program}/data/footer.json
- * Programs without a logo (cvle, datascience, highered, publichealth) are not listed.
+ * Programs without a logo (cvle) are not listed.
  */
 const PROGRAM_IMAGE_PATHS: Record<string, string> = {
   acct: '/shared/ugaonline/templates/acct/img/logo.png',
+  datascience: '/shared/ugaonline/templates/datascience/img/datascience_logo.svg',
   envgeology: '/shared/ugaonline/templates/envgeology/img/logo.png',
+  fanr: '/shared/ugaonline/templates/fanr/img/fanr_logo.svg',
   general: '/shared/ugaonline/templates/general/img/logo.svg',
+  highered: '/shared/ugaonline/templates/highered/img/highered_logo.svg',
   msw: '/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png',
   ool: '/shared/ugaonline/templates/ool/img/logo.png',
+  publichealth: '/shared/ugaonline/templates/publichealth/img/publichealth_logo.svg',
 };
 
 class UgaFooter extends LitElement {
