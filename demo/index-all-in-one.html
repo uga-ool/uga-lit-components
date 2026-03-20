@@ -258,13 +258,13 @@
     <section class="component-demo" id="image-demo">
       <h2>Image Component</h2>
       <div class="demo-description">
-        <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Based on instructional designer patterns with UGA brand styling.</p>
+        <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Use a relative path (e.g. <code>images/your-image.jpg</code> when the image is in an images folder next to your page) or the full path from eLC Manage Files.</p>
       </div>
       <div class="demo-example">
         <uga-image
-          src="/content/enforced4/3519736-LITComponentsDevSite/images/demo_image.jpg"
+          src="images/demo_image.jpg"
           alt="Sample image for demonstration"
-          caption="Click the image to expand and use zoom controls to view details."
+          caption="Click the image to expand and use zoom controls to view details. Use Ctrl/Cmd+scroll or double-click to zoom in the lightbox."
         ></uga-image>
       </div>
       <div class="demo-props">
@@ -291,6 +291,26 @@
             <td>Caption displayed below the image</td>
           </tr>
           <tr>
+            <td>srcset</td>
+            <td>string</td>
+            <td>Optional. Responsive image sources</td>
+          </tr>
+          <tr>
+            <td>sizes</td>
+            <td>string</td>
+            <td>Optional. Sizes for responsive images</td>
+          </tr>
+          <tr>
+            <td>placeholder</td>
+            <td>string</td>
+            <td>Optional. Blur placeholder URL while loading</td>
+          </tr>
+          <tr>
+            <td>lightbox-disabled</td>
+            <td>boolean</td>
+            <td>Disables expand-on-click when true</td>
+          </tr>
+          <tr>
             <td>max-width</td>
             <td>string</td>
             <td>Max width of container (default: 450px)</td>
@@ -308,7 +328,7 @@
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-image src="Images/005.jpg" alt="Description of image" caption="Optional caption text"&gt;&lt;/uga-image&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-image src="images/your-image.jpg" alt="Description" caption="Optional caption"&gt;&lt;/uga-image&gt;</uga-code>
       </div>
     </section>
 

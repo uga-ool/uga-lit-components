@@ -28,6 +28,11 @@
       background-color: #fafafa;
       border: 1px dashed #ccc;
     }
+    .demo-example h4 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
     .demo-code {
       margin-top: 1rem;
     }
@@ -80,14 +85,36 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Based on instructional designer patterns with UGA brand styling.</p>
-        <p><strong>Image path:</strong> Use the full path from D2L Manage Files (right-click file → Copy Path). Example: <code>/content/enforced4/COURSE_ID/images/your-image.jpg</code></p>
+        <p><strong>Image path:</strong> Use a relative path (resolves from the page location) or the full path from eLC Manage Files (right-click file → Copy Path). When the image is in an <code>images/</code> folder next to your HTML page, use <code>images/your-image.jpg</code>. In eLC, use the full path: <code>/content/enforced4/COURSE_ID/images/your-image.jpg</code>.</p>
       </div>
 
       <div class="demo-example">
+        <h4>Basic image with lightbox</h4>
         <uga-image
-          src="/content/enforced4/3519736-LITComponentsDevSite/images/demo_image.jpg"
+          src="images/demo_image.jpg"
           alt="Sample image for demonstration"
           caption="Scatterplot of two highly correlated variables (length and width). One vector is drawn through the centroid along the long axis of the data cloud (first principal component), with a second vector drawn perpendicular to it (second principal component)."
+        ></uga-image>
+      </div>
+
+      <div class="demo-example">
+        <h4>Responsive images (srcset/sizes)</h4>
+        <uga-image
+          src="images/demo_image.jpg"
+          srcset="images/demo_image.jpg 1x"
+          sizes="(max-width: 600px) 100vw, 450px"
+          alt="Responsive image example"
+          caption="Use srcset and sizes for responsive images. Provide multiple image URLs with width descriptors (e.g. image-400w.jpg 400w, image-800w.jpg 800w) so the browser picks the right size."
+        ></uga-image>
+      </div>
+
+      <div class="demo-example">
+        <h4>Lightbox disabled</h4>
+        <uga-image
+          src="images/demo_image.jpg"
+          alt="Image without lightbox"
+          caption="With lightbox-disabled, the image displays in the styled container but does not expand on click."
+          lightbox-disabled
         ></uga-image>
       </div>
 
@@ -113,6 +140,26 @@
             <td>caption</td>
             <td>string</td>
             <td>Caption displayed below the image</td>
+          </tr>
+          <tr>
+            <td>srcset</td>
+            <td>string</td>
+            <td>Optional. Comma-separated list of image URLs with width descriptors. Example: <code>image-400w.jpg 400w, image-800w.jpg 800w</code>. The browser picks the best size for the screen.</td>
+          </tr>
+          <tr>
+            <td>sizes</td>
+            <td>string</td>
+            <td>Optional. Tells the browser how wide the image will display. Example: <code>(max-width: 600px) 100vw, 450px</code> means full width on small screens, 450px otherwise.</td>
+          </tr>
+          <tr>
+            <td>placeholder</td>
+            <td>string</td>
+            <td>Optional. Low-res or blur placeholder URL to show while the main image loads</td>
+          </tr>
+          <tr>
+            <td>lightbox-disabled</td>
+            <td>boolean</td>
+            <td>When true, disables the expand-on-click lightbox behavior</td>
           </tr>
           <tr>
             <td>max-width</td>
@@ -143,10 +190,29 @@
       </div>
 
       <div class="demo-code">
+        <h4>Basic usage (relative path when image is in images/ folder)</h4>
         <uga-code language="markup">&lt;uga-image
-  src="/content/enforced4/3519736-LITComponentsDevSite/images/demo_image.jpg"
-  alt="Scatterplot of Width (y-axis) versus Length (x-axis). The points form a tight cluster trending upward."
-  caption="Scatterplot of two highly correlated variables with principal component vectors."
+  src="images/your-image.jpg"
+  alt="Description of image"
+  caption="Optional caption text."
+&gt;&lt;/uga-image&gt;</uga-code>
+      </div>
+      <div class="demo-code">
+        <h4>eLC: use full path from Manage Files</h4>
+        <uga-code language="markup">&lt;uga-image
+  src="/content/enforced4/COURSE_ID/images/your-image.jpg"
+  alt="Description of image"
+  caption="Optional caption."
+&gt;&lt;/uga-image&gt;</uga-code>
+      </div>
+      <div class="demo-code">
+        <h4>With responsive images (srcset + sizes)</h4>
+        <uga-code language="markup">&lt;uga-image
+  src="images/photo.jpg"
+  srcset="images/photo-400w.jpg 400w, images/photo-800w.jpg 800w"
+  sizes="(max-width: 600px) 100vw, 450px"
+  alt="Responsive photo"
+  caption="Caption text."
 &gt;&lt;/uga-image&gt;</uga-code>
       </div>
     </section>
