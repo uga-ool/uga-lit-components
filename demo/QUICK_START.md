@@ -195,6 +195,7 @@ In the eLC HTML editor, update file paths to:
 
 ### Components That Work Standalone
 
+- `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. When the image is in an `images/` folder next to your HTML page, use `src="images/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
 - `<uga-toc>` - Auto-generates from h2/h3 headings on page
 - `<uga-return-to-top>` - Smooth scroll button (appears after scrolling)
 - `<uga-code>` - Syntax-highlighted code with copy button

@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 /**
@@ -13,6 +13,12 @@ import { customElement, property, state } from 'lit/decorators.js';
 class UgaImage extends LitElement {
   @property({ type: String }) src = '';
   @property({ type: String }) alt = '';
+  /** Optional srcset for responsive images (e.g. "image-400w.jpg 400w, image-800w.jpg 800w") */
+  @property({ type: String }) srcset = '';
+  /** Optional sizes for responsive images (e.g. "(max-width: 600px) 100vw, 450px") */
+  @property({ type: String }) sizes = '';
+  /** Optional low-res or blur placeholder URL to show while the main image loads */
+  @property({ type: String }) placeholder = '';
   @property({ type: String }) caption = '';
   /** Max width of the thumbnail container (default: 450px) */
   @property({ type: String, attribute: 'max-width' }) maxWidth = '450px';
@@ -24,16 +30,21 @@ class UgaImage extends LitElement {
   @property({ type: Number, attribute: 'border-width' }) borderWidth = 2;
   /** Padding in pixels (default: 15) */
   @property({ type: Number }) padding = 15;
+  /** When true, disables the lightbox expand-on-click behavior */
+  @property({ type: Boolean, attribute: 'lightbox-disabled' }) lightboxDisabled = false;
 
   @state() private expanded = false;
   @state() private zoom = 1;
   @state() private panX = 0;
   @state() private panY = 0;
+  @state() private loaded = false;
   private isPanning = false;
   private startX = 0;
   private startY = 0;
   private startPanX = 0;
   private startPanY = 0;
+  private _triggerEl: HTMLElement | null = null;
+  private _wheelHandler = (e: WheelEvent) => this._onLightboxWheel(e);
 
   createRenderRoot() {
     return this;
@@ -65,11 +76,80 @@ class UgaImage extends LitElement {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
+    .cmp-image__container--no-expand {
+      cursor: default;
+    }
+
+    .cmp-image__container--no-expand:hover {
+      box-shadow: none;
+    }
+
     .cmp-image__img {
       display: block;
       width: 100%;
       height: auto;
       background: white;
+    }
+
+    .cmp-image__placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      background: #f5f5f5;
+      color: #666;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .cmp-image__placeholder-icon {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.5;
+    }
+
+    .cmp-image__skeleton {
+      min-height: 200px;
+      background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e8e8e8 50%,
+        #f0f0f0 75%
+      );
+      background-size: 200% 100%;
+      animation: cmp-image-skeleton 1.5s ease-in-out infinite;
+    }
+
+    @keyframes cmp-image-skeleton {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .cmp-image__placeholder-img-wrap {
+      position: relative;
+      min-height: 200px;
+    }
+
+    .cmp-image__placeholder-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 200px;
+      object-fit: cover;
+      filter: blur(8px);
+      opacity: 0.8;
+    }
+
+    .cmp-image__img-loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
     }
 
     .cmp-image__figcaption {
@@ -196,6 +276,27 @@ class UgaImage extends LitElement {
     this._boundKeydown = this._handleKeydown.bind(this);
   }
 
+  updated(changedProperties: Map<string, unknown>): void {
+    super.updated(changedProperties);
+    if (changedProperties.has('src')) {
+      this.loaded = false;
+    }
+    if (changedProperties.has('expanded')) {
+      const wrap = this.querySelector('.cmp-image__lightbox-img-wrap');
+      if (this.expanded) {
+        wrap?.addEventListener('wheel', this._wheelHandler, { passive: false });
+        requestAnimationFrame(() => {
+          const closeBtn = this.querySelector<HTMLButtonElement>(
+            '.cmp-image__lightbox-btn-close'
+          );
+          closeBtn?.focus();
+        });
+      } else {
+        wrap?.removeEventListener('wheel', this._wheelHandler);
+      }
+    }
+  }
+
   disconnectedCallback(): void {
     super.disconnectedCallback();
     document.removeEventListener('keydown', this._boundKeydown);
@@ -206,11 +307,35 @@ class UgaImage extends LitElement {
   private _handleKeydown(e: KeyboardEvent): void {
     if (e.key === 'Escape') {
       this.closeLightbox();
+      return;
+    }
+    if (!this.expanded || e.key !== 'Tab') return;
+    const lightbox = this.querySelector('.cmp-image__lightbox-content');
+    if (!lightbox || !lightbox.contains(document.activeElement)) return;
+    const focusable = Array.from(lightbox.querySelectorAll<HTMLElement>('button'));
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   }
 
+  private _onImageLoad(): void {
+    this.loaded = true;
+  }
+
   openLightbox(): void {
-    if (!this.src) return;
+    if (!this.src || this.lightboxDisabled) return;
+    this._triggerEl = this.querySelector<HTMLElement>('.cmp-image__container');
     this.expanded = true;
     this.zoom = 1;
     this.panX = 0;
@@ -220,12 +345,20 @@ class UgaImage extends LitElement {
   }
 
   closeLightbox(): void {
+    this.querySelector('.cmp-image__lightbox-img-wrap')?.removeEventListener(
+      'wheel',
+      this._wheelHandler
+    );
     this.expanded = false;
     this.zoom = 1;
     this.panX = 0;
     this.panY = 0;
     document.removeEventListener('keydown', this._boundKeydown);
     document.body.style.overflow = '';
+    if (this._triggerEl) {
+      this._triggerEl.focus();
+      this._triggerEl = null;
+    }
   }
 
   zoomIn(): void {
@@ -272,6 +405,32 @@ class UgaImage extends LitElement {
     }
   }
 
+  private _onLightboxWheel(e: WheelEvent): void {
+    if (e.ctrlKey || e.metaKey || this.zoom > 1) {
+      e.preventDefault();
+      if (e.deltaY < 0) this.zoomIn();
+      else if (e.deltaY > 0) this.zoomOut();
+    }
+  }
+
+  private _onLightboxDblClick(): void {
+    this.resetZoom();
+  }
+
+  private _onContainerClick(e: Event): void {
+    if (!this.src || this.lightboxDisabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    this.openLightbox();
+  }
+
+  private _onContainerKeydown(e: KeyboardEvent): void {
+    if (!this.src || this.lightboxDisabled) return;
+    if (e.key === 'Enter') this.openLightbox();
+  }
+
   render() {
     const containerStyle = `
       max-width: ${this.maxWidth};
@@ -287,20 +446,67 @@ class UgaImage extends LitElement {
       <div class="cmp-image">
         <figure class="cmp-image__figure">
           <div
-            class="cmp-image__container"
+            class="cmp-image__container${!this.src || this.lightboxDisabled ? ' cmp-image__container--no-expand' : ''}"
             style="${containerStyle}"
-            role="button"
-            tabindex="0"
-            aria-label="Click to expand image"
-            @click="${this.openLightbox}"
-            @keydown="${(e: KeyboardEvent) => e.key === 'Enter' && this.openLightbox()}"
+            role="${!this.src || this.lightboxDisabled ? undefined : 'button'}"
+            tabindex="${!this.src || this.lightboxDisabled ? -1 : 0}"
+            aria-label="${!this.src || this.lightboxDisabled ? undefined : 'Click to expand image'}"
+            @click="${this._onContainerClick}"
+            @keydown="${this._onContainerKeydown}"
           >
-            <img
-              class="cmp-image__img"
-              src="${this.src}"
-              alt="${this.alt}"
-              loading="lazy"
-            />
+            ${!this.src
+              ? html`
+                  <div class="cmp-image__placeholder">
+                    <span class="cmp-image__placeholder-icon" aria-hidden="true">🖼️</span>
+                    <span>No image specified</span>
+                  </div>
+                `
+              : !this.loaded
+                ? this.placeholder
+                  ? html`
+                      <div class="cmp-image__placeholder-img-wrap">
+                        <img
+                          class="cmp-image__placeholder-img"
+                          src="${this.placeholder}"
+                          alt=""
+                          aria-hidden="true"
+                        />
+                        <img
+                          class="cmp-image__img cmp-image__img-loading"
+                          src="${this.src}"
+                          alt="${this.alt}"
+                          loading="lazy"
+                          srcset="${this.srcset || nothing}"
+                          sizes="${this.sizes || nothing}"
+                          @load="${this._onImageLoad}"
+                        />
+                      </div>
+                    `
+                  : html`
+                      <div class="cmp-image__placeholder-img-wrap">
+                        <div class="cmp-image__skeleton"></div>
+                        <img
+                          class="cmp-image__img cmp-image__img-loading"
+                          src="${this.src}"
+                          alt="${this.alt}"
+                          loading="lazy"
+                          srcset="${this.srcset || nothing}"
+                          sizes="${this.sizes || nothing}"
+                          @load="${this._onImageLoad}"
+                        />
+                      </div>
+                    `
+                : html`
+                    <img
+                      class="cmp-image__img"
+                      src="${this.src}"
+                      alt="${this.alt}"
+                      loading="lazy"
+                      srcset="${this.srcset || nothing}"
+                      sizes="${this.sizes || nothing}"
+                      @load="${this._onImageLoad}"
+                    />
+                  `}
           </div>
           ${this.caption
             ? html`<figcaption class="cmp-image__figcaption">${this.caption}</figcaption>`
@@ -336,11 +542,14 @@ class UgaImage extends LitElement {
                     @touchstart="${this._onPanStart}"
                     @touchmove="${this._onPanMove}"
                     @touchend="${this._onPanEnd}"
+                    @dblclick="${this._onLightboxDblClick}"
                   >
                     <img
                       class="cmp-image__lightbox-img"
                       src="${this.src}"
                       alt="${this.alt}"
+                      srcset="${this.srcset || nothing}"
+                      sizes="${this.sizes || nothing}"
                       style="transform: ${imgTransform};"
                       draggable="false"
                     />
