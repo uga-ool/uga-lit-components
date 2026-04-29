@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Component Demo</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
@@ -99,6 +100,8 @@
 
     <section class="component-demo">
       <div class="demo-description">
+        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+
         <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, multi-select, ordering, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
         <p><strong>Use Case:</strong> Students can't take summative assessments until they've completed embedded formative quizzes (release conditions).</p>
       </div>
@@ -106,7 +109,7 @@
       <h2>Demo: All Question Types and Features</h2>
       <div class="demo-description">
         <p><strong>This demo uses <code>quiz-sample.json</code></strong>, which includes all six question types: Multiple Choice, True/False, Short Answer, Matching, Multi-Select, and Ordering. The quiz below has all features enabled: timer (10 min with auto-submit), question randomization, retries, immediate feedback, and submission to the eLC assignment <strong>Quiz Demo 2</strong>.</p>
-        <p><strong>How to use a JSON file:</strong> (1) Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format). (2) Upload the file to the same directory as your HTML or to eLC Public Files. (3) Set <code>type="local"</code> and <code>filename="your-file.json"</code> on the quiz component. Use a relative path (e.g. <code>quiz-sample.json</code>) if the file is in the same folder as your HTML, or a full path (e.g. <code>/shared/PublicFiles/quiz-sample.json</code>) for eLC Public Files.</p>
+        <p><strong>How to use a JSON file:</strong> (1) Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format). (2) Upload the file to <strong>course files</strong> (same folder as your HTML page when possible). (3) Set <code>type="local"</code> and <code>filename="your-file.json"</code> on the quiz. Use a filename only (e.g. <code>quiz-sample.json</code>) when the JSON is in the same folder as the page, or the full path from <strong>Manage Files</strong> (e.g. <code>/content/enforced/…/quiz-sample.json</code>). Shared institutional paths like <code>/shared/PublicFiles/…</code> are optional if your unit hosts files there.</p>
       </div>
       <div class="demo-example">
         <uga-quiz
@@ -184,7 +187,7 @@
         <ol>
           <li>Create a JSON file with a <code>questions</code> array (see <code>quiz-sample.json</code>, <code>quiz10.json</code>, or <code>quiz20.json</code> in the demo folder)</li>
           <li>Upload the JSON file to the same folder as your HTML page, or to eLC Public Files</li>
-          <li>Add <code>type="local"</code> and <code>filename="your-file.json"</code> to the quiz component (use relative path if same folder, or full path like <code>/shared/PublicFiles/your-file.json</code>)</li>
+          <li>Add <code>type="local"</code> and <code>filename="your-file.json"</code> to the quiz component (filename only if same folder as the page, or full course-files path from <strong>Manage Files</strong>)</li>
         </ol>
       </div>
 
@@ -219,7 +222,7 @@
             <td><code>filename</code></td>
             <td>string</td>
             <td>''</td>
-            <td>Path to the JSON file. Use relative path (e.g. <code>quiz-sample.json</code>) if the file is in the same directory as your HTML, or full path (e.g. <code>/shared/PublicFiles/quiz-sample.json</code>) for eLC Public Files. Required when <code>type="local"</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format.</td>
+            <td>Path to the JSON file. Use a filename only (e.g. <code>quiz-sample.json</code>) if the file is in the same folder as the HTML page, or the full path from course <strong>Manage Files</strong>. Required when <code>type="local"</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format.</td>
           </tr>
           <tr>
             <td><code>passing-score</code></td>

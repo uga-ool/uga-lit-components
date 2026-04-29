@@ -331,6 +331,12 @@ async performAction() {
    - Reduce API calls from user input
    - Better performance
 
+5. **Rubric Import to D2L**
+   - Import rubric definitions from external files (CSV/JSON)
+   - Map rubric criteria and levels to D2L-compatible structures
+   - Validate rubric schema before import
+   - Reduce manual rubric setup work for instructors
+
 ---
 
 ## ✅ Implementation Checklist

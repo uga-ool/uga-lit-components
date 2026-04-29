@@ -2,7 +2,7 @@
 
 ## What You Just Got
 
-A comprehensive demo system with **17 dedicated pages** showcasing all UGA Lit components:
+A comprehensive demo system with **multiple HTML pages** (hub, per-component demos, setup, and quiz variants) showcasing UGA Lit components:
 
 - ✅ **Main demo page** (`index-all-in-one.html`) - Comprehensive all-in-one scrollable demo with all components
 - ✅ **15 individual demo pages** - One per component (including Quiz), perfect for eLC side navigation
@@ -21,6 +21,7 @@ A comprehensive demo system with **17 dedicated pages** showcasing all UGA Lit c
 - 📂 **Accordion refactored**: Direct axios pattern, improved error handling
 - 🗂️ **TOC filtering**: Now scans h2/h3 only for cleaner navigation
 - 🐛 **Bug fixes**: Accordion icons, footer paths, axios errors
+- 📄 **Demo pages**: Shared `demo-inline-code.css`, instructional-designer blurbs linking to `setup.html`, clarified quiz file paths (course files / Manage Files)
 
 👉 See [../CHANGELOG.md](../CHANGELOG.md) for complete details
 
@@ -30,22 +31,30 @@ A comprehensive demo system with **17 dedicated pages** showcasing all UGA Lit c
 demo/
 ├── index-all-in-one.html        # Main comprehensive demo (all components)
 ├── setup.html                    # Setup & usage guide
-├── accordion.html                # Individual component demos (14 pages)
-├── assignment.html               #   Each shows one component in detail
-├── circles.html                  #   Perfect for eLC side navigation
+├── accordion.html                # Individual component demos
+├── assignment.html
+├── circles.html
 ├── code.html
+├── course-analytics.html
 ├── duedate.html
 ├── footer.html
+├── image.html
+├── instructor-card.html
 ├── instructor-note.html
-├── module-feedback.html
 ├── quiz.html
-├── quiz-sync-note.html
+├── quiz10.html                   # Smaller quiz example
+├── quiz20.html
+├── quiz-sync-note.html           # HTML fragments for instructor-note embeds
+├── quiz-sync-note-basic.html
 ├── rating.html
 ├── return-to-top.html
 ├── slideshow.html
 ├── tabs.html
 ├── toc.html
 ├── video.html
+├── video-debug.html
+├── template-manager.html         # uga-template-manager (admin / stub demo)
+├── demo-inline-code.css          # Optional: inline <code> sizing in demo callouts
 ├── QUICK_START.md               # This file
 ├── accordion-demo.json           # Sample data files (available on Google Drive)
 ├── tabs-demo.json
@@ -87,13 +96,13 @@ Then open: `http://localhost:4173/demo/index-all-in-one.html`
 
 **`index-all-in-one.html`** - Main comprehensive demo page:
 
-- Comprehensive scrollable demo with all 14 components
+- Comprehensive scrollable demo with all components
 - Organized by category (Content, Media, Interactive, Navigation, Instructor Tools)
 - Auto-generated table of contents for quick navigation
 - Live examples, property tables, and code snippets for each component
 - Setup instructions at the bottom
 
-### Individual Component Pages (14 files)
+### Individual component pages
 
 Each component has a dedicated demo page:
 

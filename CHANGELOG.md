@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-01-09
 
+### uga-template-manager (course template widget — MVP)
+
+- New **admin-only** component `uga-template-manager`: read-only **content preview** (TOC module counts for live + template OU), stub mode for local demos, gated by `admin-role-names` / `admin-role-ids`
+- Docs: [docs/COURSE_TEMPLATE_WIDGET.md](docs/COURSE_TEMPLATE_WIDGET.md), [docs/COURSE_TEMPLATE_API_SPIKE.md](docs/COURSE_TEMPLATE_API_SPIKE.md); minimal Drive upload service under [server/drive-upload/](server/drive-upload/)
+- Demo: [demo/template-manager.html](demo/template-manager.html); listed in README and setup.html. Export / Clear / Back-copy actions are placeholders until Valence spike completes
+
+### Demo pages (instructional designers)
+
+- Reviewed demo HTML for eLC terminology, consistent production script path (<code>/shared/ugaonline/js/uga-components.js</code>), and clearer quiz/course file path guidance (prefer same-folder filenames or full paths from Manage Files)
+- Added <code>demo/demo-inline-code.css</code> and linked it from demos so inline <code>&lt;code&gt;</code> in descriptions matches paragraph size
+- Added “For instructional designers” setup blurb + link to `demo/setup.html` on standalone demos; expanded hub intro on `demo/index-all-in-one.html`
+- <code>course-analytics.html</code>: back navigation, localhost vs production script note, whitespace fix
+- <code>setup.html</code>: quiz data format clarified (JSON default; CSV optional)
+
 ### uga-footer — Abbreviated program codes
 
 - **Program attribute now uses abbreviated codes** (e.g. `msw`, `acct`, `envgeology`, `general`, `ool`) instead of full names

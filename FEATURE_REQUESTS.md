@@ -1,6 +1,6 @@
 # Feature Requests from Instructional Designers
 
-This document tracks feature requests from the instructional design team for eLC/Brightspace components.
+This document tracks feature requests from the instructional design team for **eLC** (UGA’s online learning environment; Brightspace-based) components.
 
 ## Current Requests (January 2026)
 
@@ -13,8 +13,8 @@ This document tracks feature requests from the instructional design team for eLC
 - **Note:** Creator+ has in-page quizzes, but UGA/USG doesn't have this add-on. Would need custom solution.
 
 **Technical Considerations:**
-- Would need to track completion status in D2L
-- Integration with D2L release conditions API
+- Would need to track completion status in eLC
+- Integration with eLC release conditions API (Valence)
 - May require React for complex quiz interactions
 - Storage of quiz responses and completion data
 - Question types: multiple choice, true/false, matching, short answer, etc.
@@ -22,17 +22,17 @@ This document tracks feature requests from the instructional design team for eLC
 **Implementation Approach:**
 - Could build as Lit component for simple quizzes
 - React might be better for complex quiz builder/editor
-- Need to store completion data (possibly in D2L gradebook or custom data store)
+- Need to store completion data (possibly in the eLC gradebook or custom data store)
 
 ### 2. Autograding and Gradebook Export for Assignments ⭐ HIGH PRIORITY
 **Requested by:** Stephanie  
 **Description:**
 - Auto-grade assignments (multiple choice, true/false, matching, etc.)
-- Automatically export grades to D2L gradebook
+- Automatically export grades to the eLC gradebook
 - Link Groups tool in content pages
 
 **Technical Considerations:**
-- Integration with D2L Gradebook API
+- Integration with the eLC gradebook API (Valence)
 - Assignment submission API
 - Groups API integration for content linking
 - Could potentially extend existing `uga-assignment` component
@@ -43,15 +43,17 @@ This document tracks feature requests from the instructional design team for eLC
 - May need backend service for complex grading logic
 - React might be better for grading interface
 
-### 3. Rubric Upload Tool
+### 3. Rubric Upload / Import Tool
 **Requested by:** Dee  
 **Description:**
 - Tool to upload rubrics created in a document file (Word, Google Docs, etc.)
-- Parse rubric structure and create D2L rubric
+- Import rubric definitions from external files (CSV/JSON)
+- Parse rubric structure and create an eLC rubric
 
 **Technical Considerations:**
 - File upload and parsing (Word, PDF, Google Docs)
-- D2L Rubrics API integration
+- CSV/JSON schema validation before import
+- eLC Rubrics API integration (Valence)
 - Rubric structure parsing and mapping
 - May require backend service for file processing
 - OCR or text extraction for PDFs
@@ -59,7 +61,7 @@ This document tracks feature requests from the instructional design team for eLC
 **Implementation Approach:**
 - React component for file upload interface
 - Backend service needed for file parsing
-- Integration with D2L Rubrics API
+- Integration with the eLC Rubrics API (Valence)
 
 ### 4. In-Video Quizzes (LTI Use Cases)
 **Requested by:** Stephen  
@@ -87,7 +89,7 @@ This document tracks feature requests from the instructional design team for eLC
 - Display group information, members, activities
 
 **Technical Considerations:**
-- D2L Groups API
+- eLC Groups API (Valence)
 - Group membership API
 - Content embedding patterns
 - Could be extension of existing components
@@ -114,12 +116,12 @@ This document tracks feature requests from the instructional design team for eLC
 - Archive template versions to Google Drive before clearing
 
 **Technical Considerations:**
-- **Admin Role Detection:** Need to identify admin role names/codes in D2L
+- **Admin Role Detection:** Need to identify admin role names/codes in eLC
 - **Template vs Live Course Identification:** How to determine which course is the template (course code pattern, metadata, property?)
 - **Google Drive API Integration:** 
   - OAuth authentication or service account
   - File upload/export functionality
-- **D2L Content API:** Need endpoints for:
+- **eLC Content API (Valence):** Need endpoints for:
   - Listing course files
   - Downloading files from course
   - Uploading files to course
@@ -129,7 +131,7 @@ This document tracks feature requests from the instructional design team for eLC
 
 **Implementation Approach:**
 - Could be Lit component (`uga-template-manager`) or separate React app/widget
-- Requires significant D2L Content API integration
+- Requires significant eLC Content API integration
 - Google Drive API integration (may need backend service for OAuth)
 - File management operations between courses
 - Admin-only visibility (similar to `uga-instructor-note` role checking)
@@ -162,9 +164,9 @@ This document tracks feature requests from the instructional design team for eLC
 ### API Requirements
 
 All features would require:
-- D2L Valence/LP API access
+- eLC Valence/LP API access (Learning Platform API for Brightspace)
 - Appropriate permissions (instructor/admin level for most)
-- Understanding of D2L data models (rubrics, gradebook, groups, quizzes, etc.)
+- Understanding of eLC/Brightspace data models (rubrics, gradebook, groups, quizzes, etc.)
 - Release Conditions API (for #1)
 - Gradebook API (for #2)
 - Rubrics API (for #4)
@@ -187,7 +189,7 @@ All features would require:
 
 ## Next Steps
 
-1. **Research D2L APIs:**
+1. **Research eLC (Valence) APIs:**
    - Quiz/Assessment APIs
    - Gradebook API
    - Rubrics API
@@ -235,8 +237,8 @@ Broader institutional projects and ideas for future development, beyond eLC comp
 
 ## References
 
-- D2L API Documentation: https://docs.valence.desire2learn.com/
-- Brightspace Release Conditions: https://documentation.brightspace.com/
+- Valence API (Learning Platform API for eLC/Brightspace): https://docs.valence.desire2learn.com/
+- Brightspace Release Conditions (eLC): https://documentation.brightspace.com/
 - LTI Specification: https://www.imsglobal.org/activity/learning-tools-interoperability
-- D2L Gradebook API: https://docs.valence.desire2learn.com/res/gradebook.html
-- D2L Rubrics API: https://docs.valence.desire2learn.com/res/rubrics.html
+- Gradebook API (Valence): https://docs.valence.desire2learn.com/res/gradebook.html
+- Rubrics API (Valence): https://docs.valence.desire2learn.com/res/rubrics.html

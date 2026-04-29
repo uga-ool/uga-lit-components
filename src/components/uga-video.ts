@@ -1,8 +1,8 @@
 import { LitElement, html } from 'lit';
 import type { PropertyValues } from 'lit';
 import axios from 'axios';
-import { customElement, property } from 'lit/decorators.js';
-import { getVersions, getClasslist, getCurrentUserId } from '../lib/api/d2l-client.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import { getVersions, getClasslist, getCurrentUserId, getXsrfToken } from '../lib/api/d2l-client.js';
 import { getCourse, getTopicId } from '../lib/api/d2l-utils.js';
 import { completeContentTopic } from '../lib/api/d2l-client-content.js';
 import { sendVideoEvent } from '../lib/api/video-analytics-client.js';
@@ -10,6 +10,11 @@ import { loadData } from '../lib/data/data-loader.js';
 import type { ApiVersions, ClasslistUser } from '../types/d2l.js';
 import './uga-rating.js';
 
+interface DjinnCitation {
+  startMs: number;
+  endMs?: number;
+  text: string;
+}
 
 @customElement('uga-video')
 class UgaVideo extends LitElement {
@@ -28,6 +33,18 @@ class UgaVideo extends LitElement {
   @property({ type: Boolean }) includeRating = false;
   @property({ type: String }) name = '';
   @property({ type: String, attribute: 'topic-id' }) topicId = '';
+  /** When true and `djinnApiBase` is set, show Kaltura Djinn Q&A (eLC + Djinn server). */
+  @property({ type: Boolean, attribute: 'enable-djinn' }) enableDjinn = false;
+  /** Base URL of Kaltura Djinn service (no trailing slash), e.g. https://djinn.example.edu */
+  @property({ type: String, attribute: 'djinn-api-base' }) djinnApiBase = '';
+  /** Optional shared secret; sent as X-Djinn-Api-Key if set */
+  @property({ type: String, attribute: 'djinn-api-key' }) djinnApiKey = '';
+
+  @state() private djinnLoadingVideoId: string | null = null;
+  @state() private djinnQuestionDraft: Record<string, string> = {};
+  @state() private djinnAnswerByVideo: Record<string, string> = {};
+  @state() private djinnCitationsByVideo: Record<string, DjinnCitation[]> = {};
+  @state() private djinnErrorByVideo: Record<string, string> = {};
 
   private uiconfid = '';
   private domain: string | null = null;
@@ -350,11 +367,83 @@ class UgaVideo extends LitElement {
     }
   }
 
+  private normalizeDjinnBase(): string {
+    return (this.djinnApiBase || '').trim().replace(/\/$/, '');
+  }
+
+  private async submitDjinnQuestion(videoId: string): Promise<void> {
+    const base = this.normalizeDjinnBase();
+    if (!base) return;
+    const q = (this.djinnQuestionDraft[videoId] || '').trim();
+    if (!q) return;
+
+    this.djinnLoadingVideoId = videoId;
+    const nextErr = { ...this.djinnErrorByVideo };
+    delete nextErr[videoId];
+    this.djinnErrorByVideo = nextErr;
+    this.requestUpdate();
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (this.djinnApiKey) {
+      headers['X-Djinn-Api-Key'] = this.djinnApiKey;
+    }
+    try {
+      const tok = await getXsrfToken();
+      if (tok) headers['X-Csrf-Token'] = tok;
+    } catch (_) {
+      /* Xsrf optional when gateway does not require Brightspace session */
+    }
+
+    try {
+      const res = await fetch(`${base}/v1/ask`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ entryId: videoId, question: q }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        answer?: string;
+        citations?: DjinnCitation[];
+        error?: string;
+      };
+      if (!res.ok) {
+        throw new Error(typeof data.error === 'string' ? data.error : res.statusText);
+      }
+      this.djinnAnswerByVideo = { ...this.djinnAnswerByVideo, [videoId]: data.answer ?? '' };
+      this.djinnCitationsByVideo = {
+        ...this.djinnCitationsByVideo,
+        [videoId]: Array.isArray(data.citations) ? data.citations : [],
+      };
+    } catch (e) {
+      this.djinnErrorByVideo = {
+        ...this.djinnErrorByVideo,
+        [videoId]: e instanceof Error ? e.message : 'Request failed',
+      };
+    } finally {
+      this.djinnLoadingVideoId = null;
+      this.requestUpdate();
+    }
+  }
+
+  private seekDjinnCitation(videoId: string, startMs: number): void {
+    const p = this.playerInstances.get(videoId);
+    if (!p) return;
+    try {
+      p.currentTime = startMs / 1000;
+      if (typeof p.play === 'function') {
+        p.play().catch(() => {});
+      }
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
   kalturaCode(videoId: string) {
     const containerId = `kaltura_player_${this.componentId}_${videoId}`;
     // Kick off async name fetch for rating display
     this.ensureVideoName(videoId);
 
+    const djinnBase = this.normalizeDjinnBase();
+    const showDjinn = this.enableDjinn && djinnBase !== '';
     const embedCode = html`
       <style>
         .cmp-video::after {
@@ -362,7 +451,15 @@ class UgaVideo extends LitElement {
           display: none !important;
           padding-top: 0 !important;
         }
+        .cmp-video__row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          align-items: flex-start;
+        }
         .cmp-video__container {
+          flex: 2;
+          min-width: 280px;
           width: 100%;
           background: #000;
         }
@@ -370,10 +467,111 @@ class UgaVideo extends LitElement {
           width: 100%;
           height: auto;
         }
+        .djinn-panel {
+          flex: 1;
+          min-width: 260px;
+          max-width: 100%;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          padding: 0.75rem 1rem;
+          background: #fafafa;
+        }
+        .djinn-panel h4 {
+          margin: 0 0 0.5rem;
+          font-size: 1rem;
+          color: #333;
+        }
+        .djinn-panel textarea {
+          width: 100%;
+          min-height: 4rem;
+          box-sizing: border-box;
+          font: inherit;
+          margin-bottom: 0.5rem;
+        }
+        .djinn-panel button.djinn-ask {
+          background: #ba0c2f;
+          color: #fff;
+          border: none;
+          padding: 0.4rem 1rem;
+          border-radius: 4px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+        .djinn-panel button.djinn-ask:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+        .djinn-answer {
+          margin-top: 0.75rem;
+          font-size: 0.95rem;
+          line-height: 1.45;
+          color: #222;
+        }
+        .djinn-cite {
+          display: block;
+          margin-top: 0.35rem;
+          font-size: 0.85rem;
+          color: #ba0c2f;
+          text-decoration: underline;
+          cursor: pointer;
+          background: none;
+          border: none;
+          padding: 0;
+          text-align: left;
+        }
+        .djinn-err {
+          margin-top: 0.5rem;
+          color: #b00020;
+          font-size: 0.9rem;
+        }
       </style>
       <div class="cmp-video util-margin-top-lg">
-        <div class="cmp-video__container">
-          <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
+        <div class="cmp-video__row">
+          <div class="cmp-video__container">
+            <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
+          </div>
+          ${showDjinn
+            ? html`
+                <div class="djinn-panel" aria-label="Kaltura Djinn">
+                  <h4>Kaltura Djinn</h4>
+                  <textarea
+                    placeholder="Ask about this video (from captions)…"
+                    .value=${this.djinnQuestionDraft[videoId] ?? ''}
+                    @input=${(e: Event) => {
+                      const t = e.target as HTMLTextAreaElement;
+                      this.djinnQuestionDraft = { ...this.djinnQuestionDraft, [videoId]: t.value };
+                    }}
+                  ></textarea>
+                  <button
+                    type="button"
+                    class="djinn-ask"
+                    ?disabled=${this.djinnLoadingVideoId === videoId}
+                    @click=${() => this.submitDjinnQuestion(videoId)}
+                  >
+                    ${this.djinnLoadingVideoId === videoId ? 'Asking…' : 'Ask'}
+                  </button>
+                  ${this.djinnErrorByVideo[videoId]
+                    ? html`<div class="djinn-err">${this.djinnErrorByVideo[videoId]}</div>`
+                    : null}
+                  ${this.djinnAnswerByVideo[videoId]
+                    ? html`
+                        <div class="djinn-answer">${this.djinnAnswerByVideo[videoId]}</div>
+                        ${(this.djinnCitationsByVideo[videoId] ?? []).map(
+                          (c) => html`
+                            <button
+                              type="button"
+                              class="djinn-cite"
+                              @click=${() => this.seekDjinnCitation(videoId, c.startMs)}
+                            >
+                              Jump to ${(c.startMs / 1000).toFixed(1)}s — ${c.text.slice(0, 80)}${c.text.length > 80 ? '…' : ''}
+                            </button>
+                          `
+                        )}
+                      `
+                    : null}
+                </div>
+              `
+            : null}
         </div>
       </div>
       ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.videoNames.get(videoId) ?? this.name} contentPlatform="kaltura"></uga-rating>`:html``}

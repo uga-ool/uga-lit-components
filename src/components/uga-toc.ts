@@ -25,6 +25,8 @@ export class UGATableOfContents extends LitElement {
     const tocList = this.querySelector('#toc-list') as HTMLUListElement | null;
     if (!tocList) return;
     const headings = Array.from(document.querySelectorAll('h2, h3')) as HTMLHeadingElement[];
+    const hasCategoryHeaders = document.querySelectorAll('.category-header h2').length > 0;
+    let seenCategoryHeader = false;
     const usedIds = new Set<string>();
     // Seed with any existing IDs to guarantee uniqueness
     headings.forEach(h => { if (h.id) usedIds.add(h.id); });
@@ -39,6 +41,14 @@ export class UGATableOfContents extends LitElement {
 
       // Create a link to each heading
       const level = parseInt(heading.tagName[1]); // Get the heading level (1-6)
+      const isCategoryHeader = Boolean(heading.closest('.category-header'));
+      // Demo pages like index-all-in-one use h2 for both category headers and item headers.
+      // Only treat non-category h2 headings as one level deeper AFTER the first category header
+      // appears, so pre-category sections remain top-level entries.
+      const normalizedLevel = hasCategoryHeaders && seenCategoryHeader && level === 2 && !isCategoryHeader ? 3 : level;
+      if (isCategoryHeader) {
+        seenCategoryHeader = true;
+      }
       // Ensure heading has an id; generate slug if missing
       if (!heading.id) {
         const base = (heading.textContent || 'section')
@@ -57,8 +67,8 @@ export class UGATableOfContents extends LitElement {
       
       // Set root level based on first heading
       if (rootLevel === null) {
-        rootLevel = level;
-        currentLists[level] = tocList as HTMLUListElement;
+        rootLevel = normalizedLevel;
+        currentLists[normalizedLevel] = tocList as HTMLUListElement;
       }
 
       const listItem = document.createElement('li');
@@ -78,38 +88,38 @@ export class UGATableOfContents extends LitElement {
       });
 
       // Clear deeper nested lists when we go back to a higher level
-      for (let i = level + 1; i <= 6; i++) {
+      for (let i = normalizedLevel + 1; i <= 6; i++) {
         if (currentLists[i]) {
           delete currentLists[i];
         }
       }
 
       // If this is the root level, append directly to root list
-      if (level === rootLevel) {
+      if (normalizedLevel === rootLevel) {
         currentLists[rootLevel].appendChild(listItem);
       }
       // If this is a deeper level, create nested lists as needed
-      else if (level > rootLevel) {
+      else if (normalizedLevel > rootLevel) {
         // Find the closest parent level that exists
-        let parentLevel = level - 1;
+        let parentLevel = normalizedLevel - 1;
         while (parentLevel >= rootLevel && !currentLists[parentLevel]) {
           parentLevel--;
         }
 
         // Create nested list if it doesn't exist for this level
-        if (!currentLists[level]) {
+        if (!currentLists[normalizedLevel]) {
           const newList = document.createElement('ul');
           // Append to the last item of the parent level
           const parentList = currentLists[parentLevel];
           if (parentList && parentList.lastElementChild) {
             parentList.lastElementChild.appendChild(newList);
-            currentLists[level] = newList;
+            currentLists[normalizedLevel] = newList;
           }
         }
 
         // Append the list item to the appropriate level
-        if (currentLists[level]) {
-          currentLists[level].appendChild(listItem);
+        if (currentLists[normalizedLevel]) {
+          currentLists[normalizedLevel].appendChild(listItem);
         }
       }
     });

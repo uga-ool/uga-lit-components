@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Video Component Demo</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
@@ -86,6 +87,8 @@
     <section class="component-demo">
       <h2>Single Video</h2>
       <div class="demo-description">
+        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+
         <p><strong>Embeds a single Kaltura video with customizable player.</strong> Use this method when you have one video to display. Logo/watermark is hidden by default.</p>
       </div>
 
@@ -117,6 +120,21 @@
             <td>boolean</td>
             <td>Add rating component below video</td>
           </tr>
+          <tr>
+            <td>enable-djinn</td>
+            <td>boolean</td>
+            <td>Show <strong>Kaltura Djinn</strong> Q&amp;A panel (requires <code>djinn-api-base</code> and captions on the entry)</td>
+          </tr>
+          <tr>
+            <td>djinn-api-base</td>
+            <td>string</td>
+            <td>Base URL of the Kaltura Djinn service (no trailing slash), eLC-only with CORS</td>
+          </tr>
+          <tr>
+            <td>djinn-api-key</td>
+            <td>string</td>
+            <td>Optional; sent as <code>X-Djinn-Api-Key</code> if the Djinn server requires it</td>
+          </tr>
         </table>
       </div>
 
@@ -124,7 +142,10 @@
         <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="1574196844"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
-&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
+
+&lt;!-- Kaltura Djinn (run uga-kaltura-djinn + LLM gateway; use only in eLC) --&gt;
+&lt;uga-video videoid="1_icw0df6y" enable-djinn djinn-api-base="https://djinn.example.edu"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -246,7 +267,7 @@
   <!-- Video analytics: disabled when using Kaltura analytics only (no custom backend) -->
   <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
   <!-- Video analytics: required for event collection. For local dev, run: cd template-manager/api && npm run dev -->
-  <!-- For D2L, uncomment and set to your deployed backend URL: -->
+  <!-- For eLC / production: uncomment and set to your deployed backend URL: -->
   <!-- <script>window.UGA_VIDEO_ANALYTICS_URL = 'https://YOUR-API-SERVER/api/video-analytics/events';</script> -->
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 </body>

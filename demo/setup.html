@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Setup & Usage - UGA Lit Components</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
@@ -68,6 +69,7 @@
       <div class="intro">
         <p><strong>Complete guide to setting up and using UGA Lit Components in eLC.</strong></p>
         <p>This page covers installation, configuration, and data file creation for all components.</p>
+        <p><strong>Demo HTML pages</strong> in this folder link to <code>demo-inline-code.css</code> so filenames and inline <code>&lt;code&gt;</code> in callouts match surrounding text size. Individual demos also link back here for the full checklist.</p>
       </div>
     </header>
 
@@ -99,7 +101,7 @@
       <p><strong>Production (eLC):</strong> Use <code>src="/shared/ugaonline/js/uga-components.js"</code>. Ensure the bundle is deployed to that path for instructional designers.</p>
 
       <h3>2. Create Data Files (for components that need them)</h3>
-      <p>Many components load data from JSON files; the <strong>Quiz</strong> component uses <strong>CSV</strong>. Upload files to eLC course files and reference them by the full file path (or relative path if in the same directory as your HTML).</p>
+      <p>Many components load data from JSON files. The <strong>uga-quiz</strong> component loads questions from <strong>JSON</strong> by default (<code>type="local"</code>); CSV is optional via <code>type="csv"</code>. Upload files to eLC course files and reference them with a relative filename when the file is next to your HTML, or use the full path from <strong>Manage Files</strong>.</p>
       <p><strong>How to find the file path in eLC:</strong></p>
       <ol>
         <li>Go to <strong>Content</strong> → <strong>Manage Files</strong> (or <strong>Course Admin</strong> → <strong>Manage Files</strong>)</li>
@@ -175,7 +177,7 @@
     "imageSrc": "https://design.online.uga.edu/images/uga-logo.png"
   }
 }</uga-code>
-      <p>Use <code>filename="footer-demo.json"</code> for local files. The <code>program</code> property uses an abbreviated program code (e.g. <code>msw</code>, <code>acct</code>) and loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. A full list of program codes and logo paths is on the <a href="footer.html">Footer demo</a> page.</p>
+      <p>Use <code>filename="footer-demo.json"</code> for local files. The <code>program</code> property uses an abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>) and loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. A full list of program codes and logo paths is on the <a href="footer.html">Footer demo</a> page (including <code>mfp</code> → <code>/shared/ugaonline/templates/mfp/img/MFP_logo_Horizontal_CW.png</code>).</p>
 
       <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note-data.json</a></h4>
       <uga-code language="javascript">{
@@ -199,7 +201,7 @@
       <h4>Quiz component: JSON file</h4>
       <p>The <strong>uga-quiz</strong> component loads questions from a JSON file. Use <code>type="local"</code> and <code>filename</code> pointing to your JSON file.</p>
       <p><strong>JSON format:</strong> The file must have a top-level <code>questions</code> array. Each question has <code>id</code>, <code>type</code>, <code>question</code>, <code>points</code>, <code>correctAnswer</code>, and optionally <code>options</code>, <code>explanation</code>, <code>caseSensitive</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the full format and examples.</p>
-      <p><strong>Steps:</strong> (1) Create a JSON file with a <code>questions</code> array (use quiz-sample.json, quiz10.json, or quiz20.json as templates). (2) Upload the file to the same folder as your HTML or to eLC Public Files. (3) Set <code>type="local"</code> and <code>filename="your-file.json"</code> on the quiz component. Use a relative path (e.g. <code>quiz-sample.json</code>) if the file is in the same folder, or a full path (e.g. <code>/shared/PublicFiles/quiz-sample.json</code>) for Public Files. See the <a href="quiz.html">Quiz demo</a> for full usage.</p>
+      <p><strong>Steps:</strong> (1) Create a JSON file with a <code>questions</code> array (use quiz-sample.json, quiz10.json, or quiz20.json as templates). (2) Upload the file to course files (ideally the same folder as your HTML page). (3) Set <code>type="local"</code> and <code>filename="your-file.json"</code> on the quiz. Use a filename only when the JSON sits next to the page, or paste the full path from <strong>Manage Files</strong>. See the <a href="quiz.html">Quiz demo</a> for full usage.</p>
 
       <h3>3. Component-Specific Setup</h3>
       
@@ -211,6 +213,7 @@
         <li><strong>uga-quiz</strong> - Embed formative quizzes; loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>). Can submit results to an eLC assignment. See <a href="quiz.html">Quiz demo</a> and <code>quiz-sample.json</code>.</li>
         <li><strong>uga-quiz-grade-sync</strong> - Instructor-only button to sync quiz submissions to the gradebook. Place below the quiz (or inside an instructor note); set <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;) or <code>dropbox-folder-id</code> to the assignment folder ID.</li>
         <li><strong>uga-course-analytics</strong> - Course-wide analytics aggregating data from content, assignments, discussions, and quizzes. Shows module-level consumption statistics and comparisons. Instructor-only. See <a href="course-analytics.html">Course Analytics demo</a>.</li>
+        <li><strong>uga-template-manager</strong> - Admin-only: template export / clear / back-copy (MVP: read-only preview). Configure <code>admin-role-names</code> or <code>admin-role-ids</code>; use <code>stub-mode</code> for demos. See <a href="../docs/COURSE_TEMPLATE_WIDGET.md">docs/COURSE_TEMPLATE_WIDGET.md</a> and <a href="template-manager.html">Template manager demo</a>.</li>
         <li><strong>uga-instructor-note</strong> - Visible only to instructors (uses eLC role checking)</li>
         <li><strong>uga-rating</strong> - Stores ratings in eLC forums</li>
       </ul>
@@ -303,7 +306,7 @@
       <ul>
         <li>Verify JSON file paths are correct relative to Public Files</li>
         <li>Check JSON syntax is valid (use a JSON validator)</li>
-        <li>For <strong>uga-quiz</strong>: create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>), upload it, then set <code>type="local"</code> and <code>filename</code> to the file path (relative if same folder, or full path like <code>/shared/PublicFiles/your-quiz.json</code>)</li>
+        <li>For <strong>uga-quiz</strong>: create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>), upload it, then set <code>type="local"</code> and <code>filename</code> to the file path (filename only if same folder as the page, or full course-files path)</li>
         <li>Ensure files are uploaded to the correct location in eLC</li>
       </ul>
 
