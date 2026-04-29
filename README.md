@@ -166,7 +166,7 @@ npm run preview
 
 ## 📦 Components Overview
 
-The repository includes 18 pre-built components:
+The repository includes 19 pre-built components:
 
 | Component                | Purpose                                                                                                                                                                                                                                                                                                                           |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -186,6 +186,7 @@ The repository includes 18 pre-built components:
 | **uga-return-to-top**    | Fixed button to scroll to top                                                                                                                                                                                                                                                                                                     |
 | **uga-slideshow**        | Image carousel with navigation                                                                                                                                                                                                                                                                                                    |
 | **uga-tabs**             | Tab navigation interface                                                                                                                                                                                                                                                                                                          |
+| **uga-template-manager** | Admin-only: course template workflows (export to Drive, clear template, back-copy live → template). MVP shows read-only content preview; see [docs/COURSE_TEMPLATE_WIDGET.md](docs/COURSE_TEMPLATE_WIDGET.md) |
 | **uga-toc**              | Auto-generated table of contents                                                                                                                                                                                                                                                                                                  |
 | **uga-video**            | Embed Kaltura or YouTube videos with logo control                                                                                                                                                                                                                                                                                 |
 
@@ -233,6 +234,8 @@ const kalturaPlayer = KalturaPlayer.setup({
 <uga-video videoid="1_icw0df6y" playerid="57494843" includerating="false">
 </uga-video>
 ```
+
+**Kaltura Djinn (caption Q&A):** Enable AI Q&A against captions by deploying the [Kaltura Djinn](https://github.com/uga-ool/uga-kaltura-djinn) API and setting **`enable-djinn`** + **`djinn-api-base`**. See **[docs/KALTURA_DJINN_D2L.md](./docs/KALTURA_DJINN_D2L.md)** for attributes and eLC checklist.
 
 **Multiple Videos:**
 

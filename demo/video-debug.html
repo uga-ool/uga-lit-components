@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Video Component Demo (Debug)</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
@@ -86,6 +87,8 @@
     <section class="component-demo">
       <h2>Single Video</h2>
       <div class="demo-description">
+        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+
         <p><strong>Embeds a single Kaltura video with customizable player.</strong> Use this method when you have one video to display. Logo/watermark is hidden by default.</p>
       </div>
 
@@ -196,7 +199,7 @@
   <!-- Video analytics debug: logs endpoint and request status to console -->
   <script>window.UGA_VIDEO_ANALYTICS_DEBUG = true;</script>
   <!-- Video analytics: required for event collection. For local dev, run: cd template-manager/api && npm run dev -->
-  <!-- For D2L, uncomment and set to your deployed backend URL: -->
+  <!-- For eLC / production: uncomment and set to your deployed backend URL: -->
   <!-- <script>window.UGA_VIDEO_ANALYTICS_URL = 'https://YOUR-API-SERVER/api/video-analytics/events';</script> -->
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 </body>

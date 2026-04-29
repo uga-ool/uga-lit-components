@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Course Analytics Component Demo</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
@@ -78,13 +79,27 @@
       border-left: 4px solid #ff9800;
       margin: 1rem 0;
     }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #ba0c2f;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
+  <div class="obj-container">
+    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
   <div class="component-demo">
     <h1>Course Analytics Component</h1>
     
     <div class="demo-description">
+        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> when the hostname is <code>localhost</code>; in eLC, the same script tag should resolve to the production bundle at <code>/shared/ugaonline/js/uga-components.js</code>.</p>
+
       <h2>Overview</h2>
       <p>
         The <code>&lt;uga-course-analytics&gt;</code> component provides course-wide analytics 
@@ -184,8 +199,8 @@
       </ul>
 
       <div class="note">
-        <strong>Note:</strong>         The component automatically groups assignments and discussions 
-        by module based on their distribution across course modules. For more accurate module assignment, 
+        <strong>Note:</strong> The component automatically groups assignments and discussions
+        by module based on their distribution across course modules. For more accurate module assignment,
         ensure your course content is properly organized with modules and topics.
       </div>
     </div>
@@ -213,6 +228,7 @@
         <li>Loading states during data fetch</li>
       </ul>
     </div>
+  </div>
   </div>
 
   <script>

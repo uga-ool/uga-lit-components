@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UGA Lit Components Demo</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
@@ -106,6 +107,7 @@
       <div class="intro">
         <p><strong>UGA Lit Components Demo</strong></p>
         <p>This page showcases all available Lit web components for UGA's eLC environment. Each component includes a live example, properties, and sample code.</p>
+        <p><strong>For instructional designers:</strong> In production eLC pages, load the bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code> (this demo uses the same path when not on localhost). Step-by-step setup, JSON examples, and troubleshooting: <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
     </header>
 
@@ -640,7 +642,7 @@ console.log(x);
           <tr>
             <td><code>filename</code></td>
             <td>String</td>
-            <td>Path to the JSON file. Use relative path (e.g. <code>quiz-sample.json</code>) if same folder as HTML, or full path (e.g. <code>/shared/PublicFiles/quiz-sample.json</code>) for eLC Public Files. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format.</td>
+            <td>Path to the JSON file. Use a filename only (e.g. <code>quiz-sample.json</code>) if the file is in the same folder as the HTML page, or the full path from course <strong>Manage Files</strong>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format.</td>
           </tr>
         </table>
       </div>
@@ -653,7 +655,7 @@ console.log(x);
   type="local"
   filename="quiz-sample.json"&gt;
 &lt;/uga-quiz&gt;</uga-code>
-        <p><strong>Note:</strong> Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>). Upload to the same folder as your HTML or to eLC Public Files. Set <code>type="local"</code> and <code>filename</code> to the file path (relative or full).</p>
+        <p><strong>Note:</strong> Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>). Upload to course files (same folder as your HTML when possible). Set <code>type="local"</code> and <code>filename</code> to the filename or full path from <strong>Manage Files</strong>.</p>
         
         <h4 style="margin-top: 1.5rem;">With Assignment Submission</h4>
         <uga-code language="markup">&lt;uga-quiz 
@@ -747,6 +749,27 @@ console.log(x);
   compare-modules="true"&gt;
 &lt;/uga-course-analytics&gt;</uga-code>
         <p><strong>Note:</strong> This component is instructor-only and will not display for students. It aggregates data from multiple eLC APIs, so loading may take several seconds for large courses. The component shows overall course statistics and a module comparison table with color-coded indicators for performance relative to course averages.</p>
+      </div>
+    </section>
+
+    <!-- Course Template Manager -->
+    <section class="component-demo" id="template-manager-demo">
+      <h2>Course Template Manager</h2>
+      <div class="demo-description">
+        <p><strong>Admin-only</strong> workflows for template export, clear, and back-copy (MVP: read-only preview). Configure <code>admin-role-names</code> or <code>admin-role-ids</code> in eLC. <a href="template-manager.html">Full demo</a> — uses <code>stub-mode</code> below for this page.</p>
+      </div>
+      <div class="demo-example">
+        <uga-template-manager
+          stub-mode
+          template-ou="demo-template-ou"
+          live-ou="demo-live-ou"
+        ></uga-template-manager>
+      </div>
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-template-manager
+  template-ou="TEMPLATE_ORG_UNIT_ID"
+  admin-role-names="Super Administrator"&gt;
+&lt;/uga-template-manager&gt;</uga-code>
       </div>
     </section>
 
@@ -914,7 +937,7 @@ console.log(x);
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Abbreviated program code (e.g. <code>msw</code>, <code>acct</code>). When set, data loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>; logo path is per program (see <a href="footer.html">Footer demo</a>).</td>
+            <td>Abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>). When set, data loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>; logo path is per program (see <a href="footer.html">Footer demo</a>).</td>
           </tr>
           <tr>
             <td>imagefile</td>
@@ -928,7 +951,7 @@ console.log(x);
         <uga-code language="markup">&lt;uga-footer filename="footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
-        <p>Use the abbreviated program code. Template data: <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. See <a href="footer.html">Footer demo</a> for program codes and logo paths.</p>
+        <p>Use the abbreviated program code (including <code>mfp</code> for Masters in Financial Planning). Template data: <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. See <a href="footer.html">Footer demo</a> for program codes and logo paths.</p>
         <uga-code language="markup">&lt;uga-footer program="msw"&gt;&lt;/uga-footer&gt;</uga-code>
       </div>
     </section>

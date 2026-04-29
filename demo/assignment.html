@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Assignment Component Demo</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
@@ -79,6 +80,8 @@
 
     <section class="component-demo">
       <div class="demo-description">
+        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+
         <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
         <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can download a CSV for an assignment that lists <strong>all students</strong>, whether they submitted, and their current gradebook value (blank if not graded yet).</p>
       </div>
@@ -161,7 +164,7 @@
         
         <p><strong>Important Notes:</strong></p>
         <ul>
-          <li><strong>Grade objects must exist</strong> - The assignment must have a corresponding grade object in the D2L gradebook. The component matches assignments to grade objects by name.</li>
+          <li><strong>Grade objects must exist</strong> - The assignment must have a corresponding grade object in the eLC gradebook. The component matches assignments to grade objects by name.</li>
           <li><strong>Export reads existing grades</strong> - The export feature reads grades that already exist in the gradebook. It does not create new grades or autograde submissions.</li>
           <li><strong>Instructor-only feature</strong> - Students will not see the export buttons, only the standard assignment list.</li>
         </ul>

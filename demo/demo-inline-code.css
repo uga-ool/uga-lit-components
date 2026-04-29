@@ -1,0 +1,10 @@
+/**
+ * Demo pages: keep inline <code> (e.g. filenames in links) visually aligned
+ * with surrounding paragraph text when using design.online.uga.edu base.css.
+ */
+.demo-description p code,
+.demo-props td code {
+  font-size: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+}

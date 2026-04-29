@@ -1,0 +1,17 @@
+{
+  "name": "uga-template-drive-upload",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Minimal backend for uploading course export bundles to Google Drive (secrets stay off the client).",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}
