@@ -1,0 +1,122 @@
+{
+  "data": {
+    "weeks": [
+      {
+        "label": "Week 1 - May 12-18 - Classes Begin",
+        "rows": [
+          {
+            "type": "open",
+            "date": "May 12",
+            "day": "Tuesday",
+            "moduleTitle": "Modules 00, 01 and 02 Open",
+            "moduleItems": [
+              "M00: Welcome and Introduction",
+              "M01: Starting Your APE",
+              "M02: The APE Portfolio"
+            ],
+            "event": "Classes Begin",
+            "notes": "First day of instruction."
+          },
+          {
+            "type": "open",
+            "date": "May 18",
+            "day": "Monday",
+            "moduleTitle": "Modules 03 and 04 Open",
+            "moduleItems": [
+              "M03: Revisiting Your APE Portfolio",
+              "M04: Crafting the Introduction Section"
+            ],
+            "event": "Drop/Add Ends",
+            "notes": "Final day to adjust schedule without academic penalty."
+          }
+        ]
+      },
+      {
+        "label": "Week 2 - May 19-25 - Memorial Day",
+        "rows": [
+          {
+            "type": "holiday",
+            "date": "May 25",
+            "day": "Monday",
+            "event": "Memorial Day - No Class",
+            "notes": "University holiday."
+          }
+        ]
+      },
+      {
+        "label": "Week 6 - June 16-22 - Midterm / Juneteenth",
+        "rows": [
+          {
+            "type": "exam",
+            "date": "June 18",
+            "day": "Thursday",
+            "event": "Midterm",
+            "notes": "UGA academic calendar midterm marker."
+          },
+          {
+            "type": "holiday",
+            "date": "June 19",
+            "day": "Friday",
+            "event": "Juneteenth - No Class",
+            "notes": "University holiday."
+          },
+          {
+            "type": "open",
+            "date": "June 22",
+            "day": "Monday",
+            "moduleTitle": "Modules 08 and 09 Open",
+            "moduleItems": [
+              "M08: Reflecting on SMART Goals",
+              "M09: Piecing Together Your Presentation"
+            ],
+            "event": "Modules 08 and 09 Open",
+            "notes": "No assignment due this week; use time to work ahead."
+          }
+        ]
+      },
+      {
+        "label": "Week 10 - July 14-20 - Withdrawal Deadline",
+        "rows": [
+          {
+            "type": "deadline",
+            "date": "July 15",
+            "day": "Wednesday",
+            "event": "Withdrawal Deadline",
+            "notes": "Last day to withdraw without academic penalty."
+          }
+        ]
+      },
+      {
+        "label": "Week 11 - July 21-26 - Final Submissions",
+        "rows": [
+          {
+            "type": "final",
+            "date": "July 26",
+            "day": "Sunday",
+            "event": "Final Submissions",
+            "notes": "Final submission milestone."
+          }
+        ]
+      },
+      {
+        "label": "Final Days - July 27-29",
+        "rows": [
+          {
+            "type": "admin",
+            "date": "July 27",
+            "day": "Monday",
+            "event": "Final Review",
+            "notes": "No new content. Final exam period begins July 30."
+          },
+          {
+            "type": "lastday",
+            "date": "July 29",
+            "day": "Wednesday",
+            "event": "Last Class Day",
+            "notes": "Final day of instruction. Grades due August 3."
+          }
+        ]
+      }
+    ]
+  }
+}

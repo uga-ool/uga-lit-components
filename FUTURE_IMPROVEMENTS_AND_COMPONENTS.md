@@ -39,20 +39,7 @@ import { getContentTOC, getContentTopics } from '../lib/api/d2l-client.js';
 - Complete course overview
 - Better visibility into all course requirements
 
-#### 1.3 Add Calendar Integration
-**Current:** Shows assignments/discussions  
-**Enhancement:** Display calendar events with due dates
-
-```typescript
-// Add calendar API support
-import { getCalendarEvents } from '../lib/api/d2l-client.js';
-```
-
-**Benefits:**
-- Unified view of all course deadlines
-- Better time management for students
-
-#### 1.4 Add Progress Tracking
+#### 1.3 Add Progress Tracking
 **Current:** Shows assignments  
 **Enhancement:** Show completion status (submitted, graded, etc.)
 
@@ -61,7 +48,7 @@ import { getCalendarEvents } from '../lib/api/d2l-client.js';
 - Visual progress indicators
 - Better engagement
 
-#### 1.5 Add Filtering/Sorting UI
+#### 1.4 Add Filtering/Sorting UI
 **Current:** Filter by type via attribute  
 **Enhancement:** Add UI controls for filtering and sorting
 

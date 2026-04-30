@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-01-09
 
+### uga-course-calendar
+
+- Added new `uga-course-calendar` component for rendering full week-by-week course calendars from JSON (static or program data source)
+- Supports row types (`open`, `due`, `holiday`, `deadline`, `exam`, `final`, `lastday`, `admin`), legend metadata, due tags, and optional embedded `uga-duedate`
+- Added optional `sync-due-status` mode to reconcile calendar date cells with live eLC assignment due dates by matching `dueTags[].folderId`
+- Added demo assets: `demo/course-calendar.html` and `demo/course-calendar-demo.json`
+- Updated docs in `demo/index-all-in-one.html`, `demo/setup.html`, and `README.md`
+- Added CSV input support with `type="csv"` using flat rows grouped by `weekLabel`
+- Added instructor CSV starter template `demo/course-calendar-template.csv` and sample `demo/course-calendar-demo.csv`
+
 ### uga-template-manager (course template widget — MVP)
 
 - New **admin-only** component `uga-template-manager`: read-only **content preview** (TOC module counts for live + template OU), stub mode for local demos, gated by `admin-role-names` / `admin-role-ids`
