@@ -179,6 +179,38 @@
 }</uga-code>
       <p>Use <code>filename="footer-demo.json"</code> for local files. The <code>program</code> property uses an abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>) and loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. A full list of program codes and logo paths is on the <a href="footer.html">Footer demo</a> page (including <code>mfp</code> → <code>/shared/ugaonline/templates/mfp/img/MFP_logo_Horizontal_CW.png</code>).</p>
 
+      <h4>Example: course-calendar-demo.json</h4>
+      <uga-code language="javascript">{
+  "data": {
+    "weeks": [
+      {
+        "label": "Week 1 - May 12-18 - Classes Begin",
+        "rows": [
+          {
+            "type": "open",
+            "date": "May 12",
+            "day": "Tuesday",
+            "moduleTitle": "Modules 00, 01 and 02 Open",
+            "moduleItems": ["M00: Welcome and Introduction"],
+            "event": "Classes Begin",
+            "notes": "First day of instruction."
+          }
+        ]
+      }
+    ]
+  }
+}</uga-code>
+      <p>Use <code>&lt;uga-course-calendar type="local" filename="course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;</code> to render the table. Put titles and intro copy in page HTML. Optional <code>caption</code> sets the table caption. Add <code>sync-from-course</code> (or legacy <code>sync-due-status</code>) only when rows include <code>dueTags</code> with <code>folderId</code> for assignment sync.</p>
+      <p><strong>CSV option:</strong> You can use <code>type="csv"</code> with a flat file that includes <code>weekLabel</code> on each row. Use <code>course-calendar-template.csv</code> as a starter template.</p>
+      <uga-code language="markup">&lt;uga-course-calendar type="csv" filename="course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;
+
+&lt;uga-course-calendar
+  type="csv"
+  filename="course-calendar-demo.csv"
+  sync-from-course&gt;
+&lt;/uga-course-calendar&gt;</uga-code>
+      <p><strong>CSV columns:</strong> required: <code>weekLabel</code>, <code>rowType</code>, <code>date</code>, <code>day</code>, <code>event</code>. Optional: <code>moduleTitle</code>, <code>moduleItems</code>, <code>notes</code>, <code>noteHint</code>, <code>rowDate</code>, <code>dueTags</code>, <code>folderIds</code>. Use pipe separators for multi-values (<code>|</code>), with <code>dueTags</code> and <code>folderIds</code> position-matched.</p>
+
       <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note-data.json</a></h4>
       <uga-code language="javascript">{
   "content": "&lt;p&gt;This is a note only visible to instructors.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Grading tip 1&lt;/li&gt;&lt;li&gt;Grading tip 2&lt;/li&gt;&lt;/ul&gt;"
@@ -211,6 +243,7 @@
         <li><strong>uga-assignment</strong> - Displays assignments, discussions, quizzes, and content with due dates from the current eLC course. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment,discussion"</code>). Supports grade export when <code>enable-export</code> is set.</li>
         <li><strong>uga-duedate</strong> - Displays due dates for assignments, discussions, quizzes, and content in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment"</code>).</li>
         <li><strong>uga-quiz</strong> - Embed formative quizzes; loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>). Can submit results to an eLC assignment. See <a href="quiz.html">Quiz demo</a> and <code>quiz-sample.json</code>.</li>
+        <li><strong>uga-course-calendar</strong> - Renders a week-by-week calendar from JSON. Optional <code>sync-due-status</code> mode updates date cells from live assignment due dates using <code>dueTags[].folderId</code>.</li>
         <li><strong>uga-quiz-grade-sync</strong> - Instructor-only button to sync quiz submissions to the gradebook. Place below the quiz (or inside an instructor note); set <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;) or <code>dropbox-folder-id</code> to the assignment folder ID.</li>
         <li><strong>uga-course-analytics</strong> - Course-wide analytics aggregating data from content, assignments, discussions, and quizzes. Shows module-level consumption statistics and comparisons. Instructor-only. See <a href="course-analytics.html">Course Analytics demo</a>.</li>
         <li><strong>uga-template-manager</strong> - Admin-only: template export / clear / back-copy (MVP: read-only preview). Configure <code>admin-role-names</code> or <code>admin-role-ids</code>; use <code>stub-mode</code> for demos. See <a href="../docs/COURSE_TEMPLATE_WIDGET.md">docs/COURSE_TEMPLATE_WIDGET.md</a> and <a href="template-manager.html">Template manager demo</a>.</li>

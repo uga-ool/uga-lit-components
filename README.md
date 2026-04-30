@@ -61,7 +61,7 @@ uga-lit-components/
 │   ├── accordion.html            # Individual component demo pages
 │   ├── video.html                # (one for each component)
 │   ├── toc.html
-│   ├── ...                       # (18 individual component pages)
+│   ├── ...                       # (19 individual component pages)
 │   ├── QUICK_START.md            # Quick start guide for demo system
 │   └── *.json                    # Sample data files (also on Google Drive)
 ├── src/
@@ -130,7 +130,7 @@ All components use **Light DOM** rendering (`createRenderRoot() { return this; }
 
 3. **Explore individual components:**
    - View comprehensive demo at `demo/index-all-in-one.html`
-   - Each component has its own dedicated demo page (18 individual pages)
+   - Each component has its own dedicated demo page (19 individual pages)
    - Access via eLC side navigation for easy browsing
    - Review `demo/setup.html` for deployment instructions
 
@@ -166,7 +166,7 @@ npm run preview
 
 ## 📦 Components Overview
 
-The repository includes 19 pre-built components:
+The repository includes 20 pre-built components:
 
 | Component                | Purpose                                                                                                                                                                                                                                                                                                                           |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -174,6 +174,7 @@ The repository includes 19 pre-built components:
 | **uga-assignment**       | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property.                                                                                                                                                                                                                 |
 | **uga-circles**          | Display data in circular badge format                                                                                                                                                                                                                                                                                             |
 | **uga-code**             | Syntax-highlighted code blocks with copy button                                                                                                                                                                                                                                                                                   |
+| **uga-course-calendar**  | Data-driven week-by-week course calendar table from JSON or CSV, with row-type styling, due tags, and optional live eLC due-date sync by assignment folder ID                                                                                                                                                                   |
 | **uga-course-analytics** | Course-wide analytics aggregating data from content, assignments, discussions, and quizzes. Shows module-level consumption statistics and comparisons. Instructor-only.                                                                                                                                                           |
 | **uga-duedate**          | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property.                                                                                                                                                                                                       |
 | **uga-footer**           | Site footer with branding                                                                                                                                                                                                                                                                                                         |
@@ -335,7 +336,7 @@ When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` bl
 | --------------------------------- | ----------------------------------------------------------------------------------------- |
 | `demo/index-all-in-one.html`      | Comprehensive all-in-one demo showing all components                                      |
 | `demo/setup.html`                 | Comprehensive setup, usage, and troubleshooting guide                                     |
-| `demo/[component].html`           | Individual component demo pages (18 total, including quiz.html, course-analytics.html, image.html) |
+| `demo/[component].html`           | Individual component demo pages (19 total, including quiz.html, course-analytics.html, course-calendar.html, image.html) |
 | `src/all.ts`                      | Entry point; eagerly imports all components                                               |
 | `src/components/*.ts`             | Individual component implementations                                                      |
 | `src/lib/api/d2l-client.ts`       | Centralized D2L API methods                                                               |
