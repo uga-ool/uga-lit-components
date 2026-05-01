@@ -130,7 +130,7 @@ This document tracks feature requests from the instructional design team for **e
 - **Course Relationship:** Need to identify template course associated with live course
 
 **Implementation Approach:**
-- Could be Lit component (`uga-template-manager`) or separate React app/widget
+- Could be Lit component (`uga-elc-google-sync`) or separate React app/widget
 - Requires significant eLC Content API integration
 - Google Drive API integration (may need backend service for OAuth)
 - File management operations between courses

@@ -5,7 +5,7 @@
 A comprehensive demo system with **multiple HTML pages** (hub, per-component demos, setup, and quiz variants) showcasing UGA Lit components:
 
 - ✅ **Main demo page** (`index-all-in-one.html`) - Comprehensive all-in-one scrollable demo with all components
-- ✅ **15 individual demo pages** - One per component (including Quiz), perfect for eLC side navigation
+- ✅ **19 individual demo pages** - One per component (including Quiz), perfect for eLC side navigation. Plus extra `quiz10.html` / `quiz20.html` variants and `video-debug.html` for analytics troubleshooting.
 - ✅ **Setup guide** (`setup.html`) - Deployment instructions and troubleshooting
 - ✅ **Property documentation** tables for every component
 - ✅ **Copy-paste ready** code snippets
@@ -36,6 +36,7 @@ demo/
 ├── circles.html
 ├── code.html
 ├── course-analytics.html
+├── course-calendar.html
 ├── duedate.html
 ├── footer.html
 ├── image.html
@@ -44,8 +45,13 @@ demo/
 ├── quiz.html
 ├── quiz10.html                   # Smaller quiz example
 ├── quiz20.html
-├── quiz-sync-note.html           # HTML fragments for instructor-note embeds
-├── quiz-sync-note-basic.html
+├── quiz/                         # Quiz JSON / CSV + instructor-note HTML for grade sync
+│   ├── quiz-sample.json          # All six question types (JSON)
+│   ├── quiz-sample.csv           # Same six types in eLC question-import CSV format
+│   ├── quiz10.json
+│   ├── quiz20.json
+│   ├── quiz-sync-note.html       # Wraps uga-quiz-grade-sync for instructors
+│   └── quiz-sync-note-basic.html
 ├── rating.html
 ├── return-to-top.html
 ├── slideshow.html
@@ -53,16 +59,23 @@ demo/
 ├── toc.html
 ├── video.html
 ├── video-debug.html
-├── template-manager.html         # uga-template-manager (admin / stub demo)
+├── elc-google-sync.html          # uga-elc-google-sync (admin / stub demo)
 ├── demo-inline-code.css          # Optional: inline <code> sizing in demo callouts
 ├── QUICK_START.md               # This file
-├── accordion-demo.json           # Sample data files (available on Google Drive)
-├── tabs-demo.json
-├── circles-demo.json
-├── slideshow-demo.json
-├── footer-demo.json
-├── quiz-sample.json
-└── instructor-note-demo.html
+├── accordion/accordion-demo.json    # Sample data (also on Google Drive)
+├── tabs/tabs-demo.json
+├── circles/circles-demo.json
+├── slideshow/slideshow-demo.json
+├── footer/footer-demo.json
+├── instructor-note/instructor-note-demo.html
+├── videos/videos-demo.json
+├── course-calendar/
+│   ├── course-calendar-demo.json
+│   ├── course-calendar-demo.csv
+│   └── course-calendar-template.csv
+├── image/demo_image.jpg
+├── quiz-demo.json               # Extra template at demo root (optional)
+└── quiz-sample.csv
 ```
 
 ## View the Demo Locally
@@ -187,13 +200,13 @@ In the eLC HTML editor, update file paths to:
 
 **Download example files from Google Drive links in the demo pages, then customize:**
 
-- `<uga-quiz>` - quiz-sample.json, quiz10.json, or quiz20.json. Create a JSON file with a `questions` array. Set `type="local"` and `filename="your-file.json"` on the component. See [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the full format.
-- `<uga-accordion>` - accordion-demo.json (expandable/collapsible sections)
-- `<uga-tabs>` - tabs-demo.json (tabbed content navigation)
-- `<uga-circles>` - circles-demo.json (circular statistics/figures)
-- `<uga-slideshow>` - slideshow-demo.json (image carousel with controls)
-- `<uga-footer>` - footer-demo.json (branded footer with logo)
-- `<uga-instructor-note>` - instructor-note-demo.html (instructor-only notes)
+- `<uga-quiz>` - e.g. `quiz/quiz-sample.json`, `quiz/quiz10.json`, or `quiz/quiz20.json` for JSON, or `quiz/quiz-sample.csv` for the eLC question-import CSV format. Set `type="local"` (JSON) or `type="csv"` (CSV) and point `filename` at the relative or Manage Files path. See [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the JSON format and CSV usage notes.
+- `<uga-accordion>` - `accordion/accordion-demo.json` (expandable/collapsible sections)
+- `<uga-tabs>` - `tabs/tabs-demo.json` (tabbed content navigation)
+- `<uga-circles>` - `circles/circles-demo.json` (circular statistics/figures)
+- `<uga-slideshow>` - `slideshow/slideshow-demo.json` (image carousel with controls)
+- `<uga-footer>` - `footer/footer-demo.json` (branded footer with logo)
+- `<uga-instructor-note>` - `instructor-note/instructor-note-demo.html` (instructor-only notes)
 
 **All example files include:**
 
@@ -204,7 +217,7 @@ In the eLC HTML editor, update file paths to:
 
 ### Components That Work Standalone
 
-- `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. When the image is in an `images/` folder next to your HTML page, use `src="images/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
+- `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. When the image is in an `image/` folder next to your HTML page, use `src="image/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
 - `<uga-toc>` - Auto-generates from h2/h3 headings on page
 - `<uga-return-to-top>` - Smooth scroll button (appears after scrolling)
 - `<uga-code>` - Syntax-highlighted code with copy button
@@ -214,7 +227,7 @@ In the eLC HTML editor, update file paths to:
 - `<uga-video>` - Kaltura video ID required (hides logo by default)
 - `<uga-assignment>` - Displays assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property (default: all types).
 - `<uga-duedate>` - Displays due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property (default: all types).
-- `<uga-quiz>` - Embed formative quizzes; loads questions from a JSON file. Use `type="local"` and `filename="your-quiz.json"`. The JSON file must have a `questions` array; see [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the format. Sample files: quiz-sample.json (all 6 types), quiz10.json, quiz20.json. Can submit results to an eLC assignment. See [Quiz demo](quiz.html).
+- `<uga-quiz>` - Embed formative quizzes; loads questions from a JSON file (`type="local"`) or an eLC question-import CSV (`type="csv"`). Use `filename` (e.g. `quiz/quiz-sample.json` or `quiz/quiz-sample.csv`). The JSON file must have a top-level `questions` array; see [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the format and CSV notes. Sample files in-repo: `quiz/quiz-sample.json` and `quiz/quiz-sample.csv` (all 6 types), `quiz/quiz10.json`, `quiz/quiz20.json`. Can submit results to an eLC assignment. See [Quiz demo](quiz.html).
 - `<uga-quiz-grade-sync>` - Instructor-only: sync quiz submissions to the linked grade item. Use `dropbox-assignment-name` (e.g. "Quiz Demo 2") or `dropbox-folder-id`. Place below the quiz or inside `uga-instructor-note`.
 - `<uga-rating>` - Collects user ratings via eLC forums
 

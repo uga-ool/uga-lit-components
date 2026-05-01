@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Course Template Manager Demo</title>
+  <title>eLC ⇄ Google Sync Demo</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
   <link rel="stylesheet" href="demo-inline-code.css">
   <style>
@@ -44,21 +44,21 @@
     <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
 
     <header class="util-margin-vert-lg">
-      <h1>Course Template Manager</h1>
+      <h1>eLC ⇄ Google Sync</h1>
     </header>
 
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a>.</p>
-        <p><strong>Admin-only</strong> widget for export to Google Drive, clearing a template, and back-copy from live to template. MVP shows a read-only content preview (module counts). Destructive actions and Drive export require configuration and API completion — see <a href="../docs/COURSE_TEMPLATE_WIDGET.md">docs/COURSE_TEMPLATE_WIDGET.md</a>.</p>
+        <p><strong>Admin-only</strong> widget for export to Google Drive, clearing a template, and back-copy from live to template. MVP shows a read-only content preview (module counts). Destructive actions and Drive export require configuration and API completion — see <a href="../docs/ELC_GOOGLE_SYNC_WIDGET.md">docs/ELC_GOOGLE_SYNC_WIDGET.md</a>.</p>
         <p>This page uses <code>stub-mode</code> so you can open it outside eLC; set <code>template-ou</code> to a real template course id in eLC for a live preview.</p>
       </div>
 
-      <uga-template-manager
+      <uga-elc-google-sync
         stub-mode
         template-ou="demo-template-ou"
         live-ou="demo-live-ou"
-      ></uga-template-manager>
+      ></uga-elc-google-sync>
     </section>
   </div>
 

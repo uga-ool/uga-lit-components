@@ -148,7 +148,7 @@ if (this.assignments.length === 0) {
 
 ---
 
-### 3. **uga-template-manager** - Course Template Management
+### 3. **uga-elc-google-sync** - eLC ⇄ Google Drive Course Template Sync
 **Priority:** ⭐⭐⭐ HIGH  
 **Requested by:** Chris Sparks  
 **Effort:** Very High  
@@ -287,7 +287,7 @@ Reusable loading component:
 ### Phase 3: High Priority Features (4-8 weeks)
 1. Create uga-quiz component (formative quizzes)
 2. Create uga-autograder component
-3. Create uga-template-manager component
+3. Create uga-elc-google-sync component
 
 ### Phase 4: Polish & Enhancements (Ongoing)
 1. Component base class
@@ -304,7 +304,7 @@ Based on feature requests and common needs:
 
 1. **uga-quiz** - Formative quizzes (Chris Sparks)
 2. **uga-autograder** - Auto-grading (Stephanie)
-3. **uga-template-manager** - Template management (Chris Sparks)
+3. **uga-elc-google-sync** - eLC ⇄ Google Drive template sync (Chris Sparks)
 4. **uga-groups** - Groups integration (Stephanie)
 5. **uga-rubric-upload** - Rubric upload tool (Dee)
 6. **uga-in-video-quiz** - LTI video quizzes (Stephen)

@@ -1,4 +1,4 @@
-# Course template management widget (`uga-template-manager`)
+# eLC ⇄ Google Sync widget (`uga-elc-google-sync`)
 
 Design reference for the admin-only widget described in [FEATURE_REQUESTS.md](../FEATURE_REQUESTS.md) (section 6). This document records **Phase 0 decisions** (institution-specific placeholders), **security/UX** expectations, and pointers to API research. Implementation details for Valence routes live in [COURSE_TEMPLATE_API_SPIKE.md](./COURSE_TEMPLATE_API_SPIKE.md).
 
@@ -33,6 +33,7 @@ Design reference for the admin-only widget described in [FEATURE_REQUESTS.md](..
 
 ## Related files
 
-- Component: [src/components/uga-template-manager.ts](../src/components/uga-template-manager.ts)
-- API helpers: [src/lib/api/d2l-client-template.ts](../src/lib/api/d2l-client-template.ts)
-- Demo: [demo/template-manager.html](../demo/template-manager.html)
+- Component: [src/components/uga-elc-google-sync.ts](../src/components/uga-elc-google-sync.ts)
+- API helpers: [src/lib/api/d2l-client-elc-google-sync.ts](../src/lib/api/d2l-client-elc-google-sync.ts)
+- Demo: [demo/elc-google-sync.html](../demo/elc-google-sync.html)
+- Standalone React app + Node API (optional): [elc-google-sync/](../elc-google-sync/)

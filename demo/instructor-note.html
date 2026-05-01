@@ -80,16 +80,16 @@
 
     <section class="component-demo">
       <div class="demo-description">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and examples.</p>
 
         <p><strong>Displays notes visible only to instructors.</strong> Uses eLC role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
-        <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note-demo.html</code></a>
-          to modify and upload it to your course files.</p>
+        <p><strong>Content file:</strong> The note is an <strong>HTML fragment</strong> (not JSON). Download
+          <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note/instructor-note-demo.html</code></a>
+          (or copy the file in this folder), edit the HTML, and upload it to your course files. Reference it with <code>filename="your-note.html"</code> when it sits next to your page, or use the full path from <strong>Manage Files</strong>.</p>
       </div>
 
       <div class="demo-example">
-        <uga-instructor-note type="local" filename="instructor-note-demo.html"></uga-instructor-note>
+        <uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"></uga-instructor-note>
         <p><em>Note: Only visible to users with instructor role in eLC</em></p>
       </div>
 
@@ -104,24 +104,25 @@
           <tr>
             <td>type</td>
             <td>string</td>
-            <td>Data source type: 'local' or 'program'</td>
+            <td>Data source type: <code>local</code> (course-files HTML) or <code>program</code> (shared template HTML)</td>
           </tr>
           <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file with note content</td>
+            <td>Name (or full path) of the <strong>HTML fragment</strong> that holds the note content. Use the filename when the file is next to the page; otherwise paste the full path from <strong>Manage Files</strong>.</td>
           </tr>
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Program identifier (for program type)</td>
+            <td>Program code when loading shared template HTML (used with <code>type="program"</code>)</td>
           </tr>
         </table>
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-instructor-note type="local" filename="instructor-notes.json"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
       </div>
+      <p><em>The HTML in the file is rendered inside a styled callout. See <a href="instructor-note/instructor-note-demo.html">instructor-note/instructor-note-demo.html</a> for sample markup (in eLC, upload under <code>instructor-note/</code> and use <code>filename="instructor-note/instructor-note-demo.html"</code>).</em></p>
     </section>
 
     <uga-return-to-top></uga-return-to-top>

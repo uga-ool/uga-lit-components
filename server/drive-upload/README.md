@@ -18,7 +18,7 @@ npm start
 - `POST /upload` – raw body (`application/octet-stream`) is uploaded as a new file in the target folder  
   - Optional: `Authorization: Bearer <DRIVE_UPLOAD_TOKEN>` if `DRIVE_UPLOAD_TOKEN` is set in `.env`
 
-The `uga-template-manager` component can point `drive-upload-url` to `http://localhost:3847/upload` in development only.
+The `uga-elc-google-sync` component can point `drive-upload-url` to `http://localhost:3847/upload` in development only.
 
 ## Production
 

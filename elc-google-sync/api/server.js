@@ -1,5 +1,5 @@
 /**
- * Template Manager API
+ * eLC ⇄ Google Sync API
  * Backend for Google Drive OAuth, D2L proxy, and video analytics.
  *
  * Video analytics: in-memory store for MVP. Use PostgreSQL or similar for production.
@@ -19,7 +19,7 @@ const videoEvents = [];
 
 app.get('/', (req, res) => {
   res.json({
-    service: 'template-manager-api',
+    service: 'elc-google-sync-api',
     status: 'ok',
     endpoints: {
       health: 'GET /health',
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'template-manager-api' });
+  res.json({ status: 'ok', service: 'elc-google-sync-api' });
 });
 
 /**
@@ -102,5 +102,5 @@ app.get('/api/video-analytics/aggregate', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Template Manager API running on port ${PORT}`);
+  console.log(`eLC ⇄ Google Sync API running on port ${PORT}`);
 });

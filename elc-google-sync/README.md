@@ -1,6 +1,6 @@
-# Course Template Management Widget
+# eLC ⇄ Google Sync Widget
 
-Admin-only widget for managing course templates and live course files in eLC (D2L Brightspace). Placed in a live class and visible only to admins.
+Admin-only widget for syncing course content between eLC (D2L Brightspace) templates and Google Drive. Placed in a live class and visible only to admins. Implemented as the `uga-elc-google-sync` Lit component (see [src/components/uga-elc-google-sync.ts](../src/components/uga-elc-google-sync.ts)) and an optional standalone React app + Node API in this folder.
 
 ## Operations
 
@@ -11,7 +11,7 @@ Admin-only widget for managing course templates and live course files in eLC (D2
 ## Project Structure
 
 ```
-template-manager/
+elc-google-sync/
 ├── app/          # React frontend (embedded in eLC content)
 ├── api/          # Node.js backend (Google Drive, D2L proxy)
 ├── SPEC.md       # Detailed specification and API requirements

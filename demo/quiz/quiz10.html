@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fixed Assets Quiz</title>
+  <title>Receivables Quiz</title>
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="demo-inline-code.css">
+  <link rel="stylesheet" href="../demo-inline-code.css">
   <style>
     .obj-container {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -18,31 +18,36 @@
       border-bottom: 3px solid #ba0c2f;
       padding-bottom: 1rem;
     }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #ba0c2f;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <div class="obj-container">
     <header>
-      <h1>Fixed Assets & PP&E Quiz</h1>
-      <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a>. This demo loads questions from <code>quiz20.json</code> via <code>type="local"</code>.</p>
+      <h1>Receivables Quiz</h1>
+      <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="../setup.html">Setup &amp; Usage</a>. This demo loads questions from <code>quiz10.json</code> in this folder via <code>type="local"</code> (from the repo root demo page use <code>quiz/quiz10.json</code>).</p>
     </header>
 
     <section>
       <uga-quiz
+        quiz-id="quiz10-receivables"
+        quiz-title="Receivables Quiz"
         passing-score="70"
         allow-retry="true"
         max-attempts="99"
         show-feedback="true"
-        randomize-questions="true"
-        randomize-answers="true"  
         type="local"
-        filename="quiz20.json"
-        dropbox-assignment-name="Quiz 20">
+        filename="quiz10.json">
       </uga-quiz>
     </section>
-    <p></p>
-    <uga-instructor-note type="local" filename="quiz-sync-note.html"></uga-instructor-note>
-    <p></p>
   </div>
 
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>

@@ -19,7 +19,7 @@ The **uga-quiz** component is a standalone Lit component used as embedded HTML. 
 </uga-quiz>
 ```
 
-**Important:** `type="local"` and `filename` are required when using a JSON file. Use a relative path (e.g. `quiz-sample.json`) if the file is in the same directory as your HTML, or a full path (e.g. `/shared/PublicFiles/my-quiz.json`) if stored in eLC Public Files.
+**Important:** `type="local"` and `filename` are required when using a JSON file. Use a relative path from the HTML page (e.g. `quiz/quiz-sample.json` when the JSON sits under `quiz/` next to the page), or a full path (e.g. `/shared/PublicFiles/my-quiz.json`) if stored in eLC Public Files.
 
 ## JSON File Structure
 
@@ -172,27 +172,44 @@ The JSON file must have a top-level `questions` array. An optional `title` field
 
 ## File Location and Paths
 
-- **Same directory as HTML:** Use `filename="quiz-sample.json"` (relative path).
-- **eLC Public Files:** Use `filename="/shared/PublicFiles/quiz-sample.json"` (full path).
+- **Relative to HTML:** Use `filename="quiz/quiz-sample.json"` when organized in a subfolder, or `filename="my-quiz.json"` when the file sits next to the page.
+- **eLC Public Files:** Use `filename="/shared/PublicFiles/my-quiz.json"` (full path).
 - **Course content folder:** Use the path relative to your HTML (e.g. `filename="../files/my-quiz.json"`).
 
 **Tip:** Upload the JSON file to the same folder as your content page so the relative path works. If the quiz shows "JSON file not found," check that the path is correct and the file is uploaded.
 
 ## Sample Files
 
-- **demo/quiz-sample.json** – All six question types (multiple-choice, true-false, short-answer, matching, multi-select, ordering)
-- **demo/quiz10.json** – Multiple-choice only (4 questions)
-- **demo/quiz20.json** – Multiple-choice only (8 questions)
+- **demo/quiz/quiz-sample.json** – All six question types (multiple-choice, true-false, short-answer, matching, multi-select, ordering)
+- **demo/quiz/quiz10.json** – Multiple-choice only (4 questions)
+- **demo/quiz/quiz20.json** – Multiple-choice only (8 questions)
+- **demo/quiz/quiz-sample.csv** – Same six question types in eLC question-import CSV format (use with `type="csv"`)
 
-## Converting from CSV
+## Using an eLC CSV file directly
 
-If you have quiz questions in eLC CSV format, use the `scripts/csv-to-json.ts` script to convert:
+You can skip the JSON conversion entirely and load an eLC question-import CSV with `type="csv"`:
+
+```html
+<uga-quiz
+  quiz-id="my-quiz"
+  quiz-title="My Quiz"
+  passing-score="70"
+  type="csv"
+  filename="quiz/quiz-sample.csv">
+</uga-quiz>
+```
+
+The CSV must follow eLC's question-import layout: each question is a block of rows starting with `NewQuestion,<type>` (`MC`, `TF`, `SA`/`WR`, `M`, `MS`, `O`) and including `QuestionText`, `Points`, and the type-specific rows (`Option`, `TRUE`/`FALSE`, `Answer`, `Choice`/`Match`, `Item`). Lines beginning with `//` are treated as comments. See `demo/quiz/quiz-sample.csv` for a complete template covering all six types.
+
+## Converting from CSV (optional)
+
+If you would rather store JSON in your course files, you can convert eLC CSV to JSON with the included script:
 
 ```bash
 npx tsx scripts/csv-to-json.ts path/to/quiz.csv path/to/output.json
 ```
 
-Or use `type="csv"` with `filename` pointing to a CSV file for eLC CSV format support.
+Both `type="csv"` (read CSV at runtime) and converting to JSON ahead of time produce the same quiz UI.
 
 ## See Also
 

@@ -93,16 +93,16 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file or a program-specific footer image stored in public files.</p>
-        <p><strong>eLC setup:</strong> Load the component bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. Upload <code>footer-demo.json</code> to your course files. If the file is in the same folder as this page, use <code>filename="footer-demo.json"</code>; otherwise use the full path (e.g. <code>/content/enforced/COURSE_ID/.../footer-demo.json</code>). Use the abbreviated program code for <code>program=</code> (e.g. <code>program="msw"</code> for Master of Social Work or <code>program="mfp"</code> for Masters in Financial Planning). Logo paths are per-template (see list below).</p>
+        <p><strong>eLC setup:</strong> Load the component bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. Upload <code>footer/footer-demo.json</code> (or your chosen path under Manage Files). Use <code>filename="footer/footer-demo.json"</code> when that folder sits next to your HTML page; otherwise use the full path from Manage Files. Use the abbreviated program code for <code>program=</code> (e.g. <code>program="msw"</code> for Master of Social Work or <code>program="mfp"</code> for Masters in Financial Planning). Logo paths are per-template (see list below).</p>
         <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>
           to modify and upload to your course files.</p>
       </div>
 
       <div class="demo-example">
         <h4 style="margin-top: 0; margin-bottom: 1rem;">Default footer (course file JSON)</h4>
         <p style="margin: 0 0 0.5rem 0; font-size: 0.9em; color: #555;">When the file is stored locally in the course files (same folder as this page), use the filename only.</p>
-        <uga-footer filename="footer-demo.json"></uga-footer>
+        <uga-footer filename="footer/footer-demo.json"></uga-footer>
       </div>
       <div class="demo-example">
         <h4 style="margin-top: 0; margin-bottom: 1rem;">Master of Social Work footer (program template)</h4>
@@ -120,7 +120,7 @@
           <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file (required for local/course files). When the file is in the same folder as the page, use the filename only, e.g. <code>filename="footer-demo.json"</code>; otherwise use the full path. Not needed when using <code>program</code>.</td>
+            <td>Name of the JSON data file (required for local/course files). Example when organized by folder: <code>filename="footer/footer-demo.json"</code>. Use the filename only when the file is next to the page, or the full path from Manage Files. Not needed when using <code>program</code>.</td>
           </tr>
           <tr>
             <td>program</td>
@@ -132,13 +132,18 @@
             <td>string</td>
             <td>Optional. Logo image filename when using <code>program</code>; if omitted, defaults to <code>{program}.png</code> in that template's <code>img/</code> folder. For local mode, used when JSON doesn't include imageSrc.</td>
           </tr>
+          <tr>
+            <td>cache-bust</td>
+            <td>boolean</td>
+            <td>Optional. When set, appends a <code>?t=timestamp</code> query string to the local JSON URL so eLC users see the most recent edits without a hard refresh. Useful while iterating on <code>footer/footer-demo.json</code>.</td>
+          </tr>
         </table>
       </div>
 
       <div class="demo-code">
         <h4>Basic usage (course file)</h4>
-        <p>When the JSON file is in the same folder as the page: <code>filename="footer-demo.json"</code>. Otherwise use the full path to the file.</p>
-        <uga-code language="markup">&lt;uga-footer filename="footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
+        <p>When the JSON lives under a <code>footer/</code> folder next to the page: <code>filename="footer/footer-demo.json"</code>. Otherwise use the full path from Manage Files.</p>
+        <uga-code language="markup">&lt;uga-footer filename="footer/footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
         <p>Use the abbreviated program code with <code>program=</code>. Template data loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>.</p>

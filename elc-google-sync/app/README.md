@@ -1,6 +1,6 @@
-# Template Manager App
+# eLC ⇄ Google Sync App
 
-React frontend for the Course Template Management Widget. Embed in eLC content; visible only to admins.
+React frontend for the eLC ⇄ Google Sync widget (paired with `uga-elc-google-sync`). Embed in eLC content; visible only to admins.
 
 ## Development
 
