@@ -118,8 +118,8 @@
     <section class="component-demo" id="toc-demo">
       <h2>Table of Contents Component</h2>
       <div class="demo-description">
-        <p><strong>Auto-generates a navigable table of contents</strong> from all headings (h1-h4) on the page. Provides smooth scrolling navigation.</p>
-        <p><em>Note: The TOC above this section is a live example! It automatically scans all h1-h4 headings on the page.</em></p>
+        <p><strong>Auto-generates a navigable table of contents</strong> from h2 and h3 headings on the page. Provides smooth scrolling navigation, and auto-generates IDs for headings that don't already have one.</p>
+        <p><em>Note: The TOC above this section is a live example. It scans the page's h2 and h3 headings only (h4 and lower are intentionally excluded for cleaner navigation).</em></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -141,11 +141,11 @@
       <div class="demo-description">
         <p><strong>Creates expandable/collapsible content sections.</strong> Great for FAQs, course modules, or organizing large amounts of content.</p>
         <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>accordion-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>accordion/accordion-demo.json</code></a>
           to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
-        <uga-accordion type="local" filename="accordion-demo.json"></uga-accordion>
+        <uga-accordion type="local" filename="accordion/accordion-demo.json"></uga-accordion>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -173,7 +173,7 @@
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-accordion type="local" filename="accordion-data.json"&gt;&lt;/uga-accordion&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-accordion type="local" filename="accordion/accordion-demo.json"&gt;&lt;/uga-accordion&gt;</uga-code>
       </div>
     </section>
 
@@ -183,11 +183,11 @@
       <div class="demo-description">
         <p><strong>Creates tabbed content sections.</strong> Ideal for organizing related content that users can switch between without leaving the page.</p>
         <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1a4rAQHgJCY8Z6u-dRpQ4fp8yibmDLm78/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>tabs-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1a4rAQHgJCY8Z6u-dRpQ4fp8yibmDLm78/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>tabs/tabs-demo.json</code></a>
           to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
-        <uga-tabs type="local" filename="tabs-demo.json"></uga-tabs>
+        <uga-tabs type="local" filename="tabs/tabs-demo.json"></uga-tabs>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -215,7 +215,7 @@
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-tabs type="local" filename="tabs-data.json"&gt;&lt;/uga-tabs&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-tabs type="local" filename="tabs/tabs-demo.json"&gt;&lt;/uga-tabs&gt;</uga-code>
       </div>
     </section>
 
@@ -225,11 +225,11 @@
       <div class="demo-description">
         <p><strong>Creates an image slideshow with navigation controls.</strong> Perfect for visual content, step-by-step instructions, or image galleries.</p>
         <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>slideshow-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>slideshow/slideshow-demo.json</code></a>
           to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
-        <uga-slideshow filename="slideshow-demo.json" imageheight="400"></uga-slideshow>
+        <uga-slideshow filename="slideshow/slideshow-demo.json" imageheight="400"></uga-slideshow>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -252,7 +252,7 @@
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-slideshow filename="slideshow-data.json" imageheight="400"&gt;&lt;/uga-slideshow&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-slideshow filename="slideshow/slideshow-demo.json" imageheight="400"&gt;&lt;/uga-slideshow&gt;</uga-code>
       </div>
     </section>
 
@@ -260,11 +260,11 @@
     <section class="component-demo" id="image-demo">
       <h2>Image Component</h2>
       <div class="demo-description">
-        <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Use a relative path (e.g. <code>images/your-image.jpg</code> when the image is in an images folder next to your page) or the full path from eLC Manage Files.</p>
+        <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Use a relative path (e.g. <code>image/your-image.jpg</code> when the image is in an <code>image/</code> folder next to your page) or the full path from eLC Manage Files.</p>
       </div>
       <div class="demo-example">
         <uga-image
-          src="images/demo_image.jpg"
+          src="image/demo_image.jpg"
           alt="Sample image for demonstration"
           caption="Click the image to expand and use zoom controls to view details. Use Ctrl/Cmd+scroll or double-click to zoom in the lightbox."
         ></uga-image>
@@ -330,7 +330,7 @@
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-image src="images/your-image.jpg" alt="Description" caption="Optional caption"&gt;&lt;/uga-image&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-image src="image/your-image.jpg" alt="Description" caption="Optional caption"&gt;&lt;/uga-image&gt;</uga-code>
       </div>
     </section>
 
@@ -407,12 +407,12 @@
       <div class="demo-description">
         <p><strong>Embeds multiple Kaltura videos from a JSON data file.</strong> Use this method when you want to load multiple videos from a single JSON file. Perfect for course playlists or module video collections.</p>
         <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos/videos-demo.json</code></a>
           to modify and upload it to your course files.</p>
       </div>
 
       <div class="demo-example">
-        <uga-video type="local" filename="videos-demo.json"></uga-video>
+        <uga-video type="local" filename="videos/videos-demo.json"></uga-video>
       </div>
 
       <div class="demo-props">
@@ -453,10 +453,10 @@
 
       <div class="demo-code">
         <uga-code language="markup">&lt;!-- Multiple videos from file --&gt;
-&lt;uga-video type="local" filename="videos-demo.json"&gt;&lt;/uga-video&gt;
+&lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With custom player ID --&gt;
-&lt;uga-video type="local" filename="videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
+&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -572,8 +572,8 @@ console.log(x);
     <section class="component-demo" id="quiz-demo">
       <h2>Quiz Component</h2>
       <div class="demo-description">
-        <p><strong>Embed formative quizzes directly in content pages.</strong> Loads questions from a JSON file: set <code>type="local"</code> and <code>filename="your-quiz.json"</code>. The JSON file must have a <code>questions</code> array—see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format. Supports multiple question types (multiple choice, true/false, matching, short answer, multi-select, ordering), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
-        <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-assignment-name</code> (or <code>dropbox-folder-id</code>) to test.</p>
+        <p><strong>Embed formative quizzes directly in content pages.</strong> Loads questions from a JSON file (<code>type="local"</code> + <code>filename="your-quiz.json"</code>) or from an eLC CSV question-import file (<code>type="csv"</code> + <code>filename="your-quiz.csv"</code>). The JSON file must have a top-level <code>questions</code> array—see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format. CSV must follow the eLC question-import layout (see <code>quiz/quiz-sample.csv</code>). Supports multiple question types (multiple choice, true/false, matching, short answer, multi-select, ordering), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
+        <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes both JSON and CSV live examples, plus <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-assignment-name</code> (or <code>dropbox-folder-id</code>) to test.</p>
       </div>
       <div class="demo-example">
         <uga-quiz 
@@ -584,11 +584,11 @@ console.log(x);
           max-attempts="99"
           show-feedback="true"
           type="local"
-          filename="quiz-sample.json"
+          filename="quiz/quiz-sample.json"
           dropbox-assignment-name="Quiz Demo 2">
         </uga-quiz>
         <p></p>
-        <uga-instructor-note type="local" filename="quiz-sync-note.html"></uga-instructor-note>
+        <uga-instructor-note type="local" filename="quiz/quiz-sync-note.html"></uga-instructor-note>
         <p></p>
       </div>
       <div class="demo-props">
@@ -630,19 +630,44 @@ console.log(x);
             <td>Show immediate feedback after answering (default: true)</td>
           </tr>
           <tr>
+            <td><code>randomize-questions</code></td>
+            <td>Boolean</td>
+            <td>Randomize question order (default: false)</td>
+          </tr>
+          <tr>
+            <td><code>randomize-answers</code></td>
+            <td>Boolean</td>
+            <td>Shuffle answer options within each question (default: false)</td>
+          </tr>
+          <tr>
             <td><code>time-limit</code></td>
             <td>Number</td>
             <td>Time limit in minutes (0 = no limit, default: 0)</td>
           </tr>
           <tr>
+            <td><code>auto-submit</code></td>
+            <td>Boolean</td>
+            <td>Auto-submit when timer expires (default: false)</td>
+          </tr>
+          <tr>
             <td><code>type</code></td>
-            <td>'local'</td>
-            <td>Load questions from JSON file (use with <code>filename</code>)</td>
+            <td>String</td>
+            <td>Question source: <code>local</code> (JSON file via <code>filename</code>), <code>csv</code> (eLC question-import CSV via <code>filename</code>), or <code>inline</code> (JSON inside the element). Default: <code>inline</code>.</td>
           </tr>
           <tr>
             <td><code>filename</code></td>
             <td>String</td>
-            <td>Path to the JSON file. Use a filename only (e.g. <code>quiz-sample.json</code>) if the file is in the same folder as the HTML page, or the full path from course <strong>Manage Files</strong>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format.</td>
+            <td>Path to the JSON or CSV file when <code>type="local"</code> / <code>type="csv"</code>. Example when organized by folder: <code>quiz/quiz-sample.json</code> or <code>quiz/quiz-sample.csv</code>. Use a relative path from the HTML page or the full path from course <strong>Manage Files</strong>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the JSON format; CSV follows the eLC question-import layout (see the Quiz demo).</td>
+          </tr>
+          <tr>
+            <td><code>dropbox-assignment-name</code></td>
+            <td>String</td>
+            <td>Name of the eLC assignment (e.g. "Quiz Demo 2") that receives quiz submissions. The instructor must create the assignment and make it visible.</td>
+          </tr>
+          <tr>
+            <td><code>dropbox-folder-id</code></td>
+            <td>Number</td>
+            <td>Numeric assignment (dropbox) folder ID; alternative to <code>dropbox-assignment-name</code>. Read it from the assignment URL (<code>db=...</code>).</td>
           </tr>
         </table>
       </div>
@@ -653,7 +678,7 @@ console.log(x);
   quiz-title="Formative Quiz"
   passing-score="70"
   type="local"
-  filename="quiz-sample.json"&gt;
+  filename="quiz/quiz-sample.json"&gt;
 &lt;/uga-quiz&gt;</uga-code>
         <p><strong>Note:</strong> Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>). Upload to course files (same folder as your HTML when possible). Set <code>type="local"</code> and <code>filename</code> to the filename or full path from <strong>Manage Files</strong>.</p>
         
@@ -663,10 +688,10 @@ console.log(x);
   quiz-title="My Quiz"
   passing-score="70"
   type="local"
-  filename="quiz-sample.json"
+  filename="quiz/quiz-sample.json"
   dropbox-assignment-name="Quiz Demo 2"&gt;
 &lt;/uga-quiz&gt;
-&lt;uga-instructor-note type="local" filename="quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+&lt;uga-instructor-note type="local" filename="quiz/quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
         <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. The instructor note contains the grade sync component. When synced, the most recent grade overwrites any current grade for each student.</p>
         
         <h4 style="margin-top: 1.5rem;">With Timer and Assignment Submission</h4>
@@ -677,10 +702,10 @@ console.log(x);
   time-limit="10"
   auto-submit="true"
   type="local"
-  filename="quiz-sample.json"
+  filename="quiz/quiz-sample.json"
   dropbox-assignment-name="Quiz Demo 2"&gt;
 &lt;/uga-quiz&gt;
-&lt;uga-instructor-note type="local" filename="quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+&lt;uga-instructor-note type="local" filename="quiz/quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
         <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot; When synced, the most recent grade overwrites any current grade for each student.</p>
       </div>
     </section>
@@ -689,7 +714,8 @@ console.log(x);
     <section class="component-demo" id="course-analytics-demo">
       <h2>Course Analytics Component</h2>
       <div class="demo-description">
-        <p><strong>Course-wide analytics aggregating data from content, assignments, discussions, and quizzes.</strong> Shows module-level consumption statistics and comparisons. Instructor-only component that provides insights into student engagement across course modules.</p>
+        <p><strong>Course-wide analytics aggregating data from content, assignments, and discussions.</strong> Shows module-level consumption statistics and comparisons across course modules.</p>
+        <p><strong>Important:</strong> This component does <strong>not</strong> perform its own role check. Hide the embedding page from students with eLC release conditions before publishing.</p>
         <p><a href="course-analytics.html">Open full Course Analytics demo</a> — includes detailed usage examples and property documentation.</p>
       </div>
       <div class="demo-example">
@@ -723,10 +749,10 @@ console.log(x);
             <td>Show discussion participation statistics</td>
           </tr>
           <tr>
-            <td><code>show-quizzes</code></td>
-            <td>Boolean</td>
-            <td>true</td>
-            <td>Show quiz completion statistics</td>
+            <td><code>group-by</code></td>
+            <td>String</td>
+            <td>'module'</td>
+            <td>Grouping for analytics: <code>module</code>, <code>topic</code>, or <code>all</code> (currently only <code>module</code> is implemented)</td>
           </tr>
           <tr>
             <td><code>compare-modules</code></td>
@@ -745,31 +771,30 @@ console.log(x);
   show-content-stats="true"
   show-assignments="true"
   show-discussions="false"
-  show-quizzes="false"
   compare-modules="true"&gt;
 &lt;/uga-course-analytics&gt;</uga-code>
-        <p><strong>Note:</strong> This component is instructor-only and will not display for students. It aggregates data from multiple eLC APIs, so loading may take several seconds for large courses. The component shows overall course statistics and a module comparison table with color-coded indicators for performance relative to course averages.</p>
+        <p><strong>Note:</strong> The component aggregates data from multiple eLC APIs, so loading may take several seconds for large courses. It shows overall course statistics and a module comparison table with color-coded indicators for performance relative to course averages. Always restrict the embedding page to instructors via release conditions—the component itself does not check roles.</p>
       </div>
     </section>
 
-    <!-- Course Template Manager -->
-    <section class="component-demo" id="template-manager-demo">
-      <h2>Course Template Manager</h2>
+    <!-- eLC ⇄ Google Sync -->
+    <section class="component-demo" id="elc-google-sync-demo">
+      <h2>eLC ⇄ Google Sync</h2>
       <div class="demo-description">
-        <p><strong>Admin-only</strong> workflows for template export, clear, and back-copy (MVP: read-only preview). Configure <code>admin-role-names</code> or <code>admin-role-ids</code> in eLC. <a href="template-manager.html">Full demo</a> — uses <code>stub-mode</code> below for this page.</p>
+        <p><strong>Admin-only</strong> workflows for template export to Google Drive, clearing a template, and back-copy from live to template (MVP: read-only preview). Configure <code>admin-role-names</code> or <code>admin-role-ids</code> in eLC. <a href="elc-google-sync.html">Full demo</a> — uses <code>stub-mode</code> below for this page.</p>
       </div>
       <div class="demo-example">
-        <uga-template-manager
+        <uga-elc-google-sync
           stub-mode
           template-ou="demo-template-ou"
           live-ou="demo-live-ou"
-        ></uga-template-manager>
+        ></uga-elc-google-sync>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-template-manager
+        <uga-code language="markup">&lt;uga-elc-google-sync
   template-ou="TEMPLATE_ORG_UNIT_ID"
   admin-role-names="Super Administrator"&gt;
-&lt;/uga-template-manager&gt;</uga-code>
+&lt;/uga-elc-google-sync&gt;</uga-code>
       </div>
     </section>
 
@@ -797,11 +822,11 @@ console.log(x);
       <div class="demo-description">
         <p><strong>Displays circular figures with captions.</strong> Perfect for statistics, progress indicators, or visual data representation.</p>
         <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1M4Yqk_cgFMzCftXe1Whw8ytyH6ShyiCA/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>circles-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1M4Yqk_cgFMzCftXe1Whw8ytyH6ShyiCA/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>circles/circles-demo.json</code></a>
           to modify and upload it to your course files.</p>
       </div>
       <div class="demo-example">
-        <uga-circles type="local" filename="circles-demo.json"></uga-circles>
+        <uga-circles type="local" filename="circles/circles-demo.json"></uga-circles>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -829,7 +854,7 @@ console.log(x);
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-circles type="local" filename="circles-data.json"&gt;&lt;/uga-circles&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-circles type="local" filename="circles/circles-demo.json"&gt;&lt;/uga-circles&gt;</uga-code>
       </div>
     </section>
 
@@ -915,11 +940,11 @@ console.log(x);
       <div class="demo-description">
         <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file. Customization happens via the JSON file in eLC. By default, loads from local course files using the <code>filename</code> property.</p>
         <p><strong>Example data file:</strong> The <code>filename</code> must match the file exactly. Download
-          <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>
           to modify and upload to your course files.</p>
       </div>
       <div class="demo-example">
-        <uga-footer filename="footer-demo.json"></uga-footer>
+        <uga-footer filename="footer/footer-demo.json"></uga-footer>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -932,7 +957,7 @@ console.log(x);
           <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer-demo.json</code></a>). Not needed when using <code>program</code>.</td>
+            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>). Not needed when using <code>program</code>.</td>
           </tr>
           <tr>
             <td>program</td>
@@ -948,7 +973,7 @@ console.log(x);
       </div>
       <div class="demo-code">
         <h4>Basic Usage (Local File)</h4>
-        <uga-code language="markup">&lt;uga-footer filename="footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-footer filename="footer/footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
         <p>Use the abbreviated program code (including <code>mfp</code> for Masters in Financial Planning). Template data: <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. See <a href="footer.html">Footer demo</a> for program codes and logo paths.</p>
@@ -966,12 +991,12 @@ console.log(x);
       <h2>Instructor Note Component</h2>
       <div class="demo-description">
         <p><strong>Displays notes visible only to instructors.</strong> Uses eLC role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
-        <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note-demo.html</code></a>
-          to modify and upload it to your course files.</p>
+        <p><strong>Content file:</strong> The note is an <strong>HTML fragment</strong> (not JSON). Download
+          <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note/instructor-note-demo.html</code></a>,
+          edit the HTML, and upload it to your course files.</p>
       </div>
       <div class="demo-example">
-        <uga-instructor-note type="local" filename="instructor-note-demo.html"></uga-instructor-note>
+        <uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"></uga-instructor-note>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -984,22 +1009,22 @@ console.log(x);
           <tr>
             <td>type</td>
             <td>string</td>
-            <td>Data source type: 'local' or 'program'</td>
+            <td>Data source type: <code>local</code> (course-files HTML) or <code>program</code> (shared template HTML)</td>
           </tr>
           <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file with note content</td>
+            <td>Name (or full path) of the <strong>HTML fragment</strong> that holds the note content</td>
           </tr>
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Program identifier (for program type)</td>
+            <td>Program code when loading shared template HTML (used with <code>type="program"</code>)</td>
           </tr>
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-instructor-note type="local" filename="instructor-notes.json"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
       </div>
     </section>
 
@@ -1048,10 +1073,10 @@ console.log(x);
       <h2>Course Calendar Component</h2>
       <div class="demo-description">
         <p><strong>Displays a full course calendar from JSON or CSV.</strong> Supports week separators, row types (open/due/holiday/deadline/final), assignment tags, and an optional live sync mode to align date cells with eLC assignment due dates from the current course.</p>
-        <p><strong>Example data files:</strong> Use <code>course-calendar-demo.json</code> or <code>course-calendar-demo.csv</code>. For CSV authoring, start with <code>course-calendar-template.csv</code>.</p>
+        <p><strong>Example data files:</strong> Use <code>course-calendar/course-calendar-demo.json</code> or <code>course-calendar/course-calendar-demo.csv</code>. For CSV authoring, start with <code>course-calendar/course-calendar-template.csv</code>.</p>
       </div>
       <div class="demo-example">
-        <uga-course-calendar type="csv" filename="course-calendar-demo.csv"></uga-course-calendar>
+        <uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"></uga-course-calendar>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -1100,14 +1125,14 @@ console.log(x);
       </div>
       <div class="demo-code">
         <h4>Basic Usage</h4>
-        <uga-code language="markup">&lt;uga-course-calendar type="local" filename="course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;
+        <uga-code language="markup">&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;
 
-&lt;uga-course-calendar type="csv" filename="course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;</uga-code>
+&lt;uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;</uga-code>
 
         <h4 style="margin-top: 1.5rem;">With live due-date sync (optional)</h4>
         <uga-code language="markup">&lt;uga-course-calendar
   type="local"
-  filename="course-calendar-demo.json"
+  filename="course-calendar/course-calendar-demo.json"
   sync-from-course&gt;
 &lt;/uga-course-calendar&gt;</uga-code>
       </div>

@@ -100,16 +100,17 @@
 
     <section class="component-demo">
       <div class="demo-description">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON / CSV examples.</p>
 
         <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, multi-select, ordering, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
+        <p><strong>Question source:</strong> load from a <strong>JSON</strong> file with <code>type="local"</code> (component format) or from an <strong>eLC CSV export</strong> with <code>type="csv"</code>. Pick whichever your team already authors—both render the same quiz UI.</p>
         <p><strong>Use Case:</strong> Students can't take summative assessments until they've completed embedded formative quizzes (release conditions).</p>
       </div>
 
-      <h2>Demo: All Question Types and Features</h2>
+      <h2>Demo: All Question Types and Features (JSON)</h2>
       <div class="demo-description">
-        <p><strong>This demo uses <code>quiz-sample.json</code></strong>, which includes all six question types: Multiple Choice, True/False, Short Answer, Matching, Multi-Select, and Ordering. The quiz below has all features enabled: timer (10 min with auto-submit), question randomization, retries, immediate feedback, and submission to the eLC assignment <strong>Quiz Demo 2</strong>.</p>
-        <p><strong>How to use a JSON file:</strong> (1) Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format). (2) Upload the file to <strong>course files</strong> (same folder as your HTML page when possible). (3) Set <code>type="local"</code> and <code>filename="your-file.json"</code> on the quiz. Use a filename only (e.g. <code>quiz-sample.json</code>) when the JSON is in the same folder as the page, or the full path from <strong>Manage Files</strong> (e.g. <code>/content/enforced/…/quiz-sample.json</code>). Shared institutional paths like <code>/shared/PublicFiles/…</code> are optional if your unit hosts files there.</p>
+        <p><strong>This demo uses <code>quiz/quiz-sample.json</code></strong>, which includes all six question types: Multiple Choice, True/False, Short Answer, Matching, Multi-Select, and Ordering. The quiz below has all features enabled: timer (10 min with auto-submit), question randomization, retries, immediate feedback, and submission to the eLC assignment <strong>Quiz Demo 2</strong>.</p>
+        <p><strong>How to use a JSON file:</strong> (1) Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format). (2) Upload the file to <strong>course files</strong> (e.g. a <code>quiz/</code> folder next to your HTML page). (3) Set <code>type="local"</code> and <code>filename</code> on the quiz—this demo uses <code>quiz/quiz-sample.json</code>. Use a path relative to the page, or the full path from <strong>Manage Files</strong>. Shared institutional paths like <code>/shared/PublicFiles/…</code> are optional if your unit hosts files there.</p>
       </div>
       <div class="demo-example">
         <uga-quiz
@@ -123,35 +124,65 @@
           time-limit="10"
           auto-submit="true"
           type="local"
-          filename="quiz-sample.json"
+          filename="quiz/quiz-sample.json"
           dropbox-assignment-name="Quiz Demo 2">
         </uga-quiz>
         <p></p>
-        <uga-instructor-note type="local" filename="quiz-sync-note.html"></uga-instructor-note>
+        <uga-instructor-note type="local" filename="quiz/quiz-sync-note.html"></uga-instructor-note>
         <p></p>
       </div>
 
+      <h2 style="margin-top: 3rem;">Demo: Same Quiz from eLC CSV</h2>
+      <div class="demo-description">
+        <p><strong>This demo uses <code>quiz/quiz-sample.csv</code></strong> in the <strong>eLC question import (CSV) format</strong>. It loads the same six question types as the JSON demo above. Set <code>type="csv"</code> and point <code>filename</code> at the CSV file.</p>
+        <p><strong>How to use a CSV file:</strong> (1) Export questions from eLC's question library, or hand-author a CSV in the eLC format (see <code>quiz/quiz-sample.csv</code> in this repo for a template covering all six types). (2) Upload the file to <strong>course files</strong> (a <code>quiz/</code> folder next to your HTML page works well). (3) Set <code>type="csv"</code> and <code>filename="quiz/quiz-sample.csv"</code> on the quiz. Lines starting with <code>//</code> are treated as comments and ignored.</p>
+        <p><strong>Note:</strong> Only the eLC CSV layout is supported—generic spreadsheets will not parse. The component converts CSV rows into the same internal question format used for JSON, so all features (timer, retries, randomization, dropbox submission, grade sync) work the same way.</p>
+      </div>
+      <div class="demo-example">
+        <uga-quiz
+          quiz-id="demo-quiz-csv"
+          quiz-title="Quiz: All Types &amp; Features (CSV)"
+          passing-score="70"
+          allow-retry="true"
+          max-attempts="99"
+          show-feedback="true"
+          randomize-questions="true"
+          type="csv"
+          filename="quiz/quiz-sample.csv">
+        </uga-quiz>
+      </div>
+
       <div class="demo-code">
-        <h4>Basic (CSV, no timer):</h4>
+        <h4>Basic (JSON, no timer):</h4>
         <pre><code class="language-html">&lt;uga-quiz 
   quiz-id="demo-quiz"
   quiz-title="My Quiz"
   passing-score="70"
   type="local"
-  filename="quiz-sample.json"&gt;
+  filename="quiz/quiz-sample.json"&gt;
 &lt;/uga-quiz&gt;</code></pre>
-        
+
+        <h4 style="margin-top: 1.5rem;">Basic (CSV, no timer):</h4>
+        <pre><code class="language-html">&lt;uga-quiz 
+  quiz-id="demo-quiz-csv"
+  quiz-title="My Quiz"
+  passing-score="70"
+  type="csv"
+  filename="quiz/quiz-sample.csv"&gt;
+&lt;/uga-quiz&gt;</code></pre>
+
         <h4 style="margin-top: 1.5rem;">With assignment submission:</h4>
         <pre><code class="language-html">&lt;uga-quiz 
   quiz-id="demo-quiz"
   quiz-title="My Quiz"
   passing-score="70"
   type="local"
-  filename="quiz-sample.json"
+  filename="quiz/quiz-sample.json"
           dropbox-assignment-name="Quiz Demo 2"&gt;
 &lt;/uga-quiz&gt;
 &lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;&lt;/uga-quiz-grade-sync&gt;
-&lt;!-- or use dropbox-folder-id="12345" with the assignment URL db= value --&gt;</code></pre>
+&lt;!-- or use dropbox-folder-id="12345" with the assignment URL db= value --&gt;
+&lt;!-- swap type/filename to type="csv" filename="quiz/quiz-sample.csv" to load from an eLC CSV instead --&gt;</code></pre>
 
         <h4 style="margin-top: 1.5rem;">All features (timer, auto-submit, randomize):</h4>
         <pre><code class="language-html">&lt;uga-quiz 
@@ -165,7 +196,7 @@
   time-limit="10"
   auto-submit="true"
   type="local"
-  filename="quiz-sample.json"
+  filename="quiz/quiz-sample.json"
           dropbox-assignment-name="Quiz Demo 2"&gt;
 &lt;/uga-quiz&gt;</code></pre>
         <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot; When synced, the most recent grade overwrites any current grade for each student.</p>
@@ -173,7 +204,7 @@
 
       <div class="demo-props">
         <h4>JSON Question Format</h4>
-        <p>The quiz component loads questions from a JSON file. The file must have a top-level <code>questions</code> array. Each question has <code>id</code>, <code>type</code>, <code>question</code>, <code>points</code>, <code>correctAnswer</code>, and optionally <code>options</code>, <code>explanation</code>, <code>caseSensitive</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the full format and examples.</p>
+        <p>The quiz component can load questions from a JSON file. The file must have a top-level <code>questions</code> array. Each question has <code>id</code>, <code>type</code>, <code>question</code>, <code>points</code>, <code>correctAnswer</code>, and optionally <code>options</code>, <code>explanation</code>, <code>caseSensitive</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the full format and examples.</p>
         <p><strong>Question types and correctAnswer format:</strong></p>
         <ul>
           <li><strong>multiple-choice:</strong> <code>options</code> array, <code>correctAnswer</code> = index (0-based)</li>
@@ -185,9 +216,30 @@
         </ul>
         <p><strong>Steps to use a JSON file:</strong></p>
         <ol>
-          <li>Create a JSON file with a <code>questions</code> array (see <code>quiz-sample.json</code>, <code>quiz10.json</code>, or <code>quiz20.json</code> in the demo folder)</li>
+          <li>Create a JSON file with a <code>questions</code> array (see <code>quiz/quiz-sample.json</code>, <code>quiz/quiz10.json</code>, or <code>quiz/quiz20.json</code> in this demo repo)</li>
           <li>Upload the JSON file to the same folder as your HTML page, or to eLC Public Files</li>
           <li>Add <code>type="local"</code> and <code>filename="your-file.json"</code> to the quiz component (filename only if same folder as the page, or full course-files path from <strong>Manage Files</strong>)</li>
+        </ol>
+      </div>
+
+      <div class="demo-props">
+        <h4>eLC CSV Question Format</h4>
+        <p>The quiz component can also load questions from a CSV file in eLC's <strong>Question Import</strong> layout (the same one Brightspace generates when you export a question library). Use <code>type="csv"</code> and point <code>filename</code> at the file.</p>
+        <p>Each question is a block of rows. Required tags include <code>NewQuestion</code> (with question type), <code>QuestionText</code>, <code>Points</code>, and one of:</p>
+        <ul>
+          <li><strong>MC</strong> (Multiple Choice): one or more <code>Option,&lt;weight&gt;,&lt;text&gt;</code> rows. The option with weight <code>100</code> (or the highest weight) is treated as correct.</li>
+          <li><strong>TF</strong> (True/False): <code>TRUE,&lt;weight&gt;,&lt;feedback&gt;</code> and <code>FALSE,&lt;weight&gt;,&lt;feedback&gt;</code>. Weight 100 marks the correct side.</li>
+          <li><strong>SA</strong> / <strong>WR</strong> (Short Answer / Written Response): one or more <code>Answer,&lt;weight&gt;,&lt;accepted text&gt;</code> rows.</li>
+          <li><strong>M</strong> (Matching): <code>Choice,&lt;id&gt;,&lt;text&gt;</code> and <code>Match,&lt;id&gt;,&lt;text&gt;</code> rows—the IDs link choice to match.</li>
+          <li><strong>MS</strong> (Multi-Select): <code>Option,&lt;weight&gt;,&lt;text&gt;</code> rows. Every option with weight <code>100</code> is treated as correct.</li>
+          <li><strong>O</strong> (Ordering): <code>Item,&lt;text&gt;</code> rows listed <em>in the correct order</em>; the component shuffles them at runtime.</li>
+        </ul>
+        <p>Optional rows: <code>ID</code>, <code>Title</code>, <code>Difficulty</code>, <code>Hint</code>, <code>Feedback</code>, plus question-type extras like <code>Scoring</code> (matching) and <code>InputBox</code> (short answer). Lines starting with <code>//</code> are comments. See <code>quiz/quiz-sample.csv</code> in the demo folder for a working template covering all six types.</p>
+        <p><strong>Steps to use a CSV file:</strong></p>
+        <ol>
+          <li>Export questions from eLC (Question Library → Import/Export → CSV) <em>or</em> hand-author a file using <code>quiz/quiz-sample.csv</code> as a template.</li>
+          <li>Upload the CSV to the same folder as your HTML page (or anywhere under course files).</li>
+          <li>Add <code>type="csv"</code> and <code>filename="your-file.csv"</code> to the quiz component (relative path or full <strong>Manage Files</strong> path).</li>
         </ol>
       </div>
 
@@ -214,15 +266,15 @@
           </tr>
           <tr>
             <td><code>type</code></td>
-            <td>'local'</td>
-            <td>'local'</td>
-            <td>Load questions from JSON file</td>
+            <td>'local' | 'csv' | 'inline'</td>
+            <td>'inline'</td>
+            <td>Question source. <code>local</code> loads a JSON file via <code>filename</code>; <code>csv</code> loads an eLC CSV question-import file via <code>filename</code>; <code>inline</code> uses JSON placed inside the element (<code>questions</code> attribute).</td>
           </tr>
           <tr>
             <td><code>filename</code></td>
             <td>string</td>
             <td>''</td>
-            <td>Path to the JSON file. Use a filename only (e.g. <code>quiz-sample.json</code>) if the file is in the same folder as the HTML page, or the full path from course <strong>Manage Files</strong>. Required when <code>type="local"</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format.</td>
+            <td>Path to the JSON or CSV file. Example when organized by folder: <code>quiz/quiz-sample.json</code> or <code>quiz/quiz-sample.csv</code>. Use a relative path from the HTML page or the full path from course <strong>Manage Files</strong>. Required when <code>type="local"</code> or <code>type="csv"</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for JSON format; CSV must follow the eLC question-import layout (see CSV section above).</td>
           </tr>
           <tr>
             <td><code>passing-score</code></td>
@@ -255,6 +307,12 @@
             <td>Randomize question order</td>
           </tr>
           <tr>
+            <td><code>randomize-answers</code></td>
+            <td>boolean</td>
+            <td>false</td>
+            <td>Shuffle the answer options within each question (multiple-choice / multi-select)</td>
+          </tr>
+          <tr>
             <td><code>time-limit</code></td>
             <td>number</td>
             <td>0</td>
@@ -282,14 +340,13 @@
       </div>
 
       <div class="demo-props">
-        <h4>Question Types (in CSV)</h4>
+        <h4>Question Types (JSON quick reference)</h4>
         <ul>
           <li><strong>multiple-choice:</strong> <code>options</code> array, <code>correctAnswer</code> is index (0-based)</li>
           <li><strong>multi-select:</strong> <code>options</code> array, <code>correctAnswer</code> is array of indices, e.g. <code>[0, 2]</code></li>
           <li><strong>ordering:</strong> <code>options</code> array (items in correct order), <code>correctAnswer</code> is <code>[0, 1, 2, ...]</code>. User arranges with up/down.</li>
-          <li><strong>true-false:</strong> <code>correctAnswer</code> is boolean (true/false)</li>
+          <li><strong>true-false:</strong> <code>options</code> <code>["True","False"]</code>, <code>correctAnswer</code> is 0 or 1</li>
           <li><strong>short-answer:</strong> <code>correctAnswer</code> is string, optional <code>caseSensitive</code></li>
-          <li><strong>fill-in-blank:</strong> Same as short-answer</li>
           <li><strong>matching:</strong> <code>options</code> array, <code>correctAnswer</code> is object like <code>{"A": "Option 1", "B": "Option 2"}</code></li>
         </ul>
       </div>
@@ -324,8 +381,8 @@
         <h4>Setup Requirements</h4>
         <ol>
           <li><strong>Assignment:</strong> Instructor creates an assignment in eLC (Assignments) with the same name as <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;). <strong>Make the assignment visible</strong> to students (if hidden, submissions will not pass through). Set <strong>All submissions are kept</strong>. See docs/D2L_QUIZ_DROPBOX.md.</li>
-          <li><strong>Questions:</strong> Use the provided <code>quiz-sample.json</code> (all six question types) or create your own JSON file with a <code>questions</code> array. See the sample file for the required structure.</li>
-          <li><strong>Upload Files:</strong> Place the CSV in your course content area (same directory as your HTML page, or set <code>filename</code> to the path).</li>
+          <li><strong>Questions:</strong> Use the provided <code>quiz/quiz-sample.json</code> (all six question types, JSON) or <code>quiz/quiz-sample.csv</code> (same six types, eLC CSV format). You can also create your own file in either format—JSON needs a top-level <code>questions</code> array; CSV must follow the eLC question-import layout.</li>
+          <li><strong>Upload Files:</strong> Place the JSON or CSV file in your course content area (same directory as your HTML page when possible, or set <code>filename</code> to the full path from <strong>Manage Files</strong>). Match <code>type</code> to your file: <code>type="local"</code> for JSON, <code>type="csv"</code> for CSV.</li>
           <li><strong>Course Context:</strong> Component must be used within an eLC course page (for API access and assignment submission).</li>
         </ol>
       </div>

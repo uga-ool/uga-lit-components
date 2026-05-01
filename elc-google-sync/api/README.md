@@ -1,6 +1,6 @@
-# Template Manager API
+# eLC ⇄ Google Sync API
 
-Backend service for the Course Template Management Widget.
+Backend service for the eLC ⇄ Google Sync widget (`uga-elc-google-sync`). Handles Google Drive uploads, D2L proxy, and video analytics.
 
 ## Planned Endpoints
 

@@ -2,15 +2,15 @@ import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getVersions, getUser, getEnrollment, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
-import { getTemplateManagerPreview, type TemplateManagerPreview } from '../lib/api/d2l-client-template.js';
+import { getElcGoogleSyncPreview, type ElcGoogleSyncPreview } from '../lib/api/d2l-client-elc-google-sync.js';
 import type { ApiVersions, Enrollment } from '../types/d2l.js';
 
 /**
- * Admin-only course template management (export / clear / back-copy).
- * See docs/COURSE_TEMPLATE_WIDGET.md — destructive actions require API spike completion.
+ * Admin-only eLC ⇄ Google Drive sync (export / clear / back-copy template content).
+ * See docs/ELC_GOOGLE_SYNC_WIDGET.md — destructive actions require API spike completion.
  */
-@customElement('uga-template-manager')
-export class UgaTemplateManager extends LitElement {
+@customElement('uga-elc-google-sync')
+export class UgaElcGoogleSync extends LitElement {
   createRenderRoot() {
     return this;
   }
@@ -33,7 +33,7 @@ export class UgaTemplateManager extends LitElement {
   @state() private loading = true;
   @state() private errorMessage: string | null = null;
   @state() private enrollment: Enrollment | null = null;
-  @state() private preview: TemplateManagerPreview | null = null;
+  @state() private preview: ElcGoogleSyncPreview | null = null;
   @state() private actionMessage: string | null = null;
   @state() private busy = false;
 
@@ -91,7 +91,7 @@ export class UgaTemplateManager extends LitElement {
               templateModuleCount: 0,
             };
           } else {
-            this.preview = await getTemplateManagerPreview(this.liveOu, this.templateOu, this.versions.le);
+            this.preview = await getElcGoogleSyncPreview(this.liveOu, this.templateOu, this.versions.le);
           }
         }
         return;
@@ -116,7 +116,7 @@ export class UgaTemplateManager extends LitElement {
       this.enrollment = en;
 
       if (this.isAllowedAdmin() && this.templateOu && this.versions.le) {
-        this.preview = await getTemplateManagerPreview(ou, this.templateOu, this.versions.le);
+        this.preview = await getElcGoogleSyncPreview(ou, this.templateOu, this.versions.le);
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -193,7 +193,7 @@ export class UgaTemplateManager extends LitElement {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
         <div class="util-pad-all-md util-background-creamery__75" style="border: 1px solid #e0e0e0; border-radius: 8px;">
-          <p>Loading template manager…</p>
+          <p>Loading eLC ⇄ Google Sync…</p>
         </div>
       `;
     }
@@ -202,7 +202,7 @@ export class UgaTemplateManager extends LitElement {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
         <div class="util-pad-all-md" style="border-left: 4px solid #ba0c2f; background: #fff5f5;">
-          <p><strong>Template manager</strong></p>
+          <p><strong>eLC ⇄ Google Sync</strong></p>
           <p>${this.errorMessage}</p>
         </div>
       `;
@@ -224,7 +224,7 @@ export class UgaTemplateManager extends LitElement {
         class="util-pad-all-md util-background-creamery__75"
         style="border: 1px solid #e0e0e0; border-radius: 8px; max-width: 42rem;"
       >
-        <h3 class="cmp-heading-3 util-margin-top-none">Course template manager</h3>
+        <h3 class="cmp-heading-3 util-margin-top-none">eLC ⇄ Google Sync</h3>
         ${this.stubMode
           ? html`<p class="util-font-size-sm" style="background: #fff3cd; padding: 0.5rem; border-radius: 4px;">
               <strong>Stub mode:</strong> for demos only. Admin roles are not enforced.
@@ -278,7 +278,7 @@ export class UgaTemplateManager extends LitElement {
           : null}
         <p class="util-margin-top-md util-font-size-sm" style="color: #555;">
           Documentation:
-          <a href="../docs/COURSE_TEMPLATE_WIDGET.md" target="_blank" rel="noopener noreferrer">COURSE_TEMPLATE_WIDGET.md</a>
+          <a href="../docs/ELC_GOOGLE_SYNC_WIDGET.md" target="_blank" rel="noopener noreferrer">ELC_GOOGLE_SYNC_WIDGET.md</a>
         </p>
       </div>
     `;
@@ -287,6 +287,6 @@ export class UgaTemplateManager extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'uga-template-manager': UgaTemplateManager;
+    'uga-elc-google-sync': UgaElcGoogleSync;
   }
 }

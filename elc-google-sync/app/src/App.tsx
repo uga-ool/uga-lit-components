@@ -103,7 +103,7 @@ function App() {
 
   if (authState === 'loading') {
     return (
-      <div className="cmp-template-manager">
+      <div className="cmp-elc-google-sync">
         <p>Loading...</p>
       </div>
     );
@@ -111,7 +111,7 @@ function App() {
 
   if (authState === 'no-context') {
     return (
-      <div className="cmp-template-manager">
+      <div className="cmp-elc-google-sync">
         <p>No course context. Open this tool from within an eLC course.</p>
       </div>
     );
@@ -119,7 +119,7 @@ function App() {
 
   if (authState === 'denied') {
     return (
-      <div className="cmp-template-manager">
+      <div className="cmp-elc-google-sync">
         <p>Access denied. Admin or instructor role required.</p>
         {error && <p style={{ color: '#ba0c2f' }}>Error: {error}</p>}
       </div>
@@ -130,35 +130,35 @@ function App() {
   const topicCount = modules?.reduce((n, m) => n + (m.Topics?.length ?? 0), 0) ?? 0;
 
   return (
-    <div className="cmp-template-manager">
-      <h2 className="cmp-template-manager__title cmp-heading-4">Course Template Manager</h2>
+    <div className="cmp-elc-google-sync">
+      <h2 className="cmp-elc-google-sync__title cmp-heading-4">eLC ⇄ Google Sync</h2>
       <p>Admin-only. Export template to Drive, clear template, or back-copy live course to template.</p>
 
       {/* Phase 1: read-only listing */}
       {modules && (
-        <div className="cmp-template-manager__toc">
+        <div className="cmp-elc-google-sync__toc">
           <strong>Content:</strong> {moduleCount} module{moduleCount !== 1 ? 's' : ''},{' '}
           {topicCount} topic{topicCount !== 1 ? 's' : ''}
         </div>
       )}
 
-      <div className="cmp-template-manager__actions">
+      <div className="cmp-elc-google-sync__actions">
         <button
-          className="cmp-template-manager__btn"
+          className="cmp-elc-google-sync__btn"
           onClick={handleExport}
           disabled={loading}
         >
           Export template to Google Drive
         </button>
         <button
-          className="cmp-template-manager__btn"
+          className="cmp-elc-google-sync__btn"
           onClick={handleClear}
           disabled={loading}
         >
           Clear template contents
         </button>
         <button
-          className="cmp-template-manager__btn"
+          className="cmp-elc-google-sync__btn"
           onClick={handleBackCopy}
           disabled={loading}
         >

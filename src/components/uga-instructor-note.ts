@@ -158,9 +158,11 @@ class UgaInstructorNote extends LitElement {
       return html`
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
       <div class="obj-grid">
-        <div class="obj-grid__full util-background-odyssey util-text-center util-pad-all-md">
+        <div class="obj-grid__full util-background-odyssey util-pad-all-md">
           <h1 class="cmp-heading-5">Instructor Note</h1>
-          <div class="instructor-note-content">${unsafeHTML(this.text)}</div>
+          <div class="instructor-note-content" style="text-align: left;">
+            ${unsafeHTML(this.text)}
+          </div>
         </div>
       </div>
       `;

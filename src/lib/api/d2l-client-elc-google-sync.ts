@@ -1,9 +1,9 @@
 /**
- * Helpers for uga-template-manager: preview and (future) template operations.
+ * Helpers for uga-elc-google-sync: preview and (future) template operations.
  */
 import { getContentTOC } from './d2l-client-content.js';
 
-export interface TemplateManagerPreview {
+export interface ElcGoogleSyncPreview {
   liveOu: string;
   templateOu: string;
   liveModuleCount: number;
@@ -14,11 +14,11 @@ export interface TemplateManagerPreview {
 /**
  * MVP: compare content module counts between live and template org units (read-only).
  */
-export async function getTemplateManagerPreview(
+export async function getElcGoogleSyncPreview(
   liveOu: string,
   templateOu: string,
   leVersion: string
-): Promise<TemplateManagerPreview> {
+): Promise<ElcGoogleSyncPreview> {
   try {
     const [liveToc, templateToc] = await Promise.all([
       getContentTOC(liveOu, leVersion),

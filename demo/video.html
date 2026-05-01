@@ -121,6 +121,11 @@
             <td>Add rating component below video</td>
           </tr>
           <tr>
+            <td>topic-id</td>
+            <td>string</td>
+            <td>Optional. eLC content topic ID. Recommended when embedding inside a topic so completion events are reliably attributed (otherwise the topic is parsed from the parent URL).</td>
+          </tr>
+          <tr>
             <td>enable-djinn</td>
             <td>boolean</td>
             <td>Show <strong>Kaltura Djinn</strong> Q&amp;A panel (requires <code>djinn-api-base</code> and captions on the entry)</td>
@@ -207,13 +212,13 @@
       <div class="demo-description">
         <p><strong>Embeds multiple Kaltura videos from a JSON data file.</strong> Use this method when you want to load multiple videos from a single JSON file. Perfect for course playlists or module video collections.</p>
         <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos-demo.json</code></a>
+          <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos/videos-demo.json</code></a>
           to modify and upload it to your course files.</p>
       </div>
 
       <div class="demo-example">
-        <uga-video type="local" filename="videos-demo.json"></uga-video>
-        <p><em>Note: This example loads multiple videos from the videos-demo.json file</em></p>
+        <uga-video type="local" filename="videos/videos-demo.json"></uga-video>
+        <p><em>Note: This example loads multiple videos from <code>videos/videos-demo.json</code></em></p>
       </div>
 
       <div class="demo-props">
@@ -254,10 +259,10 @@
 
       <div class="demo-code">
         <uga-code language="markup">&lt;!-- Multiple videos from file --&gt;
-&lt;uga-video type="local" filename="videos-demo.json"&gt;&lt;/uga-video&gt;
+&lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With custom player ID --&gt;
-&lt;uga-video type="local" filename="videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
+&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -266,7 +271,7 @@
 
   <!-- Video analytics: disabled when using Kaltura analytics only (no custom backend) -->
   <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
-  <!-- Video analytics: required for event collection. For local dev, run: cd template-manager/api && npm run dev -->
+  <!-- Video analytics: required for event collection. For local dev, run: cd elc-google-sync/api && npm run dev -->
   <!-- For eLC / production: uncomment and set to your deployed backend URL: -->
   <!-- <script>window.UGA_VIDEO_ANALYTICS_URL = 'https://YOUR-API-SERVER/api/video-analytics/events';</script> -->
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>

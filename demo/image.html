@@ -88,13 +88,13 @@
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
 
         <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Based on instructional designer patterns with UGA brand styling.</p>
-        <p><strong>Image path:</strong> Use a relative path (resolves from the page location) or the full path from eLC Manage Files (right-click file → Copy Path). When the image is in an <code>images/</code> folder next to your HTML page, use <code>images/your-image.jpg</code>. In eLC, use the full path: <code>/content/enforced4/COURSE_ID/images/your-image.jpg</code>.</p>
+        <p><strong>Image path:</strong> Use a relative path (resolves from the page location) or the full path from eLC Manage Files (right-click file → Copy Path). This demo uses an <code>image/</code> folder (e.g. <code>image/demo_image.jpg</code>). In eLC, use the full path from Manage Files, e.g. <code>/content/enforced4/COURSE_ID/image/your-image.jpg</code>.</p>
       </div>
 
       <div class="demo-example">
         <h4>Basic image with lightbox</h4>
         <uga-image
-          src="images/demo_image.jpg"
+          src="image/demo_image.jpg"
           alt="Sample image for demonstration"
           caption="Scatterplot of two highly correlated variables (length and width). One vector is drawn through the centroid along the long axis of the data cloud (first principal component), with a second vector drawn perpendicular to it (second principal component)."
         ></uga-image>
@@ -103,8 +103,8 @@
       <div class="demo-example">
         <h4>Responsive images (srcset/sizes)</h4>
         <uga-image
-          src="images/demo_image.jpg"
-          srcset="images/demo_image.jpg 1x"
+          src="image/demo_image.jpg"
+          srcset="image/demo_image.jpg 1x"
           sizes="(max-width: 600px) 100vw, 450px"
           alt="Responsive image example"
           caption="Use srcset and sizes for responsive images. Provide multiple image URLs with width descriptors (e.g. image-400w.jpg 400w, image-800w.jpg 800w) so the browser picks the right size."
@@ -114,7 +114,7 @@
       <div class="demo-example">
         <h4>Lightbox disabled</h4>
         <uga-image
-          src="images/demo_image.jpg"
+          src="image/demo_image.jpg"
           alt="Image without lightbox"
           caption="With lightbox-disabled, the image displays in the styled container but does not expand on click."
           lightbox-disabled
@@ -193,9 +193,9 @@
       </div>
 
       <div class="demo-code">
-        <h4>Basic usage (relative path when image is in images/ folder)</h4>
+        <h4>Basic usage (relative path when image is in an image/ folder)</h4>
         <uga-code language="markup">&lt;uga-image
-  src="images/your-image.jpg"
+  src="image/your-image.jpg"
   alt="Description of image"
   caption="Optional caption text."
 &gt;&lt;/uga-image&gt;</uga-code>
@@ -203,7 +203,7 @@
       <div class="demo-code">
         <h4>eLC: use full path from Manage Files</h4>
         <uga-code language="markup">&lt;uga-image
-  src="/content/enforced4/COURSE_ID/images/your-image.jpg"
+  src="/content/enforced4/COURSE_ID/image/your-image.jpg"
   alt="Description of image"
   caption="Optional caption."
 &gt;&lt;/uga-image&gt;</uga-code>
@@ -211,8 +211,8 @@
       <div class="demo-code">
         <h4>With responsive images (srcset + sizes)</h4>
         <uga-code language="markup">&lt;uga-image
-  src="images/photo.jpg"
-  srcset="images/photo-400w.jpg 400w, images/photo-800w.jpg 800w"
+  src="image/photo.jpg"
+  srcset="image/photo-400w.jpg 400w, image/photo-800w.jpg 800w"
   sizes="(max-width: 600px) 100vw, 450px"
   alt="Responsive photo"
   caption="Caption text."

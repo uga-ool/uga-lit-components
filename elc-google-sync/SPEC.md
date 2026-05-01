@@ -1,8 +1,8 @@
-# Course Template Management Widget – Specification
+# eLC ⇄ Google Sync Widget – Specification
 
 ## Overview
 
-Admin-only widget for eLC that enables:
+Admin-only widget for eLC (Lit component `uga-elc-google-sync`, plus optional React app under `elc-google-sync/app`) that enables:
 1. **Export** – Archive template to Google Drive before clearing
 2. **Clear** – Clear template contents
 3. **Back-copy** – Copy live course files back to template

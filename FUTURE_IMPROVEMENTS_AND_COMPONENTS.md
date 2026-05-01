@@ -245,7 +245,7 @@ import { getContentTOC, getContentTopics } from '../lib/api/d2l-client.js';
 
 ---
 
-### 3. **uga-template-manager** - Course Template Management ⭐
+### 3. **uga-elc-google-sync** - eLC ⇄ Google Drive Course Template Sync ⭐
 **Priority:** HIGH  
 **Requested by:** Chris Sparks
 
@@ -275,11 +275,11 @@ import { getContentTOC, getContentTopics } from '../lib/api/d2l-client.js';
 
 **Example Usage:**
 ```html
-<uga-template-manager 
+<uga-elc-google-sync 
   course-id="12345"
   template-id="67890"
   google-drive-enabled="true">
-</uga-template-manager>
+</uga-elc-google-sync>
 ```
 
 ---
@@ -1024,7 +1024,7 @@ Create video tutorials:
 5. **Add unit tests**
 
 ### Medium Term (Next 6 Months)
-1. **Create uga-template-manager** (High priority feature request)
+1. **Create uga-elc-google-sync** (High priority feature request)
 2. **Create uga-rubric-upload** (Medium priority)
 3. **Add dark mode support**
 4. **Improve accessibility**

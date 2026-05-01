@@ -187,7 +187,7 @@ The repository includes 20 pre-built components:
 | **uga-return-to-top**    | Fixed button to scroll to top                                                                                                                                                                                                                                                                                                     |
 | **uga-slideshow**        | Image carousel with navigation                                                                                                                                                                                                                                                                                                    |
 | **uga-tabs**             | Tab navigation interface                                                                                                                                                                                                                                                                                                          |
-| **uga-template-manager** | Admin-only: course template workflows (export to Drive, clear template, back-copy live → template). MVP shows read-only content preview; see [docs/COURSE_TEMPLATE_WIDGET.md](docs/COURSE_TEMPLATE_WIDGET.md) |
+| **uga-elc-google-sync** | Admin-only: eLC ⇄ Google Drive sync for course templates (export to Drive, clear template, back-copy live → template). MVP shows read-only content preview; see [docs/ELC_GOOGLE_SYNC_WIDGET.md](docs/ELC_GOOGLE_SYNC_WIDGET.md) |
 | **uga-toc**              | Auto-generated table of contents                                                                                                                                                                                                                                                                                                  |
 | **uga-video**            | Embed Kaltura or YouTube videos with logo control                                                                                                                                                                                                                                                                                 |
 
@@ -255,10 +255,10 @@ When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` bl
 
 - **In D2L (eLC):** Set `window.UGA_VIDEO_ANALYTICS_URL` _before_ loading the component script. The default `/api/video-analytics/events` resolves to D2L's server and returns 404—analytics will not work without this. Example: `<script>window.UGA_VIDEO_ANALYTICS_URL = 'https://your-api-server.edu/api/video-analytics/events';</script>`
 - **Kaltura analytics only:** If you use Kaltura's built-in analytics (no custom backend), set `window.UGA_VIDEO_ANALYTICS_DISABLED = true` before loading to avoid 404 errors from failed event sends.
-- **Local dev:** The Vite dev server proxies `/api/video-analytics` to localhost:3001. Run `cd template-manager/api && npm run dev` so the backend is available.
+- **Local dev:** The Vite dev server proxies `/api/video-analytics` to localhost:3001. Run `cd elc-google-sync/api && npm run dev` so the backend is available.
 - Add `topic-id` when embedding in content: `<uga-video videoid="1_icw0df6y" topic-id="12345">` for reliable topic association. Otherwise, topic is parsed from the page URL.
 
-**Backend:** The template-manager API (`template-manager/api/server.js`) includes `POST /api/video-analytics/events` and `GET /api/video-analytics/aggregate`. Deploy it to a server accessible from eLC and enable CORS for your D2L domain (e.g. `ugatest2.view.usg.edu`). Course analytics reads from this backend when available.
+**Backend:** The eLC ⇄ Google Sync API (`elc-google-sync/api/server.js`) includes `POST /api/video-analytics/events` and `GET /api/video-analytics/aggregate`. Deploy it to a server accessible from eLC and enable CORS for your D2L domain (e.g. `ugatest2.view.usg.edu`). Course analytics reads from this backend when available.
 
 **D2L scope:** Ensure your LTI/app registration includes `content:completions:write` for the D2L completion flow.
 
@@ -357,7 +357,7 @@ When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` bl
 | Styles not applying               | Add `<link rel="stylesheet" href="...base.css" />` if using UGA classes                            |
 | **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**                                |
 | Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                               |
-| Video analytics not collected     | In D2L: set `window.UGA_VIDEO_ANALYTICS_URL` before loading; deploy template-manager API with CORS |
+| Video analytics not collected     | In D2L: set `window.UGA_VIDEO_ANALYTICS_URL` before loading; deploy elc-google-sync API with CORS |
 
 ### Troubleshooting video analytics URL
 

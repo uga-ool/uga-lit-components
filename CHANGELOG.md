@@ -15,11 +15,12 @@ All notable changes to this project will be documented in this file.
 - Added CSV input support with `type="csv"` using flat rows grouped by `weekLabel`
 - Added instructor CSV starter template `demo/course-calendar-template.csv` and sample `demo/course-calendar-demo.csv`
 
-### uga-template-manager (course template widget — MVP)
+### uga-elc-google-sync (eLC ⇄ Google Drive sync widget — MVP)
 
-- New **admin-only** component `uga-template-manager`: read-only **content preview** (TOC module counts for live + template OU), stub mode for local demos, gated by `admin-role-names` / `admin-role-ids`
-- Docs: [docs/COURSE_TEMPLATE_WIDGET.md](docs/COURSE_TEMPLATE_WIDGET.md), [docs/COURSE_TEMPLATE_API_SPIKE.md](docs/COURSE_TEMPLATE_API_SPIKE.md); minimal Drive upload service under [server/drive-upload/](server/drive-upload/)
-- Demo: [demo/template-manager.html](demo/template-manager.html); listed in README and setup.html. Export / Clear / Back-copy actions are placeholders until Valence spike completes
+- New **admin-only** component `uga-elc-google-sync` (formerly `uga-template-manager`): read-only **content preview** (TOC module counts for live + template OU), stub mode for local demos, gated by `admin-role-names` / `admin-role-ids`
+- Docs: [docs/ELC_GOOGLE_SYNC_WIDGET.md](docs/ELC_GOOGLE_SYNC_WIDGET.md), [docs/COURSE_TEMPLATE_API_SPIKE.md](docs/COURSE_TEMPLATE_API_SPIKE.md); minimal Drive upload service under [server/drive-upload/](server/drive-upload/)
+- Demo: [demo/elc-google-sync.html](demo/elc-google-sync.html); listed in README and setup.html. Export / Clear / Back-copy actions are placeholders until Valence spike completes
+- Companion folder [elc-google-sync/](elc-google-sync/) (formerly `template-manager/`) holds the standalone React app + Node API and shared SPEC.md
 
 ### Demo pages (instructional designers)
 
