@@ -28,6 +28,20 @@
             ],
             "event": "Drop/Add Ends",
             "notes": "Final day to adjust schedule without academic penalty."
+          },
+          {
+            "type": "due",
+            "date": "May 17",
+            "day": "Sunday",
+            "event": "Due: 11:59 PM",
+            "rowDate": "2026-05-17",
+            "dueTags": [
+              {
+                "label": "Module 1 Assignment",
+                "folderId": "3439577"
+              }
+            ],
+            "notes": "Live sync will replace this date with the current eLC due date."
           }
         ]
       },

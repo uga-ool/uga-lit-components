@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import type { PropertyValues } from 'lit';
 import { loadData } from '../lib/data/data-loader.js';
-import { getAssignments, getVersions } from '../lib/api/d2l-client.js';
+import { getAssignments, getEnrollment, getVersions } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 
 interface CalendarDueTag {
@@ -17,6 +17,7 @@ interface CalendarRow {
   date: string;
   day: string;
   moduleTitle?: string;
+  moduleLink?: string;
   moduleItems?: string[];
   event: string;
   notes?: string;
@@ -319,13 +320,53 @@ class UgaCourseCalendar extends LitElement {
         return;
       }
 
+      const studentRoleNames = ['Student', 'Demo Student'];
+      let isStudent = false;
+      if (versions.lp) {
+        try {
+          const enrollment = await getEnrollment(currentOu, versions.lp, {
+            fallbackToFirst: true,
+            throwOnNotFound: false
+          });
+          if (enrollment?.Role?.Name) {
+            isStudent = studentRoleNames.includes(enrollment.Role.Name);
+          }
+        } catch (_) {
+          // Default to instructor view if enrollment lookup fails.
+        }
+      }
+      const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+      const buildAssignmentLink = (folderId: string): string => {
+        const path = isStudent
+          ? `/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${encodeURIComponent(folderId)}&ou=${encodeURIComponent(currentOu)}`
+          : `/d2l/lms/dropbox/admin/mark/folder_submissions_users.d2l?db=${encodeURIComponent(folderId)}&ou=${encodeURIComponent(currentOu)}`;
+        return hostname ? `https://${hostname}${path}` : path;
+      };
+
       const assignments = await getAssignments(currentOu, leVersion);
       const dueByFolderId = new Map<string, Date>();
+      const assignmentByFolderId = new Map<string, any>();
       assignments.forEach((assignment) => {
         if (assignment.Id && assignment.DueDate) {
           dueByFolderId.set(String(assignment.Id), new Date(assignment.DueDate));
         }
+        if (assignment.Id) {
+          assignmentByFolderId.set(String(assignment.Id), assignment);
+        }
       });
+      const categoryNameById = new Map<string, string>();
+      try {
+        const categoriesRes = await fetch(`/d2l/api/le/${leVersion}/${currentOu}/dropbox/categories/`, { credentials: 'include' });
+        if (categoriesRes.ok) {
+          const categoriesRaw = await categoriesRes.json();
+          const categories = Array.isArray(categoriesRaw) ? categoriesRaw : (categoriesRaw?.Items || []);
+          categories.forEach((c: any) => {
+            if (c?.Id != null && c?.Name) categoryNameById.set(String(c.Id), String(c.Name));
+          });
+        }
+      } catch (_) {
+        // Keep sync working even if categories endpoint is unavailable.
+      }
 
       let syncedRows = 0;
       const updatedWeeks = this.data.weeks.map((week) => ({
@@ -345,10 +386,34 @@ class UgaCourseCalendar extends LitElement {
 
           const latestDue = new Date(Math.max(...dueDates.map(d => d.getTime())));
           const liveDate = this.formatMonthDayEastern(latestDue);
+          const liveDay = this.formatWeekdayEastern(latestDue);
           const originalDate = row.date?.trim() || '';
+          const matchedAssignment =
+            folderIds
+              .map(id => assignmentByFolderId.get(id))
+              .find((a: any) => a && a.DueDate && new Date(a.DueDate).getTime() === latestDue.getTime())
+            || folderIds.map(id => assignmentByFolderId.get(id)).find(Boolean);
+          const assignmentName = matchedAssignment?.Name || row.moduleTitle || 'Assignment';
+          const assignmentType = this.formatAssignmentType(matchedAssignment?.DropboxType);
+          const assignmentCategory = matchedAssignment?.Category?.Name
+            || (matchedAssignment?.CategoryId != null ? categoryNameById.get(String(matchedAssignment.CategoryId)) : undefined)
+            || undefined;
+          const assignmentMeta = assignmentCategory
+            ? `Type: ${assignmentType}; Category: ${assignmentCategory}`
+            : `Type: ${assignmentType}`;
+          const enrichedNotes = assignmentMeta;
+
+          const moduleLink = buildAssignmentLink(folderIds[0]);
 
           if (!originalDate || originalDate === liveDate) {
-            return row;
+            return {
+              ...row,
+              day: liveDay,
+              event: 'Assignment Due',
+              moduleTitle: assignmentName,
+              moduleLink,
+              notes: enrichedNotes
+            };
           }
 
           syncedRows += 1;
@@ -356,6 +421,11 @@ class UgaCourseCalendar extends LitElement {
             ...row,
             syncedDate: liveDate,
             syncedFrom: originalDate,
+            day: liveDay,
+            event: 'Assignment Due',
+            moduleTitle: assignmentName,
+            moduleLink,
+            notes: enrichedNotes,
             isSynced: true
           };
         })
@@ -386,6 +456,19 @@ class UgaCourseCalendar extends LitElement {
     });
   }
 
+  private formatWeekdayEastern(date: Date): string {
+    return date.toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+      weekday: 'long'
+    });
+  }
+
+  private formatAssignmentType(dropboxType?: number): string {
+    if (dropboxType === 1) return 'Group Assignment';
+    if (dropboxType === 2) return 'Individual Assignment';
+    return 'Assignment';
+  }
+
   private renderModuleCell(row: CalendarRow) {
     const hasModule = row.moduleTitle || (row.moduleItems && row.moduleItems.length > 0);
     if (!hasModule) {
@@ -393,7 +476,11 @@ class UgaCourseCalendar extends LitElement {
     }
 
     return html`
-      ${row.moduleTitle ? html`<strong>${row.moduleTitle}</strong>` : ''}
+      ${row.moduleTitle
+        ? html`<strong>${row.moduleLink
+            ? html`<a href="${row.moduleLink}" target="_blank" rel="noopener noreferrer">${row.moduleTitle}</a>`
+            : row.moduleTitle}</strong>`
+        : ''}
       ${(row.moduleItems || []).map(item => html`${item}<br>`)}
     `;
   }
@@ -611,7 +698,7 @@ class UgaCourseCalendar extends LitElement {
                     <td class="col-event">${row.event}</td>
                     <td class="col-notes">
                       ${row.notes || ''}
-                      ${(row.dueTags || []).map(tag => html`<span class="tag tag-due">${tag.label}</span>`)}
+                      ${row.isSynced ? '' : (row.dueTags || []).map(tag => html`<span class="tag tag-due">${tag.label}</span>`)}
                       ${row.noteHint ? html`<span class="tag-note">${row.noteHint}</span>` : ''}
                     </td>
                   </tr>
