@@ -1,6 +1,7 @@
 weekLabel,rowType,date,day,moduleTitle,moduleItems,event,notes,noteHint,rowDate,dueTags,folderIds
 "Week 1 - May 12-18 - Classes Begin",open,May 12,Tuesday,"Modules 00, 01 and 02 Open","M00: Welcome and Introduction|M01: Starting Your APE|M02: The APE Portfolio",Classes Begin,First day of instruction.,,2026-05-12,,
 Week 1 - May 12-18 - Classes Begin,open,May 18,Monday,Modules 03 and 04 Open,"M03: Revisiting Your APE Portfolio|M04: Crafting the Introduction Section",Drop/Add Ends,Final day to adjust schedule without academic penalty.,,2026-05-18,,
+Week 1 - May 12-18 - Classes Begin,due,May 17,Sunday,,,Due: 11:59 PM,Live sync will replace this date with the current eLC due date.,,2026-05-17,Module 1 Assignment,3439577
 Week 2 - May 19-25 - Memorial Day,holiday,May 25,Monday,,,Memorial Day - No Class,University holiday.,,2026-05-25,,
 Week 6 - June 16-22 - Midterm / Juneteenth,exam,June 18,Thursday,,,Midterm,UGA academic calendar midterm marker.,,2026-06-18,,
 Week 6 - June 16-22 - Midterm / Juneteenth,holiday,June 19,Friday,,,Juneteenth - No Class,University holiday.,,2026-06-19,,

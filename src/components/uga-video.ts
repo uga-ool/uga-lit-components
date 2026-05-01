@@ -582,6 +582,14 @@ class UgaVideo extends LitElement {
   youtubeCode(videoId: string) {
     const embedCode = html`
       <style>
+        /* Suppress the design-system .cmp-video::after padding-top hack so
+           the YouTube iframe keeps its 16:9 aspect ratio. Without this the
+           iframe distorts when no sibling Kaltura video is also on the page. */
+        .cmp-video::after {
+          content: none !important;
+          display: none !important;
+          padding-top: 0 !important;
+        }
         .cmp-video__youtube-container {
           width: 100%;
           aspect-ratio: 16 / 9;
