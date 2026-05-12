@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-01-09
 
+### Repository
+
+- Removed **`elc-google-sync/`** (standalone React “Course Template Manager” duplicate of Drive sync). Canonical app: **`uga-drive-elc-sync`**. Video analytics Express API moved to [server/video-analytics/](server/video-analytics/); widget spec moved to [docs/ELC_GOOGLE_SYNC_SPEC.md](docs/ELC_GOOGLE_SYNC_SPEC.md).
+
+### uga-video
+
+- Default Kaltura player / uiConf ID is **57494843** when `playerid` is not set (aligned `playerid` internal default with the loaded uiConf; demos and setup docs updated)
+
+### uga-callout
+
+- Added new `uga-callout` component for semantic callout blocks rendered as `<aside>` with slot content
+- Supports five fixed callout types with consistent brand-color mapping: `note`, `important`, `tip`, `example`, `warning`
+- Added optional `label` property rendered as a bold `<p>` pseudo-heading (not an h2/h3, so TOC heading scans are unaffected)
+- Added demos in `demo/callout.html` and `demo/index-all-in-one.html`, plus setup/reference docs in `demo/setup.html`, `demo/QUICK_START.md`, and `README.md`
+
 ### uga-course-calendar
 
 - Added new `uga-course-calendar` component for rendering full week-by-week course calendars from JSON (static or program data source)
@@ -20,7 +35,7 @@ All notable changes to this project will be documented in this file.
 - New **admin-only** component `uga-elc-google-sync` (formerly `uga-template-manager`): read-only **content preview** (TOC module counts for live + template OU), stub mode for local demos, gated by `admin-role-names` / `admin-role-ids`
 - Docs: [docs/ELC_GOOGLE_SYNC_WIDGET.md](docs/ELC_GOOGLE_SYNC_WIDGET.md), [docs/COURSE_TEMPLATE_API_SPIKE.md](docs/COURSE_TEMPLATE_API_SPIKE.md); minimal Drive upload service under [server/drive-upload/](server/drive-upload/)
 - Demo: [demo/elc-google-sync.html](demo/elc-google-sync.html); listed in README and setup.html. Export / Clear / Back-copy actions are placeholders until Valence spike completes
-- Companion folder [elc-google-sync/](elc-google-sync/) (formerly `template-manager/`) holds the standalone React app + Node API and shared SPEC.md
+- Companion folder `elc-google-sync/` (formerly `template-manager/`) previously held the standalone React app + Node API and SPEC.md—**removed**; see **Repository** under [Unreleased] for replacements
 
 ### Demo pages (instructional designers)
 

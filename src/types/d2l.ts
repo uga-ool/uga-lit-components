@@ -6,12 +6,13 @@ export interface ApiVersions {
 
 export interface ClasslistUser {
   Username: string;
-  RoleId: number;
+  RoleId: number | null;
   UserId?: number;
   Identifier?: string | number;
   DisplayName?: string;
   FirstName?: string;
   LastName?: string;
+  /** Empty when the enrollment role is not set to “display in classlist” in Brightspace. */
   ClasslistRoleDisplayName?: string;
 }
 

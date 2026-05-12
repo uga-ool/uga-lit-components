@@ -218,7 +218,15 @@ npm run build
 ### 4. Use in Brightspace HTML
 
 ```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 <uga-banner message="Welcome to the course!" variant="success"></uga-banner>
+<script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
 ```
 
@@ -298,7 +306,7 @@ class UgaUserInfo extends LitElement {
 | Issue                              | Solution                                                                                                     |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Component not showing up in bundle | Verify file is in `src/components/` with `.ts` extension and is imported correctly                           |
-| Styles not applying                | Ensure `createRenderRoot() { return this; }` is defined and `base.css` link is included if using UGA classes |
+| Styles not applying                | Ensure `createRenderRoot() { return this; }` is defined, `base.css` is linked in the component if using UGA classes, and the host page loads Google Fonts plus `scripts.js` for interactive DS patterns |
 | Kaltura video not displaying       | Check `uiconfid` is correct and script loads successfully; verify `containerId` matches target div           |
 | D2L API 404 errors                 | Verify URL path matches expected `/d2l/api/le/${version}/${ou}/...` pattern                                  |
 | `axios` not available              | Ensure you're running in Brightspace environment where axios is globally provided                            |

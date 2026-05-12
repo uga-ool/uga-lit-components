@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instructor Card Component Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
   <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
@@ -82,7 +88,8 @@
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
 
-        <p><strong>Displays an instructor profile card with photo and name.</strong> Automatically detects the course from the URL and finds the instructor from the classlist. Works for students, instructors, and admins.</p>
+        <p><strong>Displays an instructor profile card with photo and name.</strong> Automatically detects the course from the URL and finds people on the classlist whose role is <strong>Banner Instructor</strong>, <strong>Instructor</strong>, or <strong>Teaching Assistant</strong> (in that order when multiple appear). Works for students, instructors, and admins.</p>
+        <p>Use <code>username</code> to pin a specific account by Brightspace username (comma-separated for several). Use <code>multiple</code> to show more than one card when several instructors match.</p>
       </div>
 
       <div class="demo-example">
@@ -91,11 +98,46 @@
 
       <div class="demo-props">
         <h4>Properties</h4>
-        <p>This component has no required properties. It automatically detects the course and loads instructor information.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>username</code></td>
+              <td>string</td>
+              <td>Optional. Brightspace username(s), comma-separated. Filters to those accounts after role detection. Pins are allowed only for Banner Instructor, Instructor, or Teaching Assistant (or when the classlist hides the role label—empty—if the user is not clearly a Student/Learner). Case-insensitive.</td>
+            </tr>
+            <tr>
+              <td><code>multiple</code></td>
+              <td>boolean</td>
+              <td>Optional. Default <code>false</code>. When <code>true</code>, shows one card per matched instructor. When <code>false</code>, only the first match is shown.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><strong>Examples:</strong></p>
+        <ul>
+          <li><code>&lt;uga-instructor-card username="jdoe"&gt;&lt;/uga-instructor-card&gt;</code> — single named instructor</li>
+          <li><code>&lt;uga-instructor-card username="jdoe,jsmith" multiple&gt;&lt;/uga-instructor-card&gt;</code> — two cards, display order follows the list</li>
+          <li><code>&lt;uga-instructor-card multiple&gt;&lt;/uga-instructor-card&gt;</code> — one card per Banner Instructor, Instructor, or Teaching Assistant in the course</li>
+        </ul>
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-instructor-card&gt;&lt;/uga-instructor-card&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-instructor-card&gt;&lt;/uga-instructor-card&gt;
+
+&lt;!-- Specific instructor(s) --&gt;
+&lt;uga-instructor-card username="jdoe"&gt;&lt;/uga-instructor-card&gt;
+
+&lt;!-- All instructors (multiple cards) --&gt;
+&lt;uga-instructor-card multiple&gt;&lt;/uga-instructor-card&gt;
+
+&lt;!-- Two named instructors --&gt;
+&lt;uga-instructor-card username="jdoe,jsmith" multiple&gt;&lt;/uga-instructor-card&gt;</uga-code>
       </div>
     </section>
 
@@ -103,5 +145,6 @@
   </div>
 
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 </html>

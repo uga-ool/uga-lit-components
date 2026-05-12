@@ -1,8 +1,7 @@
 /**
- * eLC ⇄ Google Sync API
- * Backend for Google Drive OAuth, D2L proxy, and video analytics.
+ * Minimal Express API for uga-video analytics (local / MVP).
  *
- * Video analytics: in-memory store for MVP. Use PostgreSQL or similar for production.
+ * In-memory store only; use PostgreSQL or similar for production.
  */
 
 import express from 'express';
@@ -14,12 +13,11 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
 
-// In-memory store for video analytics events (MVP). Production: use PostgreSQL.
 const videoEvents = [];
 
 app.get('/', (req, res) => {
   res.json({
-    service: 'elc-google-sync-api',
+    service: 'uga-video-analytics-api',
     status: 'ok',
     endpoints: {
       health: 'GET /health',
@@ -32,7 +30,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'elc-google-sync-api' });
+  res.json({ status: 'ok', service: 'uga-video-analytics-api' });
 });
 
 /**
@@ -102,5 +100,5 @@ app.get('/api/video-analytics/aggregate', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`eLC ⇄ Google Sync API running on port ${PORT}`);
+  console.log(`uga-video-analytics-api listening on port ${PORT}`);
 });

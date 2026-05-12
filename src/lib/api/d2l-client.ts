@@ -206,50 +206,84 @@ export function logApiVersionWarning(leVersion: string, endpoint: string): void 
 }
 
 /**
+ * Brightspace ObjectListPage uses `Next` as a full API URL path; PagedResultSet uses `PagingInfo.Bookmark`.
+ * Never treat an API URL as a `bookmark` query value — that breaks paging (repeated first page / endless requests).
+ */
+function splitNextPointer(next: unknown): { bookmark: string | null; pageUrl: string | null } {
+  if (next == null || next === '') return { bookmark: null, pageUrl: null };
+  if (typeof next !== 'string') return { bookmark: null, pageUrl: null };
+  const trimmed = next.trim();
+  if (trimmed.startsWith('/') || /^https?:\/\//i.test(trimmed)) {
+    return { bookmark: null, pageUrl: trimmed };
+  }
+  return { bookmark: trimmed, pageUrl: null };
+}
+
+/**
  * Generic pagination helper for D2L API endpoints
- * @param url - Base API URL
+ * @param url - Base API URL (or absolute Next URL from ObjectListPage)
  * @param options - Optional parameters including pageSize and bookmark
- * @returns Object with items array and nextBookmark
+ * @returns Object with items array and nextBookmark or nextPageUrl
  */
 export async function fetchPaged<T>(
   url: string,
   options?: {
     pageSize?: number;
     bookmark?: string | null;
+    /** When true, request URL came from ObjectListPage.Next — do not add pageSize / filters again */
+    _continuation?: boolean;
     [key: string]: any;
   }
-): Promise<{ items: T[]; nextBookmark: string | null }> {
+): Promise<{ items: T[]; nextBookmark: string | null; nextPageUrl: string | null }> {
   const params = new URLSearchParams();
-  if (options?.pageSize) params.append('pageSize', options.pageSize.toString());
-  if (options?.bookmark) params.append('bookmark', options.bookmark);
-  
-  // Add other options as query params
-  for (const [key, value] of Object.entries(options || {})) {
-    if (key !== 'pageSize' && key !== 'bookmark' && value !== undefined && value !== null) {
-      params.append(key, String(value));
+  const isContinuation = options?._continuation === true;
+
+  if (!isContinuation) {
+    if (options?.pageSize) params.append('pageSize', options.pageSize.toString());
+    if (options?.bookmark) params.append('bookmark', options.bookmark);
+
+    for (const [key, value] of Object.entries(options || {})) {
+      if (['pageSize', 'bookmark', '_continuation'].includes(key)) continue;
+      if (value !== undefined && value !== null) {
+        params.append(key, String(value));
+      }
     }
   }
-  
+
   const queryString = params.toString();
-  const fullUrl = `${url}${queryString ? '?' + queryString : ''}`;
-  
+  const fullUrl = queryString
+    ? url.includes('?')
+      ? `${url}&${queryString}`
+      : `${url}?${queryString}`
+    : url;
+
   const response = await withRetry(() => axios.get(fullUrl));
   const data = response.data;
-  
+
   let items: T[] = [];
   let nextBookmark: string | null = null;
-  
+  let nextPageUrl: string | null = null;
+
   if (Array.isArray(data)) {
     items = data;
+  } else if (data?.PagingInfo && Array.isArray(data.Items)) {
+    items = data.Items;
+    if (data.PagingInfo.HasMoreItems && data.PagingInfo.Bookmark != null && data.PagingInfo.Bookmark !== '') {
+      nextBookmark = String(data.PagingInfo.Bookmark);
+    }
   } else if (data && Array.isArray(data.Items)) {
     items = data.Items;
-    nextBookmark = data.Next || null;
+    const next = splitNextPointer(data.Next);
+    nextBookmark = next.bookmark;
+    nextPageUrl = next.pageUrl;
   } else if (data && Array.isArray(data.Objects)) {
     items = data.Objects;
-    nextBookmark = data.Next || null;
+    const next = splitNextPointer(data.Next);
+    nextBookmark = next.bookmark;
+    nextPageUrl = next.pageUrl;
   }
-  
-  return { items, nextBookmark };
+
+  return { items, nextBookmark, nextPageUrl };
 }
 
 /**
@@ -266,14 +300,28 @@ export async function fetchAllPages<T>(
   }
 ): Promise<T[]> {
   const allItems: T[] = [];
+  const baseUrl = url;
   let bookmark: string | null = null;
-  
-  do {
-    const result = await fetchPaged<T>(url, { ...options, bookmark });
+  let nextPageUrl: string | null = null;
+
+  for (;;) {
+    const useContinuation = nextPageUrl != null;
+    const requestUrl = useContinuation ? nextPageUrl : baseUrl;
+    const result = await fetchPaged<T>(requestUrl, {
+      ...options,
+      bookmark: useContinuation ? null : bookmark,
+      _continuation: useContinuation,
+    });
     allItems.push(...result.items);
+
+    nextPageUrl = result.nextPageUrl;
     bookmark = result.nextBookmark;
-  } while (bookmark);
-  
+
+    if (nextPageUrl) continue;
+    if (bookmark) continue;
+    break;
+  }
+
   return allItems;
 }
 

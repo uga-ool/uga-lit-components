@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Callout Demo - UGA Lit Components</title>
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link rel="stylesheet" href="demo-inline-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+  <style>
+    .component-demo {
+      margin-bottom: 4rem;
+      padding: 2rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #ffffff;
+    }
+    .demo-description {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background-color: #f5f5f5;
+      border-left: 4px solid #ba0c2f;
+    }
+    .demo-example {
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background-color: #fafafa;
+      border: 1px dashed #ccc;
+    }
+    .demo-code {
+      margin-top: 1rem;
+    }
+    .demo-props {
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: #fff9e6;
+      border-left: 4px solid #ffc107;
+    }
+    .demo-props table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    .demo-props th,
+    .demo-props td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .demo-props th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+    h1 {
+      color: #ba0c2f;
+      border-bottom: 3px solid #ba0c2f;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #ba0c2f;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="obj-container">
+    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
+
+    <header class="util-margin-vert-lg">
+      <h1>Callout Component</h1>
+      <div class="demo-description">
+        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p><strong>Semantic callouts</strong> for examples, notes, warnings, tips, and important reminders. This component renders as an <code>&lt;aside&gt;</code> with an optional bolded pseudo-label, so it avoids adding heading tags that could interfere with page TOCs.</p>
+      </div>
+    </header>
+
+    <section class="component-demo">
+      <h2>Live Examples</h2>
+      <div class="demo-example">
+        <div id="callout-live-examples">
+          <uga-callout
+            id="note-callout-example"
+            type="note"
+            size="small"
+            label="Note (Small)"
+            body="Use this section to provide extra context that supports the main content."
+          ></uga-callout>
+
+          <uga-callout
+            id="important-callout-example"
+            type="important"
+            size="large"
+            label="Important (Large)"
+            body="Complete the identity check before opening the exam in eLC."
+          ></uga-callout>
+
+          <uga-callout
+            id="tip-callout-example"
+            type="tip"
+            size="medium"
+            label="Tip (Medium)"
+            body="Break long tasks into short numbered steps to improve completion rates."
+          ></uga-callout>
+
+          <uga-callout
+            id="example-callout-example"
+            type="example"
+            size="xlarge"
+            label="Example (X-Large)"
+            body="Apply the formula to one sample problem before assigning practice work."
+          ></uga-callout>
+
+          <uga-callout
+            id="warning-callout-example"
+            type="warning"
+            size="xlarge"
+            label="Warning (X-Large)"
+            body="Do not upload screenshots of spreadsheets; submit the original file instead."
+          ></uga-callout>
+
+          <uga-callout
+            id="id-usage-callout"
+            type="note"
+            size="medium"
+            label="ID Usage Example"
+            body="This callout has id=&quot;id-usage-callout&quot; so you can link directly to it using #id-usage-callout."
+          ></uga-callout>
+        </div>
+      </div>
+    </section>
+
+    <section class="component-demo">
+      <h2>Without Label</h2>
+      <div class="demo-example">
+        <uga-callout type="note">
+          <p>This callout omits <code>label</code> and still renders semantic aside markup.</p>
+        </uga-callout>
+      </div>
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-callout type="note"&gt;
+  &lt;p&gt;This callout omits label.&lt;/p&gt;
+&lt;/uga-callout&gt;</uga-code>
+      </div>
+    </section>
+
+    <section class="component-demo">
+      <h2>Nested Callouts</h2>
+      <div class="demo-description">
+        <p><strong>eLC tip:</strong> Use the <code>body</code> attribute for plain-text bodies so content stays inside the box after sanitization; nest another <code>&lt;uga-callout&gt;</code> in the slot for the inner callout.</p>
+      </div>
+      <div class="demo-example">
+        <uga-callout
+          type="note"
+          label="Case Study Setup"
+          body="For a 12% annual rate over 6 months, convert to the period rate before applying the formula."
+        >
+          <uga-callout
+            type="example"
+            label="Worked Example"
+            body="Read the short scenario first, then work through the embedded example."
+          ></uga-callout>
+        </uga-callout>
+      </div>
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-callout type="note" label="Case Study Setup" body="For a 12% annual rate over 6 months, convert to the period rate before applying the formula."&gt;
+  &lt;uga-callout type="example" label="Worked Example" body="Read the short scenario first, then work through the embedded example."&gt;&lt;/uga-callout&gt;
+&lt;/uga-callout&gt;</uga-code>
+      </div>
+    </section>
+
+    <section class="component-demo">
+      <h2>Properties</h2>
+      <div class="demo-props">
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td><code>type</code></td>
+            <td><code>"note" | "important" | "tip" | "example" | "warning"</code></td>
+            <td><code>"note"</code></td>
+            <td>Selects the semantic callout style and color pairing.</td>
+          </tr>
+          <tr>
+            <td><code>label</code></td>
+            <td><code>string</code></td>
+            <td><code>""</code></td>
+            <td>Bold heading text shown in the colored top strip.</td>
+          </tr>
+          <tr>
+            <td><code>body</code></td>
+            <td><code>string</code></td>
+            <td><code>""</code></td>
+            <td>Optional body text shown in the lower section. Survives eLC HTML sanitization. For richer content (lists, links, multiple paragraphs), put HTML between the tags instead.</td>
+          </tr>
+          <tr>
+            <td><code>size</code></td>
+            <td><code>"small" | "medium" | "large" | "xlarge"</code></td>
+            <td><code>"medium"</code></td>
+            <td>Adjusts callout spacing and text size.</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var script = document.createElement('script');
+      script.type = 'module';
+      var resolvedSrc = window.location.hostname === 'localhost'
+        ? '/dist/js/uga-components.js'
+        : '/shared/ugaonline/dev/js/uga-components-test.js';
+      script.src = resolvedSrc;
+      document.body.appendChild(script);
+    })();
+  </script>
+  <script>
+    window.addEventListener('load', function () {
+      var liveContainer = document.getElementById('callout-live-examples');
+      if (liveContainer) {
+        var examples = [
+          { id: 'note-callout-example', type: 'note', size: 'small', label: 'Note (Small)', body: 'Use this section to provide extra context that supports the main content.' },
+          { id: 'important-callout-example', type: 'important', size: 'large', label: 'Important (Large)', body: 'Complete the identity check before opening the exam in eLC.' },
+          { id: 'tip-callout-example', type: 'tip', size: 'medium', label: 'Tip (Medium)', body: 'Break long tasks into short numbered steps to improve completion rates.' },
+          { id: 'example-callout-example', type: 'example', size: 'xlarge', label: 'Example (X-Large)', body: 'Apply the formula to one sample problem before assigning practice work.' },
+          { id: 'warning-callout-example', type: 'warning', size: 'xlarge', label: 'Warning (X-Large)', body: 'Do not upload screenshots of spreadsheets; submit the original file instead.' },
+          { id: 'id-usage-callout', type: 'note', size: 'medium', label: 'ID Usage Example', body: 'This callout has id="id-usage-callout" so you can link directly to it using #id-usage-callout.' }
+        ];
+
+        // eLC content sanitization can move slotted text out of the custom element.
+        // Always rebuild from authoritative attributes so each callout renders cleanly.
+        liveContainer.innerHTML = '';
+        examples.forEach(function (example) {
+          var callout = document.createElement('uga-callout');
+          callout.id = example.id;
+          callout.setAttribute('type', example.type);
+          callout.setAttribute('size', example.size);
+          callout.setAttribute('label', example.label);
+          callout.setAttribute('body', example.body);
+          liveContainer.appendChild(callout);
+        });
+      }
+    });
+  </script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+</body>
+</html>

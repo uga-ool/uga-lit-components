@@ -1,0 +1,195 @@
+import { LitElement, html, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+
+const CALLOUT_STYLE_ID = 'uga-callout-styles';
+const VALID_TYPES = ['note', 'important', 'tip', 'example', 'warning'] as const;
+const VALID_SIZES = ['small', 'medium', 'large', 'xlarge'] as const;
+type CalloutType = (typeof VALID_TYPES)[number];
+type CalloutSize = (typeof VALID_SIZES)[number];
+
+const CALL_OUT_CSS = `
+.cmp-callout {
+  --callout-accent: #004e60;
+  --callout-tint: rgba(0, 78, 96, 0.1);
+  --callout-border: rgba(0, 0, 0, 0.14);
+  margin: 1rem 0;
+  padding: 0;
+  border-left: 4px solid var(--callout-accent);
+  border-radius: 0.25rem;
+  border-top: 1px solid var(--callout-border);
+  border-right: 1px solid var(--callout-border);
+  border-bottom: 1px solid var(--callout-border);
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.cmp-callout--small {
+  font-size: 0.95rem;
+}
+
+.cmp-callout--medium {
+  font-size: 1.08rem;
+}
+
+.cmp-callout--large {
+  font-size: 1.18rem;
+}
+
+.cmp-callout--xlarge {
+  font-size: 1.3rem;
+}
+
+.cmp-callout__label {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--callout-accent);
+  line-height: 1.35;
+  background-color: var(--callout-tint);
+}
+
+.cmp-callout--small .cmp-callout__label {
+  padding: 0.5rem 0.75rem;
+}
+
+.cmp-callout--medium .cmp-callout__label {
+  padding: 0.625rem 0.875rem;
+}
+
+.cmp-callout--large .cmp-callout__label {
+  padding: 0.75rem 1rem;
+}
+
+.cmp-callout--xlarge .cmp-callout__label {
+  padding: 0.875rem 1.125rem;
+}
+
+.cmp-callout__body {
+  background-color: #fff;
+}
+
+.cmp-callout--small .cmp-callout__body {
+  padding: 0.625rem 0.75rem;
+}
+
+.cmp-callout--medium .cmp-callout__body {
+  padding: 0.75rem 0.875rem;
+}
+
+.cmp-callout--large .cmp-callout__body {
+  padding: 0.875rem 1rem;
+}
+
+.cmp-callout--xlarge .cmp-callout__body {
+  padding: 1rem 1.125rem;
+}
+
+
+.cmp-callout__body > *:first-child {
+  margin-top: 0;
+}
+
+.cmp-callout__body > *:last-child {
+  margin-bottom: 0;
+}
+
+.cmp-callout__body:empty {
+  display: none;
+}
+
+.cmp-callout--note {
+  --callout-accent: #004e60;
+  --callout-tint: rgba(0, 78, 96, 0.1);
+}
+
+.cmp-callout--important {
+  --callout-accent: #e4002b;
+  --callout-tint: rgba(228, 0, 43, 0.1);
+}
+
+.cmp-callout--tip {
+  --callout-accent: #00a3ad;
+  --callout-tint: rgba(0, 163, 173, 0.1);
+}
+
+.cmp-callout--example {
+  --callout-accent: #66435a;
+  --callout-tint: rgba(102, 67, 90, 0.1);
+}
+
+.cmp-callout--warning {
+  --callout-accent: #4d5500;
+  --callout-tint: rgba(183, 191, 16, 0.2);
+}
+`;
+
+function ensureCalloutStyles(): void {
+  if (document.getElementById(CALLOUT_STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = CALLOUT_STYLE_ID;
+  style.textContent = CALL_OUT_CSS;
+  document.head.appendChild(style);
+}
+
+@customElement('uga-callout')
+export class UgaCallout extends LitElement {
+  private static nextId = 0;
+  private readonly calloutId = UgaCallout.nextId++;
+
+  @property({ type: String }) type = 'note';
+  @property({ type: String }) size = 'medium';
+  @property({ type: String }) label = '';
+  @property({ type: String }) body = '';
+
+  createRenderRoot() {
+    return this;
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    ensureCalloutStyles();
+  }
+
+  private normalizedType(): CalloutType {
+    const normalized = (this.type || 'note').trim().toLowerCase();
+    if (VALID_TYPES.includes(normalized as CalloutType)) {
+      return normalized as CalloutType;
+    }
+    if (normalized) {
+      console.warn(`uga-callout: unknown type "${this.type}". Falling back to "note".`);
+    }
+    return 'note';
+  }
+
+  private normalizedSize(): CalloutSize {
+    const normalized = (this.size || 'medium').trim().toLowerCase();
+    if (VALID_SIZES.includes(normalized as CalloutSize)) {
+      return normalized as CalloutSize;
+    }
+    if (normalized) {
+      console.warn(`uga-callout: unknown size "${this.size}". Falling back to "medium".`);
+    }
+    return 'medium';
+  }
+
+  render() {
+    const type = this.normalizedType();
+    const size = this.normalizedSize();
+    const trimmedLabel = this.label.trim();
+    const trimmedBody = (this.body || '').trim();
+    const labelId = trimmedLabel ? `uga-callout-${this.calloutId}-label` : '';
+
+    return html`
+      <aside
+        class="cmp-callout cmp-callout--${type} cmp-callout--${size}"
+        aria-labelledby=${trimmedLabel ? labelId : nothing}
+      >
+        ${trimmedLabel ? html`<p id="${labelId}" class="cmp-callout__label">${trimmedLabel}</p>` : nothing}
+        <div class="cmp-callout__body">
+          ${trimmedBody ? html`<p>${trimmedBody}</p>` : nothing}
+          <slot></slot>
+        </div>
+      </aside>
+    `;
+  }
+}

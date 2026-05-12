@@ -98,13 +98,13 @@ uga-lit-components/
 All components use **Light DOM** rendering (`createRenderRoot() { return this; }`) for seamless integration inside eLC content pages. This means:
 
 - Component styles either:
-  1. Link to the shared UGA design system: `<link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />`
+  1. On the **host HTML page**, load the full [UGA Online Design System installation](https://design.online.uga.edu/getting-started/installation/): Google Fonts (preconnect + stylesheet), `https://design.online.uga.edu/css/base.css`, and `https://design.online.uga.edu/js/scripts.js` before `</body>`. In component `render()` templates, link only `base.css` (do not inject `scripts.js` per component).
   2. Inject scoped `<style>` tags targeting the component's tag name (e.g., `uga-return-to-top { ... }`)
 - **Global class names are preferred** over Shadow DOM encapsulation. Use utility and component classes from the UGA design system (`cmp-button`, `util-pad-all-md`, etc.).
 
 - When adding a new component:
   - Always include `createRenderRoot() { return this; }` in the class.
-  - Link to `base.css` if you use UGA design system classes.
+  - Link to `base.css` in the template if you use UGA design system classes; ensure the embedding page loads Google Fonts and `scripts.js` for interactive patterns (accordions, tabs, etc.).
   - For component-specific styles, inject a `<style>` tag that targets the component's tag name to avoid global CSS pollution.
 
 ---
@@ -172,6 +172,7 @@ The repository includes 20 pre-built components:
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **uga-accordion**        | Collapsible accordion sections with expand/collapse all                                                                                                                                                                                                                                                                           |
 | **uga-assignment**       | Display assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property.                                                                                                                                                                                                                 |
+| **uga-callout**          | Semantic callout/aside (`note | important | tip | example | warning`) with optional bolded pseudo-label. Slot-based content; fixed brand-color pairings from UGA `base.css`.                                                                                                                                                     |
 | **uga-circles**          | Display data in circular badge format                                                                                                                                                                                                                                                                                             |
 | **uga-code**             | Syntax-highlighted code blocks with copy button                                                                                                                                                                                                                                                                                   |
 | **uga-course-calendar**  | Data-driven week-by-week course calendar table from JSON or CSV, with row-type styling, due tags, and optional live eLC due-date sync by assignment folder ID                                                                                                                                                                   |
@@ -202,6 +203,8 @@ The previous `uga-module-feedback` web component has been removed from this bund
 ## 🎥 Kaltura Video Integration
 
 The `uga-video` component uses **KalturaPlayer script injection** for full control over player configuration:
+
+**Default Kaltura player:** uiConf ID **57494843** when `playerid` is omitted (override with `playerid="…"` for a custom player).
 
 **Key Features:**
 
@@ -255,10 +258,10 @@ When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` bl
 
 - **In D2L (eLC):** Set `window.UGA_VIDEO_ANALYTICS_URL` _before_ loading the component script. The default `/api/video-analytics/events` resolves to D2L's server and returns 404—analytics will not work without this. Example: `<script>window.UGA_VIDEO_ANALYTICS_URL = 'https://your-api-server.edu/api/video-analytics/events';</script>`
 - **Kaltura analytics only:** If you use Kaltura's built-in analytics (no custom backend), set `window.UGA_VIDEO_ANALYTICS_DISABLED = true` before loading to avoid 404 errors from failed event sends.
-- **Local dev:** The Vite dev server proxies `/api/video-analytics` to localhost:3001. Run `cd elc-google-sync/api && npm run dev` so the backend is available.
+- **Local dev:** The Vite dev server proxies `/api/video-analytics` to localhost:3001. Run `cd server/video-analytics && npm install && npm run dev` so the backend is available.
 - Add `topic-id` when embedding in content: `<uga-video videoid="1_icw0df6y" topic-id="12345">` for reliable topic association. Otherwise, topic is parsed from the page URL.
 
-**Backend:** The eLC ⇄ Google Sync API (`elc-google-sync/api/server.js`) includes `POST /api/video-analytics/events` and `GET /api/video-analytics/aggregate`. Deploy it to a server accessible from eLC and enable CORS for your D2L domain (e.g. `ugatest2.view.usg.edu`). Course analytics reads from this backend when available.
+**Backend:** [server/video-analytics/](server/video-analytics/) implements `POST /api/video-analytics/events` and `GET /api/video-analytics/aggregate` for demos and local dev. Deploy an equivalent service accessible from eLC and enable CORS for your D2L domain (e.g. `ugatest2.view.usg.edu`). Course analytics reads from this backend when available.
 
 **D2L scope:** Ensure your LTI/app registration includes `content:completions:write` for the D2L completion flow.
 
@@ -321,7 +324,7 @@ When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` bl
 ### Component Architecture Best Practices
 
 - **Always use Light DOM:** `createRenderRoot() { return this; }`
-- **Link base.css if using UGA classes:** `<link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />`
+- **Host page:** Google Fonts + `base.css` + `scripts.js` per [installation](https://design.online.uga.edu/getting-started/installation/). **Component template:** `<link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />` when using UGA classes
 - **Inject scoped styles:** Use `<style>` tags targeting the component's tag name
 - **Centralize API calls:** Use helpers from `src/lib/api/d2l-client.ts`
 - **Handle data loading:** Move async logic to `connectedCallback()`, not `render()`
@@ -354,10 +357,11 @@ When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` bl
 | Problem                           | Solution                                                                                           |
 | --------------------------------- | -------------------------------------------------------------------------------------------------- |
 | Component not appearing in bundle | Ensure it's in `src/components/` with `.ts` extension                                              |
-| Styles not applying               | Add `<link rel="stylesheet" href="...base.css" />` if using UGA classes                            |
+| Styles not applying               | Load Google Fonts, `base.css`, and `scripts.js` on the host page; components may link `base.css` only |
 | **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**                                |
+| **Accordion / tabs not toggling** | Ensure `https://design.online.uga.edu/js/scripts.js` is on the host page (see design system installation) |
 | Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                               |
-| Video analytics not collected     | In D2L: set `window.UGA_VIDEO_ANALYTICS_URL` before loading; deploy elc-google-sync API with CORS |
+| Video analytics not collected     | In D2L: set `window.UGA_VIDEO_ANALYTICS_URL` before loading; deploy [server/video-analytics](server/video-analytics/) (or your own backend) with CORS |
 
 ### Troubleshooting video analytics URL
 

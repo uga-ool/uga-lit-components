@@ -36,4 +36,6 @@ Design reference for the admin-only widget described in [FEATURE_REQUESTS.md](..
 - Component: [src/components/uga-elc-google-sync.ts](../src/components/uga-elc-google-sync.ts)
 - API helpers: [src/lib/api/d2l-client-elc-google-sync.ts](../src/lib/api/d2l-client-elc-google-sync.ts)
 - Demo: [demo/elc-google-sync.html](../demo/elc-google-sync.html)
-- Standalone React app + Node API (optional): [elc-google-sync/](../elc-google-sync/)
+- Specification / open questions: [docs/ELC_GOOGLE_SYNC_SPEC.md](./ELC_GOOGLE_SYNC_SPEC.md)
+- Full **Drive ↔ Manage Files** standalone app: **`uga-drive-elc-sync`** (separate repository), not duplicated under this package.
+- Local **`uga-video`** analytics backend (Express on port 3001): [server/video-analytics/](../server/video-analytics/)
