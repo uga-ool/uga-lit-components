@@ -65,9 +65,10 @@ class UgaVideo extends LitElement {
     super.connectedCallback();
     this.ou = getCourse();
 
-    if (this.playerid === "") {  // If no playerid is specified, then we use the standard player.
-      this.playerid = "1574196844";
-      this.uiconfid = "57494843"; // this value is different for the standard player, but matches the playerid in other players. 40170611
+    if (this.playerid === "") {
+      // Default Kaltura player (uiConf); omit attribute to use this ID.
+      this.playerid = "57494843";
+      this.uiconfid = "57494843";
     } else {
       this.uiconfid = this.playerid;
     }

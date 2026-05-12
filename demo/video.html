@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Video Component Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
   <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
@@ -113,7 +119,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 1574196844)</td>
+            <td>Kaltura player ID (default: 57494843)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -144,7 +150,7 @@
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="1574196844"&gt;&lt;/uga-video&gt;
+        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="57494843"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
@@ -247,7 +253,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 1574196844)</td>
+            <td>Kaltura player ID (default: 57494843)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -271,9 +277,10 @@
 
   <!-- Video analytics: disabled when using Kaltura analytics only (no custom backend) -->
   <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
-  <!-- Video analytics: required for event collection. For local dev, run: cd elc-google-sync/api && npm run dev -->
+  <!-- Video analytics: required for event collection. For local dev, run: cd server/video-analytics && npm run dev -->
   <!-- For eLC / production: uncomment and set to your deployed backend URL: -->
   <!-- <script>window.UGA_VIDEO_ANALYTICS_URL = 'https://YOUR-API-SERVER/api/video-analytics/events';</script> -->
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, render } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { PropertyValues } from 'lit';
 
@@ -55,10 +55,9 @@ class UgaCode extends LitElement {
     navigator.clipboard.writeText(code).then(() => {
       const button = this.querySelector('button');
       if (button) {
-        button.innerHTML = copiedIcon as unknown as string;
-
+        render(copiedIcon, button);
         setTimeout(() => {
-          button.innerHTML = copyIcon as unknown as string;
+          render(copyIcon, button);
         }, 2000);
       }
     }).catch((err) => {
@@ -67,8 +66,9 @@ class UgaCode extends LitElement {
   }
 
   runExternalScripts(): void {
-    // Prism is loaded and globally available in eLC
-    Prism.highlightAllUnder(this);
+    if (typeof Prism !== 'undefined' && typeof Prism.highlightAllUnder === 'function') {
+      Prism.highlightAllUnder(this);
+    }
   }
 
   render() {

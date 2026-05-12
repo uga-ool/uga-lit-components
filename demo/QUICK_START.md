@@ -33,6 +33,7 @@ demo/
 ├── setup.html                    # Setup & usage guide
 ├── accordion.html                # Individual component demos
 ├── assignment.html
+├── callout.html
 ├── circles.html
 ├── code.html
 ├── course-analytics.html
@@ -217,6 +218,7 @@ In the eLC HTML editor, update file paths to:
 
 ### Components That Work Standalone
 
+- `<uga-callout>` - Semantic callout/aside with fixed type-to-color styles (`note`, `important`, `tip`, `example`, `warning`) and optional `label`; body is slot content. See [Callout demo](callout.html).
 - `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. When the image is in an `image/` folder next to your HTML page, use `src="image/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
 - `<uga-toc>` - Auto-generates from h2/h3 headings on page
 - `<uga-return-to-top>` - Smooth scroll button (appears after scrolling)
@@ -302,7 +304,7 @@ Follow the JSON structure in the sample files:
 
 **"Styles look wrong"**
 
-- Verify `base.css` is loading from design.online.uga.edu
+- Verify Google Fonts, `base.css`, and `scripts.js` load from design.online.uga.edu (see [installation](https://design.online.uga.edu/getting-started/installation/))
 - Check browser console (F12) for CSS errors
 
 **"TOC showing wrong headings"**

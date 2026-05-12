@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UGA Lit Components Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
   <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
@@ -174,6 +180,62 @@
       </div>
       <div class="demo-code">
         <uga-code language="markup">&lt;uga-accordion type="local" filename="accordion/accordion-demo.json"&gt;&lt;/uga-accordion&gt;</uga-code>
+      </div>
+    </section>
+
+    <!-- Callout Component -->
+    <section class="component-demo" id="callout-demo">
+      <h2>Callout Component</h2>
+      <div class="demo-description">
+        <p><strong>Semantic callout/aside blocks</strong> with consistent brand-color pairings and an optional pseudo-label that does not create extra page headings.</p>
+        <p>Use <a href="callout.html">the standalone callout demo</a> for focused examples and copy-paste snippets.</p>
+      </div>
+      <div class="demo-example">
+        <uga-callout type="note" label="Note">
+          <p>Use note callouts for context that supports the primary instruction.</p>
+        </uga-callout>
+        <uga-callout type="tip" size="small" label="Tip">
+          <p>Put short implementation hints where learners are most likely to need them.</p>
+        </uga-callout>
+        <uga-callout type="example" label="Example">
+          <p>Model one full solution before asking students to complete a similar task independently.</p>
+        </uga-callout>
+        <uga-callout type="warning" size="xlarge" label="Warning">
+          <p>Assignments uploaded after the deadline may trigger penalties based on the syllabus policy.</p>
+        </uga-callout>
+        <uga-callout type="important" label="Important">
+          <p>Verify all required files are attached before clicking Submit in eLC.</p>
+        </uga-callout>
+      </div>
+      <div class="demo-props">
+        <h4>Properties</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>type</td>
+            <td>string</td>
+            <td>One of <code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, or <code>warning</code>.</td>
+          </tr>
+          <tr>
+            <td>label</td>
+            <td>string</td>
+            <td>Bold text inside the box; can be a short title or the full message (see <a href="callout.html">callout demo</a>).</td>
+          </tr>
+          <tr>
+            <td>size</td>
+            <td>string</td>
+            <td>Optional: <code>small</code>, <code>medium</code> (default), <code>large</code>, or <code>xlarge</code> to adjust spacing and text size.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="demo-code">
+        <uga-code language="markup">&lt;uga-callout type="warning" size="xlarge" label="Warning"&gt;
+  &lt;p&gt;Assignments uploaded after the deadline may trigger penalties.&lt;/p&gt;
+&lt;/uga-callout&gt;</uga-code>
       </div>
     </section>
 
@@ -367,7 +429,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 1574196844)</td>
+            <td>Kaltura player ID (default: 57494843)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -378,7 +440,7 @@
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="1574196844"&gt;&lt;/uga-video&gt;
+        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="57494843"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
@@ -441,7 +503,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 1574196844)</td>
+            <td>Kaltura player ID (default: 57494843)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -1163,5 +1225,6 @@ console.log(x);
       };
     }
   </script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 </html>
