@@ -69,94 +69,14 @@ const classlist = await getClasslist(ou, versions.le);
 
 ### Kaltura Video Embedding
 
-Use KalturaPlayer script injection for full control over player configuration, especially to hide the logo. See the implementation pattern in `src/components/uga-video.ts`:
+Default embed is a **Kaltura iframe** (`embedPlaykitJs?iframeembed=true&entry_id=`) for correct thumbnails. **Playkit JS** loads only when **`topic-id`** is set (D2L topic completion). Default uiConf **53568732**. See `src/components/uga-video.ts`.
 
-**Key Implementation:**
+**Key points:**
 
-```typescript
-private kalturaScriptLoaded = false;
-private playerInstances: Map<string, any> = new Map();
-
-/**
- * Dynamically load the KalturaPlayer script from CDN
- */
-private loadKalturaScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (this.kalturaScriptLoaded || (window as any).KalturaPlayer) {
-      this.kalturaScriptLoaded = true;
-      resolve();
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = `https://cdnapisec.kaltura.com/p/1727411/embedPlaykitJs/uiconf_id/${this.uiconfid}`;
-    script.type = 'text/javascript';
-    script.onload = () => {
-      this.kalturaScriptLoaded = true;
-      resolve();
-    };
-    script.onerror = () => {
-      console.error('Failed to load KalturaPlayer script');
-      reject(new Error('KalturaPlayer script failed to load'));
-    };
-    document.head.appendChild(script);
-  });
-}
-
-/**
- * Initialize a Kaltura player for a specific video
- */
-private async initKalturaPlayer(videoId: string, containerId: string): Promise<void> {
-  try {
-    await this.loadKalturaScript();
-
-    const kalturaPlayer = (window as any).KalturaPlayer.setup({
-      targetId: containerId,
-      provider: {
-        partnerId: 1727411,
-        uiConfId: this.uiconfid
-      },
-      ui: {
-        components: {
-          // Hide the Kaltura logo/watermark
-          logo: {
-            disabled: true
-          }
-        }
-      }
-    });
-
-    kalturaPlayer.loadMedia({ entryId: videoId });
-    this.playerInstances.set(videoId, kalturaPlayer);
-  } catch (error) {
-    console.error(`Failed to initialize Kaltura player for video ${videoId}:`, error);
-  }
-}
-
-kalturaCode(videoId: string) {
-  const containerId = `kaltura_player_${videoId}`;
-
-  // Schedule player initialization after the DOM is updated
-  setTimeout(() => {
-    this.initKalturaPlayer(videoId, containerId);
-  }, 0);
-
-  return html`
-    <div class="cmp-video util-margin-top-lg">
-      <div class="cmp-video__container">
-        <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
-      </div>
-    </div>
-  `;
-}
-```
-
-**Key Implementation Details:**
-
-- Script loading is cached via `kalturaScriptLoaded` flag to avoid loading multiple times
-- `logo: { disabled: true }` in the UI configuration completely hides Kaltura branding
-- Player initialization is deferred via `setTimeout(, 0)` to ensure DOM element exists before KalturaPlayer targets it
-- Direct DOM container instead of iframe eliminates scrollbar issues and provides full styling control
+- `needsPlaykitApi()` — true when `getTopicId(topicId)` returns a non-empty id
+- Iframe path: no `initKalturaPlayer`, no Playkit script on the page
+- Playkit path: `loadKalturaScript` + `KalturaPlayer.setup` + playback listeners for 80%/ended completion
+- `playerid` overrides default uiConf (copy from Kaltura MediaSpace embed code)
 
 ### Unsafe HTML Pattern
 

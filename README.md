@@ -4,6 +4,10 @@ This repository contains a collection of reusable **Lit web components** designe
 
 The project has been modernized to use **Vite** for development and builds, and to bundle all components into a **single optimized JavaScript file** (`uga-components.js`) that can be easily uploaded to eLC Public Files.
 
+## Cursor AI (team)
+
+Open **this repo folder** in [Cursor](https://cursor.com) to load project rules and commands. Start here: [`docs/cursor/README.md`](docs/cursor/README.md). Commit messages: [`.github/COMMIT_TEMPLATE`](.github/COMMIT_TEMPLATE).
+
 ---
 
 ## 📋 Recent Updates (January 2026)
@@ -202,44 +206,20 @@ The previous `uga-module-feedback` web component has been removed from this bund
 
 ## 🎥 Kaltura Video Integration
 
-The `uga-video` component uses **KalturaPlayer script injection** for full control over player configuration:
+The `uga-video` component embeds Kaltura via an **iframe** (default), matching the standard MediaSpace embed URL so the correct **thumbnail/poster** displays.
 
-**Default Kaltura player:** uiConf ID **57494843** when `playerid` is omitted (override with `playerid="…"` for a custom player).
+**Default Kaltura player:** uiConf ID **53568732** when `playerid` is omitted. Copy the **uiConf ID** from Kaltura’s embed code into `playerid` if your course uses a different player.
 
-**Key Features:**
+**Embed behavior:**
 
-- ✅ Kaltura logo/watermark completely hidden via UI config
-- ✅ No scrollbar issues — uses direct DOM container instead of iframe
-- ✅ Full player lifecycle management with cleanup
-- ✅ Script caching to avoid multiple loads
-- ✅ Proper aspect ratio handling (16:9 default)
-
-**Implementation Pattern:**
-
-```typescript
-// Script is loaded once and cached
-private loadKalturaScript(): Promise<void> { ... }
-
-// Player initialized with logo disabled
-const kalturaPlayer = KalturaPlayer.setup({
-  targetId: containerId,
-  provider: { partnerId: 1727411, uiConfId: this.uiconfid },
-  ui: {
-    components: {
-      logo: { disabled: true }  // Hides Kaltura branding
-    }
-  }
-});
-```
+- **Default (no `topic-id`):** iframe with `embedPlaykitJs?iframeembed=true&entry_id=…` — no Playkit script on the page.
+- **With `topic-id`:** Playkit JS player for D2L topic completion (marks complete at **ended** or **≥ 80%** watched).
 
 **Usage in eLC:**
 
 ```html
-<uga-video videoid="1_icw0df6y" playerid="57494843" includerating="false">
-</uga-video>
+<uga-video videoid="1_icw0df6y" includerating="false"></uga-video>
 ```
-
-**Kaltura Djinn (caption Q&A):** Enable AI Q&A against captions by deploying the [Kaltura Djinn](https://github.com/uga-ool/uga-kaltura-djinn) API and setting **`enable-djinn`** + **`djinn-api-base`**. See **[docs/KALTURA_DJINN_D2L.md](./docs/KALTURA_DJINN_D2L.md)** for attributes and eLC checklist.
 
 **Multiple Videos:**
 
@@ -247,23 +227,13 @@ const kalturaPlayer = KalturaPlayer.setup({
 <uga-video type="local" filename="videos.json"></uga-video>
 ```
 
-**Video Analytics (Capture):**
+**D2L topic completion:** Set **`topic-id`** (or rely on topic id parsed from the page URL) when the video should mark the content topic complete:
 
-When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` blocked), the component captures playback events locally and sends them to:
+```html
+<uga-video videoid="1_icw0df6y" topic-id="12345"></uga-video>
+```
 
-1. **D2L Content Completions** – Marks the topic complete when the video is watched (ended or 80%+).
-2. **Custom backend** – Sends play, pause, ended, and throttled timeupdate events for detailed analytics.
-
-**Configuration:**
-
-- **In D2L (eLC):** Set `window.UGA_VIDEO_ANALYTICS_URL` _before_ loading the component script. The default `/api/video-analytics/events` resolves to D2L's server and returns 404—analytics will not work without this. Example: `<script>window.UGA_VIDEO_ANALYTICS_URL = 'https://your-api-server.edu/api/video-analytics/events';</script>`
-- **Kaltura analytics only:** If you use Kaltura's built-in analytics (no custom backend), set `window.UGA_VIDEO_ANALYTICS_DISABLED = true` before loading to avoid 404 errors from failed event sends.
-- **Local dev:** The Vite dev server proxies `/api/video-analytics` to localhost:3001. Run `cd server/video-analytics && npm install && npm run dev` so the backend is available.
-- Add `topic-id` when embedding in content: `<uga-video videoid="1_icw0df6y" topic-id="12345">` for reliable topic association. Otherwise, topic is parsed from the page URL.
-
-**Backend:** [server/video-analytics/](server/video-analytics/) implements `POST /api/video-analytics/events` and `GET /api/video-analytics/aggregate` for demos and local dev. Deploy an equivalent service accessible from eLC and enable CORS for your D2L domain (e.g. `ugatest2.view.usg.edu`). Course analytics reads from this backend when available.
-
-**D2L scope:** Ensure your LTI/app registration includes `content:completions:write` for the D2L completion flow.
+**D2L scope:** Ensure your LTI/app registration includes **`content:completions:write`** for the completion flow.
 
 ---
 
@@ -361,19 +331,11 @@ When Kaltura's analytics service is unreachable (e.g. `analytics.kaltura.com` bl
 | **Accordion icons not showing**   | **Add `class="js"` to `<html>` tag: `<html lang="en" class="js">`**                                |
 | **Accordion / tabs not toggling** | Ensure `https://design.online.uga.edu/js/scripts.js` is on the host page (see design system installation) |
 | Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                               |
-| Video analytics not collected     | In D2L: set `window.UGA_VIDEO_ANALYTICS_URL` before loading; deploy [server/video-analytics](server/video-analytics/) (or your own backend) with CORS |
-
-### Troubleshooting video analytics URL
-
-1. **Enable debug mode** – Add before the component script: `window.UGA_VIDEO_ANALYTICS_DEBUG = true;` Then open the browser console and play a video. You'll see the endpoint being used and whether events succeed.
-2. **Check the warning** – If you see `[UGA video analytics] Using default /api/video-analytics/events...`, the URL is not configured. Add `window.UGA_VIDEO_ANALYTICS_URL = 'https://your-backend/api/video-analytics/events';` before the script.
-3. **Verify in Network tab** – Filter for `video-analytics` or `events`. Look for POST requests to your backend. 404 = wrong URL or backend not deployed. CORS errors = backend needs to allow your D2L domain.
-4. **Test the backend** – Visit `https://your-backend/api/video-analytics/events` (or your root) to confirm the server is reachable.
-   | D2L API 404 errors | Verify course ID (`ou`) is correct and API version matches |
-   | `axios` is undefined | Ensure code runs in eLC environment (axios is globally available) |
-   | TOC showing too many items | Component now scans h2/h3 only - check if you need h4 headings in navigation |
-   | TOC links not working | Component now auto-generates IDs for headings without them |
-   | Data files not loading | Download example files from Google Drive links in demo pages, then upload to eLC Public Files |
+| D2L API 404 errors | Verify course ID (`ou`) is correct and API version matches |
+| `axios` is undefined | Ensure code runs in eLC environment (axios is globally available) |
+| TOC showing too many items | Component now scans h2/h3 only - check if you need h4 headings in navigation |
+| TOC links not working | Component now auto-generates IDs for headings without them |
+| Data files not loading | Download example files from Google Drive links in demo pages, then upload to eLC Public Files |
 | uga-image not loading   | Use relative paths (e.g. <code>images/photo.jpg</code> when image is in an images folder next to your HTML) or the full path from eLC Manage Files (right-click file → Copy Path). Avoid root-relative paths (<code>/demo/...</code>) in eLC. |
 
 ### Important Notes

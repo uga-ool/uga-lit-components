@@ -1,0 +1,14 @@
+# === Write your message on the line below (then delete everything above) ===
+# 
+
+# === Examples for uga-lit-components (then delete this section) ===
+# Add uga-my-widget Lit component
+# Fix Kaltura player in uga-video demo
+# Update demo page for uga-callout
+
+# === Before you commit — check these (then delete) ===
+# [ ] I ran Cursor command pre-commit-review (or lit-before-commit skill)
+# [ ] I only edited the correct folder (see docs/cursor/where-to-edit.md)
+# [ ] I did NOT add .env, passwords, or API keys
+# [ ] I did NOT change unrelated components or vite.config.ts unless that was the task
+# [ ] I ran npm run build — result: pass / fail / not needed

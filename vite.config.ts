@@ -3,14 +3,6 @@ import path from 'node:path';
 
 export default defineConfig({
   base: './',            // relative URLs work in Brightspace
-  server: {
-    proxy: {
-      '/api/video-analytics': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-      },
-    },
-  },
   build: {
     outDir: 'dist',      // only one output folder now
     emptyOutDir: true,

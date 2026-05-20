@@ -5,7 +5,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import type { PropertyValues } from 'lit';
-import axios from 'axios';
 import { getVersions, getClasslist, getClasslistPaged, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import type { ApiVersions, ClasslistUser } from '../types/d2l.js';
@@ -14,6 +13,15 @@ interface Instructor {
   name: string;
   imageSrc: string;
 }
+
+/** Row passed from instructor detection into card rendering. */
+type InstructorRow = {
+  userId: number;
+  name: string;
+  username: string;
+  /** Valence classlist `ImageUrl`; `null` means no photo (skip profile image request). */
+  classlistImageUrl?: string | null;
+};
 
 @customElement('uga-instructor-card')
 class UgaInstructorCard extends LitElement {
@@ -70,22 +78,23 @@ class UgaInstructorCard extends LitElement {
     if (this._cards.length === 0) return html`<div class="loading">No instructor found.</div>`;
 
     return html`
-      <div class="obj-flex util-margin-all-none" style="flex-wrap:wrap;gap:1rem;">
+      <div class="obj-flex" style="flex-wrap:wrap;gap:1rem;">
         ${this._cards.map(
           (i) => html`
             <figure
               class="obj-flex-item__sm util-align-center util-text-center util-pad-all-md util-margin-all-none util-background-white"
-              style="border-radius:4px; box-shadow:0 10px 25px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.08);"
+              style="display:block;width:240px;max-width:100%;box-sizing:border-box;border-radius:4px;box-shadow:0 10px 25px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.08);"
             >
               <img
                 class="util-margin-bottom-md"
                 loading="lazy"
                 decoding="async"
+                style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:4px;"
                 src=${i.imageSrc || `data:image/svg+xml,${this._placeholderDataUri(i.name)}`}
                 alt=${`Instructor profile image for ${i.name}`}
                 @error=${(e: Event) => this._fallbackMonogram(e, i.name)}
               />
-              <span>${i.name}</span>
+              <span style="display:block;">${i.name}</span>
             </figure>
           `
         )}
@@ -152,12 +161,19 @@ class UgaInstructorCard extends LitElement {
       }
 
       const selected = this.multiple ? instructors : [instructors[0]];
-      const imageResults = await Promise.all(selected.map((row) => this._resolveImageSrc(row.userId)));
+      const signal = this.abortController!.signal;
 
-      this._cards = selected.map((row, idx) => ({
-        name: row.name,
-        imageSrc: imageResults[idx] || '',
-      }));
+      this._cards = await Promise.all(
+        selected.map(async (row) => ({
+          name: row.name,
+          imageSrc: await this._resolveProfileImageSrc(
+            row.userId,
+            row.name,
+            signal,
+            row.classlistImageUrl
+          ),
+        }))
+      );
 
       console.log('✅ Instructor card(s) loaded:', this._cards.map((c) => c.name));
     } catch (err: any) {
@@ -197,10 +213,7 @@ class UgaInstructorCard extends LitElement {
     if (!this.versions.le) {
       throw new Error("API versions not loaded");
     }
-    
-    // Check for deprecated API version
-    logApiVersionWarning(this.versions.le, 'getClasslist');
-    
+
     // Try paged endpoint first (better for large classes)
     try {
       return await getClasslistPaged(orgUnitId, this.versions.le, {
@@ -223,10 +236,25 @@ class UgaInstructorCard extends LitElement {
     return String(s ?? '').toLowerCase();
   }
 
+  /**
+   * Numeric Brightspace user id for `/profile/user/{id}/image`. Classlist returns this either as
+   * `UserId` or as `Identifier` (D2LID). Same derivation as the previous shipped version.
+   */
+  _extractProfileUserId(pick: ClasslistUser): number {
+    const tryNum = (v: unknown): number => {
+      if (v == null || v === '') return 0;
+      const s = String(v).trim();
+      if (!/^\d+$/.test(s)) return 0;
+      const n = Number(s);
+      return Number.isFinite(n) && n > 0 ? Math.trunc(n) : 0;
+    };
+    return tryNum(pick.Identifier) || tryNum(pick.UserId);
+  }
+
   /** Stable key for deduping classlist rows */
   _classlistRowKey(u: ClasslistUser): string {
-    const id = u.UserId != null ? Number(u.UserId) : NaN;
-    if (Number.isFinite(id) && id > 0) return `id:${id}`;
+    const id = this._extractProfileUserId(u);
+    if (id > 0) return `id:${id}`;
     const un = String(u.Username ?? '').trim().toLowerCase();
     if (un) return `u:${un}`;
     return '';
@@ -272,9 +300,7 @@ class UgaInstructorCard extends LitElement {
   /**
    * Collect Banner Instructors, Instructors, and Teaching Assistants (merged; Banner rows listed first).
    */
-  _pickInstructorsFromClasslist(
-    items: ClasslistUser[] = []
-  ): Array<{ userId: number; name: string; username: string }> {
+  _pickInstructorsFromClasslist(items: ClasslistUser[] = []): InstructorRow[] {
     const keys = new Set<string>();
     const ordered: ClasslistUser[] = [];
 
@@ -302,9 +328,10 @@ class UgaInstructorCard extends LitElement {
     }
 
     return ordered.map((pick) => ({
-      userId: pick.UserId != null ? Number(pick.UserId) : 0,
+      userId: this._extractProfileUserId(pick),
       name: pick.DisplayName || `${pick.FirstName || ''} ${pick.LastName || ''}`.trim() || 'Unknown',
       username: String(pick.Username ?? '').trim(),
+      classlistImageUrl: pick.ImageUrl,
     }));
   }
 
@@ -313,9 +340,9 @@ class UgaInstructorCard extends LitElement {
    * Matching is case-insensitive on Brightspace Username.
    */
   _filterByUsername(
-    instructors: Array<{ userId: number; name: string; username: string }>,
+    instructors: InstructorRow[],
     usernameProp: string
-  ): Array<{ userId: number; name: string; username: string }> {
+  ): InstructorRow[] {
     const raw = usernameProp.trim();
     if (!raw) return instructors;
 
@@ -326,7 +353,7 @@ class UgaInstructorCard extends LitElement {
     if (wanted.length === 0) return instructors;
 
     const byUser = new Map(instructors.map((i) => [i.username.toLowerCase(), i]));
-    const ordered: Array<{ userId: number; name: string; username: string }> = [];
+    const ordered: InstructorRow[] = [];
     for (const w of wanted) {
       const row = byUser.get(w);
       if (row) ordered.push(row);
@@ -334,24 +361,79 @@ class UgaInstructorCard extends LitElement {
     return ordered;
   }
 
-  // --------------------------------------------------
-  // Fetch instructor profile image (may still fallback)
-  // Note: Profile image endpoint doesn't have retry wrapper,
-  // but failures are handled gracefully with fallback
-  // --------------------------------------------------
-  async _resolveImageSrc(userId: number): Promise<string> {
-    if (!userId || !this.versions.lp) return "";
-    try {
-      const url = `/d2l/api/lp/${this.versions.lp}/profile/user/${userId}/image`;
-      const res = await axios.get(url, { responseType: "blob" });
+  /**
+   * Resolve photo for `<img src>`.
+   * When classlist `ImageUrl` is `null`, Valence documents that the user has no classlist-visible
+   * profile image — skip the profile route entirely (avoids 404 noise). When `ImageUrl` is a URL,
+   * use it directly. When the field is absent (older payloads), fall back to a fetch+blob probe of
+   * `/profile/user/{id}/image`.
+   */
+  async _resolveProfileImageSrc(
+    userId: number,
+    name: string,
+    signal: AbortSignal,
+    classlistImageUrl?: string | null
+  ): Promise<string> {
+    const placeholder = `data:image/svg+xml,${this._placeholderDataUri(name)}`;
 
-      if (res?.data && res.headers["content-type"]?.startsWith("image/")) {
-        return URL.createObjectURL(res.data);
-      }
-    } catch (err) {
-      console.warn("No profile image available", err);
+    if (classlistImageUrl === null) {
+      return placeholder;
     }
-    return "";
+    const trimmed = typeof classlistImageUrl === 'string' ? classlistImageUrl.trim() : '';
+    if (trimmed) {
+      return trimmed;
+    }
+
+    if (!userId || !this.versions.lp) return placeholder;
+
+    const url = `/d2l/api/lp/${this.versions.lp}/profile/user/${userId}/image`;
+    try {
+      const res = await fetch(url, { credentials: 'include', signal });
+      if (!res.ok) return placeholder;
+
+      const buf = new Uint8Array(await res.arrayBuffer());
+      const ct = (res.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+      const looksImage = ct.startsWith('image/') || this._looksLikeImageBytes(buf);
+      if (!looksImage) return placeholder;
+
+      const mime =
+        ct.startsWith('image/') ? ct : this._guessImageMimeFromBytes(buf) || 'image/jpeg';
+      return URL.createObjectURL(new Blob([buf], { type: mime }));
+    } catch (e: unknown) {
+      if ((e as { name?: string })?.name === 'AbortError' || signal.aborted) {
+        throw new Error('Request aborted');
+      }
+      return placeholder;
+    }
+  }
+
+  _looksLikeImageBytes(bytes: Uint8Array): boolean {
+    if (bytes.length < 3) return false;
+    if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return true;
+    if (bytes.length >= 4 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47)
+      return true;
+    if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return true;
+    if (
+      bytes.length >= 12 &&
+      bytes[0] === 0x52 &&
+      bytes[1] === 0x49 &&
+      bytes[2] === 0x46 &&
+      bytes[3] === 0x46 &&
+      bytes[8] === 0x57 &&
+      bytes[9] === 0x45 &&
+      bytes[10] === 0x42 &&
+      bytes[11] === 0x50
+    )
+      return true;
+    return false;
+  }
+
+  _guessImageMimeFromBytes(bytes: Uint8Array): string | null {
+    if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return 'image/jpeg';
+    if (bytes.length >= 4 && bytes[0] === 0x89 && bytes[1] === 0x50) return 'image/png';
+    if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return 'image/gif';
+    if (bytes.length >= 12 && bytes[0] === 0x52 && bytes[1] === 0x49) return 'image/webp';
+    return null;
   }
 
   // --------------------------------------------------

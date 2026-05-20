@@ -99,7 +99,7 @@
       </div>
 
       <div class="demo-example">
-        <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
+        <uga-video videoid="1_icw0df6y" playerid="53568732"></uga-video>
         <p><em>Using video ID 1_icw0df6y (Faculty Profile)</em></p>
       </div>
 
@@ -119,7 +119,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 57494843)</td>
+            <td>Kaltura player ID (default: 53568732)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -130,7 +130,7 @@
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="57494843"&gt;&lt;/uga-video&gt;
+        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
@@ -178,7 +178,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 57494843)</td>
+            <td>Kaltura player ID (default: 53568732)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -193,20 +193,14 @@
 &lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With custom player ID --&gt;
-&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
+&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="53568732"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
     <uga-return-to-top></uga-return-to-top>
   </div>
 
-  <!-- Video analytics: disabled when using Kaltura analytics only (no custom backend) -->
-  <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
-  <!-- Video analytics debug: logs endpoint and request status to console -->
-  <script>window.UGA_VIDEO_ANALYTICS_DEBUG = true;</script>
-  <!-- Video analytics: required for event collection. For local dev, run: cd server/video-analytics && npm run dev -->
-  <!-- For eLC / production: uncomment and set to your deployed backend URL: -->
-  <!-- <script>window.UGA_VIDEO_ANALYTICS_URL = 'https://YOUR-API-SERVER/api/video-analytics/events';</script> -->
+  <!-- Component bundle -->
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
   <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>

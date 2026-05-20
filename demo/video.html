@@ -95,11 +95,11 @@
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
 
-        <p><strong>Embeds a single Kaltura video with customizable player.</strong> Use this method when you have one video to display. Logo/watermark is hidden by default.</p>
+        <p><strong>Embeds a single Kaltura video.</strong> Default embed is an iframe (correct thumbnail). Use <code>topic-id</code> when the video should mark the eLC content topic complete (loads Playkit JS for playback events).</p>
       </div>
 
       <div class="demo-example">
-        <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
+        <uga-video videoid="1_icw0df6y"></uga-video>
         <p><em>Using video ID 1_icw0df6y (Faculty Profile)</em></p>
       </div>
 
@@ -119,7 +119,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 57494843)</td>
+            <td>Kaltura player ID (default: 53568732)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -131,32 +131,20 @@
             <td>string</td>
             <td>Optional. eLC content topic ID. Recommended when embedding inside a topic so completion events are reliably attributed (otherwise the topic is parsed from the parent URL).</td>
           </tr>
-          <tr>
-            <td>enable-djinn</td>
-            <td>boolean</td>
-            <td>Show <strong>Kaltura Djinn</strong> Q&amp;A panel (requires <code>djinn-api-base</code> and captions on the entry)</td>
-          </tr>
-          <tr>
-            <td>djinn-api-base</td>
-            <td>string</td>
-            <td>Base URL of the Kaltura Djinn service (no trailing slash), eLC-only with CORS</td>
-          </tr>
-          <tr>
-            <td>djinn-api-key</td>
-            <td>string</td>
-            <td>Optional; sent as <code>X-Djinn-Api-Key</code> if the Djinn server requires it</td>
-          </tr>
         </table>
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="57494843"&gt;&lt;/uga-video&gt;
+        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
+
+&lt;!-- Override player from Kaltura embed code --&gt;
+&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
 
-&lt;!-- Kaltura Djinn (run uga-kaltura-djinn + LLM gateway; use only in eLC) --&gt;
-&lt;uga-video videoid="1_icw0df6y" enable-djinn djinn-api-base="https://djinn.example.edu"&gt;&lt;/uga-video&gt;</uga-code>
+&lt;!-- D2L topic completion (Playkit JS) --&gt;
+&lt;uga-video videoid="1_icw0df6y" topic-id="12345"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -253,7 +241,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 57494843)</td>
+            <td>Kaltura player ID (default: 53568732)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -268,18 +256,14 @@
 &lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With custom player ID --&gt;
-&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
+&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="53568732"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
     <uga-return-to-top></uga-return-to-top>
   </div>
 
-  <!-- Video analytics: disabled when using Kaltura analytics only (no custom backend) -->
-  <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
-  <!-- Video analytics: required for event collection. For local dev, run: cd server/video-analytics && npm run dev -->
-  <!-- For eLC / production: uncomment and set to your deployed backend URL: -->
-  <!-- <script>window.UGA_VIDEO_ANALYTICS_URL = 'https://YOUR-API-SERVER/api/video-analytics/events';</script> -->
+  <!-- Component bundle -->
   <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
   <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>

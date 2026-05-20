@@ -51,6 +51,7 @@ const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
   msw: 'Master of Social Work',
   ool: 'Online Learning',
   publichealth: 'Public Health',
+  terry: 'Terry College of Business',
 };
 
 /**
@@ -69,12 +70,18 @@ const PROGRAM_IMAGE_PATHS: Record<string, string> = {
   msw: '/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png',
   ool: '/shared/ugaonline/templates/ool/img/logo.png',
   publichealth: '/shared/ugaonline/templates/publichealth/img/publichealth_logo.svg',
+  terry: '/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png',
 };
 
 class UgaFooter extends LitElement {
   @property({ type: String }) filename = '';
   @property({ type: String }) imagefile = '';
   @property({ type: String }) program = '';
+  /**
+   * Alias for `program` (same abbreviated template code). Instructional designers
+   * often use `name="terry"` instead of `program="terry"`. If both are set, `program` wins.
+   */
+  @property({ type: String }) name = '';
   @property({ type: Boolean }) loaded = false;
   /** When true, appends ?t=timestamp to local JSON URL so edits show on refresh (avoids caching). */
   @property({ type: Boolean, attribute: 'cache-bust' }) cacheBust = false;
@@ -85,6 +92,13 @@ class UgaFooter extends LitElement {
 
   createRenderRoot() {
     return this;
+  }
+
+  /** Resolved template code for shared footer JSON and logo paths. */
+  private get effectiveProgram(): string {
+    const fromProgram = (this.program || '').trim();
+    const fromName = (this.name || '').trim();
+    return fromProgram || fromName;
   }
 
   connectedCallback(): void {
@@ -98,9 +112,11 @@ class UgaFooter extends LitElement {
     super.updated?.(changedProperties);
     const prevFilename = changedProperties.get('filename');
     const prevProgram = changedProperties.get('program');
+    const prevName = changedProperties.get('name');
     const filenameChanged = changedProperties.has('filename') && prevFilename !== undefined;
     const programChanged = changedProperties.has('program') && prevProgram !== undefined;
-    if (filenameChanged || programChanged) {
+    const nameChanged = changedProperties.has('name') && prevName !== undefined;
+    if (filenameChanged || programChanged || nameChanged) {
       this.loaded = false;
       this.footerData = null;
       this.loadError = null;
@@ -119,13 +135,14 @@ class UgaFooter extends LitElement {
     try {
       let dataFile: FooterResponse | any;
 
-      // If program is provided, use program type; otherwise default to local
-      if (this.program) {
+      // If program or name is provided, use program type; otherwise default to local
+      const prog = this.effectiveProgram;
+      if (prog) {
         // Program type - use the standard footer.json filename
         const programFilename = 'footer.json';
-        console.log('[uga-footer] Loading JSON from program:', this.program);
+        console.log('[uga-footer] Loading JSON from program:', prog);
         // Retry logic is handled internally by loadData if it uses fetch/axios
-        dataFile = await loadData<FooterResponse>('program', programFilename, this.program);
+        dataFile = await loadData<FooterResponse>('program', programFilename, prog);
         console.log('[uga-footer] JSON loaded successfully:', dataFile);
       } else {
         // Local type (default) - filename is the URL to fetch
@@ -165,16 +182,17 @@ class UgaFooter extends LitElement {
       this.loaded = true;
     } catch (error: any) {
       const requestedUrl = error?.response?.config?.url ?? '';
-      // When program is set, show program logo even if program JSON is missing (e.g. footer.json not yet uploaded)
-      if (this.program) {
-        const customPath = PROGRAM_IMAGE_PATHS[this.program];
-        const programImgBase = `/shared/ugaonline/templates/${this.program}/img`;
-        const imageName = this.imagefile || this.programNameToImageFilename(this.program);
+      // When program/name is set, show program logo even if program JSON is missing (e.g. footer.json not yet uploaded)
+      const prog = this.effectiveProgram;
+      if (prog) {
+        const customPath = PROGRAM_IMAGE_PATHS[prog];
+        const programImgBase = `/shared/ugaonline/templates/${prog}/img`;
+        const imageName = this.imagefile || this.programNameToImageFilename(prog);
         const logoUrl = customPath
           ? (customPath.startsWith('/') ? customPath : `/${customPath}`)
           : `${programImgBase}/${encodeURIComponent(imageName)}`;
         this.footerData = {
-          logo: { link: '#', alt: PROGRAM_DISPLAY_NAMES[this.program] || this.program.replace(/_/g, ' '), imageSrc: logoUrl }
+          logo: { link: '#', alt: PROGRAM_DISPLAY_NAMES[prog] || prog.replace(/_/g, ' '), imageSrc: logoUrl }
         };
         this.loadError = null;
       } else {
@@ -278,14 +296,15 @@ class UgaFooter extends LitElement {
     let logoVerticalImageSrc = '';
     
     if (logo) {
-      if (this.program) {
+      const prog = this.effectiveProgram;
+      if (prog) {
         // Use program-specific path if defined, otherwise derive from program name
-        const customPath = PROGRAM_IMAGE_PATHS[this.program];
+        const customPath = PROGRAM_IMAGE_PATHS[prog];
         if (customPath) {
           logoImageSrc = customPath.startsWith('/') ? customPath : `/${customPath}`;
         } else {
-          const programImgBase = `/shared/ugaonline/templates/${this.program}/img`;
-          const imageName = this.imagefile || this.programNameToImageFilename(this.program);
+          const programImgBase = `/shared/ugaonline/templates/${prog}/img`;
+          const imageName = this.imagefile || this.programNameToImageFilename(prog);
           logoImageSrc = `${programImgBase}/${encodeURIComponent(imageName)}`;
         }
       } else if (logo.imageSrc) {

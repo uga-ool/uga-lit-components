@@ -410,7 +410,7 @@
       </div>
 
       <div class="demo-example">
-        <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
+        <uga-video videoid="1_icw0df6y" playerid="53568732"></uga-video>
       </div>
 
       <div class="demo-props">
@@ -429,7 +429,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 57494843)</td>
+            <td>Kaltura player ID (default: 53568732)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -440,7 +440,7 @@
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="57494843"&gt;&lt;/uga-video&gt;
+        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
@@ -503,7 +503,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 57494843)</td>
+            <td>Kaltura player ID (default: 53568732)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -518,7 +518,7 @@
 &lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With custom player ID --&gt;
-&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
+&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="53568732"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -1019,17 +1019,22 @@ console.log(x);
           <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>). Not needed when using <code>program</code>.</td>
+            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>). Not needed when using <code>program</code> or <code>name</code>.</td>
           </tr>
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>). When set, data loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>; logo path is per program (see <a href="footer.html">Footer demo</a>).</td>
+            <td>Abbreviated template code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>, <code>terry</code>). When set, data loads from <code>/shared/ugaonline/templates/{code}/data/footer.json</code>; logo path is per program (see <a href="footer.html">Footer demo</a>). Same as <code>name</code> if only one is set; if both are set, <code>program</code> wins.</td>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>string</td>
+            <td>Optional alias for <code>program</code> (e.g. <code>name="terry"</code> for Terry College of Business).</td>
           </tr>
           <tr>
             <td>imagefile</td>
             <td>string</td>
-            <td>Optional. Logo filename when using <code>program</code>; if omitted, defaults to <code>{program}.png</code> in that template's <code>img/</code> folder. For local mode, used when JSON doesn't include imageSrc.</td>
+            <td>Optional. Logo filename when using <code>program</code> or <code>name</code>; if omitted, defaults to <code>{code}.png</code> in that template's <code>img/</code> folder. For local mode, used when JSON doesn't include imageSrc.</td>
           </tr>
         </table>
       </div>
@@ -1038,8 +1043,9 @@ console.log(x);
         <uga-code language="markup">&lt;uga-footer filename="footer/footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
-        <p>Use the abbreviated program code (including <code>mfp</code> for Masters in Financial Planning). Template data: <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. See <a href="footer.html">Footer demo</a> for program codes and logo paths.</p>
-        <uga-code language="markup">&lt;uga-footer program="msw"&gt;&lt;/uga-footer&gt;</uga-code>
+        <p>Use <code>program="…"</code> or <code>name="…"</code> with the same abbreviated code (e.g. <code>terry</code> for Terry College of Business). Template data: <code>/shared/ugaonline/templates/{code}/data/footer.json</code>. See <a href="footer.html">Footer demo</a> for program codes and logo paths.</p>
+        <uga-code language="markup">&lt;uga-footer program="msw"&gt;&lt;/uga-footer&gt;
+&lt;uga-footer name="terry"&gt;&lt;/uga-footer&gt;</uga-code>
       </div>
     </section>
 
@@ -1208,8 +1214,7 @@ console.log(x);
 
   </div>
 
-  <!-- Video analytics: disabled when using Kaltura analytics only -->
-  <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
+  <!-- Component bundle: localhost uses /dist/; eLC uses /shared/ -->
   <script>
     (function(){var s=document.createElement('script');s.type='module';s.src=window.location.hostname==='localhost'?'/dist/js/uga-components.js':'/shared/ugaonline/js/uga-components.js';document.body.appendChild(s);})();
   </script>

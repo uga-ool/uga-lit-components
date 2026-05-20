@@ -1,20 +1,13 @@
 import { LitElement, html } from 'lit';
 import type { PropertyValues } from 'lit';
 import axios from 'axios';
-import { customElement, property, state } from 'lit/decorators.js';
-import { getVersions, getClasslist, getCurrentUserId, getXsrfToken } from '../lib/api/d2l-client.js';
+import { customElement, property } from 'lit/decorators.js';
+import { getVersions, getClasslist, getCurrentUserId } from '../lib/api/d2l-client.js';
 import { getCourse, getTopicId } from '../lib/api/d2l-utils.js';
 import { completeContentTopic } from '../lib/api/d2l-client-content.js';
-import { sendVideoEvent } from '../lib/api/video-analytics-client.js';
 import { loadData } from '../lib/data/data-loader.js';
 import type { ApiVersions, ClasslistUser } from '../types/d2l.js';
 import './uga-rating.js';
-
-interface DjinnCitation {
-  startMs: number;
-  endMs?: number;
-  text: string;
-}
 
 @customElement('uga-video')
 class UgaVideo extends LitElement {
@@ -33,18 +26,6 @@ class UgaVideo extends LitElement {
   @property({ type: Boolean }) includeRating = false;
   @property({ type: String }) name = '';
   @property({ type: String, attribute: 'topic-id' }) topicId = '';
-  /** When true and `djinnApiBase` is set, show Kaltura Djinn Q&A (eLC + Djinn server). */
-  @property({ type: Boolean, attribute: 'enable-djinn' }) enableDjinn = false;
-  /** Base URL of Kaltura Djinn service (no trailing slash), e.g. https://djinn.example.edu */
-  @property({ type: String, attribute: 'djinn-api-base' }) djinnApiBase = '';
-  /** Optional shared secret; sent as X-Djinn-Api-Key if set */
-  @property({ type: String, attribute: 'djinn-api-key' }) djinnApiKey = '';
-
-  @state() private djinnLoadingVideoId: string | null = null;
-  @state() private djinnQuestionDraft: Record<string, string> = {};
-  @state() private djinnAnswerByVideo: Record<string, string> = {};
-  @state() private djinnCitationsByVideo: Record<string, DjinnCitation[]> = {};
-  @state() private djinnErrorByVideo: Record<string, string> = {};
 
   private uiconfid = '';
   private domain: string | null = null;
@@ -53,8 +34,6 @@ class UgaVideo extends LitElement {
   private videoNames: Map<string, string> = new Map();
   private componentId: string = `video_${Math.random().toString(36).substr(2, 9)}`;
   private completedTopics: Set<string> = new Set();
-  private lastTimeUpdateSent: Map<string, number> = new Map();
-  private readonly TIME_UPDATE_THROTTLE_MS = 30000;
   private analyticsContext: { userId: string | null; leVersion: string; lpVersion: string } | null = null;
 
   createRenderRoot() {
@@ -67,8 +46,8 @@ class UgaVideo extends LitElement {
 
     if (this.playerid === "") {
       // Default Kaltura player (uiConf); omit attribute to use this ID.
-      this.playerid = "57494843";
-      this.uiconfid = "57494843";
+      this.playerid = "53568732";
+      this.uiconfid = "53568732";
     } else {
       this.uiconfid = this.playerid;
     }
@@ -236,7 +215,7 @@ class UgaVideo extends LitElement {
       kalturaPlayer.loadMedia({ entryId: videoId });
       this.playerInstances.set(videoId, kalturaPlayer);
 
-      this.attachVideoAnalyticsListeners(kalturaPlayer, videoId);
+      this.attachKalturaPlaybackListeners(kalturaPlayer, videoId);
     } catch (error) {
       console.error(`Failed to initialize Kaltura player for video ${videoId}:`, error);
       // If initialization fails, don't retry to avoid infinite loops
@@ -244,9 +223,9 @@ class UgaVideo extends LitElement {
   }
 
   /**
-   * Attach event listeners for D2L completion and custom analytics backend.
+   * Kaltura playback listeners: D2L topic completion when the video ends or reaches 80%.
    */
-  private attachVideoAnalyticsListeners(player: any, videoId: string): void {
+  private attachKalturaPlaybackListeners(player: any, videoId: string): void {
     const EventCore = player?.Event?.Core || {};
     const eventMap: Array<{ key: string; name: string }> = [
       { key: 'PLAY', name: 'play' },
@@ -288,24 +267,6 @@ class UgaVideo extends LitElement {
     const topicId = getTopicId(this.topicId);
     const ou = this.ou;
     const ctx = await this.getAnalyticsContext();
-
-    sendVideoEvent({
-      entryId: videoId,
-      topicId: topicId ?? undefined,
-      ou: ou ?? undefined,
-      userId: ctx.userId ?? undefined,
-      eventType,
-      timestamp: new Date().toISOString(),
-      currentTime,
-      duration,
-      percentWatched,
-    }).catch(() => {});
-
-    if (eventType === 'timeupdate') {
-      const last = this.lastTimeUpdateSent.get(videoId) ?? 0;
-      if (Date.now() - last < this.TIME_UPDATE_THROTTLE_MS) return;
-      this.lastTimeUpdateSent.set(videoId, Date.now());
-    }
 
     const completionKey = `${videoId}:${topicId ?? 'none'}`;
     if (this.completedTopics.has(completionKey)) return;
@@ -368,83 +329,26 @@ class UgaVideo extends LitElement {
     }
   }
 
-  private normalizeDjinnBase(): string {
-    return (this.djinnApiBase || '').trim().replace(/\/$/, '');
+  /** Playkit JS is only needed for D2L topic completion (playback event listeners). */
+  private needsPlaykitApi(): boolean {
+    const topicId = getTopicId(this.topicId);
+    return topicId != null && topicId !== '';
   }
 
-  private async submitDjinnQuestion(videoId: string): Promise<void> {
-    const base = this.normalizeDjinnBase();
-    if (!base) return;
-    const q = (this.djinnQuestionDraft[videoId] || '').trim();
-    if (!q) return;
-
-    this.djinnLoadingVideoId = videoId;
-    const nextErr = { ...this.djinnErrorByVideo };
-    delete nextErr[videoId];
-    this.djinnErrorByVideo = nextErr;
-    this.requestUpdate();
-
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (this.djinnApiKey) {
-      headers['X-Djinn-Api-Key'] = this.djinnApiKey;
-    }
-    try {
-      const tok = await getXsrfToken();
-      if (tok) headers['X-Csrf-Token'] = tok;
-    } catch (_) {
-      /* Xsrf optional when gateway does not require Brightspace session */
-    }
-
-    try {
-      const res = await fetch(`${base}/v1/ask`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ entryId: videoId, question: q }),
-      });
-      const data = (await res.json().catch(() => ({}))) as {
-        answer?: string;
-        citations?: DjinnCitation[];
-        error?: string;
-      };
-      if (!res.ok) {
-        throw new Error(typeof data.error === 'string' ? data.error : res.statusText);
-      }
-      this.djinnAnswerByVideo = { ...this.djinnAnswerByVideo, [videoId]: data.answer ?? '' };
-      this.djinnCitationsByVideo = {
-        ...this.djinnCitationsByVideo,
-        [videoId]: Array.isArray(data.citations) ? data.citations : [],
-      };
-    } catch (e) {
-      this.djinnErrorByVideo = {
-        ...this.djinnErrorByVideo,
-        [videoId]: e instanceof Error ? e.message : 'Request failed',
-      };
-    } finally {
-      this.djinnLoadingVideoId = null;
-      this.requestUpdate();
-    }
+  private kalturaIframeSrc(videoId: string): string {
+    return `https://cdnapisec.kaltura.com/p/1727411/embedPlaykitJs/uiconf_id/${this.uiconfid}?iframeembed=true&entry_id=${videoId}`;
   }
 
-  private seekDjinnCitation(videoId: string, startMs: number): void {
-    const p = this.playerInstances.get(videoId);
-    if (!p) return;
-    try {
-      p.currentTime = startMs / 1000;
-      if (typeof p.play === 'function') {
-        p.play().catch(() => {});
-      }
-    } catch (_) {
-      /* ignore */
-    }
+  private kalturaVideoTitle(videoId: string): string {
+    return this.name || this.videoNames.get(videoId) || `Kaltura video ${videoId}`;
   }
 
   kalturaCode(videoId: string) {
     const containerId = `kaltura_player_${this.componentId}_${videoId}`;
-    // Kick off async name fetch for rating display
     this.ensureVideoName(videoId);
+    const usePlaykit = this.needsPlaykitApi();
+    const title = this.kalturaVideoTitle(videoId);
 
-    const djinnBase = this.normalizeDjinnBase();
-    const showDjinn = this.enableDjinn && djinnBase !== '';
     const embedCode = html`
       <style>
         .cmp-video::after {
@@ -452,15 +356,17 @@ class UgaVideo extends LitElement {
           display: none !important;
           padding-top: 0 !important;
         }
-        .cmp-video__row {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-          align-items: flex-start;
+        .cmp-video__embed-container {
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          background: #000;
+        }
+        .cmp-video__embed-container iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
         }
         .cmp-video__container {
-          flex: 2;
-          min-width: 280px;
           width: 100%;
           background: #000;
         }
@@ -468,112 +374,31 @@ class UgaVideo extends LitElement {
           width: 100%;
           height: auto;
         }
-        .djinn-panel {
-          flex: 1;
-          min-width: 260px;
-          max-width: 100%;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          padding: 0.75rem 1rem;
-          background: #fafafa;
-        }
-        .djinn-panel h4 {
-          margin: 0 0 0.5rem;
-          font-size: 1rem;
-          color: #333;
-        }
-        .djinn-panel textarea {
-          width: 100%;
-          min-height: 4rem;
-          box-sizing: border-box;
-          font: inherit;
-          margin-bottom: 0.5rem;
-        }
-        .djinn-panel button.djinn-ask {
-          background: #ba0c2f;
-          color: #fff;
-          border: none;
-          padding: 0.4rem 1rem;
-          border-radius: 4px;
-          font-weight: 600;
-          cursor: pointer;
-        }
-        .djinn-panel button.djinn-ask:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-        .djinn-answer {
-          margin-top: 0.75rem;
-          font-size: 0.95rem;
-          line-height: 1.45;
-          color: #222;
-        }
-        .djinn-cite {
-          display: block;
-          margin-top: 0.35rem;
-          font-size: 0.85rem;
-          color: #ba0c2f;
-          text-decoration: underline;
-          cursor: pointer;
-          background: none;
-          border: none;
-          padding: 0;
-          text-align: left;
-        }
-        .djinn-err {
-          margin-top: 0.5rem;
-          color: #b00020;
-          font-size: 0.9rem;
-        }
       </style>
       <div class="cmp-video util-margin-top-lg">
-        <div class="cmp-video__row">
-          <div class="cmp-video__container">
-            <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
-          </div>
-          ${showDjinn
-            ? html`
-                <div class="djinn-panel" aria-label="Kaltura Djinn">
-                  <h4>Kaltura Djinn</h4>
-                  <textarea
-                    placeholder="Ask about this video (from captions)…"
-                    .value=${this.djinnQuestionDraft[videoId] ?? ''}
-                    @input=${(e: Event) => {
-                      const t = e.target as HTMLTextAreaElement;
-                      this.djinnQuestionDraft = { ...this.djinnQuestionDraft, [videoId]: t.value };
-                    }}
-                  ></textarea>
-                  <button
-                    type="button"
-                    class="djinn-ask"
-                    ?disabled=${this.djinnLoadingVideoId === videoId}
-                    @click=${() => this.submitDjinnQuestion(videoId)}
-                  >
-                    ${this.djinnLoadingVideoId === videoId ? 'Asking…' : 'Ask'}
-                  </button>
-                  ${this.djinnErrorByVideo[videoId]
-                    ? html`<div class="djinn-err">${this.djinnErrorByVideo[videoId]}</div>`
-                    : null}
-                  ${this.djinnAnswerByVideo[videoId]
-                    ? html`
-                        <div class="djinn-answer">${this.djinnAnswerByVideo[videoId]}</div>
-                        ${(this.djinnCitationsByVideo[videoId] ?? []).map(
-                          (c) => html`
-                            <button
-                              type="button"
-                              class="djinn-cite"
-                              @click=${() => this.seekDjinnCitation(videoId, c.startMs)}
-                            >
-                              Jump to ${(c.startMs / 1000).toFixed(1)}s — ${c.text.slice(0, 80)}${c.text.length > 80 ? '…' : ''}
-                            </button>
-                          `
-                        )}
-                      `
-                    : null}
-                </div>
-              `
-            : null}
-        </div>
+        ${usePlaykit
+          ? html`
+              <div class="cmp-video__container">
+                <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
+              </div>
+            `
+          : html`
+              <div class="cmp-video__embed-container">
+                <iframe
+                  class="cmp-video__embed"
+                  src="${this.kalturaIframeSrc(videoId)}"
+                  title="${title}"
+                  allow="autoplay *; fullscreen *; encrypted-media *; picture-in-picture; gyroscope"
+                  allowfullscreen
+                  webkitallowfullscreen
+                  mozallowfullscreen
+                  frameborder="0"
+                  itemprop="video"
+                  itemscope
+                  itemtype="http://schema.org/VideoObject"
+                ></iframe>
+              </div>
+            `}
       </div>
       ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.videoNames.get(videoId) ?? this.name} contentPlatform="kaltura"></uga-rating>`:html``}
     `;
@@ -655,11 +480,13 @@ class UgaVideo extends LitElement {
   }
 
   updated(changedProperties: PropertyValues<this>): void {
-    // Initialize Kaltura players only when host is Kaltura (YouTube uses iframe, no init needed)
     const isKaltura = this.host === '' || this.host.toLowerCase() === 'kaltura';
     if (
       isKaltura &&
-      (changedProperties.has('loaded') || changedProperties.has('videos')) &&
+      this.needsPlaykitApi() &&
+      (changedProperties.has('loaded') ||
+        changedProperties.has('videos') ||
+        changedProperties.has('topicId')) &&
       this.loaded &&
       this.videos.length > 0
     ) {

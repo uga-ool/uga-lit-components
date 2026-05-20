@@ -38,4 +38,3 @@ Design reference for the admin-only widget described in [FEATURE_REQUESTS.md](..
 - Demo: [demo/elc-google-sync.html](../demo/elc-google-sync.html)
 - Specification / open questions: [docs/ELC_GOOGLE_SYNC_SPEC.md](./ELC_GOOGLE_SYNC_SPEC.md)
 - Full **Drive ↔ Manage Files** standalone app: **`uga-drive-elc-sync`** (separate repository), not duplicated under this package.
-- Local **`uga-video`** analytics backend (Express on port 3001): [server/video-analytics/](../server/video-analytics/)

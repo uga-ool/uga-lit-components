@@ -7,11 +7,18 @@ All notable changes to this project will be documented in this file.
 
 ### Repository
 
-- Removed **`elc-google-sync/`** (standalone React “Course Template Manager” duplicate of Drive sync). Canonical app: **`uga-drive-elc-sync`**. Video analytics Express API moved to [server/video-analytics/](server/video-analytics/); widget spec moved to [docs/ELC_GOOGLE_SYNC_SPEC.md](docs/ELC_GOOGLE_SYNC_SPEC.md).
+- Removed **`elc-google-sync/`** (standalone React “Course Template Manager” duplicate of Drive sync). Canonical app: **`uga-drive-elc-sync`**. Widget spec: [docs/ELC_GOOGLE_SYNC_SPEC.md](docs/ELC_GOOGLE_SYNC_SPEC.md).
 
 ### uga-video
 
-- Default Kaltura player / uiConf ID is **57494843** when `playerid` is not set (aligned `playerid` internal default with the loaded uiConf; demos and setup docs updated)
+- Removed **Kaltura Djinn** integration (`enable-djinn`, `djinn-api-base`, `djinn-api-key`, Q&A panel, and `docs/KALTURA_DJINN_D2L.md`). Caption Q&A belongs in the Brightspace agent framework, not this component.
+- **Kaltura embed:** default path is iframe (`embedPlaykitJs?iframeembed=true&entry_id=`) for correct thumbnails; Playkit JS loads only when **`topic-id`** is set (D2L completion). Default uiConf **`53568732`** when `playerid` is omitted (copy from Kaltura embed code to override).
+- Removed custom **video analytics** (`sendVideoEvent`, `window.UGA_VIDEO_ANALYTICS_*`, Vite `/api/video-analytics` proxy, and `server/video-analytics/`). **D2L topic completion** when `topic-id` is set (ended or 80% watched) is unchanged.
+
+### uga-footer
+
+- **Terry College of Business:** template code `terry` with logo `/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png`
+- Optional **`name`** attribute as alias for **`program`** (e.g. `name="terry"`); if both are set, `program` wins. Demos and setup text updated.
 
 ### uga-callout
 
