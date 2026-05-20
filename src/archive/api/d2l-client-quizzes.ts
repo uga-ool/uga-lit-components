@@ -2,7 +2,7 @@
 // Additional API functions for quiz-related components
 
 import axios from 'axios';
-import { cachedApiCall, logApiVersionWarning } from './d2l-client.js';
+import { cachedApiCall, logApiVersionWarning } from '../../lib/api/d2l-client.js';
 import type { ApiVersions } from '../../types/d2l.js';
 
 // Import withRetry helper (it's not exported, so we'll use axios directly with retry logic)

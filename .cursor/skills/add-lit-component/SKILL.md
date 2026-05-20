@@ -25,7 +25,7 @@ description: Add a new uga-* Lit component with demo page and bundle registratio
 ## Do not
 
 - Add shadow DOM by default.
-- Bundle `axios`.
+- Externalize axios or add a second HTTP client without team discussion (axios is already bundled).
 - Commit `.env` or API keys.
 
 ## Commands

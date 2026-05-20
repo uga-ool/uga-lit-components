@@ -1,9 +1,12 @@
-#!/usr/bin/env npx tsx
 /**
  * Test Kaltura API: get play count for a video.
- * Usage: npx tsx scripts/test-kaltura-plays.ts [entryId]
  *
- * Requires kaltura-secrets.ts with partnerId and secret.
+ * Usage:
+ *   npm run test:kaltura
+ *   npm run test:kaltura -- 1_yourEntryId
+ *
+ * Requires kaltura-secrets.ts with partnerId and secret (see kaltura-secrets.example.ts).
+ * Not used by the production uga-components.js bundle.
  */
 
 import axios from 'axios';

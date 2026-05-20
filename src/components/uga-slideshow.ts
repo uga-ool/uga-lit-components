@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import axios from 'axios';
+import { loadData } from '../lib/data/data-loader.js';
 
 
 interface SlideImage {
@@ -160,8 +160,7 @@ class UgaSlideshow extends LitElement {
     if (!this.filename) {
       throw new Error('Missing required filename for uga-slideshow');
     }
-    const resp = await axios.get(this.filename);
-    return resp.data as SlideshowData;
+    return loadData<SlideshowData>('local', this.filename);
   }
 
   addData(data: SlideshowData): void {

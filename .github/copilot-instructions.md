@@ -10,7 +10,7 @@ Be concise and make edits that follow the repository's existing structure and co
 ## Key Files & Entry Points
 
 - `src/components/` — individual Lit element sources (e.g. `uga-accordion.ts`). Components register via decorators/side effects.
-- `src/all.ts` — eager imports all components with `import.meta.glob(..., { eager: true })`. Editing this file or adding files under `src/components/` is how new elements get registered in the bundle.
+- `src/all.ts` — entry point; `import.meta.glob('./components/*.{js,ts}', { eager: true })` registers every new `src/components/uga-*.ts` automatically. **Do not edit `all.ts` for normal new components** — add a file under `src/components/` only.
 - `vite.config.ts` — build config: single entry `src/all.ts`, `inlineDynamicImports: true`, `outDir: dist`, `sourcemap: true`. Changing bundle shape must be done here.
 - `package.json` — scripts: `npm run dev` (vite), `npm run build` (bundle), `npm run preview` (serve build). Use these for development and producing the distributable.
 
@@ -33,9 +33,9 @@ Be concise and make edits that follow the repository's existing structure and co
 ## Project Conventions and Gotchas
 
 - **Light DOM:** components call `createRenderRoot() { return this; }` to render in light DOM — do not add shadow DOM unless you update markup consumers.
-- **Side-effect registration:** components register themselves on import. `src/all.ts` must import (or include via import.meta.glob) every component file you want registered.
-- **No axios bundling:** the D2L runtime provides `axios` globally — library code (e.g. `src/lib/api/d2l-client.ts`) assumes a global `axios` and _does not_ import it. Avoid adding axios to the bundle unless you intentionally change runtime assumptions.
-- **D2L runtime globals:** code expects Brightspace globals (e.g., `window.D2L`) and specific URL shapes. When testing locally, mock `axios` and any `window.D2L` usage.
+- **Side-effect registration:** components register themselves on import. The glob in `src/all.ts` picks up every `src/components/*.ts` file; no manual import list.
+- **Axios is bundled:** `axios` is a production dependency; Vite bundles it into `uga-components.js`. Use `import axios from 'axios'` in `src/lib/api/d2l-client.ts` and follow existing component patterns—do not switch to `window.axios` or externalize axios without updating `vite.config.ts` and all call sites.
+- **D2L runtime globals:** code expects Brightspace globals (e.g., `window.D2L`) and Valence URL shapes. Local `npm run dev` uses the bundled axios; mock `window.D2L` when testing outside eLC.
 - **Types:** API types live in `src/types/d2l.ts`. Use these for function signatures and to keep API usage consistent.
 
 ## Coding Patterns to Follow
@@ -216,7 +216,7 @@ class UgaUserInfo extends LitElement {
 
 - Do not introduce network imports that create multiple chunks unless you also update the bundling strategy in `vite.config.ts`.
 - If adding dependencies that target Node (e.g., polyfills), ensure they are compatible with ES module in-browser usage; prefer zero-runtime assumptions for Brightspace.
-- When changing API clients, preserve the runtime assumption that `axios` is global unless you update all components and the runtime to provide a bundled axios.
+- When changing API clients, keep using the bundled `axios` import pattern unless the team explicitly externalizes it in `vite.config.ts`.
 - Always use Light DOM (`createRenderRoot() { return this; }`) in components—do not use Shadow DOM unless you have a very specific reason and update all consumers.
 - Remove all `console.log()` debug statements before pushing to production.
 - Ensure all ARIA attributes are properly defined (no undefined bindings).
@@ -229,7 +229,7 @@ class UgaUserInfo extends LitElement {
 | Styles not applying                | Ensure `createRenderRoot() { return this; }` is defined, `base.css` is linked in the component if using UGA classes, and the host page loads Google Fonts plus `scripts.js` for interactive DS patterns |
 | Kaltura video not displaying       | Check `uiconfid` is correct and script loads successfully; verify `containerId` matches target div           |
 | D2L API 404 errors                 | Verify URL path matches expected `/d2l/api/le/${version}/${ou}/...` pattern                                  |
-| `axios` not available              | Ensure you're running in Brightspace environment where axios is globally provided                            |
+| `axios` / API errors in local dev  | Bundle includes axios; mock `window.D2L` and course context. In eLC, load only `uga-components.js` (no extra axios script). |
 
 ---
 

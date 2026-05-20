@@ -1,8 +1,12 @@
 node_modules/
+server/**/node_modules/
 dist/
 .cursor/debug-*.log
 .vscode/
 .DS_Store
 
-# Kaltura credentials - never commit
+# Local secrets — never commit
+.env
+.env.local
+.env.*.local
 kaltura-secrets.ts

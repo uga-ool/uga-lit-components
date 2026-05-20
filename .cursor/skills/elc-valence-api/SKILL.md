@@ -20,7 +20,7 @@ Read the **resource page** for the API you need before inventing request shapes.
 - **URL patterns:** `/d2l/api/le/{leVersion}/{ou}/...` and `/d2l/api/lp/{lpVersion}/{ou}/...`.
 - **Types:** extend [`src/types/d2l.ts`](../../src/types/d2l.ts) when adding response shapes.
 - **Org unit:** pass `ou` from component attributes or `getCourse()` — never hard-code production OU IDs in source.
-- **Runtime:** in eLC, Brightspace provides global `axios`; follow existing `d2l-client` patterns (see `.github/copilot-instructions.md`).
+- **HTTP:** use `d2l-client.ts` (`import axios from 'axios'`); axios is **bundled** in `uga-components.js` (see `.github/copilot-instructions.md`).
 - **Rate limits:** use `withRetry` / caching in `d2l-client` where already applied.
 
 ## Workflow
@@ -29,7 +29,7 @@ Read the **resource page** for the API you need before inventing request shapes.
 2. Open the matching page on docs.valence.desire2learn.com.
 3. Add or extend a helper in `d2l-client.ts` if multiple components need the same call.
 4. Wire the component via `loadData` or direct client calls; update demo if needed.
-5. Test in eLC or mock `axios` / `window.D2L` locally per copilot instructions.
+5. Test in eLC or mock `window.D2L` locally per copilot instructions (bundled axios works in `npm run dev`).
 
 ## Not in scope here
 

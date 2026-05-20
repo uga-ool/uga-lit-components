@@ -9,9 +9,10 @@ Use this table before you commit. The goal is to **add** your component without 
 | New Lit component | `src/components/uga-<name>.ts` |
 | Register in bundle | `src/all.ts` (via glob — new files under `src/components/` are usually auto-included) |
 | Demo page | `demo/<name>.html` |
-| Link demo from gallery | `index.html`, `index-all-in-one.html` |
+| Link demo from gallery | `index.html`, `demo/index-all-in-one.html` |
 | Shared API helpers | `src/lib/api/`, `src/lib/data/` (only if your component needs it) |
 | Types | `src/types/d2l.ts` (extend carefully) |
+| Source map for agents | `src/README.md` — components and API layout |
 
 ## Do not — leave unless your task says so
 

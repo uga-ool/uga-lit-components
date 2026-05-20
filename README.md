@@ -6,29 +6,21 @@ The project has been modernized to use **Vite** for development and builds, and 
 
 ## Cursor AI (team)
 
-Open **this repo folder** in [Cursor](https://cursor.com) to load project rules and commands. Start here: [`docs/cursor/README.md`](docs/cursor/README.md). After clone, run [`scripts/setup-git-hooks.sh`](scripts/setup-git-hooks.sh) so commits use [`.github/COMMIT_TEMPLATE`](.github/COMMIT_TEMPLATE).
+Open **this repo folder** in [Cursor](https://cursor.com) to load project rules and commands. Start here: [`docs/README.md`](docs/README.md) (doc index), [`src/README.md`](src/README.md) (components and APIs), and [`docs/cursor/README.md`](docs/cursor/README.md). Backlog only: [`docs/planning/README.md`](docs/planning/README.md). After clone, run [`scripts/setup-git-hooks.sh`](scripts/setup-git-hooks.sh) so commits use [`.github/COMMIT_TEMPLATE`](.github/COMMIT_TEMPLATE).
 
 ---
 
-## 📋 Recent Updates (January 2026)
+## Recent updates
 
-### What's New in v3.0
+- **Docs:** Planning backlog consolidated under [`docs/planning/`](docs/planning/); feature docs indexed in [`docs/README.md`](docs/README.md).
+- **Bundle:** **axios is bundled** in `uga-components.js` (not a separate Brightspace global).
+- **Demos:** Hub at [`demo/index-all-in-one.html`](demo/index-all-in-one.html) — there is no root `index.html`.
 
-- **🎨 eLC Rebranding Complete**: All references updated from "D2L (Brightspace)" to "eLC" (eLearning Commons)
-- **📁 Dual Index Structure**: `index.html` and `index-all-in-one.html` for flexible demo navigation
-- **📦 Google Drive Integration**: Example JSON files available via Google Drive links with consistent formatting
-- **🔗 TOC Auto-ID Generation**: Headings without IDs are automatically linkable
-- **📚 Enhanced Documentation**: Updated QUICK_START.md with clear file structure explanations
-- **🎬 Kaltura Video Enhancement**: Logo hiding, improved player lifecycle, eliminated scrollbar issues
-- **📂 Accordion Refactored**: Direct axios pattern, better error handling, TypeScript improvements
-- **🗂️ TOC Filtering**: Now scans h2/h3 only for cleaner navigation
-- **🐛 TypeScript Fixes**: Resolved type mismatches in assignment and duedate components
-
-👉 **See [CHANGELOG.md](./CHANGELOG.md) for complete details**
+See [CHANGELOG.md](./CHANGELOG.md) for full history.
 
 ---
 
-## �🚀 Key Features
+## Key features
 
 - **Single bundle deployment:**  
   One ES module (`uga-components.js`) registers all custom elements.
@@ -65,34 +57,22 @@ uga-lit-components/
 │   ├── accordion.html            # Individual component demo pages
 │   ├── video.html                # (one for each component)
 │   ├── toc.html
-│   ├── ...                       # (19 individual component pages)
+│   ├── ...                       # (20 component demo pages; quiz-grade-sync on quiz.html)
 │   ├── QUICK_START.md            # Quick start guide for demo system
 │   └── *.json                    # Sample data files (also on Google Drive)
+├── docs/                         # Feature docs, cursor guides, planning backlog
+├── scripts/                      # Git hooks, Kaltura test, quiz CSV → JSON
 ├── src/
-│   ├── all.ts                    # Entry point: eagerly imports all components
-│   ├── components/               # Individual Lit web components
-│   │   ├── uga-accordion.ts      # (refactored with direct axios pattern)
-│   │   ├── uga-assignment.ts
-│   │   ├── uga-video.ts          # (enhanced Kaltura integration)
-│   │   └── ...
-│   ├── lib/
-│   │   ├── api/                  # D2L/Brightspace API helpers
-│   │   │   ├── d2l-client.ts     # Centralized API methods
-│   │   │   └── d2l-utils.ts      # Helper utilities (getCourse, transformDate, etc.)
-│   │   └── data/
-│   │       └── data-loader.ts    # Loads JSON data from local or program-specific paths
-│   └── types/
-│       ├── d2l.ts                # TypeScript types for D2L API responses
-│       └── global.d.ts           # Global type declarations
-├── dist/
-│   └── js/
-│       └── uga-components.js     # Single bundled output file
-├── .github/
-│   └── copilot-instructions.md   # AI agent development guidelines
-├── CHANGELOG.md                  # Version history and updates
-├── vite.config.ts                # Vite build configuration
-├── package.json
-└── tsconfig.json
+│   ├── all.ts                    # Entry: import.meta.glob loads all components
+│   ├── components/               # uga-*.ts (21 components)
+│   ├── lib/api/                  # d2l-client.ts, data-loader, etc.
+│   └── types/                    # d2l.ts, global.d.ts
+├── server/drive-upload/          # Optional local stub for uga-elc-google-sync
+├── dist/js/uga-components.js     # Production bundle
+├── .github/copilot-instructions.md
+├── CHANGELOG.md
+├── vite.config.ts
+└── package.json
 ```
 
 ---
@@ -134,7 +114,7 @@ All components use **Light DOM** rendering (`createRenderRoot() { return this; }
 
 3. **Explore individual components:**
    - View comprehensive demo at `demo/index-all-in-one.html`
-   - Each component has its own dedicated demo page (19 individual pages)
+   - Dedicated demo pages for each component (20 HTML files; `uga-quiz-grade-sync` is on `demo/quiz.html` — see `demo/QUICK_START.md`)
    - Access via eLC side navigation for easy browsing
    - Review `demo/setup.html` for deployment instructions
 
@@ -170,7 +150,7 @@ npm run preview
 
 ## 📦 Components Overview
 
-The repository includes 20 pre-built components:
+The repository includes **21** pre-built components (see [`src/README.md`](src/README.md) for the authoritative table):
 
 | Component                | Purpose                                                                                                                                                                                                                                                                                                                           |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -179,14 +159,14 @@ The repository includes 20 pre-built components:
 | **uga-callout**          | Semantic callout/aside (`note | important | tip | example | warning`) with optional bolded pseudo-label. Slot-based content; fixed brand-color pairings from UGA `base.css`.                                                                                                                                                     |
 | **uga-circles**          | Display data in circular badge format                                                                                                                                                                                                                                                                                             |
 | **uga-code**             | Syntax-highlighted code blocks with copy button                                                                                                                                                                                                                                                                                   |
-| **uga-course-calendar**  | Data-driven week-by-week course calendar table from JSON or CSV, with row-type styling, due tags, and optional live eLC due-date sync by assignment folder ID                                                                                                                                                                   |
+| **uga-course-calendar**  | Data-driven week-by-week course calendar table from JSON or CSV, with row-type styling, due tags, and optional live eLC due-date sync by assignment folder ID. See [docs/COURSE_CALENDAR_FORMAT.md](docs/COURSE_CALENDAR_FORMAT.md).                                                                                                                                                          |
 | **uga-course-analytics** | Course-wide analytics aggregating data from content, assignments, discussions, and quizzes. Shows module-level consumption statistics and comparisons. Instructor-only.                                                                                                                                                           |
 | **uga-duedate**          | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property.                                                                                                                                                                                                       |
 | **uga-footer**           | Site footer with branding                                                                                                                                                                                                                                                                                                         |
 | **uga-image**            | Image with expandable lightbox, optional caption, zoom/pan, responsive srcset, loading states                                                                                                                                                                                                                                       |
 | **uga-instructor-card**  | Displays instructor profile card with photo and name (auto-detects from classlist)                                                                                                                                                                                                                                                |
 | **uga-instructor-note**  | Instructor-only notes (hidden from students)                                                                                                                                                                                                                                                                                      |
-| **uga-quiz**             | Standalone embedded HTML quiz (no eLC native quiz association); loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>); optionally submits results to an eLC assignment; supports timers, retries, and immediate feedback. See [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) for JSON format. |
+| **uga-quiz**             | Standalone embedded HTML quiz (no eLC native quiz association); loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>); optionally submits results to an eLC assignment; supports timers, retries, and immediate feedback. See [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) and [docs/QUIZ_DROPBOX_SETUP.md](docs/QUIZ_DROPBOX_SETUP.md). |
 | **uga-quiz-grade-sync**  | Instructor-only: sync quiz submissions from an assignment to the linked grade item (use with uga-quiz)                                                                                                                                                                                                                            |
 | **uga-rating**           | Collect feedback/ratings on content                                                                                                                                                                                                                                                                                               |
 | **uga-return-to-top**    | Fixed button to scroll to top                                                                                                                                                                                                                                                                                                     |
@@ -288,7 +268,7 @@ The `uga-video` component embeds Kaltura via an **iframe** (default), matching t
    }
    ```
 
-3. No changes needed to `src/all.ts` — the glob import automatically includes it
+3. No changes needed to `src/all.ts` — `import.meta.glob` in `all.ts` picks up new `src/components/uga-*.ts` files automatically
 4. Build and test: `npm run build`
 
 ### Component Architecture Best Practices
@@ -298,7 +278,7 @@ The `uga-video` component embeds Kaltura via an **iframe** (default), matching t
 - **Inject scoped styles:** Use `<style>` tags targeting the component's tag name
 - **Centralize API calls:** Use helpers from `src/lib/api/d2l-client.ts`
 - **Handle data loading:** Move async logic to `connectedCallback()`, not `render()`
-- **Never import axios directly:** It's available globally in Brightspace
+- **HTTP calls:** Use `import axios from 'axios'` via `src/lib/api/d2l-client.ts` (axios is bundled in `uga-components.js` for course-file deployment)
 - **Use TypeScript types:** Reference types from `src/types/d2l.ts`
 
 ---
@@ -309,8 +289,10 @@ The `uga-video` component embeds Kaltura via an **iframe** (default), matching t
 | --------------------------------- | ----------------------------------------------------------------------------------------- |
 | `demo/index-all-in-one.html`      | Comprehensive all-in-one demo showing all components                                      |
 | `demo/setup.html`                 | Comprehensive setup, usage, and troubleshooting guide                                     |
-| `demo/[component].html`           | Individual component demo pages (19 total, including quiz.html, course-analytics.html, course-calendar.html, image.html) |
-| `src/all.ts`                      | Entry point; eagerly imports all components                                               |
+| `demo/[component].html`           | Component demo pages (20; see `demo/QUICK_START.md`)                                      |
+| `src/README.md`                   | Component and API map for developers and agents                                           |
+| `docs/planning/README.md`         | Backlog and feature requests (not implementation spec)                                    |
+| `src/all.ts`                      | Entry point; glob-imports all components                                                  |
 | `src/components/*.ts`             | Individual component implementations                                                      |
 | `src/lib/api/d2l-client.ts`       | Centralized D2L API methods                                                               |
 | `src/lib/api/d2l-utils.ts`        | Helper utilities (getCourse, transformDate, etc.)                                         |
@@ -332,7 +314,7 @@ The `uga-video` component embeds Kaltura via an **iframe** (default), matching t
 | **Accordion / tabs not toggling** | Ensure `https://design.online.uga.edu/js/scripts.js` is on the host page (see design system installation) |
 | Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                               |
 | D2L API 404 errors | Verify course ID (`ou`) is correct and API version matches |
-| `axios` is undefined | Ensure code runs in eLC environment (axios is globally available) |
+| `axios` / Valence errors | Bundle includes axios; load only `uga-components.js` in eLC. Local dev: mock `window.D2L` if APIs fail outside Brightspace |
 | TOC showing too many items | Component now scans h2/h3 only - check if you need h4 headings in navigation |
 | TOC links not working | Component now auto-generates IDs for headings without them |
 | Data files not loading | Download example files from Google Drive links in demo pages, then upload to eLC Public Files |
@@ -358,24 +340,7 @@ The `uga-toc` component now scans **h2 and h3 headings only** (changed from h1-h
 
 **Action:** No code changes required, but review TOC output to ensure it meets your needs.
 
-### Troubleshooting Common Issues
-
-**Problem:** Accordion icons not showing  
-**Solution:** Add `class="js"` to `<html>` tag
-
-**Problem:** TOC showing too many items  
-**Solution:** Component now filters to h2/h3 only - this is expected behavior
-
-**Problem:** Video not loading  
-**Solution:** Check browser console for errors, verify Kaltura video ID
-
-**Problem:** Demo pages not loading  
-**Solution:** Run `npm install` and `npm run dev`, then try again
-
-**Problem:** Multiple video players not initializing  
-**Solution:** Ensure you're using the latest build - unique component IDs prevent container conflicts
-
-### More Help
+### More help
 
 - Review `demo/setup.html` for comprehensive troubleshooting and deployment instructions
 - Check individual component demo pages for usage examples
@@ -400,4 +365,4 @@ This project is maintained by the University of Georgia Online Learning (UGA OOL
 
 ## ✨ Contributing
 
-For contributions, AI agents should follow the guidelines in `.github/copilot-instructions.md` to ensure consistency with the project's conventions, architecture, and code style.
+For contributions, AI agents should follow [`.github/copilot-instructions.md`](.github/copilot-instructions.md) and [`src/README.md`](src/README.md). Use [`docs/planning/`](docs/planning/) for backlog only — verify against source before implementing.

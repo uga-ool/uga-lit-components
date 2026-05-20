@@ -33,7 +33,7 @@ npm run build    # produces dist/js/uga-components.js
 npm run preview  # preview production build
 ```
 
-Optional: `npm run test:kaltura` — Kaltura-related script (see `scripts/`).
+Optional scripts: see [`scripts/README.md`](scripts/README.md) — `npm run test:kaltura`, `npm run quiz:csv-to-json`.
 
 ### Build artifact and eLC deployment
 
@@ -44,15 +44,21 @@ Optional: `npm run test:kaltura` — Kaltura-related script (see `scripts/`).
 
 - **Light DOM:** `createRenderRoot() { return this; }` — do not switch to shadow DOM without coordinating all consumers.
 - **D2L / Valence:** shared helpers in `src/lib/api/` (`d2l-client.ts`, `d2l-utils.ts`); types in `src/types/d2l.ts`.
-- **Axios:** In **eLC**, `axios` is expected **globally** (not necessarily bundled the same way in local dev). `package.json` lists axios for local/scripts; agent guidance in `.github/copilot-instructions.md` says library code may assume global `axios` in Brightspace — read `d2l-client.ts` before changing imports.
+- **Axios:** Bundled into `dist/js/uga-components.js` via Vite (`axios` is a production dependency). Source uses `import axios from 'axios'` in `d2l-client.ts` and components—do not externalize without updating `vite.config.ts` and all call sites. See `.github/copilot-instructions.md`.
 - **Design system:** pages should load UGA Online DS per [installation](https://design.online.uga.edu/getting-started/installation/) (fonts, `base.css`, `scripts.js` on host). **`uga-accordion`:** host `<html>` needs **`class="js"`** for expand/collapse icon pseudo-elements (documented in `README.md`).
-- **Demos:** `demo/index-all-in-one.html`, per-component pages (e.g. `demo/quiz.html`), `demo/setup.html`. Start with `demo/QUICK_START.md` if present.
+- **Demos:** `demo/index-all-in-one.html` (hub; no root `index.html`), per-component pages (e.g. `demo/quiz.html`), `demo/setup.html`. Start with `demo/QUICK_START.md`.
+- **Optional server:** `server/drive-upload/` — local Drive upload stub for `uga-elc-google-sync`; full template workflow is **`uga-drive-elc-sync`**.
 
 ### Docs worth linking from issues/PRs
 
 - `README.md` — overview, component table, Kaltura, deploy steps.
+- `docs/README.md` — **documentation index** (UGA feature docs vs archived D2L mirror).
+- `docs/planning/README.md` — feature requests and open backlog (verify against `src/` before implementing).
+- `src/README.md` — component and `lib/api` map for agents.
 - `CHANGELOG.md` — version history.
 - `docs/QUIZ_JSON_FORMAT.md` — **`uga-quiz`** JSON schema and attributes.
+- `docs/QUIZ_DROPBOX_SETUP.md` — quiz assignment submissions and grade sync.
+- `docs/COURSE_CALENDAR_FORMAT.md` — **`uga-course-calendar`** JSON/CSV.
 - `.github/copilot-instructions.md` — **AI/agent** project rules (build commands, light DOM, globals, patterns).
 
 ### Secrets / gitignore

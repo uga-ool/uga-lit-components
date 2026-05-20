@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { property, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import type { PropertyValues } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
@@ -73,6 +73,7 @@ const PROGRAM_IMAGE_PATHS: Record<string, string> = {
   terry: '/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png',
 };
 
+@customElement('uga-footer')
 class UgaFooter extends LitElement {
   @property({ type: String }) filename = '';
   @property({ type: String }) imagefile = '';
@@ -140,10 +141,7 @@ class UgaFooter extends LitElement {
       if (prog) {
         // Program type - use the standard footer.json filename
         const programFilename = 'footer.json';
-        console.log('[uga-footer] Loading JSON from program:', prog);
-        // Retry logic is handled internally by loadData if it uses fetch/axios
         dataFile = await loadData<FooterResponse>('program', programFilename, prog);
-        console.log('[uga-footer] JSON loaded successfully:', dataFile);
       } else {
         // Local type (default) - filename is the URL to fetch
         // (relative to the document, e.g. footer-demo.json when JSON lives alongside the HTML)
@@ -155,10 +153,7 @@ class UgaFooter extends LitElement {
           return;
         }
         const url = this.cacheBust ? `${this.filename}?t=${Date.now()}` : this.filename;
-        console.log('[uga-footer] Loading JSON from:', url);
-        // Retry logic is handled internally by loadData if it uses fetch/axios
         dataFile = await loadData<FooterResponse>('local', url);
-        console.log('[uga-footer] JSON loaded successfully:', dataFile);
       }
       
       // Handle legacy format: if data has link/alt at root level, convert to new format
@@ -389,10 +384,4 @@ class UgaFooter extends LitElement {
       </footer>
     `;
   }
-}
-
-// Register the custom element, but only if it hasn't been registered already
-// This prevents errors when the script is loaded multiple times
-if (!customElements.get('uga-footer')) {
-  customElements.define('uga-footer', UgaFooter);
 }

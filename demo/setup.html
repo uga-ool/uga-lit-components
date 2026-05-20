@@ -11,7 +11,6 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
@@ -75,7 +74,6 @@
       <div class="intro">
         <p><strong>Complete guide to setting up and using UGA Lit Components in eLC.</strong></p>
         <p>This page covers installation, configuration, and data file creation for all components.</p>
-        <p><strong>Demo HTML pages</strong> in this folder link to <code>demo-inline-code.css</code> so filenames and inline <code>&lt;code&gt;</code> in callouts match surrounding text size. Individual demos also link back here for the full checklist.</p>
       </div>
     </header>
 
@@ -206,7 +204,7 @@
     ]
   }
 }</uga-code>
-      <p>Use <code>&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;</code> to render the table. Put titles and intro copy in page HTML. Optional <code>caption</code> sets the table caption. Add <code>sync-from-course</code> (or legacy <code>sync-due-status</code>) only when rows include <code>dueTags</code> with <code>folderId</code> for assignment sync.</p>
+      <p>Use <code>&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;</code> to render the table. Put titles and intro copy in page HTML. Optional <code>caption</code> sets the table caption. Add <code>sync-from-course</code> (or legacy <code>sync-due-status</code>) only when rows include <code>dueTags</code> with <code>folderId</code> for assignment sync. Full format: <a href="../docs/COURSE_CALENDAR_FORMAT.md">docs/COURSE_CALENDAR_FORMAT.md</a>.</p>
       <p><strong>CSV option:</strong> You can use <code>type="csv"</code> with a flat file that includes <code>weekLabel</code> on each row. Use <code>course-calendar/course-calendar-template.csv</code> as a starter template.</p>
       <uga-code language="markup">&lt;uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;
 

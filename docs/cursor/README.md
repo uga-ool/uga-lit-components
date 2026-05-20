@@ -30,8 +30,11 @@ Command: **`setup-git-hooks`**. PRs run the **Validate commit message** workflow
 
 ## More
 
+- [Documentation index](../README.md) — all UGA feature docs vs archived D2L mirror
+- [Planning / backlog](../planning/README.md) — feature requests and open work (not implementation spec)
 - [Where to edit](where-to-edit.md)
 - [How to commit](how-to-commit.md) (includes suggested cadence: commit, push, PR)
 - [Secrets and FERPA](secrets.md)
 - [API references (D2L, Kaltura)](api-references.md)
+- [Workspace handoff](../../WORKSPACE-HANDOFF.md) — multi-repo paths (Lit + React apps)
 - Team doc hub (optional): [uga-online-cursor-docs](https://github.com/uga-ool/uga-online-cursor-docs)

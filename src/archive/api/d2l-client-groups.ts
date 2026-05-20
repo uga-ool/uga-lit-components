@@ -2,7 +2,7 @@
 // Additional API functions for group-related components
 
 import axios from 'axios';
-import { cachedApiCall, withRetry, logApiVersionWarning } from './d2l-client.js';
+import { cachedApiCall, withRetry, logApiVersionWarning } from '../../lib/api/d2l-client.js';
 import type { ApiVersions } from '../../types/d2l.js';
 
 /**
