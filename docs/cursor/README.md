@@ -15,16 +15,18 @@ This repo includes **Cursor** rules, commands, and skills so the AI follows UGA 
 | Folder | Purpose |
 |--------|---------|
 | `.cursor/rules/` | Policies (secrets, where to edit, Lit patterns) — applied automatically |
-| `.cursor/commands/` | Palette commands such as **`pre-commit-review`**, `lit-new-component`, `lit-build-bundle` |
+| `.cursor/commands/` | **`pre-commit-review`**, **`setup-git-hooks`**, `lit-new-component`, `lit-build-bundle` |
 | `.cursor/skills/` | Playbooks (`add-lit-component`, `lit-before-commit`, `elc-valence-api`, `kaltura-api`) |
 
-## Commit template
+## Commit template and hooks
 
-Git uses [`.github/COMMIT_TEMPLATE`](../.github/COMMIT_TEMPLATE) to suggest a message format. Optional local setup:
+Git uses [`.github/COMMIT_TEMPLATE`](../.github/COMMIT_TEMPLATE). **Run once per clone:**
 
 ```bash
-git config commit.template "$(git rev-parse --show-toplevel)/.github/COMMIT_TEMPLATE"
+./scripts/setup-git-hooks.sh
 ```
+
+Command: **`setup-git-hooks`**. PRs run the **Validate commit message** workflow on GitHub.
 
 ## More
 

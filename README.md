@@ -6,7 +6,7 @@ The project has been modernized to use **Vite** for development and builds, and 
 
 ## Cursor AI (team)
 
-Open **this repo folder** in [Cursor](https://cursor.com) to load project rules and commands. Start here: [`docs/cursor/README.md`](docs/cursor/README.md). Commit messages: [`.github/COMMIT_TEMPLATE`](.github/COMMIT_TEMPLATE).
+Open **this repo folder** in [Cursor](https://cursor.com) to load project rules and commands. Start here: [`docs/cursor/README.md`](docs/cursor/README.md). After clone, run [`scripts/setup-git-hooks.sh`](scripts/setup-git-hooks.sh) so commits use [`.github/COMMIT_TEMPLATE`](.github/COMMIT_TEMPLATE).
 
 ---
 
