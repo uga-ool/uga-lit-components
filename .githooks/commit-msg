@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Reject commits that do not follow .github/COMMIT_TEMPLATE rules.
+set -euo pipefail
+
+MSG_FILE="$1"
+SOURCE="${2:-}"
+
+case "$SOURCE" in
+  merge | squash) exit 0 ;;
+esac
+
+ROOT="$(git rev-parse --show-toplevel)"
+"$ROOT/.github/scripts/validate-commit-message.sh" "$MSG_FILE"

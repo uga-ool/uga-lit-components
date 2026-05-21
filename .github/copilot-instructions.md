@@ -10,7 +10,7 @@ Be concise and make edits that follow the repository's existing structure and co
 ## Key Files & Entry Points
 
 - `src/components/` — individual Lit element sources (e.g. `uga-accordion.ts`). Components register via decorators/side effects.
-- `src/all.ts` — eager imports all components with `import.meta.glob(..., { eager: true })`. Editing this file or adding files under `src/components/` is how new elements get registered in the bundle.
+- `src/all.ts` — entry point; `import.meta.glob('./components/*.{js,ts}', { eager: true })` registers every new `src/components/uga-*.ts` automatically. **Do not edit `all.ts` for normal new components** — add a file under `src/components/` only.
 - `vite.config.ts` — build config: single entry `src/all.ts`, `inlineDynamicImports: true`, `outDir: dist`, `sourcemap: true`. Changing bundle shape must be done here.
 - `package.json` — scripts: `npm run dev` (vite), `npm run build` (bundle), `npm run preview` (serve build). Use these for development and producing the distributable.
 
@@ -33,9 +33,9 @@ Be concise and make edits that follow the repository's existing structure and co
 ## Project Conventions and Gotchas
 
 - **Light DOM:** components call `createRenderRoot() { return this; }` to render in light DOM — do not add shadow DOM unless you update markup consumers.
-- **Side-effect registration:** components register themselves on import. `src/all.ts` must import (or include via import.meta.glob) every component file you want registered.
-- **No axios bundling:** the D2L runtime provides `axios` globally — library code (e.g. `src/lib/api/d2l-client.ts`) assumes a global `axios` and _does not_ import it. Avoid adding axios to the bundle unless you intentionally change runtime assumptions.
-- **D2L runtime globals:** code expects Brightspace globals (e.g., `window.D2L`) and specific URL shapes. When testing locally, mock `axios` and any `window.D2L` usage.
+- **Side-effect registration:** components register themselves on import. The glob in `src/all.ts` picks up every `src/components/*.ts` file; no manual import list.
+- **Axios is bundled:** `axios` is a production dependency; Vite bundles it into `uga-components.js`. Use `import axios from 'axios'` in `src/lib/api/d2l-client.ts` and follow existing component patterns—do not switch to `window.axios` or externalize axios without updating `vite.config.ts` and all call sites.
+- **D2L runtime globals:** code expects Brightspace globals (e.g., `window.D2L`) and Valence URL shapes. Local `npm run dev` uses the bundled axios; mock `window.D2L` when testing outside eLC.
 - **Types:** API types live in `src/types/d2l.ts`. Use these for function signatures and to keep API usage consistent.
 
 ## Coding Patterns to Follow
@@ -69,94 +69,14 @@ const classlist = await getClasslist(ou, versions.le);
 
 ### Kaltura Video Embedding
 
-Use KalturaPlayer script injection for full control over player configuration, especially to hide the logo. See the implementation pattern in `src/components/uga-video.ts`:
+Default embed is a **Kaltura iframe** (`embedPlaykitJs?iframeembed=true&entry_id=`) for correct thumbnails. **Playkit JS** loads only when **`topic-id`** is set (D2L topic completion). Default uiConf **53568732**. See `src/components/uga-video.ts`.
 
-**Key Implementation:**
+**Key points:**
 
-```typescript
-private kalturaScriptLoaded = false;
-private playerInstances: Map<string, any> = new Map();
-
-/**
- * Dynamically load the KalturaPlayer script from CDN
- */
-private loadKalturaScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (this.kalturaScriptLoaded || (window as any).KalturaPlayer) {
-      this.kalturaScriptLoaded = true;
-      resolve();
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = `https://cdnapisec.kaltura.com/p/1727411/embedPlaykitJs/uiconf_id/${this.uiconfid}`;
-    script.type = 'text/javascript';
-    script.onload = () => {
-      this.kalturaScriptLoaded = true;
-      resolve();
-    };
-    script.onerror = () => {
-      console.error('Failed to load KalturaPlayer script');
-      reject(new Error('KalturaPlayer script failed to load'));
-    };
-    document.head.appendChild(script);
-  });
-}
-
-/**
- * Initialize a Kaltura player for a specific video
- */
-private async initKalturaPlayer(videoId: string, containerId: string): Promise<void> {
-  try {
-    await this.loadKalturaScript();
-
-    const kalturaPlayer = (window as any).KalturaPlayer.setup({
-      targetId: containerId,
-      provider: {
-        partnerId: 1727411,
-        uiConfId: this.uiconfid
-      },
-      ui: {
-        components: {
-          // Hide the Kaltura logo/watermark
-          logo: {
-            disabled: true
-          }
-        }
-      }
-    });
-
-    kalturaPlayer.loadMedia({ entryId: videoId });
-    this.playerInstances.set(videoId, kalturaPlayer);
-  } catch (error) {
-    console.error(`Failed to initialize Kaltura player for video ${videoId}:`, error);
-  }
-}
-
-kalturaCode(videoId: string) {
-  const containerId = `kaltura_player_${videoId}`;
-
-  // Schedule player initialization after the DOM is updated
-  setTimeout(() => {
-    this.initKalturaPlayer(videoId, containerId);
-  }, 0);
-
-  return html`
-    <div class="cmp-video util-margin-top-lg">
-      <div class="cmp-video__container">
-        <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
-      </div>
-    </div>
-  `;
-}
-```
-
-**Key Implementation Details:**
-
-- Script loading is cached via `kalturaScriptLoaded` flag to avoid loading multiple times
-- `logo: { disabled: true }` in the UI configuration completely hides Kaltura branding
-- Player initialization is deferred via `setTimeout(, 0)` to ensure DOM element exists before KalturaPlayer targets it
-- Direct DOM container instead of iframe eliminates scrollbar issues and provides full styling control
+- `needsPlaykitApi()` — true when `getTopicId(topicId)` returns a non-empty id
+- Iframe path: no `initKalturaPlayer`, no Playkit script on the page
+- Playkit path: `loadKalturaScript` + `KalturaPlayer.setup` + playback listeners for 80%/ended completion
+- `playerid` overrides default uiConf (copy from Kaltura MediaSpace embed code)
 
 ### Unsafe HTML Pattern
 
@@ -296,7 +216,7 @@ class UgaUserInfo extends LitElement {
 
 - Do not introduce network imports that create multiple chunks unless you also update the bundling strategy in `vite.config.ts`.
 - If adding dependencies that target Node (e.g., polyfills), ensure they are compatible with ES module in-browser usage; prefer zero-runtime assumptions for Brightspace.
-- When changing API clients, preserve the runtime assumption that `axios` is global unless you update all components and the runtime to provide a bundled axios.
+- When changing API clients, keep using the bundled `axios` import pattern unless the team explicitly externalizes it in `vite.config.ts`.
 - Always use Light DOM (`createRenderRoot() { return this; }`) in components—do not use Shadow DOM unless you have a very specific reason and update all consumers.
 - Remove all `console.log()` debug statements before pushing to production.
 - Ensure all ARIA attributes are properly defined (no undefined bindings).
@@ -309,7 +229,7 @@ class UgaUserInfo extends LitElement {
 | Styles not applying                | Ensure `createRenderRoot() { return this; }` is defined, `base.css` is linked in the component if using UGA classes, and the host page loads Google Fonts plus `scripts.js` for interactive DS patterns |
 | Kaltura video not displaying       | Check `uiconfid` is correct and script loads successfully; verify `containerId` matches target div           |
 | D2L API 404 errors                 | Verify URL path matches expected `/d2l/api/le/${version}/${ou}/...` pattern                                  |
-| `axios` not available              | Ensure you're running in Brightspace environment where axios is globally provided                            |
+| `axios` / API errors in local dev  | Bundle includes axios; mock `window.D2L` and course context. In eLC, load only `uga-components.js` (no extra axios script). |
 
 ---
 

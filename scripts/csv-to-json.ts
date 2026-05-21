@@ -1,7 +1,10 @@
-#!/usr/bin/env npx tsx
 /**
  * Convert eLC CSV quiz files to uga-quiz JSON format.
- * Usage: npx tsx scripts/csv-to-json.ts <input.csv> [output.json]
+ *
+ * Usage:
+ *   npm run quiz:csv-to-json -- <input.csv> [output.json]
+ *
+ * Uses the same parseD2LCSV() as uga-quiz type="csv". See docs/QUIZ_JSON_FORMAT.md.
  */
 
 import { readFileSync, writeFileSync } from 'fs';
@@ -12,7 +15,7 @@ const inputPath = process.argv[2];
 const outputPath = process.argv[3];
 
 if (!inputPath) {
-  console.error('Usage: npx tsx scripts/csv-to-json.ts <input.csv> [output.json]');
+  console.error('Usage: npm run quiz:csv-to-json -- <input.csv> [output.json]');
   process.exit(1);
 }
 

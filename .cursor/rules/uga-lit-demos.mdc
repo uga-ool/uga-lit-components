@@ -1,0 +1,16 @@
+---
+description: Demo HTML and UGA Online Design System for Lit demos
+globs: "demo/**/*.html,index.html,index-all-in-one.html"
+alwaysApply: false
+---
+
+# Lit demo pages
+
+- Demo pages live under `demo/` and root `index.html` / `index-all-in-one.html`.
+- **UGA Online Design System:** https://design.online.uga.edu/getting-started/installation/
+  - CSS: `https://design.online.uga.edu/css/base.css` (prefer **versioned** URLs in production).
+  - JS: `https://design.online.uga.edu/js/scripts.js` before `</body>`.
+  - Google Fonts: Merriweather, Merriweather Sans, Oswald as documented.
+- Full pages: skip link, `<main id="main-content">`, `obj-reading-width` where appropriate.
+- Load the component bundle with `<script type="module" src="...">` consistent with other demos.
+- Do not break relative paths used for local `npm run dev` / preview.

@@ -12,7 +12,6 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
@@ -99,7 +98,7 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file or a program-specific footer image stored in public files.</p>
-        <p><strong>eLC setup:</strong> Load the component bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. Upload <code>footer/footer-demo.json</code> (or your chosen path under Manage Files). Use <code>filename="footer/footer-demo.json"</code> when that folder sits next to your HTML page; otherwise use the full path from Manage Files. Use the abbreviated program code for <code>program=</code> (e.g. <code>program="msw"</code> for Master of Social Work or <code>program="mfp"</code> for Masters in Financial Planning). Logo paths are per-template (see list below).</p>
+        <p><strong>eLC setup:</strong> Load the component bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. Upload <code>footer/footer-demo.json</code> (or your chosen path under Manage Files). Use <code>filename="footer/footer-demo.json"</code> when that folder sits next to your HTML page; otherwise use the full path from Manage Files. For a shared program template, use either <code>program="…"</code> or <code>name="…"</code> with the same abbreviated code (e.g. <code>program="msw"</code> or <code>name="terry"</code> for Terry College of Business). Logo paths are per-template (see list below).</p>
         <p><strong>Example data file:</strong> Download
           <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>
           to modify and upload to your course files.</p>
@@ -126,17 +125,22 @@
           <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file (required for local/course files). Example when organized by folder: <code>filename="footer/footer-demo.json"</code>. Use the filename only when the file is next to the page, or the full path from Manage Files. Not needed when using <code>program</code>.</td>
+            <td>Name of the JSON data file (required for local/course files). Example when organized by folder: <code>filename="footer/footer-demo.json"</code>. Use the filename only when the file is next to the page, or the full path from Manage Files. Not needed when using <code>program</code> or <code>name</code>.</td>
           </tr>
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Abbreviated program code (e.g. <code>msw</code>, <code>acct</code>). When set, footer uses Program Template: data from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>; logo path is configured per program (see list below).</td>
+            <td>Abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>terry</code>). When set, footer uses Program Template: data from <code>/shared/ugaonline/templates/{code}/data/footer.json</code>; logo path is configured per program (see list below). Same meaning as <code>name</code>; if both are set, <code>program</code> wins.</td>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>string</td>
+            <td>Optional alias for <code>program</code> for instructional designers (e.g. <code>name="terry"</code> for Terry College of Business). Template paths and logo use this code when <code>program</code> is empty.</td>
           </tr>
           <tr>
             <td>imagefile</td>
             <td>string</td>
-            <td>Optional. Logo image filename when using <code>program</code>; if omitted, defaults to <code>{program}.png</code> in that template's <code>img/</code> folder. For local mode, used when JSON doesn't include imageSrc.</td>
+            <td>Optional. Logo image filename when using <code>program</code> or <code>name</code>; if omitted, defaults to <code>{code}.png</code> in that template's <code>img/</code> folder. For local mode, used when JSON doesn't include imageSrc.</td>
           </tr>
           <tr>
             <td>cache-bust</td>
@@ -152,8 +156,10 @@
         <uga-code language="markup">&lt;uga-footer filename="footer/footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
-        <p>Use the abbreviated program code with <code>program=</code>. Template data loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>.</p>
-        <uga-code language="markup">&lt;uga-footer program="msw"&gt;&lt;/uga-footer&gt;</uga-code>
+        <p>Use <code>program="…"</code> or <code>name="…"</code> with the same abbreviated code. Template data loads from <code>/shared/ugaonline/templates/{code}/data/footer.json</code>.</p>
+        <uga-code language="markup">&lt;uga-footer program="msw"&gt;&lt;/uga-footer&gt;
+&lt;!-- or the same template code with name= (e.g. Terry College of Business) --&gt;
+&lt;uga-footer name="terry"&gt;&lt;/uga-footer&gt;</uga-code>
         <h4 style="margin-top: 1.5rem;">Program codes with logo path (configured in component)</h4>
         <ul style="margin-top: 0.5rem;">
           <li><strong>acct</strong> (Accounting): <code>/shared/ugaonline/templates/acct/img/logo.png</code></li>
@@ -166,6 +172,7 @@
           <li><strong>msw</strong> (Master of Social Work): <code>/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png</code></li>
           <li><strong>ool</strong> (Online Learning): <code>/shared/ugaonline/templates/ool/img/logo.png</code></li>
           <li><strong>publichealth</strong> (Public Health): <code>/shared/ugaonline/templates/publichealth/img/publichealth_logo.svg</code></li>
+          <li><strong>terry</strong> (Terry College of Business): <code>/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png</code></li>
         </ul>
         <h4 style="margin-top: 1.5rem;">All program codes (use with <code>program=</code>)</h4>
         <ul style="margin-top: 0.5rem;">
@@ -180,6 +187,7 @@
           <li><strong>msw</strong> — Master of Social Work</li>
           <li><strong>ool</strong> — Online Learning</li>
           <li><strong>publichealth</strong> — Public Health</li>
+          <li><strong>terry</strong> — Terry College of Business</li>
         </ul>
       </div>
     </section>

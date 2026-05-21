@@ -206,12 +206,14 @@ The CSV must follow eLC's question-import layout: each question is a block of ro
 If you would rather store JSON in your course files, you can convert eLC CSV to JSON with the included script:
 
 ```bash
-npx tsx scripts/csv-to-json.ts path/to/quiz.csv path/to/output.json
+npm run quiz:csv-to-json -- path/to/quiz.csv path/to/output.json
 ```
+
+Or: `tsx scripts/csv-to-json.ts path/to/quiz.csv path/to/output.json` (see [scripts/README.md](../scripts/README.md)).
 
 Both `type="csv"` (read CSV at runtime) and converting to JSON ahead of time produce the same quiz UI.
 
 ## See Also
 
 - [Quiz demo](demo/quiz.html) – Full usage examples and options
-- [D2L Quiz Dropbox](D2L_QUIZ_DROPBOX.md) – Submitting quiz results to an eLC assignment
+- [Quiz assignment setup](QUIZ_DROPBOX_SETUP.md) – Submitting quiz results to an eLC assignment

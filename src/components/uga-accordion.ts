@@ -1,7 +1,7 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import axios from 'axios';
+import { loadData } from '../lib/data/data-loader.js';
 
 interface AccordionItem {
   id?: string;
@@ -36,17 +36,19 @@ class UgaAccordion extends LitElement {
   }
 
   async getDataFile(): Promise<void> {
-    if (this.type === 'local') {
-      const dataFile = await axios.get(this.filename);
-      this.accordionData = dataFile.data;
-      this.loaded = true;
-      this.requestUpdate();
-    } else if (this.type === 'program') {
-      const dataFile = await axios.get('/shared/ugaonline/templates/' + this.program + '/data/' + this.filename);
-      this.accordionData = dataFile.data;
-      this.loaded = true;
-      this.requestUpdate();
+    if (this.type !== 'local' && this.type !== 'program') {
+      return;
     }
+    if (this.type === 'program' && !this.program) {
+      return;
+    }
+    this.accordionData = await loadData<AccordionData>(
+      this.type,
+      this.filename,
+      this.program || undefined
+    );
+    this.loaded = true;
+    this.requestUpdate();
   }
 
   render() {

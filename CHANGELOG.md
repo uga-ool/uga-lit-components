@@ -5,13 +5,49 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-01-09
 
+### Source (`src/`)
+
+- Added [src/README.md](src/README.md) and [src/archive/README.md](src/archive/README.md); moved unused modules to `src/archive/`.
+- `uga-accordion` and `uga-slideshow` use `loadData()` instead of raw `axios.get`.
+- `uga-footer`: `@customElement` registration; removed debug `console.log` calls.
+- Updated [src/types/global.d.ts](src/types/global.d.ts) (bundled axios note; `window.D2L`).
+
+### Scripts
+
+- Added [scripts/README.md](scripts/README.md) and `npm run quiz:csv-to-json`; updated Kaltura/CSV script usage in docs.
+
+### Dependencies and repo hygiene
+
+- Removed orphan `server/video-analytics/` (leftover `node_modules` after feature removal).
+- Added `tsx` devDependency; `server/**/node_modules/` in `.gitignore`.
+- `.gitignore`: `.env`, `.env.local`, `.env.*.local`; `package.json` name aligned to `uga-lit-components`.
+- `npm audit fix` (0 vulnerabilities after update); axios security patches via dependency bumps.
+- Documented **bundled axios** in README, copilot-instructions, and Cursor rules (replaces outdated “global axios only” guidance).
+
+### Documentation
+
+- Consolidated root planning markdown into [`docs/planning/`](docs/planning/) (`FEATURE_REQUESTS`, `ROADMAP`, `valence-backlog`, `performance`); archived January 2026 originals under [`docs/planning/archive/`](docs/planning/archive/); root files are redirect stubs.
+- README, `WORKSPACE-HANDOFF`, and `src/README` aligned for agents: no root `index.html`, 21 components, bundled axios, links to planning index.
+- Added [`docs/README.md`](docs/README.md) as the documentation index for agents and authors.
+- Moved vendored D2L Developer Platform copies to [`docs/archive/d2l-platform-reference/`](docs/archive/d2l-platform-reference/) (prefer Valence online docs for Lit work).
+- Renamed `docs/D2L_QUIZ_DROPBOX.md` → [`docs/QUIZ_DROPBOX_SETUP.md`](docs/QUIZ_DROPBOX_SETUP.md).
+- Added [`docs/COURSE_CALENDAR_FORMAT.md`](docs/COURSE_CALENDAR_FORMAT.md) for `uga-course-calendar` JSON/CSV.
+- Extended [`docs/cursor/api-references.md`](docs/cursor/api-references.md) with in-repo feature doc links; linked [`WORKSPACE-HANDOFF.md`](WORKSPACE-HANDOFF.md) from [`docs/cursor/README.md`](docs/cursor/README.md).
+
 ### Repository
 
-- Removed **`elc-google-sync/`** (standalone React “Course Template Manager” duplicate of Drive sync). Canonical app: **`uga-drive-elc-sync`**. Video analytics Express API moved to [server/video-analytics/](server/video-analytics/); widget spec moved to [docs/ELC_GOOGLE_SYNC_SPEC.md](docs/ELC_GOOGLE_SYNC_SPEC.md).
+- Removed **`elc-google-sync/`** (standalone React “Course Template Manager” duplicate of Drive sync). Canonical app: **`uga-drive-elc-sync`**. Widget spec: [docs/ELC_GOOGLE_SYNC_SPEC.md](docs/ELC_GOOGLE_SYNC_SPEC.md).
 
 ### uga-video
 
-- Default Kaltura player / uiConf ID is **57494843** when `playerid` is not set (aligned `playerid` internal default with the loaded uiConf; demos and setup docs updated)
+- Removed **Kaltura Djinn** integration (`enable-djinn`, `djinn-api-base`, `djinn-api-key`, Q&A panel, and `docs/KALTURA_DJINN_D2L.md`). Caption Q&A belongs in the Brightspace agent framework, not this component.
+- **Kaltura embed:** default path is iframe (`embedPlaykitJs?iframeembed=true&entry_id=`) for correct thumbnails; Playkit JS loads only when **`topic-id`** is set (D2L completion). Default uiConf **`53568732`** when `playerid` is omitted (copy from Kaltura embed code to override).
+- Removed custom **video analytics** (`sendVideoEvent`, `window.UGA_VIDEO_ANALYTICS_*`, Vite `/api/video-analytics` proxy, and `server/video-analytics/`). **D2L topic completion** when `topic-id` is set (ended or 80% watched) is unchanged.
+
+### uga-footer
+
+- **Terry College of Business:** template code `terry` with logo `/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png`
+- Optional **`name`** attribute as alias for **`program`** (e.g. `name="terry"`); if both are set, `program` wins. Demos and setup text updated.
 
 ### uga-callout
 
@@ -40,7 +76,7 @@ All notable changes to this project will be documented in this file.
 ### Demo pages (instructional designers)
 
 - Reviewed demo HTML for eLC terminology, consistent production script path (<code>/shared/ugaonline/js/uga-components.js</code>), and clearer quiz/course file path guidance (prefer same-folder filenames or full paths from Manage Files)
-- Added <code>demo/demo-inline-code.css</code> and linked it from demos so inline <code>&lt;code&gt;</code> in descriptions matches paragraph size
+- Removed <code>demo/demo-inline-code.css</code> (demo-only; not part of eLC bundle)
 - Added “For instructional designers” setup blurb + link to `demo/setup.html` on standalone demos; expanded hub intro on `demo/index-all-in-one.html`
 - <code>course-analytics.html</code>: back navigation, localhost vs production script note, whitespace fix
 - <code>setup.html</code>: quiz data format clarified (JSON default; CSV optional)
@@ -290,18 +326,18 @@ demo/
 1. Review individual component demo pages for updated usage patterns
 2. Read `setup.html` for comprehensive deployment guide
 3. Test accordion components with `class="js"` on HTML element
-4. Update any accordion implementations to use direct axios pattern (optional)
+4. Prefer `loadData()` for JSON-driven components (accordion, slideshow, footer) — see `src/lib/data/data-loader.ts`
 5. Check TOC components to ensure h2/h3 filtering meets your needs
 
 #### Known Limitations
 
-- D2L API components (assignment, duedate, rating, instructor-note) require Brightspace environment
+- Valence-backed components (assignment, duedate, rating, instructor-note, quiz, etc.) require a real **eLC session** (`window.D2L`, course OU, XSRF) — local `npm run dev` is often UI-only unless mocked
 - Kaltura video component requires valid video IDs and player configuration
-- Mock axios in demo mode has limited functionality compared to Brightspace global axios
+- **axios is bundled** in `uga-components.js`; outside eLC, mock `window.D2L` and course context as needed for API components
 
 ---
 
 ## Version History
 
-**Current:** Unreleased (feature/updated-video branch)  
-**Previous:** 1.0 baseline (main branch)
+**Current:** [Unreleased] — accumulated changes on `develop` (see sections above)  
+**Previous:** 1.0 baseline

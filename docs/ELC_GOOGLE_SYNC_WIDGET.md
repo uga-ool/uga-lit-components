@@ -1,6 +1,6 @@
 # eLC ⇄ Google Sync widget (`uga-elc-google-sync`)
 
-Design reference for the admin-only widget described in [FEATURE_REQUESTS.md](../FEATURE_REQUESTS.md) (section 6). This document records **Phase 0 decisions** (institution-specific placeholders), **security/UX** expectations, and pointers to API research. Implementation details for Valence routes live in [COURSE_TEMPLATE_API_SPIKE.md](./COURSE_TEMPLATE_API_SPIKE.md).
+Design reference for the admin-only widget described in [FEATURE_REQUESTS.md](planning/FEATURE_REQUESTS.md) (section 6). This document records **Phase 0 decisions** (institution-specific placeholders), **security/UX** expectations, and pointers to API research. Implementation details for Valence routes live in [COURSE_TEMPLATE_API_SPIKE.md](./COURSE_TEMPLATE_API_SPIKE.md).
 
 ## Product goals
 
@@ -38,4 +38,3 @@ Design reference for the admin-only widget described in [FEATURE_REQUESTS.md](..
 - Demo: [demo/elc-google-sync.html](../demo/elc-google-sync.html)
 - Specification / open questions: [docs/ELC_GOOGLE_SYNC_SPEC.md](./ELC_GOOGLE_SYNC_SPEC.md)
 - Full **Drive ↔ Manage Files** standalone app: **`uga-drive-elc-sync`** (separate repository), not duplicated under this package.
-- Local **`uga-video`** analytics backend (Express on port 3001): [server/video-analytics/](../server/video-analytics/)

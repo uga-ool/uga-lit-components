@@ -98,47 +98,77 @@ export async function getVersions(): Promise<ApiVersions> {
   return cachedApiCall('versions', async () => {
     const apiVer = await withRetry(() => axios.get('/d2l/api/versions/'));
     const result: ApiVersions = {};
-    
+
+    let xsrfToken: string | undefined;
+    try {
+      xsrfToken = await getXsrfToken();
+    } catch {
+      xsrfToken = undefined;
+    }
+    const versionCheckHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (xsrfToken) {
+      versionCheckHeaders['X-Csrf-Token'] = xsrfToken;
+    }
+
     // Preferred versions to try (newest first). LP 1.82+ required for getUser (obsolete 1.57 in LMS v20.26.1)
     const preferredVersions: { [key: string]: string[] } = {
-      'le': ['1.91', '1.82'],   // Learning Environment - try newest first
-      'lp': ['1.91', '1.82', '1.75']  // Learning Platform - 1.82+ for getUser
+      le: ['1.91', '1.82'], // Learning Environment - try newest first
+      lp: ['1.91', '1.82', '1.75'], // Learning Platform - 1.82+ for getUser
     };
-    
-    for (let i in apiVer.data) {
-      const productCode = apiVer.data[i].ProductCode;
+
+    for (const i in apiVer.data) {
+      const rawCode = apiVer.data[i].ProductCode;
+      const codeKey = String(rawCode || '').toLowerCase();
       const reportedVersion = apiVer.data[i].LatestVersion;
-      
+
       // For LE and LP, try to use a newer version if available
-      if (preferredVersions[productCode]) {
+      if (preferredVersions[codeKey]) {
         let versionToUse = reportedVersion;
-        
+
         // Check if any preferred version is supported
-        for (const preferredVersion of preferredVersions[productCode]) {
+        for (const preferredVersion of preferredVersions[codeKey]) {
           try {
-            const checkResponse = await axios.post('/d2l/api/versions/check', [{
-              ProductCode: productCode,
-              Version: preferredVersion
-            }]);
-            
-            if (checkResponse.data?.Supported === true || 
-                (checkResponse.data?.Versions?.[0]?.Supported === true)) {
+            const checkResponse = await axios.post(
+              '/d2l/api/versions/check',
+              [
+                {
+                  ProductCode: rawCode,
+                  Version: preferredVersion,
+                },
+              ],
+              { headers: versionCheckHeaders }
+            );
+
+            const data = checkResponse.data as {
+              Supported?: boolean;
+              Versions?: Array<{ Supported?: boolean | string }>;
+            };
+            const first = data?.Versions?.[0];
+            const supported =
+              data?.Supported === true ||
+              first?.Supported === true ||
+              first?.Supported === 'True' ||
+              first?.Supported === 'true';
+            if (supported) {
               versionToUse = preferredVersion;
-              console.log(`✅ Using API version ${preferredVersion} for ${productCode} (reported: ${reportedVersion})`);
+              console.log(
+                `✅ Using API version ${preferredVersion} for ${codeKey} (reported: ${reportedVersion})`
+              );
               break; // Use the first supported preferred version
             }
-          } catch (error) {
+          } catch {
             // If version check fails, continue to next preferred version
             continue;
           }
         }
-        
-        result[productCode] = versionToUse;
+
+        result[codeKey] = versionToUse;
       } else {
         // For other product codes, use whatever D2L reports
-        result[productCode] = reportedVersion;
+        result[codeKey] = reportedVersion;
       }
     }
+
     return result;
   }, 30 * 60 * 1000); // 30 minutes
 }

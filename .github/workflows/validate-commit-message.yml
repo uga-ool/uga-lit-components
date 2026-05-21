@@ -1,0 +1,24 @@
+name: Validate commit message
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commits in PR
+        run: |
+          chmod +x .github/scripts/validate-commit-message.sh
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          .github/scripts/validate-commit-message.sh --range "${BASE}..${HEAD}"

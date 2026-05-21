@@ -1,0 +1,26 @@
+---
+description: Where to add Lit components and demos in uga-lit-components
+alwaysApply: true
+---
+
+# Where to edit (uga-lit-components)
+
+## Add new work here
+
+- **New component:** `src/components/uga-<name>.ts` (kebab-case file name, `uga-` prefix).
+- **Register in bundle:** ensure the file is picked up by `src/all.ts` (`import.meta.glob` on `src/components`).
+- **Demo page:** `demo/<name>.html` and link from `index.html` / `index-all-in-one.html`.
+
+## Do not change unless the task requires it
+
+- **`vite.config.ts`** — single-file bundle layout (`dist/js/uga-components.js`).
+- **Unrelated existing components** in `src/components/`.
+- **`package.json` / lockfile** — only when adding dependencies the team approved.
+
+## Deploy reminder
+
+- Production bundle: `dist/js/uga-components.js` → eLC Public Files path documented in README.
+
+## Docs
+
+- [`docs/cursor/where-to-edit.md`](../docs/cursor/where-to-edit.md)

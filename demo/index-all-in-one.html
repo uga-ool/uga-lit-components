@@ -11,7 +11,6 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
@@ -191,21 +190,43 @@
         <p>Use <a href="callout.html">the standalone callout demo</a> for focused examples and copy-paste snippets.</p>
       </div>
       <div class="demo-example">
-        <uga-callout type="note" label="Note">
-          <p>Use note callouts for context that supports the primary instruction.</p>
-        </uga-callout>
-        <uga-callout type="tip" size="small" label="Tip">
-          <p>Put short implementation hints where learners are most likely to need them.</p>
-        </uga-callout>
-        <uga-callout type="example" label="Example">
-          <p>Model one full solution before asking students to complete a similar task independently.</p>
-        </uga-callout>
-        <uga-callout type="warning" size="xlarge" label="Warning">
-          <p>Assignments uploaded after the deadline may trigger penalties based on the syllabus policy.</p>
-        </uga-callout>
-        <uga-callout type="important" label="Important">
-          <p>Verify all required files are attached before clicking Submit in eLC.</p>
-        </uga-callout>
+        <uga-callout
+          type="note"
+          size="small"
+          label="Note (Small)"
+          body="Use note callouts for context that supports the primary instruction."
+        ></uga-callout>
+        <uga-callout
+          type="important"
+          size="large"
+          label="Important (Large)"
+          body="Complete the identity check before opening the exam in eLC."
+        ></uga-callout>
+        <uga-callout
+          type="tip"
+          size="medium"
+          label="Tip (Medium)"
+          body="Put short implementation hints where learners are most likely to need them."
+        ></uga-callout>
+        <uga-callout
+          type="example"
+          size="xlarge"
+          label="Example (X-Large)"
+          body="Model one full solution before asking students to complete a similar task independently."
+        ></uga-callout>
+        <uga-callout
+          type="warning"
+          size="xlarge"
+          label="Warning (X-Large)"
+          body="Assignments uploaded after the deadline may trigger penalties based on the syllabus policy."
+        ></uga-callout>
+        <uga-callout
+          type="note"
+          size="medium"
+          label="ID Usage Example"
+          body="This callout has id=&quot;id-usage-callout-all-in-one&quot; so you can link directly to it using #id-usage-callout-all-in-one."
+          id="id-usage-callout-all-in-one"
+        ></uga-callout>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -226,6 +247,11 @@
             <td>Bold text inside the box; can be a short title or the full message (see <a href="callout.html">callout demo</a>).</td>
           </tr>
           <tr>
+            <td>body</td>
+            <td>string</td>
+            <td>Plain-text body in the lower section; survives eLC HTML sanitization. For richer markup, use slot content (see <a href="callout.html">callout demo</a>).</td>
+          </tr>
+          <tr>
             <td>size</td>
             <td>string</td>
             <td>Optional: <code>small</code>, <code>medium</code> (default), <code>large</code>, or <code>xlarge</code> to adjust spacing and text size.</td>
@@ -233,9 +259,11 @@
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-callout type="warning" size="xlarge" label="Warning"&gt;
-  &lt;p&gt;Assignments uploaded after the deadline may trigger penalties.&lt;/p&gt;
-&lt;/uga-callout&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-callout type="note" size="small" label="Note (Small)" body="Use note callouts for context that supports the primary instruction."&gt;&lt;/uga-callout&gt;
+
+&lt;uga-callout type="important" size="large" label="Important (Large)" body="Complete the identity check before opening the exam in eLC."&gt;&lt;/uga-callout&gt;
+
+&lt;uga-callout type="warning" size="xlarge" label="Warning (X-Large)" body="Assignments uploaded after the deadline may trigger penalties based on the syllabus policy."&gt;&lt;/uga-callout&gt;</uga-code>
       </div>
     </section>
 
@@ -410,7 +438,7 @@
       </div>
 
       <div class="demo-example">
-        <uga-video videoid="1_icw0df6y" playerid="57494843"></uga-video>
+        <uga-video videoid="1_icw0df6y" playerid="53568732"></uga-video>
       </div>
 
       <div class="demo-props">
@@ -429,7 +457,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 57494843)</td>
+            <td>Kaltura player ID (default: 53568732)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -440,7 +468,7 @@
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="57494843"&gt;&lt;/uga-video&gt;
+        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
@@ -503,7 +531,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 57494843)</td>
+            <td>Kaltura player ID (default: 53568732)</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -518,7 +546,7 @@
 &lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With custom player ID --&gt;
-&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="57494843"&gt;&lt;/uga-video&gt;</uga-code>
+&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="53568732"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
@@ -1019,17 +1047,22 @@ console.log(x);
           <tr>
             <td>filename</td>
             <td>string</td>
-            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>). Not needed when using <code>program</code>.</td>
+            <td>Name of the JSON data file (required for local files, e.g. <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>). Not needed when using <code>program</code> or <code>name</code>.</td>
           </tr>
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>). When set, data loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>; logo path is per program (see <a href="footer.html">Footer demo</a>).</td>
+            <td>Abbreviated template code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>, <code>terry</code>). When set, data loads from <code>/shared/ugaonline/templates/{code}/data/footer.json</code>; logo path is per program (see <a href="footer.html">Footer demo</a>). Same as <code>name</code> if only one is set; if both are set, <code>program</code> wins.</td>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>string</td>
+            <td>Optional alias for <code>program</code> (e.g. <code>name="terry"</code> for Terry College of Business).</td>
           </tr>
           <tr>
             <td>imagefile</td>
             <td>string</td>
-            <td>Optional. Logo filename when using <code>program</code>; if omitted, defaults to <code>{program}.png</code> in that template's <code>img/</code> folder. For local mode, used when JSON doesn't include imageSrc.</td>
+            <td>Optional. Logo filename when using <code>program</code> or <code>name</code>; if omitted, defaults to <code>{code}.png</code> in that template's <code>img/</code> folder. For local mode, used when JSON doesn't include imageSrc.</td>
           </tr>
         </table>
       </div>
@@ -1038,8 +1071,9 @@ console.log(x);
         <uga-code language="markup">&lt;uga-footer filename="footer/footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
-        <p>Use the abbreviated program code (including <code>mfp</code> for Masters in Financial Planning). Template data: <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. See <a href="footer.html">Footer demo</a> for program codes and logo paths.</p>
-        <uga-code language="markup">&lt;uga-footer program="msw"&gt;&lt;/uga-footer&gt;</uga-code>
+        <p>Use <code>program="…"</code> or <code>name="…"</code> with the same abbreviated code (e.g. <code>terry</code> for Terry College of Business). Template data: <code>/shared/ugaonline/templates/{code}/data/footer.json</code>. See <a href="footer.html">Footer demo</a> for program codes and logo paths.</p>
+        <uga-code language="markup">&lt;uga-footer program="msw"&gt;&lt;/uga-footer&gt;
+&lt;uga-footer name="terry"&gt;&lt;/uga-footer&gt;</uga-code>
       </div>
     </section>
 
@@ -1208,14 +1242,22 @@ console.log(x);
 
   </div>
 
-  <!-- Video analytics: disabled when using Kaltura analytics only -->
-  <script>window.UGA_VIDEO_ANALYTICS_DISABLED = true;</script>
-  <script>
-    (function(){var s=document.createElement('script');s.type='module';s.src=window.location.hostname==='localhost'?'/dist/js/uga-components.js':'/shared/ugaonline/js/uga-components.js';document.body.appendChild(s);})();
+  <!-- Component bundle: localhost uses /dist/; eLC uses /shared/ -->
+  <script type="module">
+    // Dynamically load the component bundle based on deployment context
+    const bundleSrc =
+      window.location.hostname === 'localhost'
+        ? '/dist/js/uga-components.js'
+        : '/shared/ugaonline/js/uga-components.js';
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = bundleSrc;
+    document.body.appendChild(script);
   </script>
-  
+
   <script>
-    if (typeof axios === 'undefined') {
+    // Minimal axios polyfill for demo/fetch compatibility
+    if (typeof window.axios === 'undefined') {
       window.axios = {
         get: async (url) => {
           const response = await fetch(url);

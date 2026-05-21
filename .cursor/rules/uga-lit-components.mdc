@@ -1,0 +1,22 @@
+---
+description: Lit component implementation patterns in src/components and src/lib
+globs: "src/components/**/*.ts,src/lib/**/*.ts"
+alwaysApply: false
+---
+
+# Lit component code
+
+## New or updated components
+
+- File naming: `src/components/uga-<name>.ts`.
+- Side-effect registration on import; confirm `src/all.ts` includes the file.
+- Data loading: `loadData<T>()` from `src/lib/data/data-loader.ts`, then `this.loaded = true; this.requestUpdate();` in `connectedCallback`.
+- D2L API: use `src/lib/api/d2l-client.ts` and `d2l-utils.ts` — no hard-coded org unit IDs in source.
+- Kaltura/video: follow patterns in `uga-video.ts` (script load, player lifecycle, logo disabled in ui config).
+
+@james, do we add uga design system?
+
+## Style
+
+- Match existing components (accordion, callout, instructor-card) for structure and error handling.
+- TypeScript throughout; no new `.js` components.

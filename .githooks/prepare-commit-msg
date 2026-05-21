@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Inject .github/COMMIT_TEMPLATE when the commit message is still empty.
+set -euo pipefail
+
+MSG_FILE="$1"
+SOURCE="${2:-}"
+
+case "$SOURCE" in
+  merge | squash) exit 0 ;;
+esac
+
+ROOT="$(git rev-parse --show-toplevel)"
+TEMPLATE="$ROOT/.github/COMMIT_TEMPLATE"
+
+[ -f "$TEMPLATE" ] || exit 0
+
+has_subject() {
+  grep -qE '^[^#[:space:]]' "$MSG_FILE" 2>/dev/null
+}
+
+if has_subject; then
+  exit 0
+fi
+
+cat "$TEMPLATE" >"$MSG_FILE"

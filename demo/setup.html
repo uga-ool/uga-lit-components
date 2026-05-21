@@ -11,7 +11,6 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="demo-inline-code.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
@@ -75,7 +74,6 @@
       <div class="intro">
         <p><strong>Complete guide to setting up and using UGA Lit Components in eLC.</strong></p>
         <p>This page covers installation, configuration, and data file creation for all components.</p>
-        <p><strong>Demo HTML pages</strong> in this folder link to <code>demo-inline-code.css</code> so filenames and inline <code>&lt;code&gt;</code> in callouts match surrounding text size. Individual demos also link back here for the full checklist.</p>
       </div>
     </header>
 
@@ -183,7 +181,7 @@
     "imageSrc": "https://design.online.uga.edu/images/uga-logo.png"
   }
 }</uga-code>
-      <p>Use <code>filename="footer/footer-demo.json"</code> when the JSON sits under a <code>footer/</code> folder next to your HTML page (or the full path from Manage Files). The <code>program</code> property uses an abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>) and loads from <code>/shared/ugaonline/templates/{program}/data/footer.json</code>. A full list of program codes and logo paths is on the <a href="footer.html">Footer demo</a> page (including <code>mfp</code> → <code>/shared/ugaonline/templates/mfp/img/MFP_logo_Horizontal_CW.png</code>).</p>
+      <p>Use <code>filename="footer/footer-demo.json"</code> when the JSON sits under a <code>footer/</code> folder next to your HTML page (or the full path from Manage Files). Use <code>program="…"</code> or <code>name="…"</code> with the same abbreviated template code (e.g. <code>msw</code>, <code>acct</code>, <code>mfp</code>, <code>terry</code> for Terry College of Business); data loads from <code>/shared/ugaonline/templates/{code}/data/footer.json</code>. A full list of codes and logo paths is on the <a href="footer.html">Footer demo</a> page (including <code>mfp</code> → <code>/shared/ugaonline/templates/mfp/img/MFP_logo_Horizontal_CW.png</code> and <code>terry</code> → <code>/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png</code>).</p>
 
       <h4>Example: course-calendar/course-calendar-demo.json</h4>
       <uga-code language="javascript">{
@@ -206,7 +204,7 @@
     ]
   }
 }</uga-code>
-      <p>Use <code>&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;</code> to render the table. Put titles and intro copy in page HTML. Optional <code>caption</code> sets the table caption. Add <code>sync-from-course</code> (or legacy <code>sync-due-status</code>) only when rows include <code>dueTags</code> with <code>folderId</code> for assignment sync.</p>
+      <p>Use <code>&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;</code> to render the table. Put titles and intro copy in page HTML. Optional <code>caption</code> sets the table caption. Add <code>sync-from-course</code> (or legacy <code>sync-due-status</code>) only when rows include <code>dueTags</code> with <code>folderId</code> for assignment sync. Full format: <a href="../docs/COURSE_CALENDAR_FORMAT.md">docs/COURSE_CALENDAR_FORMAT.md</a>.</p>
       <p><strong>CSV option:</strong> You can use <code>type="csv"</code> with a flat file that includes <code>weekLabel</code> on each row. Use <code>course-calendar/course-calendar-template.csv</code> as a starter template.</p>
       <uga-code language="markup">&lt;uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;
 
@@ -253,7 +251,7 @@
       <h3>3. Component-Specific Setup</h3>
       <h4>Components that do not require eLC API access</h4>
       <ul>
-        <li><strong>uga-callout</strong> - Semantic callout block (<code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, <code>warning</code>) with an optional bolded label. Uses slot content and renders as <code>&lt;aside&gt;</code>. See <a href="callout.html">Callout demo</a>.</li>
+        <li><strong>uga-callout</strong> - Semantic callout block (<code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, <code>warning</code>) with an optional bolded <code>label</code>, optional <code>body</code> attribute (plain text), or slot content for richer HTML. Renders as <code>&lt;aside&gt;</code>. See <a href="callout.html">Callout demo</a>.</li>
       </ul>
       
       <h4>eLC API Components</h4>
@@ -338,7 +336,8 @@
       <p>For <strong>uga-video</strong>, you'll need:</p>
       <ul>
         <li><strong>videoid</strong> - The Kaltura entry ID (found in Kaltura MediaSpace)</li>
-        <li><strong>playerid</strong> (optional) - Kaltura player / uiConf ID (default: 57494843)</li>
+        <li><strong>playerid</strong> (optional) - Kaltura player / uiConf ID (default: 53568732; copy from Kaltura embed code)</li>
+        <li><strong>topic-id</strong> (optional) - eLC content topic ID for completion tracking (uses Playkit JS instead of iframe)</li>
         <li><strong>uiconfid</strong> (optional) - UI configuration ID for custom player appearance</li>
       </ul>
 

@@ -14,6 +14,8 @@ export interface ClasslistUser {
   LastName?: string;
   /** Empty when the enrollment role is not set to “display in classlist” in Brightspace. */
   ClasslistRoleDisplayName?: string;
+  /** When `null`, the user has no classlist-visible profile image (do not call the profile image route). */
+  ImageUrl?: string | null;
 }
 
 export interface Enrollment {

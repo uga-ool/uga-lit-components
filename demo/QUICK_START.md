@@ -5,33 +5,25 @@
 A comprehensive demo system with **multiple HTML pages** (hub, per-component demos, setup, and quiz variants) showcasing UGA Lit components:
 
 - ✅ **Main demo page** (`index-all-in-one.html`) - Comprehensive all-in-one scrollable demo with all components
-- ✅ **19 individual demo pages** - One per component (including Quiz), perfect for eLC side navigation. Plus extra `quiz10.html` / `quiz20.html` variants and `video-debug.html` for analytics troubleshooting.
+- ✅ **20 individual demo pages** - One HTML file per component showcase (**21** components in the bundle; `uga-quiz-grade-sync` is demonstrated on `quiz.html`). Plus `quiz/quiz10.html` and `quiz/quiz20.html` variants.
 - ✅ **Setup guide** (`setup.html`) - Deployment instructions and troubleshooting
 - ✅ **Property documentation** tables for every component
 - ✅ **Copy-paste ready** code snippets
 - ✅ **Sample data files** with Google Drive links for easy sharing
 - ✅ **Auto-generated table of contents** on main pages
 
-## Recent Updates (January 2026)
+## Recent updates
 
-### What's New
+See [../CHANGELOG.md](../CHANGELOG.md) for component changes (callout, course calendar, eLC Google Sync, quiz grade sync, footer program codes, and more). Demo pages use the production bundle path `/shared/ugaonline/js/uga-components.js` and link to [setup.html](setup.html) for deployment steps.
 
-- 🎨 **Separated demos**: Each component now has its own HTML page for easier testing
-- 🎬 **Enhanced video component**: Kaltura logo hiding, better player management
-- 📂 **Accordion refactored**: Direct axios pattern, improved error handling
-- 🗂️ **TOC filtering**: Now scans h2/h3 only for cleaner navigation
-- 🐛 **Bug fixes**: Accordion icons, footer paths, axios errors
-- 📄 **Demo pages**: Shared `demo-inline-code.css`, instructional-designer blurbs linking to `setup.html`, clarified quiz file paths (course files / Manage Files)
-
-👉 See [../CHANGELOG.md](../CHANGELOG.md) for complete details
-
-## Files Created
+## Demo files layout
 
 ```
 demo/
-├── index-all-in-one.html        # Main comprehensive demo (all components)
-├── setup.html                    # Setup & usage guide
-├── accordion.html                # Individual component demos
+├── index-all-in-one.html         # All components on one scrollable page
+├── setup.html                    # Deployment, data files, troubleshooting
+├── QUICK_START.md                # This file
+├── accordion.html                # Per-component demo pages (20 total)
 ├── assignment.html
 ├── callout.html
 ├── circles.html
@@ -39,45 +31,43 @@ demo/
 ├── course-analytics.html
 ├── course-calendar.html
 ├── duedate.html
+├── elc-google-sync.html          # uga-elc-google-sync (admin / stub-mode demo)
 ├── footer.html
 ├── image.html
 ├── instructor-card.html
 ├── instructor-note.html
 ├── quiz.html
-├── quiz10.html                   # Smaller quiz example
-├── quiz20.html
-├── quiz/                         # Quiz JSON / CSV + instructor-note HTML for grade sync
-│   ├── quiz-sample.json          # All six question types (JSON)
-│   ├── quiz-sample.csv           # Same six types in eLC question-import CSV format
-│   ├── quiz10.json
-│   ├── quiz20.json
-│   ├── quiz-sync-note.html       # Wraps uga-quiz-grade-sync for instructors
-│   └── quiz-sync-note-basic.html
 ├── rating.html
 ├── return-to-top.html
 ├── slideshow.html
 ├── tabs.html
 ├── toc.html
 ├── video.html
-├── video-debug.html
-├── elc-google-sync.html          # uga-elc-google-sync (admin / stub demo)
-├── demo-inline-code.css          # Optional: inline <code> sizing in demo callouts
-├── QUICK_START.md               # This file
-├── accordion/accordion-demo.json    # Sample data (also on Google Drive)
+├── accordion/accordion-demo.json
 ├── tabs/tabs-demo.json
 ├── circles/circles-demo.json
 ├── slideshow/slideshow-demo.json
 ├── footer/footer-demo.json
 ├── instructor-note/instructor-note-demo.html
 ├── videos/videos-demo.json
+├── image/demo_image.jpg          # Sample image for uga-image demos
 ├── course-calendar/
 │   ├── course-calendar-demo.json
 │   ├── course-calendar-demo.csv
 │   └── course-calendar-template.csv
-├── image/demo_image.jpg
-├── quiz-demo.json               # Extra template at demo root (optional)
-└── quiz-sample.csv
+└── quiz/
+    ├── quiz10.html               # Smaller quiz demo page
+    ├── quiz20.html               # Larger quiz demo page
+    ├── quiz10.json
+    ├── quiz20.json
+    ├── quiz-sample.json          # All six question types (JSON)
+    ├── quiz-sample.csv           # Same types in eLC question-import CSV format
+    ├── quiz-demo.json            # Extra template
+    ├── quiz-sync-note.html       # Wraps uga-quiz-grade-sync for instructors
+    └── quiz-sync-note-basic.html
 ```
+
+Repo root [`index.html`](../index.html) links to the all-in-one demo, setup guide, and a few focused pages.
 
 ## View the Demo Locally
 
@@ -149,7 +139,7 @@ Comprehensive guide covering:
 npm run build
 ```
 
-This creates `dist/js/uga-components.js` (~113 kB, 37 kB gzipped)
+This creates `dist/js/uga-components.js` (run `npm run build` to see current size; recently ~301 kB, ~83 kB gzipped)
 
 ### Step 2: Upload to eLC
 
@@ -206,8 +196,9 @@ In the eLC HTML editor, update file paths to:
 - `<uga-tabs>` - `tabs/tabs-demo.json` (tabbed content navigation)
 - `<uga-circles>` - `circles/circles-demo.json` (circular statistics/figures)
 - `<uga-slideshow>` - `slideshow/slideshow-demo.json` (image carousel with controls)
-- `<uga-footer>` - `footer/footer-demo.json` (branded footer with logo)
+- `<uga-footer>` - `footer/footer-demo.json` (branded footer with logo; or `program` / `name` for template paths)
 - `<uga-instructor-note>` - `instructor-note/instructor-note-demo.html` (instructor-only notes)
+- `<uga-course-calendar>` - `course-calendar/course-calendar-demo.json` or `.csv` (`type="local"` or `type="csv"`); starter template `course-calendar-template.csv`. Optional `sync-from-course` when rows use `dueTags[].folderId`. See [Course Calendar demo](course-calendar.html) and [docs/COURSE_CALENDAR_FORMAT.md](../docs/COURSE_CALENDAR_FORMAT.md).
 
 **All example files include:**
 
@@ -218,7 +209,7 @@ In the eLC HTML editor, update file paths to:
 
 ### Components That Work Standalone
 
-- `<uga-callout>` - Semantic callout/aside with fixed type-to-color styles (`note`, `important`, `tip`, `example`, `warning`) and optional `label`; body is slot content. See [Callout demo](callout.html).
+- `<uga-callout>` - Semantic callout/aside with fixed type-to-color styles (`note`, `important`, `tip`, `example`, `warning`), optional `label`, optional `body` attribute (plain text), and slot content for richer HTML. See [Callout demo](callout.html).
 - `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. When the image is in an `image/` folder next to your HTML page, use `src="image/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
 - `<uga-toc>` - Auto-generates from h2/h3 headings on page
 - `<uga-return-to-top>` - Smooth scroll button (appears after scrolling)
@@ -226,12 +217,15 @@ In the eLC HTML editor, update file paths to:
 
 ### Components That Need eLC API
 
-- `<uga-video>` - Kaltura video ID required (hides logo by default)
-- `<uga-assignment>` - Displays assignments, discussions, quizzes, and content with due dates. Filter by type using the `types` property (default: all types).
-- `<uga-duedate>` - Displays due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property (default: all types).
-- `<uga-quiz>` - Embed formative quizzes; loads questions from a JSON file (`type="local"`) or an eLC question-import CSV (`type="csv"`). Use `filename` (e.g. `quiz/quiz-sample.json` or `quiz/quiz-sample.csv`). The JSON file must have a top-level `questions` array; see [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the format and CSV notes. Sample files in-repo: `quiz/quiz-sample.json` and `quiz/quiz-sample.csv` (all 6 types), `quiz/quiz10.json`, `quiz/quiz20.json`. Can submit results to an eLC assignment. See [Quiz demo](quiz.html).
-- `<uga-quiz-grade-sync>` - Instructor-only: sync quiz submissions to the linked grade item. Use `dropbox-assignment-name` (e.g. "Quiz Demo 2") or `dropbox-folder-id`. Place below the quiz or inside `uga-instructor-note`.
-- `<uga-rating>` - Collects user ratings via eLC forums
+- `<uga-video>` - Kaltura `videoid` required; optional `topic-id` for D2L completion tracking. See [Video demo](video.html).
+- `<uga-assignment>` - Assignments, discussions, quizzes, and content with due dates. Filter with `types`. See [Assignment demo](assignment.html).
+- `<uga-duedate>` - Due-date table for the same activity types. See [Due date demo](duedate.html).
+- `<uga-instructor-card>` - Instructor photos/names from the classlist API; optional `username` pin list. See [Instructor card demo](instructor-card.html).
+- `<uga-quiz>` - Formative quizzes from JSON (`type="local"`) or eLC question-import CSV (`type="csv"`). See [Quiz demo](quiz.html), [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md), and [docs/QUIZ_DROPBOX_SETUP.md](../docs/QUIZ_DROPBOX_SETUP.md) for assignment submission.
+- `<uga-quiz-grade-sync>` - Instructor-only: sync quiz submissions to the linked grade item via `dropbox-assignment-name` or `dropbox-folder-id`. See quiz sync snippets in [quiz.html](quiz.html).
+- `<uga-rating>` - Collects user ratings via eLC forums. See [Rating demo](rating.html).
+- `<uga-course-analytics>` - Aggregated content, assignment, and discussion analytics. Hide the page from students with release conditions. See [Course analytics demo](course-analytics.html).
+- `<uga-elc-google-sync>` - Admin-only template / Google Drive sync widget (MVP: read-only preview; use `stub-mode` in demos). See [eLC Google Sync demo](elc-google-sync.html) and [docs/ELC_GOOGLE_SYNC_WIDGET.md](../docs/ELC_GOOGLE_SYNC_WIDGET.md).
 
 ## Customization Tips
 
@@ -334,6 +328,7 @@ The table of contents component now scans **h2 and h3 headings only** (previousl
 
 ## Support
 
+- **Documentation index**: `/docs/README.md` - UGA feature docs vs archived D2L reference
 - **Setup Guide**: `/demo/setup.html` - Comprehensive deployment and troubleshooting
 - **Main README**: `/README.md` - Project overview and architecture
 - **Changelog**: `/CHANGELOG.md` - Recent updates and migration notes

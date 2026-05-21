@@ -1,0 +1,16 @@
+---
+description: uga-lit-components bundle and eLC deployment conventions
+alwaysApply: true
+---
+
+# UGA Lit component library
+
+- **Repo:** canonical `uga-ool` Lit web components for **eLC** (UGA Brightspace).
+- **Output:** single ES module `dist/js/uga-components.js` from `src/all.ts` via Vite (`inlineDynamicImports: true`).
+- **Registration:** every component under `src/components/` must be included in the `src/all.ts` glob.
+- **Light DOM only:** use `createRenderRoot() { return this; }` — do not use Shadow DOM unless explicitly required and consumers updated.
+- **Axios is bundled:** Use `import axios from 'axios'` via `src/lib/api/d2l-client.ts` (and existing component patterns). Vite includes axios in `dist/js/uga-components.js`. Do not externalize axios or add a second HTTP client without team discussion.
+- **Types:** use `src/types/d2l.ts` for API shapes.
+- **Scripts:** `npm run dev`, `npm run build`, `npm run preview` per `package.json`.
+
+See `.github/copilot-instructions.md`, [`docs/README.md`](../docs/README.md), and `docs/cursor/README.md` for patterns.
