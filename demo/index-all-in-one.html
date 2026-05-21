@@ -190,21 +190,43 @@
         <p>Use <a href="callout.html">the standalone callout demo</a> for focused examples and copy-paste snippets.</p>
       </div>
       <div class="demo-example">
-        <uga-callout type="note" label="Note">
-          <p>Use note callouts for context that supports the primary instruction.</p>
-        </uga-callout>
-        <uga-callout type="tip" size="small" label="Tip">
-          <p>Put short implementation hints where learners are most likely to need them.</p>
-        </uga-callout>
-        <uga-callout type="example" label="Example">
-          <p>Model one full solution before asking students to complete a similar task independently.</p>
-        </uga-callout>
-        <uga-callout type="warning" size="xlarge" label="Warning">
-          <p>Assignments uploaded after the deadline may trigger penalties based on the syllabus policy.</p>
-        </uga-callout>
-        <uga-callout type="important" label="Important">
-          <p>Verify all required files are attached before clicking Submit in eLC.</p>
-        </uga-callout>
+        <uga-callout
+          type="note"
+          size="small"
+          label="Note (Small)"
+          body="Use note callouts for context that supports the primary instruction."
+        ></uga-callout>
+        <uga-callout
+          type="important"
+          size="large"
+          label="Important (Large)"
+          body="Complete the identity check before opening the exam in eLC."
+        ></uga-callout>
+        <uga-callout
+          type="tip"
+          size="medium"
+          label="Tip (Medium)"
+          body="Put short implementation hints where learners are most likely to need them."
+        ></uga-callout>
+        <uga-callout
+          type="example"
+          size="xlarge"
+          label="Example (X-Large)"
+          body="Model one full solution before asking students to complete a similar task independently."
+        ></uga-callout>
+        <uga-callout
+          type="warning"
+          size="xlarge"
+          label="Warning (X-Large)"
+          body="Assignments uploaded after the deadline may trigger penalties based on the syllabus policy."
+        ></uga-callout>
+        <uga-callout
+          type="note"
+          size="medium"
+          label="ID Usage Example"
+          body="This callout has id=&quot;id-usage-callout-all-in-one&quot; so you can link directly to it using #id-usage-callout-all-in-one."
+          id="id-usage-callout-all-in-one"
+        ></uga-callout>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
@@ -225,6 +247,11 @@
             <td>Bold text inside the box; can be a short title or the full message (see <a href="callout.html">callout demo</a>).</td>
           </tr>
           <tr>
+            <td>body</td>
+            <td>string</td>
+            <td>Plain-text body in the lower section; survives eLC HTML sanitization. For richer markup, use slot content (see <a href="callout.html">callout demo</a>).</td>
+          </tr>
+          <tr>
             <td>size</td>
             <td>string</td>
             <td>Optional: <code>small</code>, <code>medium</code> (default), <code>large</code>, or <code>xlarge</code> to adjust spacing and text size.</td>
@@ -232,9 +259,11 @@
         </table>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-callout type="warning" size="xlarge" label="Warning"&gt;
-  &lt;p&gt;Assignments uploaded after the deadline may trigger penalties.&lt;/p&gt;
-&lt;/uga-callout&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-callout type="note" size="small" label="Note (Small)" body="Use note callouts for context that supports the primary instruction."&gt;&lt;/uga-callout&gt;
+
+&lt;uga-callout type="important" size="large" label="Important (Large)" body="Complete the identity check before opening the exam in eLC."&gt;&lt;/uga-callout&gt;
+
+&lt;uga-callout type="warning" size="xlarge" label="Warning (X-Large)" body="Assignments uploaded after the deadline may trigger penalties based on the syllabus policy."&gt;&lt;/uga-callout&gt;</uga-code>
       </div>
     </section>
 
@@ -1214,12 +1243,21 @@ console.log(x);
   </div>
 
   <!-- Component bundle: localhost uses /dist/; eLC uses /shared/ -->
-  <script>
-    (function(){var s=document.createElement('script');s.type='module';s.src=window.location.hostname==='localhost'?'/dist/js/uga-components.js':'/shared/ugaonline/js/uga-components.js';document.body.appendChild(s);})();
+  <script type="module">
+    // Dynamically load the component bundle based on deployment context
+    const bundleSrc =
+      window.location.hostname === 'localhost'
+        ? '/dist/js/uga-components.js'
+        : '/shared/ugaonline/js/uga-components.js';
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = bundleSrc;
+    document.body.appendChild(script);
   </script>
-  
+
   <script>
-    if (typeof axios === 'undefined') {
+    // Minimal axios polyfill for demo/fetch compatibility
+    if (typeof window.axios === 'undefined') {
       window.axios = {
         get: async (url) => {
           const response = await fetch(url);

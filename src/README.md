@@ -8,7 +8,7 @@ Entry: [`all.ts`](all.ts) eagerly loads every `components/uga-*.ts` into one bun
 |----------------|------------|------|
 | `uga-accordion` | JSON via `loadData` (`type`, `filename`, `program`) | `demo/accordion.html` |
 | `uga-assignment` | Valence `d2l-client` | `demo/assignment.html` |
-| `uga-callout` | Slot content only | `demo/callout.html` |
+| `uga-callout` | `body` attribute and/or slot content | `demo/callout.html` |
 | `uga-circles` | JSON `loadData` | `demo/circles.html` |
 | `uga-code` | Static / Prism | `demo/code.html` |
 | `uga-course-analytics` | `analytics-utils` + Valence | `demo/course-analytics.html` |
