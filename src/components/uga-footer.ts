@@ -73,6 +73,42 @@ const PROGRAM_IMAGE_PATHS: Record<string, string> = {
   terry: '/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png',
 };
 
+/** Default logo hyperlink per program template (cvle omitted — no footer logo yet). */
+const PROGRAM_LOGO_LINKS: Record<string, string> = {
+  acct: 'https://www.terry.uga.edu/departments/accounting/',
+  datascience: 'https://www.stat.uga.edu/',
+  envgeology: 'https://www.terry.uga.edu/departments/environmental-geology/',
+  fanr: 'https://warnell.uga.edu/',
+  general: 'https://www.uga.edu/',
+  highered: 'https://ihe.uga.edu/',
+  mfp: 'https://online.uga.edu/degrees-certificates/master-science-financial-planning/',
+  msw: 'https://ssw.uga.edu/',
+  ool: 'https://online.uga.edu/',
+  publichealth: 'https://publichealth.uga.edu/',
+  terry: 'https://www.terry.uga.edu/',
+};
+
+function isPlaceholderLogoLink(link?: string): boolean {
+  const trimmed = (link ?? '').trim();
+  return !trimmed || trimmed === '#';
+}
+
+function resolveProgramLogoLink(prog: string, jsonLink?: string): string {
+  if (!isPlaceholderLogoLink(jsonLink)) {
+    return jsonLink!.trim();
+  }
+  return PROGRAM_LOGO_LINKS[prog] ?? '#';
+}
+
+function applyProgramLogoLinkToFooterData(prog: string, data: FooterData): void {
+  if (!prog || !data.logo) return;
+  data.logo.link = resolveProgramLogoLink(prog, data.logo.link);
+}
+
+function isExternalHttpUrl(url: string): boolean {
+  return /^https?:\/\//i.test((url ?? '').trim());
+}
+
 @customElement('uga-footer')
 class UgaFooter extends LitElement {
   @property({ type: String }) filename = '';
@@ -173,6 +209,10 @@ class UgaFooter extends LitElement {
         // New format
         this.footerData = rawData as FooterData;
       }
+
+      if (prog) {
+        applyProgramLogoLinkToFooterData(prog, this.footerData);
+      }
       
       this.loaded = true;
     } catch (error: any) {
@@ -187,7 +227,11 @@ class UgaFooter extends LitElement {
           ? (customPath.startsWith('/') ? customPath : `/${customPath}`)
           : `${programImgBase}/${encodeURIComponent(imageName)}`;
         this.footerData = {
-          logo: { link: '#', alt: PROGRAM_DISPLAY_NAMES[prog] || prog.replace(/_/g, ' '), imageSrc: logoUrl }
+          logo: {
+            link: resolveProgramLogoLink(prog),
+            alt: PROGRAM_DISPLAY_NAMES[prog] || prog.replace(/_/g, ' '),
+            imageSrc: logoUrl,
+          },
         };
         this.loadError = null;
       } else {
@@ -318,7 +362,11 @@ class UgaFooter extends LitElement {
         <div class="cmp-site-footer__container">
           ${logo ? html`
             <div class="cmp-site-footer__logo">
-              <a href="${logo.link}" ${logo.link.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>
+              <a
+                href="${logo.link}"
+                target=${isExternalHttpUrl(logo.link) ? '_blank' : undefined}
+                rel=${isExternalHttpUrl(logo.link) ? 'noopener noreferrer' : undefined}
+              >
                 ${logoImageSrcSet || logoVerticalImageSrc ? html`
                   <picture>
                     ${logoImageSrcSet ? html`
@@ -343,7 +391,12 @@ class UgaFooter extends LitElement {
                 <ul class="cmp-site-footer__navigation-list">
                   ${navigation.map(link => html`
                     <li class="cmp-site-footer__navigation-list-item">
-                      <a href="${link.url}" class="cmp-site-footer__navigation-link" ${link.url.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>${link.text}</a>
+                      <a
+                        href="${link.url}"
+                        class="cmp-site-footer__navigation-link"
+                        target=${isExternalHttpUrl(link.url) ? '_blank' : undefined}
+                        rel=${isExternalHttpUrl(link.url) ? 'noopener noreferrer' : undefined}
+                      >${link.text}</a>
                     </li>
                   `)}
                 </ul>
@@ -370,10 +423,13 @@ class UgaFooter extends LitElement {
                   <span class="cmp-site-footer__social-label">${social.label}</span>
                 ` : ''}
                 ${social.links.map(link => html`
-                  <a class="cmp-site-footer__social-link" 
-                     href="${link.url}" 
-                     ${link.url.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}
-                     aria-label="${link.name}">
+                  <a
+                    class="cmp-site-footer__social-link"
+                    href="${link.url}"
+                    target=${isExternalHttpUrl(link.url) ? '_blank' : undefined}
+                    rel=${isExternalHttpUrl(link.url) ? 'noopener noreferrer' : undefined}
+                    aria-label="${link.name}"
+                  >
                     ${link.icon ? unsafeHTML(this.getSocialIconSVG(link.icon)) : link.name}
                   </a>
                 `)}
