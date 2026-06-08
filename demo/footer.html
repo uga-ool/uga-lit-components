@@ -98,7 +98,7 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file or a program-specific footer image stored in public files.</p>
-        <p><strong>eLC setup:</strong> Load the component bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. Upload <code>footer/footer-demo.json</code> (or your chosen path under Manage Files). Use <code>filename="footer/footer-demo.json"</code> when that folder sits next to your HTML page; otherwise use the full path from Manage Files. For a shared program template, use either <code>program="…"</code> or <code>name="…"</code> with the same abbreviated code (e.g. <code>program="msw"</code> or <code>name="terry"</code> for Terry College of Business). Logo paths are per-template (see list below).</p>
+        <p><strong>eLC setup:</strong> Load the component bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. Upload <code>footer/footer-demo.json</code> (or your chosen path under Manage Files). Use <code>filename="footer/footer-demo.json"</code> when that folder sits next to your HTML page; otherwise use the full path from Manage Files. For a shared program template, use <code>program="…"</code> or <code>name="…"</code> (e.g. <code>program="msw"</code>) — logo and department link are built in; no <code>footer.json</code> request unless you add <code>data-file="footer.json"</code> for nav/copyright/social from Public Files.</p>
         <p><strong>Example data file:</strong> Download
           <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>
           to modify and upload to your course files.</p>
@@ -130,12 +130,17 @@
           <tr>
             <td>program</td>
             <td>string</td>
-            <td>Abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>terry</code>). When set, footer uses Program Template: data from <code>/shared/ugaonline/templates/{code}/data/footer.json</code>; logo path is configured per program (see list below). Same meaning as <code>name</code>; if both are set, <code>program</code> wins.</td>
+            <td>Abbreviated program code (e.g. <code>msw</code>, <code>acct</code>, <code>terry</code>). Uses built-in logo image and department link (see lists below). Does not fetch shared JSON unless <code>data-file</code> is set. Same meaning as <code>name</code>; if both are set, <code>program</code> wins.</td>
           </tr>
           <tr>
             <td>name</td>
             <td>string</td>
             <td>Optional alias for <code>program</code> for instructional designers (e.g. <code>name="terry"</code> for Terry College of Business). Template paths and logo use this code when <code>program</code> is empty.</td>
+          </tr>
+          <tr>
+            <td>data-file</td>
+            <td>string</td>
+            <td>Optional, with <code>program</code> or <code>name</code>. Loads <code>/shared/ugaonline/templates/{code}/data/{file}</code> (e.g. <code>data-file="footer.json"</code>) for navigation, copyright, social, and JSON overrides. Omit for logo-only footers (avoids broken-link reports when the file is missing).</td>
           </tr>
           <tr>
             <td>imagefile</td>
@@ -156,9 +161,10 @@
         <uga-code language="markup">&lt;uga-footer filename="footer/footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
         <h4 style="margin-top: 1.5rem;">Program Template (for instructional designers)</h4>
-        <p>Use <code>program="…"</code> or <code>name="…"</code> with the same abbreviated code. Template data loads from <code>/shared/ugaonline/templates/{code}/data/footer.json</code>.</p>
+        <p>Use <code>program="…"</code> or <code>name="…"</code> for built-in logo and link. Add <code>data-file="footer.json"</code> only when that file exists in Public Files and you need extra footer content from JSON.</p>
         <uga-code language="markup">&lt;uga-footer program="msw"&gt;&lt;/uga-footer&gt;
-&lt;!-- or the same template code with name= (e.g. Terry College of Business) --&gt;
+&lt;!-- optional shared JSON (nav, copyright, social) --&gt;
+&lt;uga-footer program="msw" data-file="footer.json"&gt;&lt;/uga-footer&gt;
 &lt;uga-footer name="terry"&gt;&lt;/uga-footer&gt;</uga-code>
         <h4 style="margin-top: 1.5rem;">Program codes with logo path (configured in component)</h4>
         <ul style="margin-top: 0.5rem;">
@@ -175,7 +181,7 @@
           <li><strong>terry</strong> (Terry College of Business): <code>/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png</code></li>
         </ul>
         <h4 style="margin-top: 1.5rem;">Default logo links (<code>program=</code> / <code>name=</code>)</h4>
-        <p style="margin-top: 0.5rem;">Built into <code>uga-footer</code> when template JSON omits <code>logo.link</code> or uses <code>#</code>. A non-empty link in <code>footer.json</code> overrides these.</p>
+        <p style="margin-top: 0.5rem;">Built into <code>uga-footer</code> for <code>program=</code> / <code>name=</code> when <code>data-file</code> is omitted, or when loaded JSON omits <code>logo.link</code> or uses <code>#</code>. A non-empty link in template JSON overrides these.</p>
         <ul style="margin-top: 0.5rem;">
           <li><strong>acct</strong> — <a href="https://www.terry.uga.edu/departments/accounting/" target="_blank" rel="noopener noreferrer">terry.uga.edu/departments/accounting</a></li>
           <li><strong>datascience</strong> — <a href="https://www.stat.uga.edu/" target="_blank" rel="noopener noreferrer">stat.uga.edu</a></li>
