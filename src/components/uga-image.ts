@@ -65,7 +65,6 @@ class UgaImage extends LitElement {
 
     .cmp-image__container {
       background-color: white;
-      margin: auto;
       border-radius: 15px;
       padding: 15px;
       cursor: pointer;
@@ -432,8 +431,13 @@ class UgaImage extends LitElement {
   }
 
   render() {
-    const containerStyle = `
+    const figureStyle = `
       max-width: ${this.maxWidth};
+      margin-left: auto;
+      margin-right: auto;
+    `;
+
+    const containerStyle = `
       border-radius: ${this.borderRadius}px;
       border: ${this.borderWidth}px solid ${this.borderColor};
       padding: ${this.padding}px;
@@ -444,7 +448,7 @@ class UgaImage extends LitElement {
     return html`
       <style>${UgaImage.styles}</style>
       <div class="cmp-image">
-        <figure class="cmp-image__figure">
+        <figure class="cmp-image__figure" style="${figureStyle}">
           <div
             class="cmp-image__container${!this.src || this.lightboxDisabled ? ' cmp-image__container--no-expand' : ''}"
             style="${containerStyle}"

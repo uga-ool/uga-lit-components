@@ -196,7 +196,7 @@ In the eLC HTML editor, update file paths to:
 - `<uga-tabs>` - `tabs/tabs-demo.json` (tabbed content navigation)
 - `<uga-circles>` - `circles/circles-demo.json` (circular statistics/figures)
 - `<uga-slideshow>` - `slideshow/slideshow-demo.json` (image carousel with controls)
-- `<uga-footer>` - `footer/footer-demo.json` (branded footer with logo; or `program` / `name` for template paths)
+- `<uga-footer>` - `footer/footer-demo.json` (course file), or `program` / `name` (built-in logo/link); optional `data-file="footer.json"` for shared template data
 - `<uga-instructor-note>` - `instructor-note/instructor-note-demo.html` (instructor-only notes)
 - `<uga-course-calendar>` - `course-calendar/course-calendar-demo.json` or `.csv` (`type="local"` or `type="csv"`); starter template `course-calendar-template.csv`. Optional `sync-from-course` when rows use `dueTags[].folderId`. See [Course Calendar demo](course-calendar.html) and [docs/COURSE_CALENDAR_FORMAT.md](../docs/COURSE_CALENDAR_FORMAT.md).
 

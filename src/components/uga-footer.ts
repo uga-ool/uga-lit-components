@@ -56,7 +56,7 @@ const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
 
 /**
  * Program-specific logo image paths. Keys are abbreviated program codes.
- * Template data: /shared/ugaonline/templates/{program}/data/footer.json
+ * Optional template JSON: /shared/ugaonline/templates/{program}/data/{file} when data-file is set.
  * Programs without a logo (cvle) are not listed.
  */
 const PROGRAM_IMAGE_PATHS: Record<string, string> = {
@@ -109,6 +109,46 @@ function isExternalHttpUrl(url: string): boolean {
   return /^https?:\/\//i.test((url ?? '').trim());
 }
 
+function programCodeToImageFilename(programName: string): string {
+  if (!programName || !programName.trim()) return 'logo.png';
+  const name = programName.trim().replace(/\s+/g, '_');
+  return name.includes('.') ? name : `${name}.png`;
+}
+
+/** Built-in program footer (logo + link); no shared data/footer.json request. */
+function buildProgramDefaultFooterData(prog: string, imagefile = ''): FooterData {
+  const customPath = PROGRAM_IMAGE_PATHS[prog];
+  const programImgBase = `/shared/ugaonline/templates/${prog}/img`;
+  const imageName = imagefile.trim() || programCodeToImageFilename(prog);
+  const logoUrl = customPath
+    ? (customPath.startsWith('/') ? customPath : `/${customPath}`)
+    : `${programImgBase}/${encodeURIComponent(imageName)}`;
+
+  return {
+    logo: {
+      link: resolveProgramLogoLink(prog),
+      alt: PROGRAM_DISPLAY_NAMES[prog] || prog.replace(/_/g, ' '),
+      ...(customPath || imagefile.trim() ? { imageSrc: logoUrl } : {}),
+    },
+  };
+}
+
+function parseFooterRawData(rawData: FooterResponse | FooterData): FooterData {
+  const data = (rawData as FooterResponse).data ?? rawData;
+  if (data.link && data.alt && !data.logo) {
+    return {
+      logo: {
+        link: data.link,
+        alt: data.alt,
+        ...(data.imageSrc && { imageSrc: data.imageSrc }),
+        ...(data.imageSrcSet && { imageSrcSet: data.imageSrcSet }),
+        ...(data.verticalImageSrc && { verticalImageSrc: data.verticalImageSrc }),
+      },
+    };
+  }
+  return data as FooterData;
+}
+
 @customElement('uga-footer')
 class UgaFooter extends LitElement {
   @property({ type: String }) filename = '';
@@ -119,6 +159,12 @@ class UgaFooter extends LitElement {
    * often use `name="terry"` instead of `program="terry"`. If both are set, `program` wins.
    */
   @property({ type: String }) name = '';
+  /**
+   * When using program/name: optional JSON under
+   * /shared/ugaonline/templates/{code}/data/{data-file} (e.g. data-file="footer.json").
+   * If omitted, logo and link come from built-in program maps (no network request).
+   */
+  @property({ type: String, attribute: 'data-file' }) datafile = '';
   @property({ type: Boolean }) loaded = false;
   /** When true, appends ?t=timestamp to local JSON URL so edits show on refresh (avoids caching). */
   @property({ type: Boolean, attribute: 'cache-bust' }) cacheBust = false;
@@ -150,10 +196,12 @@ class UgaFooter extends LitElement {
     const prevFilename = changedProperties.get('filename');
     const prevProgram = changedProperties.get('program');
     const prevName = changedProperties.get('name');
+    const prevDatafile = changedProperties.get('datafile');
     const filenameChanged = changedProperties.has('filename') && prevFilename !== undefined;
     const programChanged = changedProperties.has('program') && prevProgram !== undefined;
     const nameChanged = changedProperties.has('name') && prevName !== undefined;
-    if (filenameChanged || programChanged || nameChanged) {
+    const datafileChanged = changedProperties.has('datafile') && prevDatafile !== undefined;
+    if (filenameChanged || programChanged || nameChanged || datafileChanged) {
       this.loaded = false;
       this.footerData = null;
       this.loadError = null;
@@ -168,81 +216,56 @@ class UgaFooter extends LitElement {
   async getDataFile(): Promise<void> {
     this.loading = true;
     this.loadError = null;
-    
-    try {
-      let dataFile: FooterResponse | any;
 
-      // If program or name is provided, use program type; otherwise default to local
-      const prog = this.effectiveProgram;
+    const prog = this.effectiveProgram;
+    const templateDataFile = (this.datafile || '').trim();
+
+    try {
       if (prog) {
-        // Program type - use the standard footer.json filename
-        const programFilename = 'footer.json';
-        dataFile = await loadData<FooterResponse>('program', programFilename, prog);
-      } else {
-        // Local type (default) - filename is the URL to fetch
-        // (relative to the document, e.g. footer-demo.json when JSON lives alongside the HTML)
-        if (!this.filename) {
-          this.loadError = 'Missing filename. Use filename="footer-demo.json" (or your JSON file).';
+        if (!templateDataFile) {
+          this.footerData = buildProgramDefaultFooterData(prog, this.imagefile);
           this.loaded = true;
-          this.loading = false;
-          this.requestUpdate();
           return;
         }
-        const url = this.cacheBust ? `${this.filename}?t=${Date.now()}` : this.filename;
-        dataFile = await loadData<FooterResponse>('local', url);
-      }
-      
-      // Handle legacy format: if data has link/alt at root level, convert to new format
-      const rawData = dataFile.data || dataFile;
-      if (rawData.link && rawData.alt && !rawData.logo) {
-        // Legacy format - convert to new structure
-        this.footerData = {
-          logo: {
-            link: rawData.link,
-            alt: rawData.alt,
-            ...(rawData.imageSrc && { imageSrc: rawData.imageSrc }),
-            ...(rawData.imageSrcSet && { imageSrcSet: rawData.imageSrcSet }),
-            ...(rawData.verticalImageSrc && { verticalImageSrc: rawData.verticalImageSrc })
-          }
-        };
-      } else {
-        // New format
-        this.footerData = rawData as FooterData;
+
+        const dataFile = await loadData<FooterResponse>('program', templateDataFile, prog);
+        this.footerData = parseFooterRawData(dataFile);
+        applyProgramLogoLinkToFooterData(prog, this.footerData);
+        this.loaded = true;
+        return;
       }
 
-      if (prog) {
-        applyProgramLogoLinkToFooterData(prog, this.footerData);
+      // Local type (default) - filename is the URL to fetch
+      if (!this.filename) {
+        this.loadError = 'Missing filename. Use filename="footer-demo.json" (or your JSON file).';
+        this.loaded = true;
+        return;
       }
-      
+      const url = this.cacheBust ? `${this.filename}?t=${Date.now()}` : this.filename;
+      const dataFile = await loadData<FooterResponse>('local', url);
+      this.footerData = parseFooterRawData(dataFile);
       this.loaded = true;
     } catch (error: any) {
       const requestedUrl = error?.response?.config?.url ?? '';
-      // When program/name is set, show program logo even if program JSON is missing (e.g. footer.json not yet uploaded)
-      const prog = this.effectiveProgram;
+
       if (prog) {
-        const customPath = PROGRAM_IMAGE_PATHS[prog];
-        const programImgBase = `/shared/ugaonline/templates/${prog}/img`;
-        const imageName = this.imagefile || this.programNameToImageFilename(prog);
-        const logoUrl = customPath
-          ? (customPath.startsWith('/') ? customPath : `/${customPath}`)
-          : `${programImgBase}/${encodeURIComponent(imageName)}`;
-        this.footerData = {
-          logo: {
-            link: resolveProgramLogoLink(prog),
-            alt: PROGRAM_DISPLAY_NAMES[prog] || prog.replace(/_/g, ' '),
-            imageSrc: logoUrl,
-          },
-        };
+        this.footerData = buildProgramDefaultFooterData(prog, this.imagefile);
+        applyProgramLogoLinkToFooterData(prog, this.footerData);
         this.loadError = null;
+        if (templateDataFile) {
+          console.warn(
+            `uga-footer: could not load /shared/ugaonline/templates/${prog}/data/${templateDataFile}; using built-in program footer.`,
+            error
+          );
+        }
       } else {
         const msg = error?.response?.status === 404
-          ? `File not found: ${this.filename || requestedUrl || 'program JSON'}. If the file is in the same folder as this page, use filename="footer-demo.json" (or your JSON filename); otherwise use the full path (e.g. /content/enforced/COURSE_ID/.../footer-demo.json).`
+          ? `File not found: ${this.filename || requestedUrl || 'footer JSON'}. If the file is in the same folder as this page, use filename="footer-demo.json" (or your JSON filename); otherwise use the full path (e.g. /content/enforced/COURSE_ID/.../footer-demo.json).`
           : (error?.message || 'Failed to load footer data');
         this.loadError = msg;
+        console.error('Failed to load footer data:', error);
       }
-      console.error('Failed to load footer data:', error);
-      console.error('Filename:', this.filename);
-      this.loaded = true; // Set to true to prevent infinite loop
+      this.loaded = true;
     } finally {
       this.loading = false;
       this.requestUpdate();
@@ -278,16 +301,6 @@ class UgaFooter extends LitElement {
     };
 
     return icons[iconName.toLowerCase()] || '';
-  }
-
-  /**
-   * For Program Template method: derive image filename from program code.
-   * When no custom path is set, images are loaded from shared/ugaonline/templates/{program}/img/.
-   */
-  private programNameToImageFilename(programName: string): string {
-    if (!programName || !programName.trim()) return 'logo.png';
-    const name = programName.trim().replace(/\s+/g, '_');
-    return name.includes('.') ? name : `${name}.png`;
   }
 
   render() {
@@ -343,7 +356,7 @@ class UgaFooter extends LitElement {
           logoImageSrc = customPath.startsWith('/') ? customPath : `/${customPath}`;
         } else {
           const programImgBase = `/shared/ugaonline/templates/${prog}/img`;
-          const imageName = this.imagefile || this.programNameToImageFilename(prog);
+          const imageName = this.imagefile || programCodeToImageFilename(prog);
           logoImageSrc = `${programImgBase}/${encodeURIComponent(imageName)}`;
         }
       } else if (logo.imageSrc) {
