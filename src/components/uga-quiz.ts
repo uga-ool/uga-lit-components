@@ -97,6 +97,8 @@ class UgaQuiz extends LitElement {
   @state() private jsonTitle = ''; // Title from JSON file (takes precedence over quiz-title attribute)
   @state() private feedbackLoadStatus: 'idle' | 'loading' | 'loaded' | 'failed' = 'idle';
   @state() private fetchedFeedback: { results: QuizResult; responses: Record<string, unknown> } | null = null;
+  /** True after Retake until Start; prevents showCompletedBlock from trapping the start screen. */
+  @state() private isRetaking = false;
 
   private get displayTitle(): string {
     return this.jsonTitle || this.quizTitle || 'Quiz';
@@ -699,6 +701,7 @@ class UgaQuiz extends LitElement {
    * Start the quiz
    */
   private startQuiz(): void {
+    this.isRetaking = false;
     this.isStarted = true;
     this.currentQuestionIndex = 0;
     this.isSubmitted = false;
@@ -1255,6 +1258,7 @@ class UgaQuiz extends LitElement {
       });
     }
 
+    this.isRetaking = true;
     this.isStarted = false;
     this.isSubmitted = false;
     this.results = null;
@@ -1263,6 +1267,8 @@ class UgaQuiz extends LitElement {
     this.responses = {};
     this.dropboxSaveStatus = 'idle';
     this.dropboxErrorMessage = null;
+    this.feedbackLoadStatus = 'idle';
+    this.fetchedFeedback = null;
     
     // Re-initialize responses
     for (const q of this.parsedQuestions) {
@@ -1646,7 +1652,8 @@ class UgaQuiz extends LitElement {
 
     // Show completion summary when we don't have full results in memory.
     // Also treat attemptCount > 0 as "completed" so we can try to load feedback from assignment when storage fails.
-    const showCompletedBlock = ((this.completionStatus === 'passed' || this.completionStatus === 'failed') || (this.attemptCount > 0 && this.showFeedback)) && !this.results;
+    // Exclude in-progress quizzes (isStarted) and intentional retakes (isRetaking) so Start/Retake are not trapped.
+    const showCompletedBlock = !this.isRetaking && !this.isStarted && ((this.completionStatus === 'passed' || this.completionStatus === 'failed') || (this.attemptCount > 0 && this.showFeedback)) && !this.results;
     if (showCompletedBlock) {
       const persisted = this.showFeedback ? this.getPersistedResults() : null;
       if (persisted) {
