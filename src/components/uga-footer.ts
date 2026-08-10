@@ -34,8 +34,19 @@ interface FooterData {
   };
 }
 
+/** Legacy JSON shape: logo fields at root instead of under `logo`. */
+interface FlatLogoFooterFields {
+  link?: string;
+  alt?: string;
+  imageSrc?: string;
+  imageSrcSet?: string;
+  verticalImageSrc?: string;
+}
+
+type FooterRawPayload = FooterData & FlatLogoFooterFields;
+
 interface FooterResponse {
-  data: FooterData;
+  data: FooterRawPayload;
 }
 
 /** Display names for program codes (used in logo alt text). */
@@ -133,8 +144,8 @@ function buildProgramDefaultFooterData(prog: string, imagefile = ''): FooterData
   };
 }
 
-function parseFooterRawData(rawData: FooterResponse | FooterData): FooterData {
-  const data = (rawData as FooterResponse).data ?? rawData;
+function parseFooterRawData(rawData: FooterResponse | FooterRawPayload): FooterData {
+  const data: FooterRawPayload = (rawData as FooterResponse).data ?? rawData;
   if (data.link && data.alt && !data.logo) {
     return {
       logo: {
