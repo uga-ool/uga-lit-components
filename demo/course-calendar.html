@@ -36,6 +36,7 @@
 
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON / CSV examples.</p>
+        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). The calendar panel uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code> (requires <code>base.css</code>).</p>
         <p><strong>Displays a table-only course calendar</strong> with week separators and row-type styling.</p>
         <p>Titles, intro text, and legend should be authored in page HTML outside the component.</p>
         <p>Use <code>filename</code> with <code>type="local"</code> (JSON), <code>type="csv"</code> (flat CSV with a <code>weekLabel</code> column), or <code>type="program"</code> (shared program template). Add <code>sync-from-course</code> (or legacy <code>sync-due-status</code>) to optionally reconcile date cells with live eLC assignment due dates by <code>dueTags[].folderId</code>.</p>

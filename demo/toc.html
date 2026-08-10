@@ -71,8 +71,9 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Requires Design System <code>base.css</code> for shadow/radius utilities on the TOC panel.</p>
 
-        <p><strong>Auto-generates a navigable table of contents</strong> from h2 and h3 headings on the page. Provides smooth scrolling navigation.</p>
+        <p><strong>Auto-generates a navigable table of contents</strong> from h2 and h3 headings on the page. Provides smooth scrolling navigation. Panel elevation uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>.</p>
         <p><em>Note: The TOC below is a live example! It automatically scans all h2 and h3 headings on the page.</em></p>
       </div>
 
@@ -103,7 +104,17 @@
     <uga-return-to-top></uga-return-to-top>
   </div>
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
   <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 </html>

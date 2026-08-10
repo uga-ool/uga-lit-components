@@ -20,7 +20,6 @@ uga-callout {
   margin: 1rem 0;
   padding: 0;
   border-left: 4px solid var(--callout-accent);
-  border-radius: 0.25rem;
   border-top: 1px solid var(--callout-border);
   border-right: 1px solid var(--callout-border);
   border-bottom: 1px solid var(--callout-border);
@@ -218,7 +217,7 @@ export class UgaCallout extends LitElement {
 
     return html`
       <aside
-        class="uga-callout uga-callout--${type} uga-callout--${size}"
+        class="uga-callout uga-callout--${type} uga-callout--${size} util-radius-all-sm"
         aria-labelledby=${trimmedLabel ? labelId : nothing}
       >
         ${trimmedLabel ? html`<p id="${labelId}" class="uga-callout__label">${trimmedLabel}</p>` : nothing}

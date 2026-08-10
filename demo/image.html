@@ -91,8 +91,10 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Pages must also load UGA Online Design System <code>base.css</code> so utilities such as <code>util-shadow-hover</code> work.</p>
 
         <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Based on instructional designer patterns with UGA brand styling.</p>
+        <p><strong>Hover affordance (opt-in):</strong> Add <code>hover-shadow</code> when you want the Design System <code>util-shadow-hover</code> lift on mouseover so the image reads as clickable. Omit it to leave existing pages unchanged.</p>
         <p><strong>Image path:</strong> Use a relative path (resolves from the page location) or the full path from eLC Manage Files (right-click file → Copy Path). This demo uses an <code>image/</code> folder (e.g. <code>image/demo_image.jpg</code>). In eLC, use the full path from Manage Files, e.g. <code>/content/enforced4/COURSE_ID/image/your-image.jpg</code>.</p>
       </div>
 
@@ -123,6 +125,16 @@
           alt="Image without lightbox"
           caption="With lightbox-disabled, the image displays in the styled container but does not expand on click."
           lightbox-disabled
+        ></uga-image>
+      </div>
+
+      <div class="demo-example">
+        <h4>Hover shadow (opt-in)</h4>
+        <uga-image
+          src="image/demo_image.jpg"
+          alt="Image with hover shadow"
+          caption="Add hover-shadow so the Design System util-shadow-hover lift appears on mouseover—makes the lightbox affordance clearer."
+          hover-shadow
         ></uga-image>
       </div>
 
@@ -168,6 +180,11 @@
             <td>lightbox-disabled</td>
             <td>boolean</td>
             <td>When true, disables the expand-on-click lightbox behavior</td>
+          </tr>
+          <tr>
+            <td>hover-shadow</td>
+            <td>boolean</td>
+            <td>Opt-in. When set (and lightbox is enabled), applies Design System <code>util-shadow-hover</code> so the image lifts on hover</td>
           </tr>
           <tr>
             <td>max-width</td>
@@ -223,12 +240,31 @@
   caption="Caption text."
 &gt;&lt;/uga-image&gt;</uga-code>
       </div>
+      <div class="demo-code">
+        <h4>With hover shadow (opt-in click affordance)</h4>
+        <uga-code language="markup">&lt;uga-image
+  src="image/photo.jpg"
+  alt="Description of image"
+  caption="Optional caption."
+  hover-shadow
+&gt;&lt;/uga-image&gt;</uga-code>
+      </div>
     </section>
 
     <uga-return-to-top></uga-return-to-top>
   </div>
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
   <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 </html>

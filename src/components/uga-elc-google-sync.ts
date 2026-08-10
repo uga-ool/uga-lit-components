@@ -192,7 +192,7 @@ export class UgaElcGoogleSync extends LitElement {
     if (this.loading) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-        <div class="util-pad-all-md util-background-creamery__75" style="border: 1px solid #e0e0e0; border-radius: 8px;">
+        <div class="util-pad-all-md util-background-creamery__75 util-radius-all-md" style="border: 1px solid #e0e0e0;">
           <p>Loading eLC ⇄ Google Sync…</p>
         </div>
       `;
@@ -221,12 +221,12 @@ export class UgaElcGoogleSync extends LitElement {
     return html`
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
       <div
-        class="util-pad-all-md util-background-creamery__75"
-        style="border: 1px solid #e0e0e0; border-radius: 8px; max-width: 42rem;"
+        class="util-pad-all-md util-background-creamery__75 util-radius-all-md"
+        style="border: 1px solid #e0e0e0; max-width: 42rem;"
       >
         <h3 class="cmp-heading-3 util-margin-top-none">eLC ⇄ Google Sync</h3>
         ${this.stubMode
-          ? html`<p class="util-font-size-sm" style="background: #fff3cd; padding: 0.5rem; border-radius: 4px;">
+          ? html`<p class="util-font-size-sm util-radius-all-sm" style="background: #fff3cd; padding: 0.5rem;">
               <strong>Stub mode:</strong> for demos only. Admin roles are not enforced.
             </p>`
           : html`<p class="util-font-size-sm">Signed in as <strong>${roleLabel}</strong> (admin allowlist required).</p>`}
@@ -236,7 +236,7 @@ export class UgaElcGoogleSync extends LitElement {
         </p>
         ${this.preview
           ? html`
-              <div class="util-margin-vert-md util-pad-all-sm" style="background: #fff; border-radius: 4px;">
+              <div class="util-margin-vert-md util-pad-all-sm util-radius-all-sm" style="background: #fff;">
                 <p class="util-margin-bottom-none"><strong>Content preview (TOC modules)</strong></p>
                 ${this.preview.error
                   ? html`<p style="color: #b00020;">Preview error: ${this.preview.error}</p>`

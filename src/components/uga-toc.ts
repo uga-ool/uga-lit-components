@@ -127,16 +127,11 @@ export class UGATableOfContents extends LitElement {
 
   render() {
     return html`
-      <!-- Local styles for this element, now in the light DOM -->
-      <style>
-        #table-of-contents {
-          border: 1px solid #ccc;
-          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
-                      0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        }
-      </style>
-
-      <div class="util-pad-all-md util-margin-bottom-lg util-background-odyssey" id="table-of-contents">
+      <div
+        class="util-pad-all-md util-margin-bottom-lg util-background-odyssey util-shadow-base util-radius-all-sm"
+        id="table-of-contents"
+        style="border: 1px solid #ccc;"
+      >
         <h2>Contents</h2>
         <ul class="util-pad-left-lg util-delist" id="toc-list"></ul>
       </div>

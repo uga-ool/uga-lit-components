@@ -32,6 +32,11 @@ class UgaImage extends LitElement {
   @property({ type: Number }) padding = 15;
   /** When true, disables the lightbox expand-on-click behavior */
   @property({ type: Boolean, attribute: 'lightbox-disabled' }) lightboxDisabled = false;
+  /**
+   * When true (and lightbox is enabled), applies Design System `.util-shadow-hover`
+   * so the image lifts on hover as a click affordance. Opt-in so existing courses are unchanged.
+   */
+  @property({ type: Boolean, attribute: 'hover-shadow' }) hoverShadow = false;
 
   @state() private expanded = false;
   @state() private zoom = 1;
@@ -68,19 +73,10 @@ class UgaImage extends LitElement {
       border-radius: 15px;
       padding: 15px;
       cursor: pointer;
-      transition: box-shadow 0.2s ease, transform 0.2s ease;
-    }
-
-    .cmp-image__container:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     .cmp-image__container--no-expand {
       cursor: default;
-    }
-
-    .cmp-image__container--no-expand:hover {
-      box-shadow: none;
     }
 
     .cmp-image__img {
@@ -444,17 +440,25 @@ class UgaImage extends LitElement {
     `;
 
     const imgTransform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
+    const canExpand = Boolean(this.src) && !this.lightboxDisabled;
+    const containerClasses = [
+      'cmp-image__container',
+      !canExpand ? 'cmp-image__container--no-expand' : '',
+      this.hoverShadow && canExpand ? 'util-shadow-hover' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     return html`
       <style>${UgaImage.styles}</style>
       <div class="cmp-image">
         <figure class="cmp-image__figure" style="${figureStyle}">
           <div
-            class="cmp-image__container${!this.src || this.lightboxDisabled ? ' cmp-image__container--no-expand' : ''}"
+            class="${containerClasses}"
             style="${containerStyle}"
-            role="${!this.src || this.lightboxDisabled ? undefined : 'button'}"
-            tabindex="${!this.src || this.lightboxDisabled ? -1 : 0}"
-            aria-label="${!this.src || this.lightboxDisabled ? undefined : 'Click to expand image'}"
+            role="${!canExpand ? undefined : 'button'}"
+            tabindex="${!canExpand ? -1 : 0}"
+            aria-label="${!canExpand ? undefined : 'Click to expand image'}"
             @click="${this._onContainerClick}"
             @keydown="${this._onContainerKeydown}"
           >

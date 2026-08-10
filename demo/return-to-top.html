@@ -76,6 +76,7 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first).</p>
 
         <p><strong>Adds a "Return to Top" button.</strong> Appears after scrolling down, provides smooth scroll back to the top of the page.</p>
       </div>
@@ -104,7 +105,17 @@
     <uga-return-to-top></uga-return-to-top>
   </div>
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
   <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 </html>
