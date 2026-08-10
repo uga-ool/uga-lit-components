@@ -55,6 +55,7 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Panel corners use Design System <code>util-radius-all-md</code> / <code>util-radius-all-sm</code> (requires <code>base.css</code>).</p>
         <p><strong>Admin-only</strong> widget for export to Google Drive, clearing a template, and back-copy from live to template. MVP shows a read-only content preview (module counts). Destructive actions and Drive export require configuration and API completion — see <a href="../docs/ELC_GOOGLE_SYNC_WIDGET.md">docs/ELC_GOOGLE_SYNC_WIDGET.md</a>.</p>
         <p>This page uses <code>stub-mode</code> so you can open it outside eLC; set <code>template-ou</code> to a real template course id in eLC for a live preview.</p>
       </div>
@@ -67,7 +68,17 @@
     </section>
   </div>
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
   <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 

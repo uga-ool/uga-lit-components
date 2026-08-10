@@ -14,7 +14,7 @@ A comprehensive demo system with **multiple HTML pages** (hub, per-component dem
 
 ## Recent updates
 
-See [../CHANGELOG.md](../CHANGELOG.md) for component changes (callout, course calendar, eLC Google Sync, quiz grade sync, footer program codes, and more). Demo pages use the production bundle path `/shared/ugaonline/js/uga-components.js` and link to [setup.html](setup.html) for deployment steps.
+See [../CHANGELOG.md](../CHANGELOG.md) for component changes (callout, course calendar, eLC Google Sync, quiz grade sync, footer program codes, opt-in `uga-image` `hover-shadow`, and Design System shadow/radius utilities). Demo pages on **localhost** load `/dist/js/uga-components.js` (run `npm run build` first); in eLC they use `/shared/ugaonline/js/uga-components.js`. See [setup.html](setup.html) for deployment steps.
 
 ## Demo files layout
 
@@ -74,6 +74,7 @@ Repo root [`index.html`](../index.html) links to the all-in-one demo, setup guid
 ### Quick Test (Development Mode)
 
 ```bash
+npm run build
 npm run dev
 ```
 
@@ -82,8 +83,10 @@ Then open: `http://localhost:5173/demo/index-all-in-one.html`
 **Navigate the demos:**
 
 - Main demo: `http://localhost:5173/demo/index-all-in-one.html`
-- Individual component: `http://localhost:5173/demo/accordion.html`
+- Individual component: `http://localhost:5173/demo/image.html` (includes opt-in `hover-shadow` example)
 - Setup guide: `http://localhost:5173/demo/setup.html`
+
+Rebuild (`npm run build`) after source changes so `/dist/js/uga-components.js` stays current. Design System `base.css` must load for shadow/radius utilities.
 
 ### Production Preview (After Building)
 
@@ -209,9 +212,9 @@ In the eLC HTML editor, update file paths to:
 
 ### Components That Work Standalone
 
-- `<uga-callout>` - Semantic callout/aside with fixed type-to-color styles (`note`, `important`, `tip`, `example`, `warning`), optional `label`, optional `body` attribute (plain text), and slot content for richer HTML. See [Callout demo](callout.html).
-- `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. When the image is in an `image/` folder next to your HTML page, use `src="image/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
-- `<uga-toc>` - Auto-generates from h2/h3 headings on page
+- `<uga-callout>` - Semantic callout/aside with fixed type-to-color styles (`note`, `important`, `tip`, `example`, `warning`), optional `label`, optional `body` attribute (plain text), and slot content for richer HTML. Corners use Design System `util-radius-all-sm`. See [Callout demo](callout.html).
+- `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. Add optional `hover-shadow` for Design System `util-shadow-hover` click affordance. When the image is in an `image/` folder next to your HTML page, use `src="image/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
+- `<uga-toc>` - Auto-generates from h2/h3 headings on page (panel uses Design System shadow/radius utilities)
 - `<uga-return-to-top>` - Smooth scroll button (appears after scrolling)
 - `<uga-code>` - Syntax-highlighted code with copy button
 

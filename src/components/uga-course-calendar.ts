@@ -508,8 +508,6 @@ class UgaCourseCalendar extends LitElement {
       <style>
         uga-course-calendar .cal-scroll {
           overflow-x: auto;
-          border-radius: 4px;
-          box-shadow: 0 1px 6px rgba(0,0,0,0.10);
         }
         uga-course-calendar .cal-key {
           display: flex;
@@ -668,7 +666,7 @@ class UgaCourseCalendar extends LitElement {
         <span class="cal-key-item"><span class="cal-key-swatch swatch-lastday" aria-hidden="true"></span>Last Class Day</span>
       </div>
 
-      <div class="cal-scroll util-scrollable-content">
+      <div class="cal-scroll util-scrollable-content util-radius-all-sm util-shadow-base">
           <table class="cal-table" aria-label="Course calendar table">
             ${(this.data.caption || this.data.title)
               ? html`<caption>${this.data.caption || this.data.title}</caption>`

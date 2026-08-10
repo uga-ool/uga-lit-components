@@ -97,14 +97,6 @@ class UgaSlideshow extends LitElement {
     .cmp-slide__button:hover {
       background-color: #dedede;
     }
-    
-    .cmp-slide__button-next {
-      border-radius: 3px 0 0 3px;
-    }
-
-    .cmp-slide__button-prev {
-      border-radius: 0 3px 3px 0;      
-    }
 
     .cmp-slide__dots {
       width: 100%;
@@ -117,7 +109,6 @@ class UgaSlideshow extends LitElement {
       height: 20px;
       width: 20px;
       background-color: #DEDEDE;
-      border-radius: 50%;
       border: none;
       display: inline-block;
       transition: background-color 0.6s ease;
@@ -213,16 +204,16 @@ class UgaSlideshow extends LitElement {
           <div class="cmp-slide ${image.displayClass}" aria-hidden="${this.activeImage === parseInt(image.id || '0') ? false : true}">
             <div class="cmp-slide__container" style="max-height:${this.imageHeight}px;">
               <div class="cmp-slide__controls">
-                <button type="button" alt="Previous Image" class="cmp-slide__button cmp-slide__button-prev" @click="${this.decrementActive}">&#10094;</button>
-                <button type="button" alt="Next Image" class="cmp-slide__button cmp-slide__button-next" @click="${this.incrementActive}">&#10095;</button>
+                <button type="button" alt="Previous Image" class="cmp-slide__button cmp-slide__button-prev util-radius-right-sm" @click="${this.decrementActive}">&#10094;</button>
+                <button type="button" alt="Next Image" class="cmp-slide__button cmp-slide__button-next util-radius-left-sm" @click="${this.incrementActive}">&#10095;</button>
               </div>
               <img class="cmp-slide__image ${image.fadeClass}" src="${image.src}" alt="${image.alt}" id="${image.id ?? ''}"/>
             </div>
             <div class="cmp-slide__dots util-margin-bottom-md">
               ${this.slideshowData.map((image) => html`
                 ${this.activeImage === parseInt(image.id ?? '0', 10)
-                  ? html`<button type="button" aria-label="image_${image.id ?? ''}" class="cmp-slide__dot cmp-slide__dot-active util-margin-top-lg util-margin-horiz-sm"></button>`
-                  : html`<button type="button" aria-label="image_${image.id ?? ''}" class="cmp-slide__dot util-margin-top-lg util-margin-horiz-sm" @click="${() => this.jumpToItem(image.id ?? '0')}"></button>`}
+                  ? html`<button type="button" aria-label="image_${image.id ?? ''}" class="cmp-slide__dot cmp-slide__dot-active util-radius-all-circle util-margin-top-lg util-margin-horiz-sm"></button>`
+                  : html`<button type="button" aria-label="image_${image.id ?? ''}" class="cmp-slide__dot util-radius-all-circle util-margin-top-lg util-margin-horiz-sm" @click="${() => this.jumpToItem(image.id ?? '0')}"></button>`}
               `)}
             </div>
             <div class="cmp-slide__content">
@@ -240,10 +231,8 @@ class UgaSlideshow extends LitElement {
           .cmp-slide__container { overflow: hidden; position: relative; }
           .cmp-slide__button { width: 50px; height: 70px; padding: 10px; border: none; cursor: pointer; background-color: #fff; font-size: 36px; opacity: 50%; }
           .cmp-slide__button:hover { background-color: #dedede; }
-          .cmp-slide__button-next { border-radius: 3px 0 0 3px; }
-          .cmp-slide__button-prev { border-radius: 0 3px 3px 0; }
           .cmp-slide__dots { width: 100%; display: flex; justify-content: center; }
-          .cmp-slide__dot { cursor: pointer; height: 20px; width: 20px; background-color: #DEDEDE; border-radius: 50%; border: none; display: inline-block; transition: background-color 0.6s ease; }
+          .cmp-slide__dot { cursor: pointer; height: 20px; width: 20px; background-color: #DEDEDE; border: none; display: inline-block; transition: background-color 0.6s ease; }
           .cmp-slide__dot-active { background-color: #9EA2A2; }
           .cmp-slide__dot:hover { background-color: #e4002b; }
           .fade { -webkit-animation-name: fade; -webkit-animation-duration: 1.5s; animation-name: fade; animation-duration: 1.5s; }

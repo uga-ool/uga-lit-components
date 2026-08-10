@@ -86,9 +86,10 @@
     <section class="component-demo">
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Requires Design System <code>base.css</code> for card shadow/radius utilities.</p>
 
         <p><strong>Displays an instructor profile card with photo and name.</strong> Automatically detects the course from the URL and finds people on the classlist whose role is <strong>Banner Instructor</strong>, <strong>Instructor</strong>, or <strong>Teaching Assistant</strong> (in that order when multiple appear). Works for students, instructors, and admins.</p>
-        <p>Use <code>username</code> to pin a specific account by Brightspace username (comma-separated for several). Use <code>multiple</code> to show more than one card when several instructors match.</p>
+        <p>Cards use Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>. Use <code>username</code> to pin a specific account by Brightspace username (comma-separated for several). Use <code>multiple</code> to show more than one card when several instructors match.</p>
       </div>
 
       <div class="demo-example">

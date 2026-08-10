@@ -82,14 +82,14 @@ class UgaInstructorCard extends LitElement {
         ${this._cards.map(
           (i) => html`
             <figure
-              class="obj-flex-item__sm util-align-center util-text-center util-pad-all-md util-margin-all-none util-background-white"
-              style="display:block;width:240px;max-width:100%;box-sizing:border-box;border-radius:4px;box-shadow:0 10px 25px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.08);"
+              class="obj-flex-item__sm util-align-center util-text-center util-pad-all-md util-margin-all-none util-background-white util-radius-all-sm util-shadow-base"
+              style="display:block;width:240px;max-width:100%;box-sizing:border-box;"
             >
               <img
-                class="util-margin-bottom-md"
+                class="util-margin-bottom-md util-radius-all-sm"
                 loading="lazy"
                 decoding="async"
-                style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:4px;"
+                style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;"
                 src=${i.imageSrc || `data:image/svg+xml,${this._placeholderDataUri(i.name)}`}
                 alt=${`Instructor profile image for ${i.name}`}
                 @error=${(e: Event) => this._fallbackMonogram(e, i.name)}

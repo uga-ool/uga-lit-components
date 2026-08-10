@@ -108,9 +108,11 @@ All components use **Light DOM** rendering (`createRenderRoot() { return this; }
 2. **View demos locally:**
 
    ```bash
+   npm run build
    npm run dev
    # Open http://localhost:5173/demo/index-all-in-one.html
    ```
+   Demo pages on localhost load `/dist/js/uga-components.js` (build first). Include Design System `base.css` for shadow/radius utilities.
 
 3. **Explore individual components:**
    - View comprehensive demo at `demo/index-all-in-one.html`
@@ -163,7 +165,7 @@ The repository includes **21** pre-built components (see [`src/README.md`](src/R
 | **uga-course-analytics** | Course-wide analytics aggregating data from content, assignments, discussions, and quizzes. Shows module-level consumption statistics and comparisons. Instructor-only.                                                                                                                                                           |
 | **uga-duedate**          | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property.                                                                                                                                                                                                       |
 | **uga-footer**           | Site footer with branding                                                                                                                                                                                                                                                                                                         |
-| **uga-image**            | Image with expandable lightbox, optional caption, zoom/pan, responsive srcset, loading states                                                                                                                                                                                                                                       |
+| **uga-image**            | Image with expandable lightbox, optional caption, zoom/pan, responsive srcset, loading states; opt-in `hover-shadow` (Design System `util-shadow-hover`)                                                                                                                                                                            |
 | **uga-instructor-card**  | Displays instructor profile card with photo and name (auto-detects from classlist)                                                                                                                                                                                                                                                |
 | **uga-instructor-note**  | Instructor-only notes (hidden from students)                                                                                                                                                                                                                                                                                      |
 | **uga-quiz**             | Standalone embedded HTML quiz (no eLC native quiz association); loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>); optionally submits results to an eLC assignment; supports timers, retries, and immediate feedback. See [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) and [docs/QUIZ_DROPBOX_SETUP.md](docs/QUIZ_DROPBOX_SETUP.md). |
