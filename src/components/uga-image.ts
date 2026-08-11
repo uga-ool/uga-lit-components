@@ -37,6 +37,12 @@ class UgaImage extends LitElement {
    * so the image lifts on hover as a click affordance. Opt-in so existing courses are unchanged.
    */
   @property({ type: Boolean, attribute: 'hover-shadow' }) hoverShadow = false;
+  /**
+   * Opt-in static elevation via Design System shadow utilities.
+   * Values: `base`, `deep`, `tinted` (deep red), or explicit `base--red` / `deep--red` / `base--blue` / `deep--blue`.
+   * Ignored when `hover-shadow` is set (hover already starts at base and lifts to deep).
+   */
+  @property({ type: String }) shadow = '';
 
   @state() private expanded = false;
   @state() private zoom = 1;
@@ -77,6 +83,34 @@ class UgaImage extends LitElement {
 
     .cmp-image__container--no-expand {
       cursor: default;
+    }
+
+    /* Fallbacks when page CSS lacks Design System shadow utilities (match v1.5.3 values). */
+    uga-image .cmp-image__container.util-shadow-base {
+      box-shadow: 0 4px 8px #0003, 0 8px 16px #0003;
+    }
+    uga-image .cmp-image__container.util-shadow-base--red {
+      box-shadow: 0 4px 8px #ba0c2f33, 0 8px 16px #ba0c2f33;
+    }
+    uga-image .cmp-image__container.util-shadow-base--blue {
+      box-shadow: 0 4px 8px #283c6433, 0 8px 16px #283c6433;
+    }
+    uga-image .cmp-image__container.util-shadow-deep {
+      box-shadow: 0 8px 12px #0006, 0 16px 24px #0006;
+    }
+    uga-image .cmp-image__container.util-shadow-deep--red {
+      box-shadow: 0 8px 12px #ba0c2f66, 0 16px 24px #ba0c2f66;
+    }
+    uga-image .cmp-image__container.util-shadow-deep--blue {
+      box-shadow: 0 8px 12px #283c6466, 0 16px 24px #283c6466;
+    }
+    uga-image .cmp-image__container.util-shadow-hover {
+      box-shadow: 0 4px 8px #0003, 0 8px 16px #0003;
+      transition: box-shadow 0.3s ease-out, transform 0.3s ease-out;
+    }
+    uga-image .cmp-image__container.util-shadow-hover:hover {
+      box-shadow: 0 8px 12px #0006, 0 16px 24px #0006;
+      transform: translateY(-4px);
     }
 
     .cmp-image__img {
@@ -426,6 +460,22 @@ class UgaImage extends LitElement {
     if (e.key === 'Enter') this.openLightbox();
   }
 
+  /** Map shadow attribute to Design System util class; empty if unset/invalid. */
+  private resolveShadowClass(): string {
+    const raw = (this.shadow || '').trim().toLowerCase();
+    if (!raw) return '';
+    const map: Record<string, string> = {
+      base: 'util-shadow-base',
+      deep: 'util-shadow-deep',
+      tinted: 'util-shadow-deep--red',
+      'base--red': 'util-shadow-base--red',
+      'deep--red': 'util-shadow-deep--red',
+      'base--blue': 'util-shadow-base--blue',
+      'deep--blue': 'util-shadow-deep--blue',
+    };
+    return map[raw] ?? '';
+  }
+
   render() {
     const figureStyle = `
       max-width: ${this.maxWidth};
@@ -441,10 +491,11 @@ class UgaImage extends LitElement {
 
     const imgTransform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
     const canExpand = Boolean(this.src) && !this.lightboxDisabled;
+    const useHoverShadow = this.hoverShadow && canExpand;
     const containerClasses = [
       'cmp-image__container',
       !canExpand ? 'cmp-image__container--no-expand' : '',
-      this.hoverShadow && canExpand ? 'util-shadow-hover' : '',
+      useHoverShadow ? 'util-shadow-hover' : this.resolveShadowClass(),
     ]
       .filter(Boolean)
       .join(' ');

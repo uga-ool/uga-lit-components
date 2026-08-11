@@ -16,7 +16,7 @@ Entry: [`all.ts`](all.ts) eagerly loads every `components/uga-*.ts` into one bun
 | `uga-duedate` | Valence | `demo/duedate.html` |
 | `uga-elc-google-sync` | Valence preview; optional Drive upload URL on tag | `demo/elc-google-sync.html` |
 | `uga-footer` | JSON `loadData` (`program` / `name` / `filename`) | `demo/footer.html` |
-| `uga-image` | `src` path; optional `hover-shadow` | `demo/image.html` |
+| `uga-image` | `src` path; optional `hover-shadow`, `shadow` | `demo/image.html` |
 | `uga-instructor-card` | Classlist API | `demo/instructor-card.html` |
 | `uga-instructor-note` | HTML/JSON `loadData` | `demo/instructor-note.html` |
 | `uga-quiz` | JSON/CSV; [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) | `demo/quiz.html` |

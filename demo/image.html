@@ -94,7 +94,7 @@
         <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Pages must also load UGA Online Design System <code>base.css</code> so utilities such as <code>util-shadow-hover</code> work.</p>
 
         <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Based on instructional designer patterns with UGA brand styling.</p>
-        <p><strong>Hover affordance (opt-in):</strong> Add <code>hover-shadow</code> when you want the Design System <code>util-shadow-hover</code> lift on mouseover so the image reads as clickable. Omit it to leave existing pages unchanged.</p>
+        <p><strong>Hover affordance (opt-in):</strong> Add <code>hover-shadow</code> when you want the Design System <code>util-shadow-hover</code> lift on mouseover so the image reads as clickable. Omit it to leave existing pages unchanged. For static elevation, use <code>shadow="base"</code>, <code>shadow="deep"</code>, or <code>shadow="tinted"</code>.</p>
         <p><strong>Image path:</strong> Use a relative path (resolves from the page location) or the full path from eLC Manage Files (right-click file → Copy Path). This demo uses an <code>image/</code> folder (e.g. <code>image/demo_image.jpg</code>). In eLC, use the full path from Manage Files, e.g. <code>/content/enforced4/COURSE_ID/image/your-image.jpg</code>.</p>
       </div>
 
@@ -135,6 +135,32 @@
           alt="Image with hover shadow"
           caption="Add hover-shadow so the Design System util-shadow-hover lift appears on mouseover—makes the lightbox affordance clearer."
           hover-shadow
+        ></uga-image>
+      </div>
+
+      <div class="demo-example">
+        <h4>Static shadows (opt-in)</h4>
+        <p>Use <code>shadow="base"</code>, <code>shadow="deep"</code>, or <code>shadow="tinted"</code> (UGA red deep tint). Explicit tints: <code>base--red</code>, <code>deep--red</code>, <code>base--blue</code>, <code>deep--blue</code>.</p>
+        <uga-image
+          src="image/demo_image.jpg"
+          alt="Image with base shadow"
+          caption="shadow=&quot;base&quot;"
+          shadow="base"
+          lightbox-disabled
+        ></uga-image>
+        <uga-image
+          src="image/demo_image.jpg"
+          alt="Image with deep shadow"
+          caption="shadow=&quot;deep&quot;"
+          shadow="deep"
+          lightbox-disabled
+        ></uga-image>
+        <uga-image
+          src="image/demo_image.jpg"
+          alt="Image with tinted shadow"
+          caption="shadow=&quot;tinted&quot; (deep red)"
+          shadow="tinted"
+          lightbox-disabled
         ></uga-image>
       </div>
 
@@ -185,6 +211,11 @@
             <td>hover-shadow</td>
             <td>boolean</td>
             <td>Opt-in. When set (and lightbox is enabled), applies Design System <code>util-shadow-hover</code> so the image lifts on hover</td>
+          </tr>
+          <tr>
+            <td>shadow</td>
+            <td>string</td>
+            <td>Opt-in static elevation: <code>base</code>, <code>deep</code>, <code>tinted</code> (deep red), or <code>base--red</code> / <code>deep--red</code> / <code>base--blue</code> / <code>deep--blue</code>. Ignored when <code>hover-shadow</code> is set</td>
           </tr>
           <tr>
             <td>max-width</td>
@@ -248,6 +279,12 @@
   caption="Optional caption."
   hover-shadow
 &gt;&lt;/uga-image&gt;</uga-code>
+      </div>
+      <div class="demo-code">
+        <h4>Static shadow options</h4>
+        <uga-code language="markup">&lt;uga-image src="image/photo.jpg" alt="…" caption="Base" shadow="base"&gt;&lt;/uga-image&gt;
+&lt;uga-image src="image/photo.jpg" alt="…" caption="Deep" shadow="deep"&gt;&lt;/uga-image&gt;
+&lt;uga-image src="image/photo.jpg" alt="…" caption="Tinted" shadow="tinted"&gt;&lt;/uga-image&gt;</uga-code>
       </div>
     </section>
 
