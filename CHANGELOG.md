@@ -49,6 +49,11 @@ All notable changes to this project will be documented in this file.
 - **Terry College of Business:** template code `terry` with logo `/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png`
 - Optional **`name`** attribute as alias for **`program`** (e.g. `name="terry"`); if both are set, `program` wins. Demos and setup text updated.
 
+### uga-toc
+
+- Optional **`headings`** attribute to choose which heading tags are included (comma-separated, e.g. `h2,h3,h4` or `2,3`). Default remains **`h2,h3`**.
+- Demos and docs updated in `demo/toc.html`, `demo/index-all-in-one.html`, and `demo/QUICK_START.md`.
+
 ### uga-callout
 
 - Added new `uga-callout` component for semantic callout blocks rendered as `<aside>` with slot content

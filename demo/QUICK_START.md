@@ -213,8 +213,8 @@ In the eLC HTML editor, update file paths to:
 ### Components That Work Standalone
 
 - `<uga-callout>` - Semantic callout/aside with fixed type-to-color styles (`note`, `important`, `tip`, `example`, `warning`), optional `label`, optional `body` attribute (plain text), and slot content for richer HTML. Corners use Design System `util-radius-all-sm`. See [Callout demo](callout.html).
-- `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. Add optional `hover-shadow` for Design System `util-shadow-hover` click affordance. When the image is in an `image/` folder next to your HTML page, use `src="image/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
-- `<uga-toc>` - Auto-generates from h2/h3 headings on page (panel uses Design System shadow/radius utilities)
+- `<uga-image>` - Displays an image with optional caption in a styled container. Click to expand in a lightbox with zoom/pan. Use `src` (image path), `alt` (required), and optional `caption`. Add optional `hover-shadow` for Design System `util-shadow-hover` click affordance, or `shadow="base|deep|tinted"` for static elevation. When the image is in an `image/` folder next to your HTML page, use `src="image/your-image.jpg"`. In eLC, use the full path from Manage Files (right-click file → Copy Path). See [Image demo](image.html).
+- `<uga-toc>` - Auto-generates from page headings (default h2/h3; optional `headings="h2,h3,h4"`). Panel uses Design System shadow/radius utilities
 - `<uga-return-to-top>` - Smooth scroll button (appears after scrolling)
 - `<uga-code>` - Syntax-highlighted code with copy button
 
@@ -306,7 +306,7 @@ Follow the JSON structure in the sample files:
 
 **"TOC showing wrong headings"**
 
-- TOC now scans h2 and h3 only (changed from h1-h4)
+- Default is h2 and h3; set `headings` (e.g. `headings="h2,h3,h4"`) to include other levels
 - Use h2 for major sections, h3 for subsections
 
 **"Video not playing"**
@@ -325,9 +325,9 @@ Pages using `uga-accordion` must have `class="js"` on the HTML element:
 <html lang="en" class="js"></html>
 ```
 
-### TOC Behavior Change
+### TOC heading levels
 
-The table of contents component now scans **h2 and h3 headings only** (previously h1-h4). This provides cleaner navigation by excluding h4 property tables.
+By default, `<uga-toc>` scans **h2 and h3**. Override with the `headings` attribute (comma-separated tags), e.g. `<uga-toc headings="h2,h3,h4"></uga-toc>`.
 
 ## Support
 

@@ -165,7 +165,7 @@ The repository includes **21** pre-built components (see [`src/README.md`](src/R
 | **uga-course-analytics** | Course-wide analytics aggregating data from content, assignments, discussions, and quizzes. Shows module-level consumption statistics and comparisons. Instructor-only.                                                                                                                                                           |
 | **uga-duedate**          | Display due dates for assignments, discussions, quizzes, and content in a table. Filter by type using the `types` property.                                                                                                                                                                                                       |
 | **uga-footer**           | Site footer with branding                                                                                                                                                                                                                                                                                                         |
-| **uga-image**            | Image with expandable lightbox, optional caption, zoom/pan, responsive srcset, loading states; opt-in `hover-shadow` (Design System `util-shadow-hover`)                                                                                                                                                                            |
+| **uga-image**            | Image with expandable lightbox, optional caption, zoom/pan, responsive srcset, loading states; opt-in `hover-shadow` and `shadow` (`base` / `deep` / `tinted`)                                                                                                                                                                      |
 | **uga-instructor-card**  | Displays instructor profile card with photo and name (auto-detects from classlist)                                                                                                                                                                                                                                                |
 | **uga-instructor-note**  | Instructor-only notes (hidden from students)                                                                                                                                                                                                                                                                                      |
 | **uga-quiz**             | Standalone embedded HTML quiz (no eLC native quiz association); loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>); optionally submits results to an eLC assignment; supports timers, retries, and immediate feedback. See [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) and [docs/QUIZ_DROPBOX_SETUP.md](docs/QUIZ_DROPBOX_SETUP.md). |
@@ -175,7 +175,7 @@ The repository includes **21** pre-built components (see [`src/README.md`](src/R
 | **uga-slideshow**        | Image carousel with navigation                                                                                                                                                                                                                                                                                                    |
 | **uga-tabs**             | Tab navigation interface                                                                                                                                                                                                                                                                                                          |
 | **uga-elc-google-sync** | Admin-only: eLC ⇄ Google Drive sync for course templates (export to Drive, clear template, back-copy live → template). MVP shows read-only content preview; see [docs/ELC_GOOGLE_SYNC_WIDGET.md](docs/ELC_GOOGLE_SYNC_WIDGET.md) |
-| **uga-toc**              | Auto-generated table of contents                                                                                                                                                                                                                                                                                                  |
+| **uga-toc**              | Auto-generated table of contents (default h2/h3; optional `headings` attribute)                                                                                                                                                                                                                                                   |
 | **uga-video**            | Embed Kaltura or YouTube videos with logo control                                                                                                                                                                                                                                                                                 |
 
 ---
@@ -317,7 +317,7 @@ The `uga-video` component embeds Kaltura via an **iframe** (default), matching t
 | Kaltura video not showing         | Verify `videoid` is correct; check browser console for script errors                               |
 | D2L API 404 errors | Verify course ID (`ou`) is correct and API version matches |
 | `axios` / Valence errors | Bundle includes axios; load only `uga-components.js` in eLC. Local dev: mock `window.D2L` if APIs fail outside Brightspace |
-| TOC showing too many items | Component now scans h2/h3 only - check if you need h4 headings in navigation |
+| TOC showing wrong headings | Default is h2/h3; set `headings` (e.g. `headings="h2,h3,h4"`) to include other levels |
 | TOC links not working | Component now auto-generates IDs for headings without them |
 | Data files not loading | Download example files from Google Drive links in demo pages, then upload to eLC Public Files |
 | uga-image not loading   | Use relative paths (e.g. <code>images/photo.jpg</code> when image is in an images folder next to your HTML) or the full path from eLC Manage Files (right-click file → Copy Path). Avoid root-relative paths (<code>/demo/...</code>) in eLC. |
@@ -338,9 +338,7 @@ This enables UGA CSS pseudo-element styles (`.js .cmp-accordion__button::after`)
 
 #### Table of Contents Behavior
 
-The `uga-toc` component now scans **h2 and h3 headings only** (changed from h1-h4). This provides cleaner navigation by excluding h4 property tables and other minor headings. The component also auto-generates IDs for headings without them, ensuring all h2/h3 headings are navigable even if they lack manual IDs.
-
-**Action:** No code changes required, but review TOC output to ensure it meets your needs.
+The `uga-toc` component defaults to **h2 and h3**. Use the optional `headings` attribute to include other levels (e.g. `<uga-toc headings="h2,h3,h4"></uga-toc>`). The component also auto-generates IDs for headings without them.
 
 ### More help
 

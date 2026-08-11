@@ -1,9 +1,17 @@
-import { LitElement, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { LitElement, html, PropertyValues } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
+const DEFAULT_HEADINGS = 'h2,h3';
+const VALID_HEADING_TAGS = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 
 @customElement('uga-toc')
 export class UGATableOfContents extends LitElement {
+  /**
+   * Comma-separated heading tags to include in the TOC (e.g. "h2,h3" or "h2,h3,h4").
+   * Defaults to h2 and h3.
+   */
+  @property({ type: String }) headings = DEFAULT_HEADINGS;
+
   // Disable Shadow DOM so global styles and light-DOM behavior can take effect
   createRenderRoot() {
     return this;
@@ -20,11 +28,47 @@ export class UGATableOfContents extends LitElement {
     }
   }
 
+  protected updated(changedProperties: PropertyValues): void {
+    if (changedProperties.has('headings') && changedProperties.get('headings') !== undefined) {
+      this.buildTOC();
+    }
+  }
+
+  /** Parse the headings attribute into a unique, ordered list of valid h1–h6 tags. */
+  private parseHeadingSelectors(): string[] {
+    const raw = (this.headings || DEFAULT_HEADINGS).trim() || DEFAULT_HEADINGS;
+    const seen = new Set<string>();
+    const selectors: string[] = [];
+
+    for (const part of raw.split(',')) {
+      const token = part.trim().toLowerCase();
+      // Accept "h2" or bare "2"
+      const tag = /^h[1-6]$/.test(token)
+        ? token
+        : /^[1-6]$/.test(token)
+          ? `h${token}`
+          : null;
+      if (tag && VALID_HEADING_TAGS.has(tag) && !seen.has(tag)) {
+        seen.add(tag);
+        selectors.push(tag);
+      }
+    }
+
+    return selectors.length > 0 ? selectors : ['h2', 'h3'];
+  }
+
   private buildTOC(): void {
     // Since we're not using shadow DOM, grab the element from the light DOM
     const tocList = this.querySelector('#toc-list') as HTMLUListElement | null;
     if (!tocList) return;
-    const headings = Array.from(document.querySelectorAll('h2, h3')) as HTMLHeadingElement[];
+
+    // Clear previous entries when rebuilding (e.g. headings attribute changed)
+    tocList.replaceChildren();
+
+    const selectors = this.parseHeadingSelectors();
+    const headings = Array.from(
+      document.querySelectorAll(selectors.join(', '))
+    ) as HTMLHeadingElement[];
     const hasCategoryHeaders = document.querySelectorAll('.category-header h2').length > 0;
     let seenCategoryHeader = false;
     const usedIds = new Set<string>();
