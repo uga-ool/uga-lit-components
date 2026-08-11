@@ -73,8 +73,8 @@
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
         <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Requires Design System <code>base.css</code> for shadow/radius utilities on the TOC panel.</p>
 
-        <p><strong>Auto-generates a navigable table of contents</strong> from h2 and h3 headings on the page. Provides smooth scrolling navigation. Panel elevation uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>.</p>
-        <p><em>Note: The TOC below is a live example! It automatically scans all h2 and h3 headings on the page.</em></p>
+        <p><strong>Auto-generates a navigable table of contents</strong> from page headings. Defaults to h2 and h3. Use the optional <code>headings</code> attribute to choose which levels to include (comma-separated, e.g. <code>h2,h3,h4</code>). Provides smooth scrolling navigation. Panel elevation uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>.</p>
+        <p><em>Note: The TOC below is a live example using the default (h2, h3). The sample h4 below is omitted unless you set <code>headings="h2,h3,h4"</code>.</em></p>
       </div>
 
       <div class="demo-example">
@@ -83,11 +83,16 @@
 
       <div class="demo-props">
         <h4>Properties</h4>
-        <p>No properties required - automatically scans page for h2 and h3 headings.</p>
+        <ul>
+          <li><code>headings</code> (optional) — Comma-separated heading tags to include. Default: <code>h2,h3</code>. Examples: <code>h2</code>, <code>h2,h3,h4</code>, <code>2,3</code>.</li>
+        </ul>
       </div>
 
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-toc&gt;&lt;/uga-toc&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-toc&gt;&lt;/uga-toc&gt;
+
+&lt;!-- Include h4 as well --&gt;
+&lt;uga-toc headings="h2,h3,h4"&gt;&lt;/uga-toc&gt;</uga-code>
       </div>
     </section>
 
@@ -97,6 +102,9 @@
     
     <h3>Subsection 1.1</h3>
     <p>More sample content here.</p>
+
+    <h4>Detail 1.1.1</h4>
+    <p>An h4 heading — omitted from the default TOC; include it with <code>headings="h2,h3,h4"</code>.</p>
     
     <h2>Sample Section 2</h2>
     <p>Another section to show in the table of contents.</p>

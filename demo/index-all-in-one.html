@@ -123,15 +123,19 @@
     <section class="component-demo" id="toc-demo">
       <h2>Table of Contents Component</h2>
       <div class="demo-description">
-        <p><strong>Auto-generates a navigable table of contents</strong> from h2 and h3 headings on the page. Provides smooth scrolling navigation, and auto-generates IDs for headings that don't already have one. Panel elevation uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>.</p>
-        <p><em>Note: The TOC above this section is a live example. It scans the page's h2 and h3 headings only (h4 and lower are intentionally excluded for cleaner navigation).</em></p>
+        <p><strong>Auto-generates a navigable table of contents</strong> from page headings (default: h2 and h3). Optional <code>headings</code> attribute selects levels (e.g. <code>h2,h3,h4</code>). Provides smooth scrolling navigation, and auto-generates IDs for headings that don't already have one. Panel elevation uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>.</p>
+        <p><em>Note: The TOC above this section is a live example using the default (h2, h3). h4 and lower are excluded unless you set <code>headings</code>.</em></p>
       </div>
       <div class="demo-props">
         <h4>Properties</h4>
-        <p>No properties required - automatically scans page for headings.</p>
+        <ul>
+          <li><code>headings</code> (optional) — Comma-separated heading tags to include. Default: <code>h2,h3</code>.</li>
+        </ul>
       </div>
       <div class="demo-code">
-        <uga-code language="markup">&lt;uga-toc&gt;&lt;/uga-toc&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-toc&gt;&lt;/uga-toc&gt;
+
+&lt;uga-toc headings="h2,h3,h4"&gt;&lt;/uga-toc&gt;</uga-code>
       </div>
     </section>
 
@@ -351,7 +355,7 @@
       <h2>Image Component</h2>
       <div class="demo-description">
         <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Use a relative path (e.g. <code>image/your-image.jpg</code> when the image is in an <code>image/</code> folder next to your page) or the full path from eLC Manage Files.</p>
-        <p><strong>Hover affordance (opt-in):</strong> Add <code>hover-shadow</code> to apply Design System <code>util-shadow-hover</code> (requires <code>base.css</code>). Leave it off for a static look. See <a href="image.html">Image demo</a>.</p>
+        <p><strong>Hover affordance (opt-in):</strong> Add <code>hover-shadow</code> to apply Design System <code>util-shadow-hover</code> (requires <code>base.css</code>). Leave it off for a static look. For static elevation use <code>shadow="base"</code>, <code>shadow="deep"</code>, or <code>shadow="tinted"</code>. See <a href="image.html">Image demo</a>.</p>
       </div>
       <div class="demo-example">
         <uga-image
@@ -364,6 +368,13 @@
           alt="Sample image with hover shadow"
           caption="Same image with hover-shadow for a clearer click affordance."
           hover-shadow
+        ></uga-image>
+        <uga-image
+          src="image/demo_image.jpg"
+          alt="Sample image with deep shadow"
+          caption="Static elevation with shadow=&quot;deep&quot;."
+          shadow="deep"
+          lightbox-disabled
         ></uga-image>
       </div>
       <div class="demo-props">
@@ -415,6 +426,11 @@
             <td>Opt-in. Applies Design System <code>util-shadow-hover</code> when lightbox is enabled</td>
           </tr>
           <tr>
+            <td>shadow</td>
+            <td>string</td>
+            <td>Opt-in static elevation: <code>base</code>, <code>deep</code>, <code>tinted</code>, or <code>*--red</code> / <code>*--blue</code> variants</td>
+          </tr>
+          <tr>
             <td>max-width</td>
             <td>string</td>
             <td>Max width of container (default: 450px)</td>
@@ -434,7 +450,9 @@
       <div class="demo-code">
         <uga-code language="markup">&lt;uga-image src="image/your-image.jpg" alt="Description" caption="Optional caption"&gt;&lt;/uga-image&gt;
 
-&lt;uga-image src="image/your-image.jpg" alt="Description" caption="Optional caption" hover-shadow&gt;&lt;/uga-image&gt;</uga-code>
+&lt;uga-image src="image/your-image.jpg" alt="Description" caption="Optional caption" hover-shadow&gt;&lt;/uga-image&gt;
+
+&lt;uga-image src="image/your-image.jpg" alt="Description" caption="Deep shadow" shadow="deep"&gt;&lt;/uga-image&gt;</uga-code>
       </div>
     </section>
 
