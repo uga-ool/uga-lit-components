@@ -131,8 +131,18 @@
     <uga-return-to-top></uga-return-to-top>
   </div>
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
-  
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
+
   <script>
     if (typeof axios === 'undefined') {
       window.axios = {

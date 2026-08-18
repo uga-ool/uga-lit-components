@@ -38,6 +38,7 @@ All notable changes to this project will be documented in this file.
 ### Repository
 
 - Removed **`elc-google-sync/`** (standalone React “Course Template Manager” duplicate of Drive sync). Canonical app: **`uga-drive-elc-sync`**. Widget spec: [docs/ELC_GOOGLE_SYNC_SPEC.md](docs/ELC_GOOGLE_SYNC_SPEC.md).
+- **Demo pages:** 10 pages (`accordion`, `assignment`, `circles`, `code`, `duedate`, `instructor-note`, `quiz`, `rating`, `tabs`, `video`) had a static `/shared/ugaonline/js/uga-components.js` bundle script, so `npm run dev` couldn't load the component bundle locally (404). Switched them to the same localhost-vs-eLC swap already used by `uga-footer` and the other demo pages (e.g. `callout.html`).
 
 ### uga-video
 
