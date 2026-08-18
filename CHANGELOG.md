@@ -26,6 +26,7 @@ All notable changes to this project will be documented in this file.
 
 ### Documentation
 
+- Added root [`CLAUDE.md`](CLAUDE.md) and [`docs/CLAUDE_CODE_HANDOFF.md`](docs/CLAUDE_CODE_HANDOFF.md) for Claude Code onboarding; linked from `docs/README.md`, `docs/cursor/README.md`, and `WORKSPACE-HANDOFF.md`.
 - Consolidated root planning markdown into [`docs/planning/`](docs/planning/) (`FEATURE_REQUESTS`, `ROADMAP`, `valence-backlog`, `performance`); archived January 2026 originals under [`docs/planning/archive/`](docs/planning/archive/); root files are redirect stubs.
 - README, `WORKSPACE-HANDOFF`, and `src/README` aligned for agents: no root `index.html`, 21 components, bundled axios, links to planning index.
 - Added [`docs/README.md`](docs/README.md) as the documentation index for agents and authors.

@@ -37,4 +37,5 @@ Command: **`setup-git-hooks`**. PRs run the **Validate commit message** workflow
 - [Secrets and FERPA](secrets.md)
 - [API references (D2L, Kaltura)](api-references.md)
 - [Workspace handoff](../../WORKSPACE-HANDOFF.md) — multi-repo paths (Lit + React apps)
+- [Claude Code](../CLAUDE_CODE_HANDOFF.md) — pasteable handoff; root [`CLAUDE.md`](../../CLAUDE.md) auto-loads in Claude Code
 - Team doc hub (optional): [uga-online-cursor-docs](https://github.com/uga-ool/uga-online-cursor-docs)
