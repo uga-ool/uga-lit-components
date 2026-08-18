@@ -51,6 +51,7 @@ interface FooterResponse {
 
 /** Display names for program codes (used in logo alt text). */
 const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
+  academicintegrity: 'Academic Integrity',
   acct: 'Accounting',
   cvle: 'Civil & Environmental Engineering',
   datascience: 'Data Science',
@@ -58,6 +59,7 @@ const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
   fanr: 'Warnell School of Forestry and Natural Resources',
   general: 'General',
   highered: 'Higher Education',
+  law: 'School of Law',
   mfp: 'Masters in Financial Planning',
   msw: 'Master of Social Work',
   ool: 'Online Learning',
@@ -71,12 +73,14 @@ const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
  * Programs without a logo (cvle) are not listed.
  */
 const PROGRAM_IMAGE_PATHS: Record<string, string> = {
+  academicintegrity: '/shared/ugaonline/templates/academicintegrity/img/AcademicIntegrity_logo_Formal_CW.svg',
   acct: '/shared/ugaonline/templates/acct/img/logo.png',
   datascience: '/shared/ugaonline/templates/datascience/img/datascience_logo.svg',
   envgeology: '/shared/ugaonline/templates/envgeology/img/logo.png',
   fanr: '/shared/ugaonline/templates/fanr/img/fanr_logo.svg',
   general: '/shared/ugaonline/templates/general/img/logo.svg',
   highered: '/shared/ugaonline/templates/highered/img/highered_logo.svg',
+  law: '/shared/ugaonline/templates/law/img/LAW_logo_Formal_CW.svg',
   mfp: '/shared/ugaonline/templates/mfp/img/MFP_logo_Horizontal_CW.png',
   msw: '/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png',
   ool: '/shared/ugaonline/templates/ool/img/logo.png',
@@ -86,12 +90,14 @@ const PROGRAM_IMAGE_PATHS: Record<string, string> = {
 
 /** Default logo hyperlink per program template (cvle omitted — no footer logo yet). */
 const PROGRAM_LOGO_LINKS: Record<string, string> = {
+  academicintegrity: 'https://integrity.uga.edu/',
   acct: 'https://www.terry.uga.edu/departments/accounting/',
   datascience: 'https://www.stat.uga.edu/',
   envgeology: 'https://www.terry.uga.edu/departments/environmental-geology/',
   fanr: 'https://warnell.uga.edu/',
   general: 'https://www.uga.edu/',
   highered: 'https://ihe.uga.edu/',
+  law: 'https://www.law.uga.edu/',
   mfp: 'https://online.uga.edu/degrees-certificates/master-science-financial-planning/',
   msw: 'https://ssw.uga.edu/',
   ool: 'https://online.uga.edu/',

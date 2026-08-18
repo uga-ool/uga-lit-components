@@ -113,6 +113,14 @@
         <h4 style="margin-top: 0; margin-bottom: 1rem;">Master of Social Work footer (program template)</h4>
         <uga-footer program="msw"></uga-footer>
       </div>
+      <div class="demo-example">
+        <h4 style="margin-top: 0; margin-bottom: 1rem;">School of Law footer (program template)</h4>
+        <uga-footer program="law"></uga-footer>
+      </div>
+      <div class="demo-example">
+        <h4 style="margin-top: 0; margin-bottom: 1rem;">Academic Integrity footer (program template)</h4>
+        <uga-footer program="academicintegrity"></uga-footer>
+      </div>
 
       <div class="demo-props">
         <h4>Properties</h4>
@@ -168,12 +176,14 @@
 &lt;uga-footer name="terry"&gt;&lt;/uga-footer&gt;</uga-code>
         <h4 style="margin-top: 1.5rem;">Program codes with logo path (configured in component)</h4>
         <ul style="margin-top: 0.5rem;">
+          <li><strong>academicintegrity</strong> (Academic Integrity): <code>/shared/ugaonline/templates/academicintegrity/img/AcademicIntegrity_logo_Formal_CW.svg</code></li>
           <li><strong>acct</strong> (Accounting): <code>/shared/ugaonline/templates/acct/img/logo.png</code></li>
           <li><strong>datascience</strong> (Data Science): <code>/shared/ugaonline/templates/datascience/img/datascience_logo.svg</code></li>
           <li><strong>envgeology</strong> (Environmental Geology): <code>/shared/ugaonline/templates/envgeology/img/logo.png</code></li>
           <li><strong>fanr</strong> (Warnell School of Forestry and Natural Resources): <code>/shared/ugaonline/templates/fanr/img/fanr_logo.svg</code></li>
           <li><strong>general</strong> (General): <code>/shared/ugaonline/templates/general/img/logo.svg</code></li>
           <li><strong>highered</strong> (Higher Education): <code>/shared/ugaonline/templates/highered/img/highered_logo.svg</code></li>
+          <li><strong>law</strong> (School of Law): <code>/shared/ugaonline/templates/law/img/LAW_logo_Formal_CW.svg</code></li>
           <li><strong>mfp</strong> (Masters in Financial Planning): <code>/shared/ugaonline/templates/mfp/img/MFP_logo_Horizontal_CW.png</code></li>
           <li><strong>msw</strong> (Master of Social Work): <code>/shared/ugaonline/templates/msw/img/SSW_logo_Horizontal_CW.png</code></li>
           <li><strong>ool</strong> (Online Learning): <code>/shared/ugaonline/templates/ool/img/logo.png</code></li>
@@ -183,12 +193,14 @@
         <h4 style="margin-top: 1.5rem;">Default logo links (<code>program=</code> / <code>name=</code>)</h4>
         <p style="margin-top: 0.5rem;">Built into <code>uga-footer</code> for <code>program=</code> / <code>name=</code> when <code>data-file</code> is omitted, or when loaded JSON omits <code>logo.link</code> or uses <code>#</code>. A non-empty link in template JSON overrides these.</p>
         <ul style="margin-top: 0.5rem;">
+          <li><strong>academicintegrity</strong> — <a href="https://integrity.uga.edu/" target="_blank" rel="noopener noreferrer">integrity.uga.edu</a></li>
           <li><strong>acct</strong> — <a href="https://www.terry.uga.edu/departments/accounting/" target="_blank" rel="noopener noreferrer">terry.uga.edu/departments/accounting</a></li>
           <li><strong>datascience</strong> — <a href="https://www.stat.uga.edu/" target="_blank" rel="noopener noreferrer">stat.uga.edu</a></li>
           <li><strong>envgeology</strong> — <a href="https://www.terry.uga.edu/departments/environmental-geology/" target="_blank" rel="noopener noreferrer">terry.uga.edu/departments/environmental-geology</a></li>
           <li><strong>fanr</strong> — <a href="https://warnell.uga.edu/" target="_blank" rel="noopener noreferrer">warnell.uga.edu</a></li>
           <li><strong>general</strong> — <a href="https://www.uga.edu/" target="_blank" rel="noopener noreferrer">uga.edu</a></li>
           <li><strong>highered</strong> — <a href="https://ihe.uga.edu/" target="_blank" rel="noopener noreferrer">ihe.uga.edu</a></li>
+          <li><strong>law</strong> — <a href="https://www.law.uga.edu/" target="_blank" rel="noopener noreferrer">law.uga.edu</a></li>
           <li><strong>mfp</strong> — <a href="https://online.uga.edu/degrees-certificates/master-science-financial-planning/" target="_blank" rel="noopener noreferrer">online.uga.edu (MFP)</a></li>
           <li><strong>msw</strong> — <a href="https://ssw.uga.edu/" target="_blank" rel="noopener noreferrer">ssw.uga.edu</a></li>
           <li><strong>ool</strong> — <a href="https://online.uga.edu/" target="_blank" rel="noopener noreferrer">online.uga.edu</a></li>
@@ -197,6 +209,7 @@
         </ul>
         <h4 style="margin-top: 1.5rem;">All program codes (use with <code>program=</code>)</h4>
         <ul style="margin-top: 0.5rem;">
+          <li><strong>academicintegrity</strong> — Academic Integrity</li>
           <li><strong>acct</strong> — Accounting</li>
           <li><strong>cvle</strong> — Civil &amp; Environmental Engineering (no footer logo or default logo link in bundle)</li>
           <li><strong>datascience</strong> — Data Science</li>
@@ -204,6 +217,7 @@
           <li><strong>fanr</strong> — Warnell School of Forestry and Natural Resources</li>
           <li><strong>general</strong> — General</li>
           <li><strong>highered</strong> — Higher Education</li>
+          <li><strong>law</strong> — School of Law</li>
           <li><strong>mfp</strong> — Masters in Financial Planning</li>
           <li><strong>msw</strong> — Master of Social Work</li>
           <li><strong>ool</strong> — Online Learning</li>
@@ -216,7 +230,17 @@
     <uga-return-to-top></uga-return-to-top>
   </div>
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
   <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 

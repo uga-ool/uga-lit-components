@@ -48,6 +48,8 @@ All notable changes to this project will be documented in this file.
 ### uga-footer
 
 - **Terry College of Business:** template code `terry` with logo `/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png`
+- **School of Law:** template code `law` with logo `/shared/ugaonline/templates/law/img/LAW_logo_Formal_CW.svg` and default link `law.uga.edu`.
+- **Academic Integrity:** template code `academicintegrity` with logo `/shared/ugaonline/templates/academicintegrity/img/AcademicIntegrity_logo_Formal_CW.svg` and default link `integrity.uga.edu`.
 - Optional **`name`** attribute as alias for **`program`** (e.g. `name="terry"`); if both are set, `program` wins. Demos and setup text updated.
 
 ### uga-toc
