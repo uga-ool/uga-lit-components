@@ -76,7 +76,7 @@ const PROGRAM_IMAGE_PATHS: Record<string, string> = {
   datascience: '/shared/ugaonline/templates/datascience/img/datascience_logo.svg',
   envgeology: '/shared/ugaonline/templates/envgeology/img/logo.png',
   fanr: '/shared/ugaonline/templates/fanr/img/fanr_logo.svg',
-  franklin: '/shared/ugaonline/templates/franklin/img/FRANKLIN_logo_Arch_CW.svg',
+  franklin: '/shared/ugaonline/templates/franklin/img/FRANKLIN_logo_ExtremeHorizontal_CW.svg',
   general: '/shared/ugaonline/templates/general/img/logo.svg',
   highered: '/shared/ugaonline/templates/highered/img/highered_logo.svg',
   mfp: '/shared/ugaonline/templates/mfp/img/MFP_logo_Horizontal_CW.png',
