@@ -395,8 +395,18 @@
   </div>
 
   <!-- Load the components bundle -->
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
-  
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
+
   <script>
     // Ensure axios is available (it's globally available in eLC, but add fallback for local testing)
     if (typeof axios === 'undefined') {

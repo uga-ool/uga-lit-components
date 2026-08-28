@@ -26,6 +26,7 @@ All notable changes to this project will be documented in this file.
 
 ### Documentation
 
+- Added root [`CLAUDE.md`](CLAUDE.md) and [`docs/CLAUDE_CODE_HANDOFF.md`](docs/CLAUDE_CODE_HANDOFF.md) for Claude Code onboarding; linked from `docs/README.md`, `docs/cursor/README.md`, and `WORKSPACE-HANDOFF.md`.
 - Consolidated root planning markdown into [`docs/planning/`](docs/planning/) (`FEATURE_REQUESTS`, `ROADMAP`, `valence-backlog`, `performance`); archived January 2026 originals under [`docs/planning/archive/`](docs/planning/archive/); root files are redirect stubs.
 - README, `WORKSPACE-HANDOFF`, and `src/README` aligned for agents: no root `index.html`, 21 components, bundled axios, links to planning index.
 - Added [`docs/README.md`](docs/README.md) as the documentation index for agents and authors.
@@ -37,6 +38,7 @@ All notable changes to this project will be documented in this file.
 ### Repository
 
 - Removed **`elc-google-sync/`** (standalone React “Course Template Manager” duplicate of Drive sync). Canonical app: **`uga-drive-elc-sync`**. Widget spec: [docs/ELC_GOOGLE_SYNC_SPEC.md](docs/ELC_GOOGLE_SYNC_SPEC.md).
+- **Demo pages:** 10 pages (`accordion`, `assignment`, `circles`, `code`, `duedate`, `instructor-note`, `quiz`, `rating`, `tabs`, `video`) had a static `/shared/ugaonline/js/uga-components.js` bundle script, so `npm run dev` couldn't load the component bundle locally (404). Switched them to the same localhost-vs-eLC swap already used by `uga-footer` and the other demo pages (e.g. `callout.html`).
 
 ### uga-video
 
@@ -47,7 +49,9 @@ All notable changes to this project will be documented in this file.
 ### uga-footer
 
 - **Terry College of Business:** template code `terry` with logo `/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png`
+- **Academic Integrity:** template code `academicintegrity` with logo `/shared/ugaonline/templates/academicintegrity/img/AcademicIntegrity_logo_Formal_CW.svg` and default link `integrity.uga.edu`.
 - **Franklin College of Arts and Sciences:** template code `franklin` with logo `/shared/ugaonline/templates/franklin/img/FRANKLIN_logo_ExtremeHorizontal_CW.svg` and default link `franklin.uga.edu`.
+- **School of Law:** template code `law` with logo `/shared/ugaonline/templates/law/img/LAW_logo_Formal_CW.svg` and default link `law.uga.edu`.
 - Optional **`name`** attribute as alias for **`program`** (e.g. `name="terry"`); if both are set, `program` wins. Demos and setup text updated.
 
 ### uga-toc

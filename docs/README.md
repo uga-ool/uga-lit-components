@@ -7,6 +7,8 @@ Use this map so humans and Cursor agents read the **right** doc first.
 | Doc | Purpose |
 |-----|---------|
 | [../README.md](../README.md) | Project overview, component table, build and deploy |
+| [../CLAUDE.md](../CLAUDE.md) | Claude Code project instructions (auto-loaded) |
+| [CLAUDE_CODE_HANDOFF.md](CLAUDE_CODE_HANDOFF.md) | Pasteable Claude Code session handoff + recent work |
 | [cursor/README.md](cursor/README.md) | Cursor rules, skills, commit hooks |
 | [cursor/api-references.md](cursor/api-references.md) | External APIs + links to in-repo feature docs below |
 | [../.github/copilot-instructions.md](../.github/copilot-instructions.md) | AI agent patterns (light DOM, `d2l-client`, build commands) |

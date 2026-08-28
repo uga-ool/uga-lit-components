@@ -60,6 +60,8 @@ Optional scripts: see [`scripts/README.md`](scripts/README.md) — `npm run test
 - `docs/QUIZ_DROPBOX_SETUP.md` — quiz assignment submissions and grade sync.
 - `docs/COURSE_CALENDAR_FORMAT.md` — **`uga-course-calendar`** JSON/CSV.
 - `.github/copilot-instructions.md` — **AI/agent** project rules (build commands, light DOM, globals, patterns).
+- `CLAUDE.md` — **Claude Code** project instructions (auto-loaded at repo root).
+- `docs/CLAUDE_CODE_HANDOFF.md` — pasteable Claude Code session handoff.
 
 ### Secrets / gitignore
 
