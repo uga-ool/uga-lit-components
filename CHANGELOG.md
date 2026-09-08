@@ -43,8 +43,12 @@ All notable changes to this project will be documented in this file.
 ### uga-video
 
 - Removed **Kaltura Djinn** integration (`enable-djinn`, `djinn-api-base`, `djinn-api-key`, Q&A panel, and `docs/KALTURA_DJINN_D2L.md`). Caption Q&A belongs in the Brightspace agent framework, not this component.
-- **Kaltura embed:** default path is iframe (`embedPlaykitJs?iframeembed=true&entry_id=`) for correct thumbnails; Playkit JS loads only when **`topic-id`** is set (D2L completion). Default uiConf **`53568732`** when `playerid` is omitted (copy from Kaltura embed code to override).
+- **Kaltura embed:** every video now renders via Kaltura's Dynamic Embed method (`KalturaPlayer.setup()` mounted into a generated `<div>`), matching what Kaltura's own Share & Embed dialog produces — the old plain-`<iframe>` fallback (used when `topic-id` was omitted) has been removed.
+- **`playerid` is now the embed's player ID** (the `kaltura_player_<N>` number from the Kaltura embed code), used as the container/`targetId`. Previously it was sent as the `uiConfId`, which meant only certain values worked. `partnerId` (1727411) and `uiConfId` (52620262) are now fixed constants, so **any** player ID works — only `videoid` and `playerid` vary per embed. Default player ID **`660400380`** when the attribute is omitted.
+- `entryTitle` (from the `name` attribute, falling back to the video's Kaltura-reported name) is now passed to `KalturaPlayer.setup()`, matching Kaltura's own generated embed code.
+- Fixed: `videoid` and `playerid` changing on an already-connected `<uga-video>` (not just on initial page load) now correctly updates the rendered video/player.
 - Removed custom **video analytics** (`sendVideoEvent`, `window.UGA_VIDEO_ANALYTICS_*`, Vite `/api/video-analytics` proxy, and `server/video-analytics/`). **D2L topic completion** when `topic-id` is set (ended or 80% watched) is unchanged.
+- A video that fails to load now shows a visible "This video failed to load" message instead of a silent blank player, and logs the player/entry IDs to the console for troubleshooting.
 
 ### uga-footer
 
