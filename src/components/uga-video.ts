@@ -27,12 +27,17 @@ class UgaVideo extends LitElement {
   @property({ type: String }) name = '';
   @property({ type: String, attribute: 'topic-id' }) topicId = '';
 
-  private uiconfid = '';
+  /**
+   * UGA's Kaltura account and player configuration. These are fixed for every embed —
+   * only `videoid` (the entry) and `playerid` (the div/target id) vary per instance.
+   */
+  private static readonly PARTNER_ID = 1727411;
+  private static readonly UICONF_ID = '52620262';
+
   private domain: string | null = null;
   private kalturaScriptLoaded = false;
   private playerInstances: Map<string, any> = new Map();
   private videoNames: Map<string, string> = new Map();
-  private componentId: string = `video_${Math.random().toString(36).substr(2, 9)}`;
   private completedTopics: Set<string> = new Set();
   private analyticsContext: { userId: string | null; leVersion: string; lpVersion: string } | null = null;
 
@@ -45,11 +50,8 @@ class UgaVideo extends LitElement {
     this.ou = getCourse();
 
     if (this.playerid === "") {
-      // Default Kaltura player (uiConf); omit attribute to use this ID.
-      this.playerid = "53568732";
-      this.uiconfid = "53568732";
-    } else {
-      this.uiconfid = this.playerid;
+      // Default player id for the embed container; omit the attribute to use this one.
+      this.playerid = "660400380";
     }
 
     if (this.videoid !== "") {  // If the videoid is specified, then use that videoid to generate the player. This is the most simple scenario.
@@ -115,7 +117,11 @@ class UgaVideo extends LitElement {
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    for (const [videoId, player] of this.playerInstances) {
+    this.destroyPlayers();
+  }
+
+  private destroyPlayers(): void {
+    for (const [, player] of this.playerInstances) {
       try {
         if (player && typeof player.destroy === 'function') {
           player.destroy();
@@ -125,6 +131,26 @@ class UgaVideo extends LitElement {
       }
     }
     this.playerInstances.clear();
+  }
+
+  /**
+   * connectedCallback() only runs once, so it can't react to videoid/playerid being changed
+   * on an already-connected element (e.g. a page swapping the attribute at runtime). Handle
+   * that here — skip the very first update since connectedCallback already set things up.
+   */
+  willUpdate(changedProperties: PropertyValues<this>): void {
+    if (!this.hasUpdated) return;
+
+    // A new playerid means a new container id, so existing players have to be torn down
+    // and rebuilt into the new element.
+    if (changedProperties.has('playerid')) {
+      this.destroyPlayers();
+    }
+
+    if (changedProperties.has('videoid') && this.videoid !== '') {
+      this.videos = [this.videoid];
+      this.loaded = true;
+    }
   }
 
   async getDataFile(): Promise<void> {
@@ -156,7 +182,7 @@ class UgaVideo extends LitElement {
       }
 
       const script = document.createElement('script');
-      script.src = `https://cdnapisec.kaltura.com/p/1727411/embedPlaykitJs/uiconf_id/${this.uiconfid}`;
+      script.src = `https://cdnapisec.kaltura.com/p/${UgaVideo.PARTNER_ID}/embedPlaykitJs/uiconf_id/${UgaVideo.UICONF_ID}`;
       script.type = 'text/javascript';
       script.onload = () => {
         this.kalturaScriptLoaded = true;
@@ -168,6 +194,17 @@ class UgaVideo extends LitElement {
       };
       document.head.appendChild(script);
     });
+  }
+
+  /**
+   * Show a visible fallback message in place of a player that failed to load or errored,
+   * since a bad uiConf ID (e.g. `playerid` set to the wrong number) fails without throwing.
+   */
+  private showVideoError(containerId: string): void {
+    const containerElement = document.getElementById(containerId);
+    if (containerElement) {
+      containerElement.innerHTML = '<p style="color: #fff; text-align: center; padding: 1rem;">This video failed to load. Please contact your instructor.</p>';
+    }
   }
 
   /**
@@ -195,12 +232,13 @@ class UgaVideo extends LitElement {
       }
 
       await this.loadKalturaScript();
-      
+
       const kalturaPlayer = (window as any).KalturaPlayer.setup({
         targetId: containerId,
+        entryTitle: this.kalturaVideoTitle(videoId),
         provider: {
-          partnerId: 1727411,
-          uiConfId: this.uiconfid
+          partnerId: UgaVideo.PARTNER_ID,
+          uiConfId: UgaVideo.UICONF_ID
         },
         ui: {
           components: {
@@ -216,8 +254,15 @@ class UgaVideo extends LitElement {
       this.playerInstances.set(videoId, kalturaPlayer);
 
       this.attachKalturaPlaybackListeners(kalturaPlayer, videoId);
+
+      const errorEventName = kalturaPlayer?.Event?.Core?.ERROR || 'error';
+      kalturaPlayer.addEventListener(errorEventName, (ev: any) => {
+        console.error(`Kaltura player error for video ${videoId} (playerid: ${this.playerid}):`, ev);
+        this.showVideoError(containerId);
+      });
     } catch (error) {
-      console.error(`Failed to initialize Kaltura player for video ${videoId}:`, error);
+      console.error(`Failed to initialize Kaltura player for video ${videoId} (playerid: ${this.playerid}):`, error);
+      this.showVideoError(containerId);
       // If initialization fails, don't retry to avoid infinite loops
     }
   }
@@ -287,7 +332,7 @@ class UgaVideo extends LitElement {
     try {
       const params = new URLSearchParams();
       // Widget ID format: _<partnerId>
-      params.append('widgetId', `_1727411`);
+      params.append('widgetId', `_${UgaVideo.PARTNER_ID}`);
       params.append('format', '1');
       const { data } = await axios.post(
         'https://www.kaltura.com/api_v3/service/session/action/startWidgetSession',
@@ -329,25 +374,23 @@ class UgaVideo extends LitElement {
     }
   }
 
-  /** Playkit JS is only needed for D2L topic completion (playback event listeners). */
-  private needsPlaykitApi(): boolean {
-    const topicId = getTopicId(this.topicId);
-    return topicId != null && topicId !== '';
-  }
-
-  private kalturaIframeSrc(videoId: string): string {
-    return `https://cdnapisec.kaltura.com/p/1727411/embedPlaykitJs/uiconf_id/${this.uiconfid}?iframeembed=true&entry_id=${videoId}`;
-  }
-
   private kalturaVideoTitle(videoId: string): string {
     return this.name || this.videoNames.get(videoId) || `Kaltura video ${videoId}`;
   }
 
+  /**
+   * The div id KalturaPlayer.setup() mounts into, matching Kaltura's own embed code
+   * (`kaltura_player_<playerid>`). When one element renders several videos from a data
+   * file, the entry id is appended so the ids stay unique on the page.
+   */
+  private getContainerId(videoId: string): string {
+    const base = `kaltura_player_${this.playerid}`;
+    return this.videos.length > 1 ? `${base}_${videoId}` : base;
+  }
+
   kalturaCode(videoId: string) {
-    const containerId = `kaltura_player_${this.componentId}_${videoId}`;
+    const containerId = this.getContainerId(videoId);
     this.ensureVideoName(videoId);
-    const usePlaykit = this.needsPlaykitApi();
-    const title = this.kalturaVideoTitle(videoId);
 
     const embedCode = html`
       <style>
@@ -355,16 +398,6 @@ class UgaVideo extends LitElement {
           content: none !important;
           display: none !important;
           padding-top: 0 !important;
-        }
-        .cmp-video__embed-container {
-          width: 100%;
-          aspect-ratio: 16 / 9;
-          background: #000;
-        }
-        .cmp-video__embed-container iframe {
-          width: 100%;
-          height: 100%;
-          border: none;
         }
         .cmp-video__container {
           width: 100%;
@@ -376,29 +409,9 @@ class UgaVideo extends LitElement {
         }
       </style>
       <div class="cmp-video util-margin-top-lg">
-        ${usePlaykit
-          ? html`
-              <div class="cmp-video__container">
-                <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
-              </div>
-            `
-          : html`
-              <div class="cmp-video__embed-container">
-                <iframe
-                  class="cmp-video__embed"
-                  src="${this.kalturaIframeSrc(videoId)}"
-                  title="${title}"
-                  allow="autoplay *; fullscreen *; encrypted-media *; picture-in-picture; gyroscope"
-                  allowfullscreen
-                  webkitallowfullscreen
-                  mozallowfullscreen
-                  frameborder="0"
-                  itemprop="video"
-                  itemscope
-                  itemtype="http://schema.org/VideoObject"
-                ></iframe>
-              </div>
-            `}
+        <div class="cmp-video__container">
+          <div id="${containerId}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
+        </div>
       </div>
       ${this.includeRating ? html`<uga-rating .contentId="${videoId}" contentType="video" .ou=${this.ou} .contentName=${this.videoNames.get(videoId) ?? this.name} contentPlatform="kaltura"></uga-rating>`:html``}
     `;
@@ -481,20 +494,15 @@ class UgaVideo extends LitElement {
 
   updated(changedProperties: PropertyValues<this>): void {
     const isKaltura = this.host === '' || this.host.toLowerCase() === 'kaltura';
-    if (
-      isKaltura &&
-      this.needsPlaykitApi() &&
-      (changedProperties.has('loaded') ||
-        changedProperties.has('videos') ||
-        changedProperties.has('topicId')) &&
-      this.loaded &&
-      this.videos.length > 0
-    ) {
+    const relevantChange =
+      changedProperties.has('loaded') ||
+      changedProperties.has('videos');
+
+    if (isKaltura && relevantChange && this.loaded && this.videos.length > 0) {
       this.updateComplete.then(() => {
         this.videos.forEach((videoId) => {
           if (!this.playerInstances.has(videoId)) {
-            const containerId = `kaltura_player_${this.componentId}_${videoId}`;
-            this.initKalturaPlayer(videoId, containerId);
+            this.initKalturaPlayer(videoId, this.getContainerId(videoId));
           }
         });
       });

@@ -94,7 +94,7 @@
       <div class="demo-description">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
 
-        <p><strong>Embeds a single Kaltura video.</strong> Default embed is an iframe (correct thumbnail). Use <code>topic-id</code> when the video should mark the eLC content topic complete (loads Playkit JS for playback events).</p>
+        <p><strong>Embeds a single Kaltura video</strong> using Kaltura's Dynamic Embed method (a generated <code>&lt;div&gt;</code> + <code>KalturaPlayer.setup()</code>), matching what Kaltura's own Share &amp; Embed dialog produces. Use <code>topic-id</code> when the video should mark the eLC content topic complete.</p>
       </div>
 
       <div class="demo-example">
@@ -102,7 +102,7 @@
         <p><em>Using video ID 1_icw0df6y (Faculty Profile)</em></p>
       </div>
 
-      <div class="demo-props"> 
+      <div class="demo-props">
         <h4>Properties for Single Video</h4>
         <table>
           <tr>
@@ -118,7 +118,12 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 53568732)</td>
+            <td>Player ID from the Kaltura embed code — the number in <code>kaltura_player_&lt;N&gt;</code>. Becomes the embed container's id. Default: 660400380.</td>
+          </tr>
+          <tr>
+            <td>name</td>
+            <td>string</td>
+            <td>Optional. Video title, passed to Kaltura as <code>entryTitle</code> and used for the rating component's display name. Falls back to the video's Kaltura-reported name.</td>
           </tr>
           <tr>
             <td>includerating</td>
@@ -136,13 +141,13 @@
       <div class="demo-code">
         <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
 
-&lt;!-- Override player from Kaltura embed code --&gt;
-&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;
+&lt;!-- Player ID from the Kaltura embed code (the kaltura_player_&lt;N&gt; number) --&gt;
+&lt;uga-video videoid="1_icw0df6y" playerid="8018531"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
 
-&lt;!-- D2L topic completion (Playkit JS) --&gt;
+&lt;!-- D2L topic completion --&gt;
 &lt;uga-video videoid="1_icw0df6y" topic-id="12345"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
