@@ -23,22 +23,26 @@ Use this when opening **Claude Code** (or a new Claude Code chat) on this repo. 
 
 **Audience:** AI developer (upstream Lit library work).
 
-**Files touched recently (merged via PR #38):**
+**Files touched recently (merged through PR #41):**
 
+- `src/components/uga-video.ts` — Kaltura Dynamic Embed fixes: `playerid` is the embed player ID (not `uiConfId`); fixed `partnerId`/`uiConfId` constants so any player ID works; unlabeled instances get unique default container IDs so multiple videos on one page no longer collide (PR #41)
+- `src/components/uga-footer.ts` — Franklin College of Arts and Sciences template; legacy flat-JSON logo payload parsing fix (PR #40, #37)
+- `src/components/uga-image.ts` — opt-in `shadow` (`base` / `deep` / `tinted` + color variants) and opt-in `hover-shadow` (PR #39/#38)
 - `src/components/uga-toc.ts` — optional `headings` attribute (default `h2,h3`)
-- `src/components/uga-image.ts` — opt-in `shadow` (`base` / `deep` / `tinted` + color variants)
-- Demos/docs: `demo/toc.html`, `demo/image.html`, `demo/index-all-in-one.html`, `demo/QUICK_START.md`, `README.md`, `CHANGELOG.md`, `src/README.md`
+- `src/components/uga-quiz.ts` — Start/Retake completed-screen trap fix (PR #35); `passing-score` attribute mapping fix (unreleased, not yet a PR)
+- Demos/docs updated alongside each: `demo/video.html`, `demo/footer.html`, `demo/image.html`, `demo/toc.html`, `demo/quiz.html`, `demo/index-all-in-one.html`, `demo/QUICK_START.md`, `README.md`, `CHANGELOG.md`, `src/README.md`
 
 **Decisions already made:**
 
 - TOC defaults remain **h2 and h3**; authors opt into other levels via `headings="h2,h3,h4"` (also accepts bare `2,3`).
 - Image `shadow` is opt-in; `hover-shadow` takes precedence when both would apply.
+- `uga-video` always uses Kaltura Dynamic Embed (`KalturaPlayer.setup()`); the old plain-`<iframe>` fallback is removed. `partnerId`/`uiConfId` are fixed constants — only `videoid` and `playerid` vary per embed.
 - Light DOM only; axios stays bundled; do not change `vite.config.ts` unless the task is about the bundle shape.
 - This repo is **canonical upstream** — edit only when the user explicitly targets Lit library changes.
 
 **Open questions:**
 
-- After PR #38 merge: pull/sync local `main` (or delete the feature branch) before new work.
+- After PR #41 merge: pull/sync local `main` (or delete the feature branch) before new work.
 - Whether to deploy an updated `uga-components.js` to eLC Public Files after merge (ops / lead).
 
 **eLC test context:** N/A for local demos. Production script path: `/shared/ugaonline/js/uga-components.js`. Use sandbox OU only if testing Valence-backed components.
@@ -63,7 +67,7 @@ Use this when opening **Claude Code** (or a new Claude Code chat) on this repo. 
 - [`docs/README.md`](README.md)
 - [`WORKSPACE-HANDOFF.md`](../WORKSPACE-HANDOFF.md)
 - [`demo/QUICK_START.md`](../demo/QUICK_START.md)
-- PR: https://github.com/uga-ool/uga-lit-components/pull/38 (merged)
+- PR: https://github.com/uga-ool/uga-lit-components/pull/41 (merged)
 
 ---
 
@@ -89,6 +93,6 @@ Prefer:
 - `uga-online-pr-and-code-review` before opening a PR
 - `uga-online-handoff` when switching role or repo
 
-Recent context: PR #38 merged — `uga-toc` `headings` attribute and `uga-image` `shadow` attribute. Confirm branch is based on current `main` before new commits.
+Recent context: PR #41 merged — `uga-video` Kaltura Dynamic Embed player-ID fixes. Confirm branch is based on current `main` before new commits.
 
 Catalog: `uga-online-cursor-docs/docs/cursor/claude-code-catalog.md`
