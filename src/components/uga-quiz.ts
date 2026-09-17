@@ -68,7 +68,7 @@ class UgaQuiz extends LitElement {
   @property({ type: String }) questions: string = ''; // JSON string of questions
   @property({ type: Number, attribute: 'dropbox-folder-id' }) dropboxFolderId = 0; // eLC Dropbox (assignment) folder ID to submit quiz result as a file
   @property({ type: String, attribute: 'dropbox-assignment-name' }) dropboxAssignmentName = ''; // Name of existing assignment to submit to (instructor creates it in eLC)
-  @property({ type: Number }) passingScore = 70; // Percentage required to pass
+  @property({ type: Number, attribute: 'passing-score' }) passingScore = 70; // Percentage required to pass
   @property({ type: Boolean, attribute: 'allow-retry' }) allowRetry = true;
   @property({ type: Number, attribute: 'max-attempts' }) maxAttempts = 3; // Maximum retry attempts
   @property({ type: Boolean, attribute: 'show-feedback' }) showFeedback = true; // Show immediate feedback
