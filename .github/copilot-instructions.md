@@ -69,14 +69,14 @@ const classlist = await getClasslist(ou, versions.le);
 
 ### Kaltura Video Embedding
 
-Default embed is a **Kaltura iframe** (`embedPlaykitJs?iframeembed=true&entry_id=`) for correct thumbnails. **Playkit JS** loads only when **`topic-id`** is set (D2L topic completion). Default uiConf **53568732**. See `src/components/uga-video.ts`.
+Every video renders via Kaltura's **Dynamic Embed** method (`KalturaPlayer.setup()` mounted into a generated container `<div>`), matching what Kaltura's own Share & Embed dialog produces. There is no iframe fallback. See `src/components/uga-video.ts`.
 
 **Key points:**
 
-- `needsPlaykitApi()` — true when `getTopicId(topicId)` returns a non-empty id
-- Iframe path: no `initKalturaPlayer`, no Playkit script on the page
-- Playkit path: `loadKalturaScript` + `KalturaPlayer.setup` + playback listeners for 80%/ended completion
-- `playerid` overrides default uiConf (copy from Kaltura MediaSpace embed code)
+- `partnerId` (**1727411**) and `uiConfId` (**52620262**) are fixed constants (`UgaVideo.PARTNER_ID`/`UgaVideo.UICONF_ID`) — every embed on this account uses the same player config.
+- `playerid` is the container/`targetId` (`kaltura_player_<playerid>`), **not** the uiConf ID — copy the `kaltura_player_<N>` number from Kaltura's embed code, or omit it to use the default (`660400380`).
+- `videoid` is the Kaltura entry ID; `loadKalturaScript` + `initKalturaPlayer` (`KalturaPlayer.setup`) run for every instance, with playback listeners for 80%/ended completion when **`topic-id`** is set (D2L topic completion).
+- A video that fails to load shows a visible "This video failed to load" message and logs the player/entry IDs to the console.
 
 ### Unsafe HTML Pattern
 
@@ -227,7 +227,7 @@ class UgaUserInfo extends LitElement {
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Component not showing up in bundle | Verify file is in `src/components/` with `.ts` extension and is imported correctly                           |
 | Styles not applying                | Ensure `createRenderRoot() { return this; }` is defined, `base.css` is linked in the component if using UGA classes, and the host page loads Google Fonts plus `scripts.js` for interactive DS patterns |
-| Kaltura video not displaying       | Check `uiconfid` is correct and script loads successfully; verify `containerId` matches target div           |
+| Kaltura video not displaying       | Check the browser console for the logged player/entry IDs; verify `playerid` matches a real Kaltura embed container ID and `videoid` is a valid entry ID |
 | D2L API 404 errors                 | Verify URL path matches expected `/d2l/api/le/${version}/${ou}/...` pattern                                  |
 | `axios` / API errors in local dev  | Bundle includes axios; mock `window.D2L` and course context. In eLC, load only `uga-components.js` (no extra axios script). |
 
