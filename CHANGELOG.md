@@ -50,6 +50,16 @@ All notable changes to this project will be documented in this file.
 - Removed custom **video analytics** (`sendVideoEvent`, `window.UGA_VIDEO_ANALYTICS_*`, Vite `/api/video-analytics` proxy, and `server/video-analytics/`). **D2L topic completion** when `topic-id` is set (ended or 80% watched) is unchanged.
 - A video that fails to load now shows a visible "This video failed to load" message instead of a silent blank player, and logs the player/entry IDs to the console for troubleshooting.
 
+### uga-quiz
+
+- Fixed: **Start** and **Retake** could get trapped on the completed screen instead of returning to the quiz. A new internal `isRetaking` state tracks the transition so the completed-screen check no longer re-triggers after a retake begins.
+- Fixed: the **`passing-score`** attribute was not mapped to the `passingScore` property (missing `attribute:` config), so setting `passing-score` on the element had no effect and the quiz silently used the 70% default.
+
+### uga-image
+
+- Added opt-in **`shadow`** attribute for static Design System elevation: `base`, `deep`, `tinted` (deep red), or explicit `base--red` / `deep--red` / `base--blue` / `deep--blue`. Includes CSS fallbacks when the host page lacks the Design System's shadow utility classes. Ignored when `hover-shadow` is set.
+- Added opt-in **`hover-shadow`** attribute so the image lifts (base → deep elevation) on hover as a click affordance; off by default so existing courses are unchanged.
+
 ### uga-footer
 
 - **Terry College of Business:** template code `terry` with logo `/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png`
@@ -57,6 +67,7 @@ All notable changes to this project will be documented in this file.
 - **Franklin College of Arts and Sciences:** template code `franklin` with logo `/shared/ugaonline/templates/franklin/img/FRANKLIN_logo_ExtremeHorizontal_CW.svg` and default link `franklin.uga.edu`.
 - **School of Law:** template code `law` with logo `/shared/ugaonline/templates/law/img/LAW_logo_Formal_CW.svg` and default link `law.uga.edu`.
 - Optional **`name`** attribute as alias for **`program`** (e.g. `name="terry"`); if both are set, `program` wins. Demos and setup text updated.
+- Fixed: legacy flat-JSON footer data (logo fields at the payload root instead of nested under `logo`) failed to parse under the stricter `FooterData` type. Added a `FlatLogoFooterFields`/`FooterRawPayload` type so both the nested and legacy flat shapes are accepted.
 
 ### uga-toc
 
