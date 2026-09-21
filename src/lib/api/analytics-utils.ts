@@ -2,8 +2,8 @@
 // Aggregates data from content, assignments, discussions, and quizzes
 
 import { getContentTOC, getContentCompletions, getContentCompletionsAggregate, type ContentModule, type ContentCompletion } from './d2l-client-content.js';
-import { getAssignments, getAssignmentSubmissions, getClasslist, getForums, getTopics, getPostsPaged, getFinalGradeValues, getCompetenciesStructure, getLoginLogs, type Assignment, type DiscussionForum, type DiscussionTopic } from './d2l-client.js';
-import type { ClasslistUser } from '../../types/d2l.js';
+import { getAssignments, getAssignmentSubmissions, getClasslist, getForums, getTopics, getPostsPaged, getFinalGradeValues, getCompetenciesStructure, getLoginLogs } from './d2l-client.js';
+import type { ClasslistUser, Assignment, DiscussionForum, DiscussionTopic } from '../../types/d2l.js';
 import type { CourseAnalytics, ModuleAnalytics, OverallStats } from '../../types/d2l.js';
 
 /**
@@ -451,7 +451,7 @@ async function fetchGradesStats(
   let gradedCount = 0;
 
   for (const { User, GradeValue } of allGrades) {
-    const userId = User?.Identifier ?? User?.UserId ?? (User as { Id?: number }).Id;
+    const userId = User?.Identifier ?? (User as { UserId?: number; Id?: number } | undefined)?.UserId ?? (User as { Id?: number }).Id;
     const id = typeof userId === 'string' ? parseInt(userId, 10) : userId;
     if (!id || !studentIdSet.has(id)) continue;
 

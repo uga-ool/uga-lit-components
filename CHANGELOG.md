@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file.
 - `uga-footer`: `@customElement` registration; removed debug `console.log` calls.
 - Updated [src/types/global.d.ts](src/types/global.d.ts) (bundled axios note; `window.D2L`).
 
+### Bug Fixes
+
+- Resolved `tsc --noEmit` errors across `uga-assignment`, `uga-course-calendar`, `uga-quiz`, `uga-toc`, `analytics-utils.ts`, and `d2l-client.ts` (type/null-safety fixes; no other behavior changes). Added the missing `kaltura-secrets.example.ts` template referenced by docs.
+
 ### Scripts
 
 - Added [scripts/README.md](scripts/README.md) and `npm run quiz:csv-to-json`; updated Kaltura/CSV script usage in docs.
