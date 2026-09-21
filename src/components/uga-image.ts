@@ -224,6 +224,8 @@ class UgaImage extends LitElement {
 
     .cmp-image__lightbox-img-wrap {
       overflow: hidden;
+      width: 95vw;
+      height: 80vh;
       max-width: 95vw;
       max-height: 80vh;
       display: flex;
@@ -286,10 +288,15 @@ class UgaImage extends LitElement {
       position: absolute;
       top: 1rem;
       right: 1rem;
+      z-index: 2;
       width: 44px;
       height: 44px;
       font-size: 1.5rem;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .cmp-image__lightbox-btn-close:hover {
+      background: rgba(0, 0, 0, 0.8);
     }
 
     .cmp-image__lightbox-zoom-label {
@@ -311,7 +318,7 @@ class UgaImage extends LitElement {
       this.loaded = false;
     }
     if (changedProperties.has('expanded')) {
-      const wrap = this.querySelector('.cmp-image__lightbox-img-wrap');
+      const wrap = this.querySelector<HTMLElement>('.cmp-image__lightbox-img-wrap');
       if (this.expanded) {
         wrap?.addEventListener('wheel', this._wheelHandler, { passive: false });
         requestAnimationFrame(() => {
@@ -331,7 +338,7 @@ class UgaImage extends LitElement {
     document.removeEventListener('keydown', this._boundKeydown);
   }
 
-  private _boundKeydown: (e: KeyboardEvent) => void;
+  private _boundKeydown!: (e: KeyboardEvent) => void;
 
   private _handleKeydown(e: KeyboardEvent): void {
     if (e.key === 'Escape') {
@@ -374,10 +381,9 @@ class UgaImage extends LitElement {
   }
 
   closeLightbox(): void {
-    this.querySelector('.cmp-image__lightbox-img-wrap')?.removeEventListener(
-      'wheel',
-      this._wheelHandler
-    );
+    this.querySelector<HTMLElement>(
+      '.cmp-image__lightbox-img-wrap'
+    )?.removeEventListener('wheel', this._wheelHandler);
     this.expanded = false;
     this.zoom = 1;
     this.panX = 0;
