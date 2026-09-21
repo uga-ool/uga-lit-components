@@ -460,7 +460,7 @@ class UgaQuiz extends LitElement {
           currentQ = qId;
           if (val) {
             const q = this.parsedQuestions.find(qq => qq.id === qId);
-            const idx = q?.options?.findIndex(o => o === val);
+            const idx = q?.options?.findIndex(o => o === val) ?? -1;
             responses[qId] = idx >= 0 ? idx : val;
           }
         }
@@ -471,7 +471,7 @@ class UgaQuiz extends LitElement {
           const q = this.parsedQuestions.find(qq => qq.id === currentQ);
           if (q?.type === QuestionType.MULTI_SELECT || q?.type === QuestionType.ORDERING) {
             const arr = (responses[currentQ!] as number[]) || [];
-            const idx = q.options?.findIndex(o => o === val);
+            const idx = q.options?.findIndex(o => o === val) ?? -1;
             if (idx >= 0) arr.push(idx);
             responses[currentQ!] = arr;
           }
@@ -519,7 +519,8 @@ class UgaQuiz extends LitElement {
       // Use getMySubmission (mysubmissions GET) - students can read their own submissions
       const userSub = await getMySubmission(this.ou, this.versions.le, folder.Id);
       const commentText = userSub?.TextSubmission ?? '';
-      let data: { attempts?: Array<{ questionId: string; isCorrect: boolean; pointsEarned: number }>; responses?: Record<string, unknown>; totalPoints?: number; pointsEarned?: number; percentage?: number; passed?: boolean } | null = null;
+      type FeedbackData = { attempts?: QuizAttempt[]; responses?: Record<string, unknown>; totalPoints?: number; pointsEarned?: number; percentage?: number; passed?: boolean };
+      let data: FeedbackData | null = null;
 
       if (!commentText || commentText.length < 10) {
         console.warn('[uga-quiz] Cannot fetch feedback: submission comment empty or too short. (Student may lack permission to read own submission, or submission format differs.)');
@@ -529,7 +530,7 @@ class UgaQuiz extends LitElement {
       const jsonStr = idx >= 0 ? commentText.slice(idx + 24).trim() : '';
       if (jsonStr) {
         try {
-          data = JSON.parse(jsonStr) as typeof data;
+          data = JSON.parse(jsonStr) as FeedbackData;
         } catch {
           // ignore
         }
@@ -1378,6 +1379,7 @@ class UgaQuiz extends LitElement {
 
     switch (question.type) {
       case QuestionType.MULTIPLE_CHOICE:
+      case QuestionType.TRUE_FALSE:
         return html`
           <div class="quiz-question">
             <p class="quiz-question-text">${question.question}</p>
@@ -1398,47 +1400,7 @@ class UgaQuiz extends LitElement {
             </div>
             ${showFeedback ? html`
               <div class="quiz-feedback ${attempt?.isCorrect ? 'correct' : 'incorrect'}">
-                ${attempt?.isCorrect 
-                  ? html`<span class="feedback-icon">✓</span> Correct! ${question.explanation ? `- ${question.explanation}` : ''}`
-                  : html`<span class="feedback-icon">✗</span> Incorrect. ${question.explanation ? `- ${question.explanation}` : ''}`
-                }
-                <div class="feedback-points">Points: ${attempt.pointsEarned}/${question.points}</div>
-              </div>
-            ` : ''}
-          </div>
-        `;
-
-      case QuestionType.TRUE_FALSE:
-        return html`
-          <div class="quiz-question">
-            <p class="quiz-question-text">${question.question}</p>
-            <div class="quiz-options">
-              <label class="quiz-option ${showFeedback && question.correctAnswer === true ? 'correct' : ''} ${showFeedback && currentAnswer === 'true' && !attempt?.isCorrect ? 'incorrect' : ''}">
-                <input
-                  type="radio"
-                  name="question-${question.id}"
-                  value="true"
-                  .checked=${currentAnswer === 'true'}
-                  @change=${() => this.handleAnswer(question.id, 'true')}
-                  ?disabled=${this.isSubmitted}
-                />
-                <span>True</span>
-              </label>
-              <label class="quiz-option ${showFeedback && question.correctAnswer === false ? 'correct' : ''} ${showFeedback && currentAnswer === 'false' && !attempt?.isCorrect ? 'incorrect' : ''}">
-                <input
-                  type="radio"
-                  name="question-${question.id}"
-                  value="false"
-                  .checked=${currentAnswer === 'false'}
-                  @change=${() => this.handleAnswer(question.id, 'false')}
-                  ?disabled=${this.isSubmitted}
-                />
-                <span>False</span>
-              </label>
-            </div>
-            ${showFeedback ? html`
-              <div class="quiz-feedback ${attempt?.isCorrect ? 'correct' : 'incorrect'}">
-                ${attempt?.isCorrect 
+                ${attempt?.isCorrect
                   ? html`<span class="feedback-icon">✓</span> Correct! ${question.explanation ? `- ${question.explanation}` : ''}`
                   : html`<span class="feedback-icon">✗</span> Incorrect. ${question.explanation ? `- ${question.explanation}` : ''}`
                 }

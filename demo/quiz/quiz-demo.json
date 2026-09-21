@@ -19,7 +19,8 @@
       "type": "true-false",
       "question": "Formative assessments should be used to determine final course grades.",
       "points": 15,
-      "correctAnswer": false,
+      "options": ["True", "False"],
+      "correctAnswer": 1,
       "explanation": "Formative assessments are for learning and feedback, not final grading. Summative assessments determine final grades."
     },
     {

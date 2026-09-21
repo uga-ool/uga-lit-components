@@ -184,24 +184,26 @@ function convertQuestion(d2lQuestion: CurrentQuestion): QuizQuestion | null {
       break;
       
     case D2LQuestionType.TF:
-      // True/False: check which has weight 100
+      // True/False: rendered like multiple-choice with options ["True", "False"]
+      // and correctAnswer as the option index (0 = True, 1 = False), per QUIZ_JSON_FORMAT.md
+      options = ['True', 'False'];
       // In eLC CSV: TRUE,100,feedback means TRUE is correct
       //             FALSE,100,feedback means FALSE is correct
       if (d2lQuestion.trueFeedback !== undefined && d2lQuestion.trueFeedback !== null) {
         // TRUE is correct (has weight 100)
-        correctAnswer = true;
+        correctAnswer = 0;
         if (typeof d2lQuestion.trueFeedback === 'string' && d2lQuestion.trueFeedback) {
           explanation = d2lQuestion.trueFeedback + (explanation ? ' ' + explanation : '');
         }
       } else if (d2lQuestion.falseFeedback !== undefined && d2lQuestion.falseFeedback !== null) {
         // FALSE is correct (has weight 100)
-        correctAnswer = false;
+        correctAnswer = 1;
         if (typeof d2lQuestion.falseFeedback === 'string' && d2lQuestion.falseFeedback) {
           explanation = d2lQuestion.falseFeedback + (explanation ? ' ' + explanation : '');
         }
       } else {
-        // Default to true if neither specified (shouldn't happen in valid CSV)
-        correctAnswer = true;
+        // Default to True if neither specified (shouldn't happen in valid CSV)
+        correctAnswer = 0;
       }
       break;
       
