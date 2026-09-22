@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import './uga-callout.js';
 import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import { getItemType, getTypesArray, shouldIncludeItem, formatItemType, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
@@ -207,9 +208,7 @@ class UgaDueDate extends LitElement {
     if (this.errorMessage) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-        <div class="util-pad-all-md util-background-light-gray" style="border-left: 4px solid #ba0c2f;">
-          <p><strong>${this.errorMessage}</strong></p>
-        </div>
+        <uga-callout type="important" body="${this.errorMessage}"></uga-callout>
       `;
     }
 
@@ -223,27 +222,27 @@ class UgaDueDate extends LitElement {
 
     return html`
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-      <div class="util-margin-top-md">
-        <table style="width: 100%; border-collapse: collapse;">
+      <div class="util-margin-top-md util-scrollable-content">
+        <table>
           <thead>
-            <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ba0c2f;">
-              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Assignment</th>
-              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Type</th>
-              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Due Date</th>
+            <tr>
+              <th>Assignment</th>
+              <th>Type</th>
+              <th>Due Date</th>
             </tr>
           </thead>
           <tbody>
             ${this.assignments.map((assignment) => {
               const assignmentLink = this.getAssignmentLink(assignment);
               return html`
-              <tr style="border-bottom: 1px solid #e0e0e0;">
-                <td style="padding: 0.75rem;">
-                  <a href="${assignmentLink}" target="_blank" style="color: #ba0c2f; text-decoration: none;">
+              <tr>
+                <td>
+                  <a href="${assignmentLink}" target="_blank" class="util-color-red">
                     ${assignment.Name}
                   </a>
                 </td>
-                <td style="padding: 0.75rem;">${formatItemType(assignment)}</td>
-                <td style="padding: 0.75rem;">${assignment.DueDate || 'No Due Date'}</td>
+                <td>${formatItemType(assignment)}</td>
+                <td>${assignment.DueDate || 'No Due Date'}</td>
               </tr>
             `;
             })}

@@ -2,6 +2,7 @@ import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import type { PropertyValues } from 'lit';
 import { loadData } from '../lib/data/data-loader.js';
+import './uga-callout.js';
 import { getAssignments, getEnrollment, getVersions } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 
@@ -492,9 +493,7 @@ class UgaCourseCalendar extends LitElement {
     if (this.loadError) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-        <div class="util-pad-all-md util-background-light-gray" style="border-left: 4px solid #ba0c2f; margin: 1rem 0;">
-          <p><strong>uga-course-calendar error:</strong> ${this.loadError}</p>
-        </div>
+        <uga-callout type="important" label="uga-course-calendar error" body="${this.loadError}"></uga-callout>
       `;
     }
 
@@ -505,6 +504,13 @@ class UgaCourseCalendar extends LitElement {
     return html`
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
       <style>
+        /* This calendar needs 7 distinct semantic row/status colors (open, exam,
+           final, due, deadline, holiday, last day) as pastel background tints plus
+           matching accent text. The UGA Design System palette has no light pastel
+           tints for this purpose (checked the full palette: only light-gray #f2f2f2
+           and creamery #d6d2c4 qualify as "light", and neither reads as a status
+           color), so these stay deliberate custom literals rather than a DS-utility
+           mapping. The two colors below that DO exactly match a DS token are noted. */
         uga-course-calendar .cal-scroll {
           overflow-x: auto;
         }
@@ -522,7 +528,7 @@ class UgaCourseCalendar extends LitElement {
           letter-spacing: 0.08em;
           text-transform: uppercase;
           font-weight: 700;
-          color: #666;
+          color: #666; /* DS util-color-dark-gray */
           margin-right: 0.1rem;
         }
         uga-course-calendar .cal-key-item {
@@ -541,7 +547,7 @@ class UgaCourseCalendar extends LitElement {
         }
         uga-course-calendar .swatch-open { background: #f5fbf7; border-color: #a8d8b0; }
         uga-course-calendar .swatch-exam { background: #fef0f2; border-color: #e8c8cc; }
-        uga-course-calendar .swatch-final { background: #ba0c2f; border-color: #ba0c2f; }
+        uga-course-calendar .swatch-final { background: #ba0c2f; border-color: #ba0c2f; } /* DS util-color-red */
         uga-course-calendar .swatch-due { background: #fffcfa; border-color: #e8c8c0; }
         uga-course-calendar .swatch-deadline { background: #fffaec; border-color: #e8d8a0; }
         uga-course-calendar .swatch-holiday { background: #f4f4f4; border-color: #ddd; }
@@ -583,11 +589,11 @@ class UgaCourseCalendar extends LitElement {
           font-size: 0.71rem;
           text-transform: uppercase;
           letter-spacing: 0.08em;
-          color: #ba0c2f;
+          color: #ba0c2f; /* DS util-color-red */
           margin-bottom: 0.18rem;
         }
         uga-course-calendar .col-event { font-weight: 700; width: 17%; }
-        uga-course-calendar .col-notes { font-size: 0.83rem; color: #666; }
+        uga-course-calendar .col-notes { font-size: 0.83rem; color: #666; } /* DS util-color-dark-gray */
         uga-course-calendar .week-sep td {
           padding: 0.3rem 0.9rem;
           background: #333;
@@ -615,7 +621,7 @@ class UgaCourseCalendar extends LitElement {
         uga-course-calendar .row-lastday td { background: #2c2c2c; color: #fff; border-bottom: 1px solid #444; }
         uga-course-calendar .row-lastday .col-day { color: rgba(255,255,255,0.5); }
         uga-course-calendar .row-lastday .col-notes { color: rgba(255,255,255,0.75); }
-        uga-course-calendar .row-final td { background: #ba0c2f; color: #fff; border-bottom: none; }
+        uga-course-calendar .row-final td { background: #ba0c2f; color: #fff; border-bottom: none; } /* DS util-color-red */
         uga-course-calendar .row-final .col-day { color: rgba(255,255,255,0.6); }
         uga-course-calendar .row-final .col-notes { color: rgba(255,255,255,0.85); }
         uga-course-calendar .tag {

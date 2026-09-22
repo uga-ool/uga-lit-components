@@ -12,91 +12,18 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
-  <style>
-    .component-demo {
-      margin-bottom: 4rem;
-      padding: 2rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      background-color: #ffffff;
-    }
-
-    .demo-description {
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      background-color: #f5f5f5;
-      border-left: 4px solid #ba0c2f;
-    }
-
-    .demo-example {
-      margin-bottom: 1.5rem;
-      padding: 1.5rem;
-      background-color: #fafafa;
-      border: 1px dashed #ccc;
-    }
-
-    .demo-code {
-      margin-top: 1rem;
-    }
-
-    .demo-props {
-      margin: 1rem 0;
-      padding: 1rem;
-      background-color: #fff9e6;
-      border-left: 4px solid #ffc107;
-    }
-
-    .demo-props table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-    }
-
-    .demo-props th,
-    .demo-props td {
-      padding: 0.5rem;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .demo-props th {
-      background-color: #f0f0f0;
-      font-weight: bold;
-    }
-
-    h1 {
-      color: #ba0c2f;
-      border-bottom: 3px solid #ba0c2f;
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-bottom: 1rem;
-      color: #ba0c2f;
-      text-decoration: none;
-    }
-
-    .back-link:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
 
 <body>
   <div class="obj-container">
-    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
+    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
 
     <header class="util-margin-vert-lg">
-      <h1>Footer Component</h1>
+      <h1 class="util-color-red util-margin-bottom-xl">Footer Component</h1>
     </header>
 
-    <section class="component-demo">
-      <div class="demo-description">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file or a program-specific footer image stored in public files.</p>
         <p><strong>eLC setup:</strong> Load the component bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. Upload <code>footer/footer-demo.json</code> (or your chosen path under Manage Files). Use <code>filename="footer/footer-demo.json"</code> when that folder sits next to your HTML page; otherwise use the full path from Manage Files. For a shared program template, use <code>program="…"</code> or <code>name="…"</code> (e.g. <code>program="msw"</code>) — logo and department link are built in; no <code>footer.json</code> request unless you add <code>data-file="footer.json"</code> for nav/copyright/social from Public Files.</p>
         <p><strong>Example data file:</strong> Download
@@ -104,29 +31,29 @@
           to modify and upload to your course files.</p>
       </div>
 
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <h4 style="margin-top: 0; margin-bottom: 1rem;">Default footer (course file JSON)</h4>
         <p style="margin: 0 0 0.5rem 0; font-size: 0.9em; color: #555;">When the file is stored locally in the course files (same folder as this page), use the filename only.</p>
         <uga-footer filename="footer/footer-demo.json"></uga-footer>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <h4 style="margin-top: 0; margin-bottom: 1rem;">Master of Social Work footer (program template)</h4>
         <uga-footer program="msw"></uga-footer>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <h4 style="margin-top: 0; margin-bottom: 1rem;">School of Law footer (program template)</h4>
         <uga-footer program="law"></uga-footer>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <h4 style="margin-top: 0; margin-bottom: 1rem;">Academic Integrity footer (program template)</h4>
         <uga-footer program="academicintegrity"></uga-footer>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <h4 style="margin-top: 0; margin-bottom: 1rem;">Franklin College of Arts and Sciences footer (program template)</h4>
         <uga-footer program="franklin"></uga-footer>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -167,7 +94,7 @@
         </table>
       </div>
 
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <h4>Basic usage (course file)</h4>
         <p>When the JSON lives under a <code>footer/</code> folder next to the page: <code>filename="footer/footer-demo.json"</code>. Otherwise use the full path from Manage Files.</p>
         <uga-code language="markup">&lt;uga-footer filename="footer/footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>

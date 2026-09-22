@@ -175,7 +175,6 @@ export class UGATableOfContents extends LitElement {
       <div
         class="util-pad-all-md util-margin-bottom-lg util-background-odyssey util-shadow-base util-radius-all-sm"
         id="table-of-contents"
-        style="border: 1px solid #ccc;"
       >
         <h2>Contents</h2>
         <ul class="util-pad-left-lg util-delist" id="toc-list"></ul>

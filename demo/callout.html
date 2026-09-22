@@ -11,87 +11,24 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
-  <style>
-    .component-demo {
-      margin-bottom: 4rem;
-      padding: 2rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      background-color: #ffffff;
-    }
-    .demo-description {
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      background-color: #f5f5f5;
-      border-left: 4px solid #ba0c2f;
-    }
-    .demo-example {
-      margin-bottom: 1.5rem;
-      padding: 1.5rem;
-      background-color: #fafafa;
-      border: 1px dashed #ccc;
-    }
-    .demo-code {
-      margin-top: 1rem;
-    }
-    .demo-props {
-      margin: 1rem 0;
-      padding: 1rem;
-      background-color: #fff9e6;
-      border-left: 4px solid #ffc107;
-    }
-    .demo-props table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-    }
-    .demo-props th,
-    .demo-props td {
-      padding: 0.5rem;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    .demo-props th {
-      background-color: #f0f0f0;
-      font-weight: bold;
-    }
-    h1 {
-      color: #ba0c2f;
-      border-bottom: 3px solid #ba0c2f;
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
-    .back-link {
-      display: inline-block;
-      margin-bottom: 1rem;
-      color: #ba0c2f;
-      text-decoration: none;
-    }
-    .back-link:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
 <body>
   <div class="obj-container">
-    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
+    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
 
     <header class="util-margin-vert-lg">
-      <h1>Callout Component</h1>
+      <h1 class="util-color-red util-margin-bottom-xl">Callout Component</h1>
     </header>
 
-    <section class="component-demo">
-      <div class="demo-description">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and examples.</p>
         <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> when the hostname is <code>localhost</code> (run <code>npm run build</code> first); in eLC, use <code>/shared/ugaonline/js/uga-components.js</code>. Callout corners use Design System <code>util-radius-all-sm</code> (requires <code>base.css</code>).</p>
         <p><strong>Semantic callouts</strong> for examples, notes, warnings, tips, and important reminders. This component renders as an <code>&lt;aside&gt;</code> with an optional bolded pseudo-label, so it avoids adding heading tags that could interfere with page TOCs.</p>
       </div>
 
       <h2>Live Examples</h2>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-callout
           id="note-callout-example"
           type="note"
@@ -140,7 +77,7 @@
           body="This callout has id=&quot;id-usage-callout&quot; so you can link directly to it using #id-usage-callout."
         ></uga-callout>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-callout type="note" size="small" label="Note (Small)" body="Use this section to provide extra context that supports the main content."&gt;&lt;/uga-callout&gt;
 
 &lt;uga-callout type="important" size="large" label="Important (Large)" body="Complete the identity check before opening the exam in eLC."&gt;&lt;/uga-callout&gt;
@@ -149,26 +86,26 @@
       </div>
     </section>
 
-    <section class="component-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
       <h2>Without Label</h2>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-callout type="note">
           <p>This callout omits <code>label</code> and still renders semantic aside markup.</p>
         </uga-callout>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-callout type="note"&gt;
   &lt;p&gt;This callout omits label.&lt;/p&gt;
 &lt;/uga-callout&gt;</uga-code>
       </div>
     </section>
 
-    <section class="component-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
       <h2>Nested Callouts</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>eLC tip:</strong> Use the <code>body</code> attribute for plain-text bodies so content stays inside the box after sanitization; nest another <code>&lt;uga-callout&gt;</code> in the slot for the inner callout.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-callout
           type="note"
           label="Case Study Setup"
@@ -181,48 +118,50 @@
           ></uga-callout>
         </uga-callout>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-callout type="note" label="Case Study Setup" body="For a 12% annual rate over 6 months, convert to the period rate before applying the formula."&gt;
   &lt;uga-callout type="example" label="Worked Example" body="Read the short scenario first, then work through the embedded example."&gt;&lt;/uga-callout&gt;
 &lt;/uga-callout&gt;</uga-code>
       </div>
     </section>
 
-    <section class="component-demo">
-      <div class="demo-props">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Default</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>note</td>
-            <td>One of <code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, or <code>warning</code>.</td>
-          </tr>
-          <tr>
-            <td>label</td>
-            <td>string</td>
-            <td>(empty)</td>
-            <td>Bold heading text shown in the colored top strip.</td>
-          </tr>
-          <tr>
-            <td>body</td>
-            <td>string</td>
-            <td>(empty)</td>
-            <td>Plain-text body in the lower section; survives eLC HTML sanitization. For lists, links, or multiple paragraphs, use slot content instead.</td>
-          </tr>
-          <tr>
-            <td>size</td>
-            <td>string</td>
-            <td>medium</td>
-            <td><code>small</code>, <code>medium</code>, <code>large</code>, or <code>xlarge</code> spacing and text size.</td>
-          </tr>
-        </table>
+        <div class="util-scrollable-content">
+          <table>
+            <tr>
+              <th>Property</th>
+              <th>Type</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>type</td>
+              <td>string</td>
+              <td>note</td>
+              <td>One of <code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, or <code>warning</code>.</td>
+            </tr>
+            <tr>
+              <td>label</td>
+              <td>string</td>
+              <td>(empty)</td>
+              <td>Bold heading text shown in the colored top strip.</td>
+            </tr>
+            <tr>
+              <td>body</td>
+              <td>string</td>
+              <td>(empty)</td>
+              <td>Plain-text body in the lower section; survives eLC HTML sanitization. For lists, links, or multiple paragraphs, use slot content instead.</td>
+            </tr>
+            <tr>
+              <td>size</td>
+              <td>string</td>
+              <td>medium</td>
+              <td><code>small</code>, <code>medium</code>, <code>large</code>, or <code>xlarge</code> spacing and text size.</td>
+            </tr>
+          </table>
+        </div>
       </div>
     </section>
 

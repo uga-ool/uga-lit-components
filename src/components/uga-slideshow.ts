@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
@@ -56,96 +56,6 @@ class UgaSlideshow extends LitElement {
         this.requestUpdate();
       });
   }
-
-  static styles = css`
-    .cmp-slide {
-      position: relative;
-      order: -1;
-    }
-
-    .cmp-slide__controls {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      position: absolute;
-      top: 45%;
-      z-index: 100;
-    }
-
-    .cmp-slide__image {
-      width: 100%;
-      object-fit: cover;
-      z-index: 99;
-    }
-
-    .cmp-slide__container {
-      overflow: hidden;
-      position: relative;
-    }
-
-    .cmp-slide__button {
-      width: 50px;
-      height: 70px;
-      padding: 10px;
-      border: none;
-      cursor: pointer;
-      background-color: #fff;
-      font-size: 36px;
-      opacity: 50%;
-    }
-
-    .cmp-slide__button:hover {
-      background-color: #dedede;
-    }
-
-    .cmp-slide__dots {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-
-    .cmp-slide__dot {
-      cursor: pointer;
-      height: 20px;
-      width: 20px;
-      background-color: #DEDEDE;
-      border: none;
-      display: inline-block;
-      transition: background-color 0.6s ease;
-    }
-
-    .cmp-slide__dot-active {
-      background-color: #9EA2A2;
-    }
-
-    .cmp-slide__dot:hover {
-      background-color: #e4002b;
-    }
-
-    /* Fading animation */
-    .fade {
-      -webkit-animation-name: fade;
-      -webkit-animation-duration: 1.5s;
-      animation-name: fade;
-      animation-duration: 1.5s;
-    }
-    @-webkit-keyframes fade {
-      from {
-        opacity: .4
-      }
-      to {
-        opacity: 1
-      }
-    }
-    @keyframes fade {
-      from {
-        opacity: .4
-      }
-      to {
-        opacity: 1
-      }
-    }
-  `
 
   async getDataFile(): Promise<SlideshowData> {
     if (!this.filename) {
@@ -230,6 +140,9 @@ class UgaSlideshow extends LitElement {
           .cmp-slide__image { width: 100%; object-fit: cover; z-index: 99; }
           .cmp-slide__container { overflow: hidden; position: relative; }
           .cmp-slide__button { width: 50px; height: 70px; padding: 10px; border: none; cursor: pointer; background-color: #fff; font-size: 36px; opacity: 50%; }
+          /* :hover / conditional-class rules below can't take a util-background-* class
+             directly; colors match DS tokens: #dedede/#DEDEDE = gray, #9EA2A2 = stegeman,
+             #e4002b = glory. */
           .cmp-slide__button:hover { background-color: #dedede; }
           .cmp-slide__dots { width: 100%; display: flex; justify-content: center; }
           .cmp-slide__dot { cursor: pointer; height: 20px; width: 20px; background-color: #DEDEDE; border: none; display: inline-block; transition: background-color 0.6s ease; }

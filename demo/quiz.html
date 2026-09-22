@@ -11,100 +11,23 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
   <style>
-    .component-demo {
-      margin-bottom: 4rem;
-      padding: 2rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      background-color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    .component-demo h1,
-    .component-demo h2,
-    .component-demo h3,
-    .component-demo h4 {
-      font-family: inherit;
-    }
-    .demo-description {
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      background-color: #f5f5f5;
-      border-left: 4px solid #ba0c2f;
-    }
-    .demo-example {
-      margin-bottom: 1.5rem;
-      padding: 1.5rem;
-      background-color: #fafafa;
-      border: 1px dashed #ccc;
-    }
-    .demo-code {
-      margin-top: 1rem;
-    }
-    .demo-props {
-      margin: 1rem 0;
-      padding: 1rem;
-      background-color: #fff9e6;
-      border-left: 4px solid #ffc107;
-    }
-    .demo-props table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-    }
-    .demo-props th,
-    .demo-props td {
-      padding: 0.5rem;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    .demo-props th {
-      background-color: #f0f0f0;
-      font-weight: bold;
-    }
-    h1 {
-      color: #ba0c2f;
-      border-bottom: 3px solid #ba0c2f;
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
-    .back-link {
-      display: inline-block;
-      margin-bottom: 1rem;
-      color: #ba0c2f;
-      text-decoration: none;
-    }
-    .back-link:hover {
-      text-decoration: underline;
-    }
     pre {
       max-height: 400px;
       overflow-y: auto;
-    }
-    .obj-container {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    .obj-container h1,
-    .obj-container h2,
-    .obj-container h3,
-    .obj-container h4 {
-      font-family: inherit;
     }
   </style>
 </head>
 <body>
   <div class="obj-container">
-    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
-    
+    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+
     <header class="util-margin-vert-lg">
-      <h1>Quiz Component</h1>
+      <h1 class="util-color-red util-margin-bottom-xl">Quiz Component</h1>
     </header>
 
-    <section class="component-demo">
-      <div class="demo-description">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON / CSV examples.</p>
 
         <p><strong>Embed formative quizzes directly in content pages.</strong> Supports multiple question types (multiple choice, multi-select, ordering, true/false, matching, short answer), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
@@ -113,11 +36,11 @@
       </div>
 
       <h2>Demo: All Question Types and Features (JSON)</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>This demo uses <code>quiz/quiz-sample.json</code></strong>, which includes all six question types: Multiple Choice, True/False, Short Answer, Matching, Multi-Select, and Ordering. The quiz below has all features enabled: timer (10 min with auto-submit), question randomization, retries, immediate feedback, and submission to the eLC assignment <strong>Quiz Demo 2</strong>.</p>
         <p><strong>How to use a JSON file:</strong> (1) Create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format). (2) Upload the file to <strong>course files</strong> (e.g. a <code>quiz/</code> folder next to your HTML page). (3) Set <code>type="local"</code> and <code>filename</code> on the quiz—this demo uses <code>quiz/quiz-sample.json</code>. Use a path relative to the page, or the full path from <strong>Manage Files</strong>. Shared institutional paths like <code>/shared/PublicFiles/…</code> are optional if your unit hosts files there.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-quiz
           quiz-id="demo-quiz-json"
           quiz-title="Quiz: All Types &amp; Features"
@@ -138,12 +61,12 @@
       </div>
 
       <h2 style="margin-top: 3rem;">Demo: Same Quiz from eLC CSV</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>This demo uses <code>quiz/quiz-sample.csv</code></strong> in the <strong>eLC question import (CSV) format</strong>. It loads the same six question types as the JSON demo above. Set <code>type="csv"</code> and point <code>filename</code> at the CSV file.</p>
         <p><strong>How to use a CSV file:</strong> (1) Export questions from eLC's question library, or hand-author a CSV in the eLC format (see <code>quiz/quiz-sample.csv</code> in this repo for a template covering all six types). (2) Upload the file to <strong>course files</strong> (a <code>quiz/</code> folder next to your HTML page works well). (3) Set <code>type="csv"</code> and <code>filename="quiz/quiz-sample.csv"</code> on the quiz. Lines starting with <code>//</code> are treated as comments and ignored.</p>
         <p><strong>Note:</strong> Only the eLC CSV layout is supported—generic spreadsheets will not parse. The component converts CSV rows into the same internal question format used for JSON, so all features (timer, retries, randomization, dropbox submission, grade sync) work the same way.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-quiz
           quiz-id="demo-quiz-csv"
           quiz-title="Quiz: All Types &amp; Features (CSV)"
@@ -157,7 +80,7 @@
         </uga-quiz>
       </div>
 
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <h4>Basic (JSON, no timer):</h4>
         <pre><code class="language-html">&lt;uga-quiz 
   quiz-id="demo-quiz"
@@ -207,7 +130,7 @@
         <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot; When synced, the most recent grade overwrites any current grade for each student.</p>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>JSON Question Format</h4>
         <p>The quiz component can load questions from a JSON file. The file must have a top-level <code>questions</code> array. Each question has <code>id</code>, <code>type</code>, <code>question</code>, <code>points</code>, <code>correctAnswer</code>, and optionally <code>options</code>, <code>explanation</code>, <code>caseSensitive</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the full format and examples.</p>
         <p><strong>Question types and correctAnswer format:</strong></p>
@@ -227,7 +150,7 @@
         </ol>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>eLC CSV Question Format</h4>
         <p>The quiz component can also load questions from a CSV file in eLC's <strong>Question Import</strong> layout (the same one Brightspace generates when you export a question library). Use <code>type="csv"</code> and point <code>filename</code> at the file.</p>
         <p>Each question is a block of rows. Required tags include <code>NewQuestion</code> (with question type), <code>QuestionText</code>, <code>Points</code>, and one of:</p>
@@ -248,8 +171,9 @@
         </ol>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
+        <div class="util-scrollable-content">
         <table>
           <tr>
             <th>Property</th>
@@ -342,9 +266,10 @@
             <td>Name of the eLC assignment (e.g. &quot;Quiz Demo 2&quot;). The <strong>instructor</strong> creates this assignment in eLC (Assignments) and <strong>makes it visible</strong>; if hidden, the component cannot find it and submissions fail. Use the exact assignment title here. See docs/QUIZ_DROPBOX_SETUP.md.</td>
           </tr>
         </table>
+        </div>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Question Types (JSON quick reference)</h4>
         <ul>
           <li><strong>multiple-choice:</strong> <code>options</code> array, <code>correctAnswer</code> is index (0-based)</li>
@@ -356,7 +281,7 @@
         </ul>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Features</h4>
         <ul>
           <li>✅ Multiple question types (MC, Multi-Select, Ordering, T/F, Matching, Short Answer)</li>
@@ -370,7 +295,7 @@
         </ul>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Automating submission to the gradebook (instructor)</h4>
         <p>Instructors can send quiz results from the assignment into the eLC gradebook in one step:</p>
         <ol>
@@ -382,7 +307,7 @@
         <p>There is no separate eLC setting to “automate” this—the one-click sync button is the automation. Students never write to the gradebook; only instructors trigger the sync.</p>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Setup Requirements</h4>
         <ol>
           <li><strong>Assignment:</strong> Instructor creates an assignment in eLC (Assignments) with the same name as <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;). <strong>Make the assignment visible</strong> to students (if hidden, submissions will not pass through). Set <strong>All submissions are kept</strong>. See docs/QUIZ_DROPBOX_SETUP.md.</li>

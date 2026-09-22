@@ -114,28 +114,35 @@ uga-callout {
   display: none;
 }
 
+/* Accent colors are set as CSS custom properties (not util-color-* classes) because
+   this stylesheet is injected once into document.head and shared by every <uga-callout>
+   instance on the page — there's no single element to put a utility class on here.
+   Four of the five match a UGA Design System palette color exactly (named below); the
+   fifth has no DS equivalent and stays a literal by necessity, not oversight. */
 .uga-callout--note {
-  --callout-accent: #004e60;
+  --callout-accent: #004e60; /* DS util-color-olympic */
   --callout-tint: rgba(0, 78, 96, 0.1);
 }
 
 .uga-callout--important {
-  --callout-accent: #e4002b;
+  --callout-accent: #e4002b; /* DS util-color-glory */
   --callout-tint: rgba(228, 0, 43, 0.1);
 }
 
 .uga-callout--tip {
-  --callout-accent: #00a3ad;
+  --callout-accent: #00a3ad; /* DS util-color-lake */
   --callout-tint: rgba(0, 163, 173, 0.1);
 }
 
 .uga-callout--example {
-  --callout-accent: #66435a;
+  --callout-accent: #66435a; /* DS util-color-athens */
   --callout-tint: rgba(102, 67, 90, 0.1);
 }
 
 .uga-callout--warning {
-  --callout-accent: #4d5500;
+  --callout-accent: #4d5500; /* No matching DS palette color; kept as a deliberate
+                                 custom value since the DS has no alert/callout-type
+                                 component to model a "warning" accent against. */
   --callout-tint: rgba(183, 191, 16, 0.2);
 }
 `;

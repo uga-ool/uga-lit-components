@@ -1,6 +1,7 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import './uga-callout.js';
 import { getVersions, getUser, getEnrollment, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import { loadData } from '../lib/data/data-loader.js';
@@ -146,11 +147,7 @@ class UgaInstructorNote extends LitElement {
     if (this.errorMessage) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-        <div class="obj-grid">
-          <div class="obj-grid__full util-background-light-gray util-pad-all-md" style="border-left: 4px solid #ba0c2f;">
-            <p><strong>Error:</strong> ${this.errorMessage}</p>
-          </div>
-        </div>
+        <uga-callout type="important" label="Error" body="${this.errorMessage}"></uga-callout>
       `;
     }
 

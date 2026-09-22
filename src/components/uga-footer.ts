@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import type { PropertyValues } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
+import './uga-callout.js';
 
 interface NavigationLink {
   text: string;
@@ -342,20 +343,14 @@ class UgaFooter extends LitElement {
     if (this.loaded && !this.footerData && this.loadError) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-        <div class="cmp-site-footer" style="padding: 1rem; background: #fff3cd; border: 2px solid #ffc107; border-radius: 4px; margin: 1rem 0;">
-          <p style="margin: 0; color: #856404; font-weight: bold;"><strong>uga-footer Error:</strong> ${this.loadError}</p>
-          <p style="margin: 0.5rem 0 0 0; color: #856404; font-size: 0.9em;">This component does NOT use design-system footer data. It only loads from your JSON file.</p>
-        </div>
+        <uga-callout type="warning" label="uga-footer Error" body="${this.loadError} This component does NOT use design-system footer data. It only loads from your JSON file."></uga-callout>
       `;
     }
-    
+
     if (!this.footerData) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-        <div class="cmp-site-footer" style="padding: 1rem; background: #fff3cd; border: 2px solid #ffc107; border-radius: 4px; margin: 1rem 0;">
-          <p style="margin: 0; color: #856404; font-weight: bold;"><strong>uga-footer Error:</strong> No footer data loaded.</p>
-          <p style="margin: 0.5rem 0 0 0; color: #856404; font-size: 0.9em;">Check the browser console for details. This component does NOT use design-system footer data.</p>
-        </div>
+        <uga-callout type="warning" label="uga-footer Error" body="No footer data loaded. Check the browser console for details. This component does NOT use design-system footer data."></uga-callout>
       `;
     }
 
