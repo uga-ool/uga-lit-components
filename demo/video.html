@@ -118,7 +118,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Player ID from the Kaltura embed code — the number in <code>kaltura_player_&lt;N&gt;</code>. Feeds into the embed container's id (each element also gets a unique per-instance suffix, so multiple <code>&lt;uga-video&gt;</code> elements can safely share or omit this). Default: 660400380.</td>
+            <td>The Kaltura player to render in — the <strong>uiConf ID</strong>, i.e. the number after <code>uiconf_id/</code> in the Kaltura embed code. This is what carries program/college branding and end cards. Omit it for the standard UGA Online player (<code>57494843</code>). Mixing different players on one page loads a separate player bundle for each, so prefer one player per page unless the branding genuinely differs.</td>
           </tr>
           <tr>
             <td>name</td>
@@ -141,8 +141,8 @@
       <div class="demo-code">
         <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
 
-&lt;!-- Player ID from the Kaltura embed code (the kaltura_player_&lt;N&gt; number) --&gt;
-&lt;uga-video videoid="1_icw0df6y" playerid="8018531"&gt;&lt;/uga-video&gt;
+&lt;!-- A specific branded player: the uiconf_id number from the Kaltura embed code --&gt;
+&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
 &lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
@@ -245,7 +245,7 @@
           <tr>
             <td>playerid</td>
             <td>string</td>
-            <td>Kaltura player ID (default: 53568732)</td>
+            <td>Kaltura player uiConf ID (default: 57494843)</td>
           </tr>
           <tr>
             <td>includerating</td>
