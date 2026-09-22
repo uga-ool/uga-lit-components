@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import './uga-callout.js';
 import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, getGradebook, getGradeValues, getBulkGradeValues, getClasslist, getAssignmentSubmissions } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
 import { getItemType, getTypesArray, shouldIncludeItem, DEFAULT_TYPES_STRING, type ItemType } from '../lib/data/item-type-utils.js';
@@ -982,19 +983,17 @@ class UgaAssignment extends LitElement {
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
       <div class="util-margin-top-md">
         ${this.errorMessage ? html`
-          <div class="util-pad-all-md util-margin-bottom-md util-background-light-gray" style="border-left: 4px solid #ba0c2f;">
-            <p><strong>${this.errorMessage}</strong></p>
-          </div>
+          <uga-callout type="important" body="${this.errorMessage}"></uga-callout>
         ` : ''}
         ${this.exportResults ? html`
-          <div class="util-pad-all-md util-margin-bottom-md" style="background-color: ${this.exportResults.failed === 0 ? '#d4edda' : '#f8d7da'}; border-left: 4px solid ${this.exportResults.failed === 0 ? '#28a745' : '#dc3545'};">
-            <p><strong>Export Results:</strong> ${this.exportResults.success} successful, ${this.exportResults.failed} failed</p>
+          <uga-callout type="${this.exportResults.failed === 0 ? 'tip' : 'important'}" label="Export Results">
+            <p>${this.exportResults.success} successful, ${this.exportResults.failed} failed</p>
             ${this.exportResults.errors.length > 0 ? html`
-              <ul style="margin-top: 0.5rem;">
+              <ul class="util-margin-top-sm">
                 ${this.exportResults.errors.map(error => html`<li>${error}</li>`)}
               </ul>
             ` : ''}
-          </div>
+          </uga-callout>
         ` : ''}
         
         ${(this.student === false || this.student === null) && this.enableExport ? html`
@@ -1009,14 +1008,15 @@ class UgaAssignment extends LitElement {
           </div>
         ` : ''}
         
-        <table style="width: 100%; border-collapse: collapse;">
+        <div class="util-scrollable-content">
+        <table>
           <thead>
-            <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ba0c2f;">
-              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Assignment</th>
-              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Type</th>
-              <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Due Date</th>
+            <tr>
+              <th>Assignment</th>
+              <th>Type</th>
+              <th>Due Date</th>
               ${(this.student === false || this.student === null) && this.enableExport ? html`
-                <th style="padding: 0.75rem; text-align: left; font-weight: bold; color: #000000;">Actions</th>
+                <th>Actions</th>
               ` : ''}
             </tr>
           </thead>
@@ -1028,17 +1028,17 @@ class UgaAssignment extends LitElement {
               const isAssignment = getItemType(assignment) === 'assignment';
 
               return html`
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                  <td style="padding: 0.75rem;">
-                    <a href="${assignmentLink}" target="_blank" style="color: #ba0c2f; text-decoration: none;">
+                <tr>
+                  <td>
+                    <a href="${assignmentLink}" target="_blank" class="util-color-red">
                       ${assignment.Name}
                     </a>
                   </td>
-                  <td style="padding: 0.75rem;">${assignmentType}</td>
-                  <td style="padding: 0.75rem;">${dueDate}</td>
+                  <td>${assignmentType}</td>
+                  <td>${dueDate}</td>
                   ${(this.student === false || this.student === null) && this.enableExport && isAssignment ? html`
-                    <td style="padding: 0.75rem;">
-                      <button 
+                    <td>
+                      <button
                         class="cmp-button cmp-button--primary"
                         @click=${() => this.exportGrades(assignment)}
                         ?disabled=${this.exportInProgress}
@@ -1047,13 +1047,14 @@ class UgaAssignment extends LitElement {
                       </button>
                     </td>
                   ` : (this.student === false || this.student === null) && this.enableExport ? html`
-                    <td style="padding: 0.75rem;">—</td>
+                    <td>—</td>
                   ` : ''}
                 </tr>
               `;
             })}
           </tbody>
         </table>
+        </div>
       </div>
     `;
   }

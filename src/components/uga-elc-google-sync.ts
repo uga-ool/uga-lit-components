@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import './uga-callout.js';
 import { getVersions, getUser, getEnrollment, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import { getElcGoogleSyncPreview, type ElcGoogleSyncPreview } from '../lib/api/d2l-client-elc-google-sync.js';
@@ -192,7 +193,7 @@ export class UgaElcGoogleSync extends LitElement {
     if (this.loading) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-        <div class="util-pad-all-md util-background-creamery__75 util-radius-all-md" style="border: 1px solid #e0e0e0;">
+        <div class="util-pad-all-md util-background-creamery__75 util-radius-all-md">
           <p>Loading eLC ⇄ Google Sync…</p>
         </div>
       `;
@@ -201,17 +202,14 @@ export class UgaElcGoogleSync extends LitElement {
     if (this.errorMessage) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-        <div class="util-pad-all-md" style="border-left: 4px solid #ba0c2f; background: #fff5f5;">
-          <p><strong>eLC ⇄ Google Sync</strong></p>
-          <p>${this.errorMessage}</p>
-        </div>
+        <uga-callout type="important" label="eLC ⇄ Google Sync" body="${this.errorMessage}"></uga-callout>
       `;
     }
 
     if (!this.stubMode && !this.isAllowedAdmin()) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-        <div class="util-pad-all-md util-font-size-sm" style="color: #666;">Access denied.</div>
+        <div class="util-pad-all-md util-font-size-sm util-color-dark-gray">Access denied.</div>
       `;
     }
 

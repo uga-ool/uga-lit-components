@@ -11,80 +11,7 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
   <style>
-    .component-demo {
-      margin-bottom: 4rem;
-      padding: 2rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      background-color: #ffffff;
-    }
-    .demo-description {
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      background-color: #f5f5f5;
-      border-left: 4px solid #ba0c2f;
-    }
-    .demo-example {
-      margin-bottom: 1.5rem;
-      padding: 1.5rem;
-      background-color: #fafafa;
-      border: 1px dashed #ccc;
-    }
-    .demo-code {
-      margin-top: 1rem;
-    }
-    .demo-props {
-      margin: 1rem 0;
-      padding: 1rem;
-      background-color: #fff9e6;
-      border-left: 4px solid #ffc107;
-    }
-    .demo-props h4 {
-      margin-top: 0;
-    }
-    .demo-props table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-    }
-    .demo-props th,
-    .demo-props td {
-      padding: 0.5rem;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    .demo-props th {
-      background-color: #f0f0f0;
-      font-weight: bold;
-    }
-    h1 {
-      color: #ba0c2f;
-      border-bottom: 3px solid #ba0c2f;
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
-    h2 {
-      color: #333;
-      margin-top: 3rem;
-      margin-bottom: 1rem;
-    }
-    .category-header {
-      background-color: #ba0c2f;
-      color: white;
-      padding: 1rem 2rem;
-      margin: 3rem 0 2rem 0;
-      border-radius: 4px;
-    }
-    .intro {
-      padding: 2rem;
-      background-color: #f0f0f0;
-      border-radius: 8px;
-      margin-bottom: 3rem;
-    }
     /* Completely remove spacing around video component */
     uga-video {
       display: block;
@@ -108,8 +35,8 @@
     
     <!-- Header -->
     <header class="util-margin-vert-lg">
-      <h1>UGA Lit Components Demo</h1>
-      <div class="intro">
+      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">UGA Lit Components Demo</h1>
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-xl util-margin-bottom-xl">
         <p><strong>UGA Lit Components Demo</strong></p>
         <p>This page showcases all available Lit web components for UGA's eLC environment. Each component includes a live example, properties, and sample code.</p>
         <p><strong>For instructional designers:</strong> In production eLC pages, load the bundle with <code>src="/shared/ugaonline/js/uga-components.js"</code>. On <code>localhost</code>, this page loads <code>/dist/js/uga-components.js</code> (run <code>npm run build</code> first). Design System <code>base.css</code> is required for shadow/radius utilities. Step-by-step setup: <a href="setup.html">Setup &amp; Usage</a>.</p>
@@ -120,19 +47,20 @@
     <uga-toc></uga-toc>
 
     <!-- Table of Contents Component Demo -->
-    <section class="component-demo" id="toc-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="toc-demo">
       <h2>Table of Contents Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Auto-generates a navigable table of contents</strong> from page headings (default: h2 and h3). Optional <code>headings</code> attribute selects levels (e.g. <code>h2,h3,h4</code>). Provides smooth scrolling navigation, and auto-generates IDs for headings that don't already have one. Panel elevation uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>.</p>
         <p><em>Note: The TOC above this section is a live example using the default (h2, h3). h4 and lower are excluded unless you set <code>headings</code>.</em></p>
+        <p><a href="toc.html">Open the full TOC demo</a> for a page with sample sections the TOC actually navigates.</p>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <ul>
           <li><code>headings</code> (optional) — Comma-separated heading tags to include. Default: <code>h2,h3</code>.</li>
         </ul>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-toc&gt;&lt;/uga-toc&gt;
 
 &lt;uga-toc headings="h2,h3,h4"&gt;&lt;/uga-toc&gt;</uga-code>
@@ -140,23 +68,24 @@
     </section>
 
     <!-- Content Components Category -->
-    <div class="category-header">
-      <h2 id="content-components" style="margin: 0; color: white;">Content Components</h2>
+    <div class="category-header util-background-red util-color-white util-radius-all-sm util-pad-all-lg util-margin-vert-xl">
+      <h2 id="content-components" class="cmp-heading-2 util-margin-bottom-none">Content Components</h2>
     </div>
 
     <!-- Accordion Component -->
-    <section class="component-demo" id="accordion-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="accordion-demo">
       <h2>Accordion Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Creates expandable/collapsible content sections.</strong> Great for FAQs, course modules, or organizing large amounts of content.</p>
         <p><strong>Example data file:</strong> Download
           <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>accordion/accordion-demo.json</code></a>
           to modify and upload it to your course files.</p>
+        <p><a href="accordion.html">Open the full Accordion demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-accordion type="local" filename="accordion/accordion-demo.json"></uga-accordion>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -181,19 +110,19 @@
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-accordion type="local" filename="accordion/accordion-demo.json"&gt;&lt;/uga-accordion&gt;</uga-code>
       </div>
     </section>
 
     <!-- Callout Component -->
-    <section class="component-demo" id="callout-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="callout-demo">
       <h2>Callout Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Semantic callout/aside blocks</strong> with consistent brand-color pairings and an optional pseudo-label that does not create extra page headings. Corners use Design System <code>util-radius-all-sm</code>.</p>
         <p>Use <a href="callout.html">the standalone callout demo</a> for focused examples and copy-paste snippets.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-callout
           type="note"
           size="small"
@@ -232,7 +161,7 @@
           id="id-usage-callout-all-in-one"
         ></uga-callout>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -262,7 +191,7 @@
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-callout type="note" size="small" label="Note (Small)" body="Use note callouts for context that supports the primary instruction."&gt;&lt;/uga-callout&gt;
 
 &lt;uga-callout type="important" size="large" label="Important (Large)" body="Complete the identity check before opening the exam in eLC."&gt;&lt;/uga-callout&gt;
@@ -272,18 +201,19 @@
     </section>
 
     <!-- Tabs Component -->
-    <section class="component-demo" id="tabs-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="tabs-demo">
       <h2>Tabs Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Creates tabbed content sections.</strong> Ideal for organizing related content that users can switch between without leaving the page.</p>
         <p><strong>Example data file:</strong> Download
           <a href="https://drive.google.com/file/d/1a4rAQHgJCY8Z6u-dRpQ4fp8yibmDLm78/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>tabs/tabs-demo.json</code></a>
           to modify and upload it to your course files.</p>
+        <p><a href="tabs.html">Open the full Tabs demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-tabs type="local" filename="tabs/tabs-demo.json"></uga-tabs>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -308,24 +238,25 @@
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-tabs type="local" filename="tabs/tabs-demo.json"&gt;&lt;/uga-tabs&gt;</uga-code>
       </div>
     </section>
 
     <!-- Slideshow Component -->
-    <section class="component-demo" id="slideshow-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="slideshow-demo">
       <h2>Slideshow Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Creates an image slideshow with navigation controls.</strong> Perfect for visual content, step-by-step instructions, or image galleries. Controls use Design System radius utilities.</p>
         <p><strong>Example data file:</strong> Download
           <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>slideshow/slideshow-demo.json</code></a>
           to modify and upload it to your course files.</p>
+        <p><a href="slideshow.html">Open the full Slideshow demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-slideshow filename="slideshow/slideshow-demo.json" imageheight="400"></uga-slideshow>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -345,19 +276,19 @@
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-slideshow filename="slideshow/slideshow-demo.json" imageheight="400"&gt;&lt;/uga-slideshow&gt;</uga-code>
       </div>
     </section>
 
     <!-- Image Component -->
-    <section class="component-demo" id="image-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="image-demo">
       <h2>Image Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Use a relative path (e.g. <code>image/your-image.jpg</code> when the image is in an <code>image/</code> folder next to your page) or the full path from eLC Manage Files.</p>
         <p><strong>Hover affordance (opt-in):</strong> Add <code>hover-shadow</code> to apply Design System <code>util-shadow-hover</code> (requires <code>base.css</code>). Leave it off for a static look. For static elevation use <code>shadow="base"</code>, <code>shadow="deep"</code>, or <code>shadow="tinted"</code>. See <a href="image.html">Image demo</a>.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-image
           src="image/demo_image.jpg"
           alt="Sample image for demonstration"
@@ -377,7 +308,7 @@
           lightbox-disabled
         ></uga-image>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -447,7 +378,7 @@
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-image src="image/your-image.jpg" alt="Description" caption="Optional caption"&gt;&lt;/uga-image&gt;
 
 &lt;uga-image src="image/your-image.jpg" alt="Description" caption="Optional caption" hover-shadow&gt;&lt;/uga-image&gt;
@@ -457,23 +388,24 @@
     </section>
 
     <!-- Media Components Category -->
-    <div class="category-header">
-      <h2 id="media-components" style="margin: 0; color: white;">Media Components</h2>
+    <div class="category-header util-background-red util-color-white util-radius-all-sm util-pad-all-lg util-margin-vert-xl">
+      <h2 id="media-components" class="cmp-heading-2 util-margin-bottom-none">Media Components</h2>
     </div>
 
     <!-- Video Component -->
     <!-- Single Video Section -->
-    <section class="component-demo" id="video-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="video-demo">
       <h2>Single Video</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Embeds a single Kaltura video with customizable player.</strong> Use this method when you have one video to display. Logo/watermark is hidden by default.</p>
+        <p><a href="video.html">Open the full Video demo</a> for single, YouTube, and multi-video (JSON) examples on one standalone page.</p>
       </div>
 
-      <div class="demo-example">
+      <div class="demo-example util-pad-all-lg util-margin-bottom-lg">
         <uga-video videoid="1_icw0df6y" playerid="53568732"></uga-video>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties for Single Video</h4>
         <table>
           <tr>
@@ -499,7 +431,7 @@
         </table>
       </div>
 
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;
 
 &lt;!-- With rating --&gt;
@@ -508,36 +440,36 @@
     </section>
 
     <!-- YouTube Video Section -->
-    <section class="component-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
       <h2>YouTube Videos</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Embed YouTube videos</strong> with <code>host="youtube"</code> and the video ID from the URL (e.g., <code>yx3bxPfbdRM</code> from youtube.com/watch?v=yx3bxPfbdRM).</p>
       </div>
 
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"></uga-video>
       </div>
 
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"&gt;&lt;/uga-video&gt;</uga-code>
       </div>
     </section>
 
     <!-- Multiple Videos Section -->
-    <section class="component-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
       <h2>Multiple Videos from JSON File</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Embeds multiple Kaltura videos from a JSON data file.</strong> Use this method when you want to load multiple videos from a single JSON file. Perfect for course playlists or module video collections.</p>
         <p><strong>Example data file:</strong> Download
           <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos/videos-demo.json</code></a>
           to modify and upload it to your course files.</p>
       </div>
 
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-video type="local" filename="videos/videos-demo.json"></uga-video>
       </div>
 
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties for Multiple Videos</h4>
         <table>
           <tr>
@@ -573,7 +505,7 @@
         </table>
       </div>
 
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;!-- Multiple videos from file --&gt;
 &lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;
 
@@ -583,19 +515,20 @@
     </section>
 
     <!-- Code Component -->
-    <section class="component-demo" id="code-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="code-demo">
       <h2>Code Block Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays syntax-highlighted code with copy functionality.</strong> Supports multiple languages via Prism.js. Can load from file or inline code.</p>
+        <p><a href="code.html">Open the full Code demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-code language="javascript">function greet(name) {
   console.log(`Hello, ${name}!`);
 }
 
 greet('Student');</uga-code>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -620,7 +553,7 @@ greet('Student');</uga-code>
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-code language="javascript"&gt;
 const x = 10;
 console.log(x);
@@ -632,17 +565,18 @@ console.log(x);
     </section>
 
     <!-- Interactive Components Category -->
-    <div class="category-header">
-      <h2 id="interactive-components" style="margin: 0; color: white;">Interactive Components</h2>
+    <div class="category-header util-background-red util-color-white util-radius-all-sm util-pad-all-lg util-margin-vert-xl">
+      <h2 id="interactive-components" class="cmp-heading-2 util-margin-bottom-none">Interactive Components</h2>
     </div>
 
     <!-- Rating Component -->
-    <section class="component-demo" id="rating-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="rating-demo">
       <h2>Rating Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Collects user ratings for content.</strong> Integrates with eLC forums to store feedback. Useful for video ratings, resource evaluations, etc.</p>
+        <p><a href="rating.html">Open the full Rating demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-rating 
           contentid="demo-video-001" 
           contenttype="video" 
@@ -650,7 +584,7 @@ console.log(x);
           contentplatform="kaltura">
         </uga-rating>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -680,7 +614,7 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-rating 
   contentid="video-123" 
   contenttype="video" 
@@ -691,13 +625,13 @@ console.log(x);
     </section>
 
     <!-- Quiz Component -->
-    <section class="component-demo" id="quiz-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="quiz-demo">
       <h2>Quiz Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Embed formative quizzes directly in content pages.</strong> Loads questions from a JSON file (<code>type="local"</code> + <code>filename="your-quiz.json"</code>) or from an eLC CSV question-import file (<code>type="csv"</code> + <code>filename="your-quiz.csv"</code>). The JSON file must have a top-level <code>questions</code> array—see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the format. CSV must follow the eLC question-import layout (see <code>quiz/quiz-sample.csv</code>). Supports multiple question types (multiple choice, true/false, matching, short answer, multi-select, ordering), auto-grading, immediate feedback, retry attempts, timers, and submission to an eLC assignment for tracking.</p>
         <p><a href="quiz.html">Open full Quiz &amp; Grade Sync demo</a> — includes both JSON and CSV live examples, plus <code>uga-quiz-grade-sync</code> (instructor-only button to sync quiz submissions to the gradebook). Use assignment &quot;Quiz Demo 2&quot; with Text or File submissions, <strong>make the assignment visible</strong> to students, and set <code>dropbox-assignment-name</code> (or <code>dropbox-folder-id</code>) to test.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-quiz 
           quiz-id="demo-quiz-main"
           quiz-title="Sample Formative Quiz"
@@ -713,7 +647,7 @@ console.log(x);
         <uga-instructor-note type="local" filename="quiz/quiz-sync-note.html"></uga-instructor-note>
         <p></p>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -793,7 +727,7 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <h4>Basic Usage (JSON file)</h4>
         <uga-code language="markup">&lt;uga-quiz 
   quiz-id="quiz-1"
@@ -833,17 +767,17 @@ console.log(x);
     </section>
 
     <!-- Course Analytics Component -->
-    <section class="component-demo" id="course-analytics-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="course-analytics-demo">
       <h2>Course Analytics Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Course-wide analytics aggregating data from content, assignments, and discussions.</strong> Shows module-level consumption statistics and comparisons across course modules.</p>
         <p><strong>Important:</strong> This component does <strong>not</strong> perform its own role check. Hide the embedding page from students with eLC release conditions before publishing.</p>
         <p><a href="course-analytics.html">Open full Course Analytics demo</a> — includes detailed usage examples and property documentation.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-course-analytics></uga-course-analytics>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -884,7 +818,7 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <h4>Basic Usage</h4>
         <uga-code language="markup">&lt;uga-course-analytics&gt;&lt;/uga-course-analytics&gt;</uga-code>
         
@@ -900,19 +834,19 @@ console.log(x);
     </section>
 
     <!-- eLC ⇄ Google Sync -->
-    <section class="component-demo" id="elc-google-sync-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="elc-google-sync-demo">
       <h2>eLC ⇄ Google Sync</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Admin-only</strong> workflows for template export to Google Drive, clearing a template, and back-copy from live to template (MVP: read-only preview). Configure <code>admin-role-names</code> or <code>admin-role-ids</code> in eLC. <a href="elc-google-sync.html">Full demo</a> — uses <code>stub-mode</code> below for this page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-elc-google-sync
           stub-mode
           template-ou="demo-template-ou"
           live-ou="demo-live-ou"
         ></uga-elc-google-sync>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-elc-google-sync
   template-ou="TEMPLATE_ORG_UNIT_ID"
   admin-role-names="Super Administrator"&gt;
@@ -921,36 +855,38 @@ console.log(x);
     </section>
 
     <!-- Instructor Card Component -->
-    <section class="component-demo" id="instructor-card-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="instructor-card-demo">
       <h2>Instructor Card Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays an instructor profile card with photo and name.</strong> Automatically detects the course from the URL and finds the instructor from the classlist. Works for students, instructors, and admins. Cards use Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>.</p>
+        <p><a href="instructor-card.html">Open the full Instructor Card demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-instructor-card></uga-instructor-card>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <p>This component has no required properties. It automatically detects the course and loads instructor information.</p>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-instructor-card&gt;&lt;/uga-instructor-card&gt;</uga-code>
       </div>
     </section>
 
     <!-- Circles Component -->
-    <section class="component-demo" id="circles-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="circles-demo">
       <h2>Circles Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays circular figures with captions.</strong> Perfect for statistics, progress indicators, or visual data representation.</p>
         <p><strong>Example data file:</strong> Download
           <a href="https://drive.google.com/file/d/1M4Yqk_cgFMzCftXe1Whw8ytyH6ShyiCA/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>circles/circles-demo.json</code></a>
           to modify and upload it to your course files.</p>
+        <p><a href="circles.html">Open the full Circles demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-circles type="local" filename="circles/circles-demo.json"></uga-circles>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -975,22 +911,23 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-circles type="local" filename="circles/circles-demo.json"&gt;&lt;/uga-circles&gt;</uga-code>
       </div>
     </section>
 
     <!-- Assignment Component -->
-    <section class="component-demo" id="assignment-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="assignment-demo">
       <h2>Assignment Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
         <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can download a per-assignment CSV that lists all students, submission status, and the current gradebook value (blank if not graded yet).</p>
+        <p><a href="assignment.html">Open the full Assignment demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-assignment></uga-assignment>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -1010,7 +947,7 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <h4>Basic Usage</h4>
         <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
         
@@ -1034,41 +971,42 @@ console.log(x);
     </section>
 
     <!-- Navigation Components Category -->
-    <div class="category-header">
-      <h2 id="navigation-components" style="margin: 0; color: white;">Navigation Components</h2>
+    <div class="category-header util-background-red util-color-white util-radius-all-sm util-pad-all-lg util-margin-vert-xl">
+      <h2 id="navigation-components" class="cmp-heading-2 util-margin-bottom-none">Navigation Components</h2>
     </div>
 
     <!-- Return to Top Component -->
-    <section class="component-demo" id="return-to-top-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="return-to-top-demo">
       <h2>Return to Top Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Adds a "Return to Top" button.</strong> Appears after scrolling down, provides smooth scroll back to the top of the page.</p>
+        <p><a href="return-to-top.html">Open the full Return to Top demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-return-to-top></uga-return-to-top>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <p>No properties required - automatically appears when user scrolls.</p>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-return-to-top&gt;&lt;/uga-return-to-top&gt;</uga-code>
       </div>
     </section>
 
     <!-- Footer Component -->
-    <section class="component-demo" id="footer-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="footer-demo">
       <h2>Footer Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays a branded UGA footer.</strong> Content is driven by a JSON data file. Customization happens via the JSON file in eLC. By default, loads from local course files using the <code>filename</code> property.</p>
         <p><strong>Example data file:</strong> The <code>filename</code> must match the file exactly. Download
           <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>footer/footer-demo.json</code></a>
           to modify and upload to your course files.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-footer filename="footer/footer-demo.json"></uga-footer>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -1098,7 +1036,7 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <h4>Basic Usage (Local File)</h4>
         <uga-code language="markup">&lt;uga-footer filename="footer/footer-demo.json"&gt;&lt;/uga-footer&gt;</uga-code>
         
@@ -1110,23 +1048,24 @@ console.log(x);
     </section>
 
     <!-- Instructor Tools Category -->
-    <div class="category-header">
-      <h2 id="instructor-tools" style="margin: 0; color: white;">Instructor Tools</h2>
+    <div class="category-header util-background-red util-color-white util-radius-all-sm util-pad-all-lg util-margin-vert-xl">
+      <h2 id="instructor-tools" class="cmp-heading-2 util-margin-bottom-none">Instructor Tools</h2>
     </div>
 
     <!-- Instructor Note Component -->
-    <section class="component-demo" id="instructor-note-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="instructor-note-demo">
       <h2>Instructor Note Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays notes visible only to instructors.</strong> Uses eLC role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
         <p><strong>Content file:</strong> The note is an <strong>HTML fragment</strong> (not JSON). Download
           <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note/instructor-note-demo.html</code></a>,
           edit the HTML, and upload it to your course files.</p>
+        <p><a href="instructor-note.html">Open the full Instructor Note demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"></uga-instructor-note>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -1151,21 +1090,22 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <uga-code language="markup">&lt;uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
       </div>
     </section>
 
     <!-- Due Date Component -->
-    <section class="component-demo" id="duedate-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="duedate-demo">
       <h2>Due Date Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays due dates for assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays all items with due dates in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
+        <p><a href="duedate.html">Open the full Due Date demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-duedate></uga-duedate>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -1180,7 +1120,7 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <h4>Basic Usage</h4>
         <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;</uga-code>
         
@@ -1197,16 +1137,17 @@ console.log(x);
     </section>
 
     <!-- Course Calendar Component -->
-    <section class="component-demo" id="course-calendar-demo">
+    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl" id="course-calendar-demo">
       <h2>Course Calendar Component</h2>
-      <div class="demo-description">
+      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
         <p><strong>Displays a full course calendar from JSON or CSV.</strong> Supports week separators, row types (open/due/holiday/deadline/final), assignment tags, and an optional live sync mode to align date cells with eLC assignment due dates from the current course. The scroll panel uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>.</p>
         <p><strong>Example data files:</strong> Use <code>course-calendar/course-calendar-demo.json</code> or <code>course-calendar/course-calendar-demo.csv</code>. For CSV authoring, start with <code>course-calendar/course-calendar-template.csv</code>.</p>
+        <p><a href="course-calendar.html">Open the full Course Calendar demo</a> for a focused, standalone page.</p>
       </div>
-      <div class="demo-example">
+      <div class="util-pad-all-lg util-margin-bottom-lg">
         <uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"></uga-course-calendar>
       </div>
-      <div class="demo-props">
+      <div class="util-margin-top-md util-margin-bottom-md">
         <h4>Properties</h4>
         <table>
           <tr>
@@ -1251,7 +1192,7 @@ console.log(x);
           </tr>
         </table>
       </div>
-      <div class="demo-code">
+      <div class="util-margin-top-md">
         <h4>Basic Usage</h4>
         <uga-code language="markup">&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;
 

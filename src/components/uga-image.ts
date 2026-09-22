@@ -85,7 +85,11 @@ class UgaImage extends LitElement {
       cursor: default;
     }
 
-    /* Fallbacks when page CSS lacks Design System shadow utilities (match v1.5.3 values). */
+    /* Fallbacks for the brief window before the page's own base.css <link> (or this
+       component's, added below) finishes loading — without these the shadow flashes in
+       late on first paint. Verified against the live design.online.uga.edu/css/base.css
+       util-shadow-* rules (2026-09-21): values match byte-for-byte. Re-verify against
+       base.css if the Design System ever changes its shadow palette. */
     uga-image .cmp-image__container.util-shadow-base {
       box-shadow: 0 4px 8px #0003, 0 8px 16px #0003;
     }

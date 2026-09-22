@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import './uga-callout.js';
 import { getVersions, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import { getCourseAnalytics } from '../lib/api/analytics-utils.js';
@@ -97,11 +98,7 @@ class UgaCourseAnalytics extends LitElement {
     if (this.errorMessage) {
       return html`
         <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-        <div class="obj-grid">
-          <div class="obj-grid__full util-background-light-gray util-pad-all-md" style="border-left: 4px solid #ba0c2f;">
-            <p><strong>Error:</strong> ${this.errorMessage}</p>
-          </div>
-        </div>
+        <uga-callout type="important" label="Error" body="${this.errorMessage}"></uga-callout>
       `;
     }
 
@@ -119,9 +116,6 @@ class UgaCourseAnalytics extends LitElement {
     return html`
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
       <style>
-        .course-analytics {
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
         .analytics-header {
           background-color: #f5f5f5;
           padding: 1.5rem;

@@ -11,6 +11,35 @@ All notable changes to this project will be documented in this file.
 - `uga-accordion` and `uga-slideshow` use `loadData()` instead of raw `axios.get`.
 - `uga-footer`: `@customElement` registration; removed debug `console.log` calls.
 - Updated [src/types/global.d.ts](src/types/global.d.ts) (bundled axios note; `window.D2L`).
+- **Design System compliance pass.** Removed styling that wasn't sourced from the UGA
+  Online Design System, across both `demo/` and the shipped components:
+  - `demo/*.html` (25 files): removed the redundant Prism.js CDN includes (syntax
+    highlighting already comes from the DS's own bundled Prism via `base.css`/
+    `scripts.js` — verified `<uga-code>` still highlights correctly with zero Prism
+    scripts loaded on the page); removed system-font overrides that fought the DS's
+    Merriweather/Merriweather Sans/Oswald fonts (`course-analytics.html`, `quiz.html`,
+    `quiz/quiz10.html`, `quiz/quiz20.html`); replaced the hand-rolled, hardcoded-hex
+    boilerplate CSS (`.component-demo`, `.demo-description`, `.demo-example`,
+    `.demo-props`, `.category-header`, `.intro`, `h1`, `.back-link`) with real DS
+    `util-*` utility classes; converted the four duplicated yellow "Instructor Note"
+    boxes and several ad hoc note/warning boxes to actual `<uga-callout>` usage.
+  - `uga-callout`, `uga-course-calendar`, `uga-quiz`: annotated every hardcoded color
+    that exactly matches a DS palette token, and left a comment explaining the ones
+    that don't (DS has no alert component, no green, and no error-red distinct from
+    brand red, so quiz correct/incorrect feedback and the calendar's status colors
+    stay deliberately custom).
+  - `uga-slideshow`: removed a dead, fully-duplicated `static styles` block — it had
+    zero effect (this component overrides `createRenderRoot()` for light DOM, which
+    bypasses Lit's `static styles` adoption entirely), so only the inline `<style>`
+    in `render()` was ever actually applied.
+  - `uga-assignment`, `uga-course-analytics`, `uga-duedate`, `uga-course-calendar`,
+    `uga-elc-google-sync`, `uga-instructor-note`, `uga-footer`: replaced hand-rolled
+    error/warning boxes with `<uga-callout>`. `uga-duedate` and `uga-assignment`'s
+    fully hand-styled tables were simplified to bare `<table>` markup, which the DS
+    auto-styles with no class needed.
+  - `uga-image`'s shadow-utility fallback rules were verified against the live DS
+    `base.css` (byte-for-byte match) and kept, with a clearer comment on why they
+    exist (first-paint race before `base.css` finishes loading).
 
 ### Bug Fixes
 

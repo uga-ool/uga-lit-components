@@ -11,7 +11,9 @@ class UgaReturnToTop extends LitElement {
     return this;
   }
 
-  // Light DOM styles injected into the page
+  // Light DOM styles injected into the page. background-color is UGA red (#ba0c2f, DS
+  // util-color-red) at 70% opacity for a translucent FAB — the DS has no utility for a
+  // translucent brand-color background, so this stays a literal rgba() by necessity.
   private styleTag() {
     return html`<style>
       uga-return-to-top {

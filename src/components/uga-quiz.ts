@@ -1101,7 +1101,9 @@ class UgaQuiz extends LitElement {
       }
     }
 
-    // HTML: structured layout
+    // HTML: structured layout. This renders inside D2L's own dropbox/comment UI, not
+    // on a UGA-Design-System page, so there's no Merriweather/Oswald to inherit — the
+    // generic sans-serif fallback here is intentional, not a DS-compliance gap.
     let html = '<div style="font-family: sans-serif; max-width: 36em;">';
     html += '<p style="font-size: 1.1em; font-weight: bold; margin-bottom: 0.5em;">' + esc(summaryLine) + '</p>';
     html += '<table style="border-collapse: collapse; margin-bottom: 1em;">';
@@ -1762,6 +1764,18 @@ class UgaQuiz extends LitElement {
 
     return html`
       <style>
+        /* This is a fully custom interactive quiz UI (buttons, progress bar, and
+           correct/incorrect answer feedback), so it needs semantic colors the UGA
+           Design System doesn't provide: no green in the DS palette at all (so
+           "correct" stays Material-style green, #4caf50/#e8f5e9), and no separate
+           error-red distinct from the brand red (DS's only red is #ba0c2f, already
+           used here for brand/primary-button accents — reusing it for "incorrect"
+           too would make error states visually indistinguishable from normal brand
+           styling, so #f44336/#d32f2f/#ffebee stay deliberate Material-style reds).
+           Grays like #ddd/#ccc/#f5f5f5/#f0f0f0/#333 are close to but not exact
+           matches for any DS token (checked against the full palette) and stay
+           literal for the same reason. The few colors below that DO exactly match
+           a DS token are noted inline. */
         .quiz-container {
           max-width: 800px;
           margin: 2rem auto;
@@ -1777,12 +1791,12 @@ class UgaQuiz extends LitElement {
           gap: 1rem;
           margin-bottom: 2rem;
           padding-bottom: 1rem;
-          border-bottom: 2px solid #ba0c2f;
+          border-bottom: 2px solid #ba0c2f; /* DS util-color-red */
         }
         .quiz-title {
           font-size: 1.5rem;
           font-weight: bold;
-          color: #ba0c2f;
+          color: #ba0c2f; /* DS util-color-red */
           flex: 1;
           min-width: 0;
         }
@@ -1807,7 +1821,7 @@ class UgaQuiz extends LitElement {
         }
         .quiz-progress-fill {
           height: 100%;
-          background: #ba0c2f;
+          background: #ba0c2f; /* DS util-color-red */
           transition: width 0.3s;
         }
         .quiz-question {
@@ -1834,7 +1848,7 @@ class UgaQuiz extends LitElement {
         }
         .quiz-option:hover:not(:has(input:disabled)) {
           background: #f5f5f5;
-          border-color: #ba0c2f;
+          border-color: #ba0c2f; /* DS util-color-red */
         }
         .quiz-option input[type="radio"],
         .quiz-option input[type="checkbox"] {
@@ -1842,7 +1856,7 @@ class UgaQuiz extends LitElement {
         }
         .quiz-question-hint {
           font-size: 0.9rem;
-          color: #666;
+          color: #666; /* DS util-color-dark-gray */
           margin: -0.5rem 0 0.75rem 0;
         }
         .quiz-option.correct {
@@ -1895,12 +1909,12 @@ class UgaQuiz extends LitElement {
           background: #fff;
         }
         .ordering-item:hover:not(:has(.ordering-btn:disabled)) {
-          border-color: #ba0c2f;
+          border-color: #ba0c2f; /* DS util-color-red */
         }
         .ordering-number {
           min-width: 2em;
           font-weight: bold;
-          color: #666;
+          color: #666; /* DS util-color-dark-gray */
         }
         .ordering-text {
           flex: 1;
@@ -1919,9 +1933,9 @@ class UgaQuiz extends LitElement {
           line-height: 1;
         }
         .ordering-btn:hover:not(:disabled) {
-          background: #ba0c2f;
+          background: #ba0c2f; /* DS util-color-red */
           color: #fff;
-          border-color: #ba0c2f;
+          border-color: #ba0c2f; /* DS util-color-red */
         }
         .ordering-btn:disabled {
           opacity: 0.5;
@@ -1972,7 +1986,7 @@ class UgaQuiz extends LitElement {
           transition: all 0.2s;
         }
         .quiz-button-primary {
-          background: #ba0c2f;
+          background: #ba0c2f; /* DS util-color-red */
           color: white;
         }
         .quiz-button-primary:hover:not(:disabled) {
