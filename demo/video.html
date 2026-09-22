@@ -1,216 +1,205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Component Demo</title>
+  <title>Video — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Video Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <!-- Single Video Section -->
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <h2>Single Video</h2>
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Video Component</h1>
 
-        <p><strong>Embeds a single Kaltura video</strong> using Kaltura's Dynamic Embed method (a generated <code>&lt;div&gt;</code> + <code>KalturaPlayer.setup()</code>), matching what Kaltura's own Share &amp; Embed dialog produces. Use <code>topic-id</code> when the video should mark the eLC content topic complete.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>Embeds Kaltura or YouTube video. Kaltura embeds use Kaltura's Dynamic Embed method (a generated <code>&lt;div&gt;</code> plus <code>KalturaPlayer.setup()</code>), which is what Kaltura's own Share &amp; Embed dialog produces.</p>
+        <p>Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <uga-toc></uga-toc>
+
+      <h2 id="a-single-kaltura-video">A single Kaltura video</h2>
+      <p class="util-reading-width">Pass the Kaltura entry ID as <code>videoid</code>. Nothing else is required; the standard UGA Online player is used by default.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-video videoid="1_icw0df6y"></uga-video>
-        <p><em>Using video ID 1_icw0df6y (Faculty Profile)</em></p>
       </div>
+      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;</uga-code>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties for Single Video</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>videoid</td>
-            <td>string</td>
-            <td>Kaltura video entry ID (required)</td>
-          </tr>
-          <tr>
-            <td>playerid</td>
-            <td>string</td>
-            <td>The Kaltura player to render in — the <strong>uiConf ID</strong>, i.e. the number after <code>uiconf_id/</code> in the Kaltura embed code. This is what carries program/college branding and end cards. Omit it for the standard UGA Online player (<code>57494843</code>). Mixing different players on one page loads a separate player bundle for each, so prefer one player per page unless the branding genuinely differs.</td>
-          </tr>
-          <tr>
-            <td>name</td>
-            <td>string</td>
-            <td>Optional. Video title, passed to Kaltura as <code>entryTitle</code> and used for the rating component's display name. Falls back to the video's Kaltura-reported name.</td>
-          </tr>
-          <tr>
-            <td>includerating</td>
-            <td>boolean</td>
-            <td>Add rating component below video</td>
-          </tr>
-          <tr>
-            <td>topic-id</td>
-            <td>string</td>
-            <td>Optional. eLC content topic ID. Recommended when embedding inside a topic so completion events are reliably attributed (otherwise the topic is parsed from the parent URL).</td>
-          </tr>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="branded-players">Branded players</h2>
+      <p class="util-reading-width">Set <code>playerid</code> to the <strong>uiConf ID</strong>, the number after <code>uiconf_id/</code> in a Kaltura embed code. That is what carries program or college branding and end cards. Omit it for the standard UGA Online player (<code>57494843</code>). Each distinct player on a page loads its own player bundle, so prefer one player per page unless the branding genuinely differs &mdash; which is why this example is not rendered live here.</p>
+      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;</uga-code>
+
+      <h3 id="known-player-ids">Known player IDs</h3>
+      <p class="util-reading-width">Player IDs for the branded players currently in use. If the player you need is not listed, take the number after <code>uiconf_id/</code> from that player's Kaltura embed code.</p>
+      <p class="cmp-label cmp-label--updated">Updated September 22, 2026</p>
+      <div class="util-scrollable-content util-margin-bottom-lg">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">Kaltura uiConf IDs by college or unit</caption>
+          <thead>
+            <tr>
+              <th scope="col">College or unit</th>
+              <th scope="col">uiConf ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>College of Business</td>
+              <td><code>53568732</code></td>
+            </tr>
+            <tr>
+              <td>College of Public Health</td>
+              <td><code>53574622</code></td>
+            </tr>
+            <tr>
+              <td>eLC Default Player</td>
+              <td><code>52620252</code></td>
+            </tr>
+            <tr>
+              <td>College of Engineering</td>
+              <td><code>53684502</code></td>
+            </tr>
+            <tr>
+              <td>Institute of Higher Education</td>
+              <td><code>55339233</code></td>
+            </tr>
+            <tr>
+              <td>College of Arts and Sciences</td>
+              <td><code>56768042</code></td>
+            </tr>
+            <tr>
+              <td>School of Forestry and Natural Resources</td>
+              <td><code>57706233</code></td>
+            </tr>
+            <tr>
+              <td>School of Social Work</td>
+              <td><code>57696473</code></td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-&lt;!-- A specific branded player: the uiconf_id number from the Kaltura embed code --&gt;
-&lt;uga-video videoid="1_icw0df6y" playerid="53568732"&gt;&lt;/uga-video&gt;
-
-&lt;!-- With rating --&gt;
-&lt;uga-video videoid="1_icw0df6y" includerating="true"&gt;&lt;/uga-video&gt;
-
-&lt;!-- D2L topic completion --&gt;
-&lt;uga-video videoid="1_icw0df6y" topic-id="12345"&gt;&lt;/uga-video&gt;</uga-code>
-      </div>
-    </section>
-
-    <!-- YouTube Video Section -->
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <h2>YouTube Videos</h2>
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>Embed YouTube videos</strong> by setting <code>host="youtube"</code> and providing the video ID from the YouTube URL. For example, <code>https://www.youtube.com/watch?v=yx3bxPfbdRM</code> uses video ID <code>yx3bxPfbdRM</code>.</p>
-      </div>
-
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <h2 id="youtube-videos">YouTube videos</h2>
+      <p class="util-reading-width">Set <code>host="youtube"</code> and pass the ID from the YouTube URL. For <code>https://www.youtube.com/watch?v=yx3bxPfbdRM</code> the ID is <code>yx3bxPfbdRM</code>.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"></uga-video>
-        <p><em>YouTube video: YouTube Demo</em></p>
       </div>
+      <uga-code language="markup">&lt;uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"&gt;&lt;/uga-video&gt;</uga-code>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties for YouTube Videos</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>host</td>
-            <td>string</td>
-            <td>Must be <code>"youtube"</code> for YouTube videos</td>
-          </tr>
-          <tr>
-            <td>videoid</td>
-            <td>string</td>
-            <td>YouTube video ID from the URL (e.g., <code>yx3bxPfbdRM</code> from youtube.com/watch?v=yx3bxPfbdRM)</td>
-          </tr>
-          <tr>
-            <td>name</td>
-            <td>string</td>
-            <td>Optional display name for the video (used in ratings and accessibility)</td>
-          </tr>
-          <tr>
-            <td>includerating</td>
-            <td>boolean</td>
-            <td>Add rating component below video</td>
-          </tr>
-        </table>
-      </div>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;!-- Basic YouTube embed --&gt;
-&lt;uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo"&gt;&lt;/uga-video&gt;
-
-&lt;!-- With rating --&gt;
-&lt;uga-video host="youtube" videoid="yx3bxPfbdRM" name="YouTube Demo" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
-      </div>
-    </section>
-
-    <!-- Multiple Videos Section -->
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <h2>Multiple Videos from JSON File</h2>
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>Embeds multiple Kaltura videos from a JSON data file.</strong> Use this method when you want to load multiple videos from a single JSON file. Perfect for course playlists or module video collections.</p>
-        <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos/videos-demo.json</code></a>
-          to modify and upload it to your course files.</p>
-      </div>
-
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <h2 id="multiple-videos-from-a-data-file">Multiple videos from a data file</h2>
+      <p class="util-reading-width">Set <code>type="local"</code> and point <code>filename</code> at a JSON file of entry IDs to render a playlist from one tag. Useful for module video collections.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-video type="local" filename="videos/videos-demo.json"></uga-video>
-        <p><em>Note: This example loads multiple videos from <code>videos/videos-demo.json</code></em></p>
       </div>
+      <uga-code language="markup">&lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;</uga-code>
+      <p class="util-reading-width">Download <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos/videos-demo.json</code></a> to modify and upload to your own course files.</p>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties for Multiple Videos</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>Data source type: 'local' or 'program' (required)</td>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>Name of the JSON data file (required)</td>
-          </tr>
-          <tr>
-            <td>program</td>
-            <td>string</td>
-            <td>Program identifier (for program type)</td>
-          </tr>
-          <tr>
-            <td>playerid</td>
-            <td>string</td>
-            <td>Kaltura player uiConf ID (default: 57494843)</td>
-          </tr>
-          <tr>
-            <td>includerating</td>
-            <td>boolean</td>
-            <td>Add rating component below video</td>
-          </tr>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="marking-an-elc-topic-complete">Marking an eLC topic complete</h2>
+      <p class="util-reading-width">Pass <code>topic-id</code> when the video should mark its eLC content topic complete. It is recommended whenever the video is embedded inside a topic, because without it the topic has to be parsed from the parent URL. This only does anything inside eLC, so it is not rendered live here.</p>
+      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" topic-id="12345"&gt;&lt;/uga-video&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="collecting-a-rating">Collecting a rating</h2>
+      <p class="util-reading-width">Add <code>includerating="true"</code> to show the rating component below the video. It is a boolean attribute, so the <em>presence</em> of it is what turns the rating on: <code>includerating="false"</code> still enables it. Leave the attribute off entirely when you do not want a rating. Ratings need eLC, so this example is not rendered live here.</p>
+      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" name="Faculty Profile" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content util-margin-bottom-xxl">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-video attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>videoid</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Kaltura entry ID, or YouTube video ID when <code>host="youtube"</code>. Required unless the videos come from a data file.</td>
+            </tr>
+            <tr>
+              <td><code>host</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Set to <code>youtube</code> for a YouTube embed. Leave it off for Kaltura.</td>
+            </tr>
+            <tr>
+              <td><code>playerid</code></td>
+              <td>string</td>
+              <td><code>57494843</code></td>
+              <td>Kaltura uiConf ID, which selects the player and therefore the branding and end cards. Omit for the standard UGA Online player.</td>
+            </tr>
+            <tr>
+              <td><code>name</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Video title, passed to Kaltura as <code>entryTitle</code> and used as the rating component's display name. Falls back to the video's Kaltura-reported name.</td>
+            </tr>
+            <tr>
+              <td><code>includerating</code></td>
+              <td>boolean</td>
+              <td><code>false</code></td>
+              <td>Show the rating component below the video. Presence of the attribute enables it, whatever the value.</td>
+            </tr>
+            <tr>
+              <td><code>topic-id</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>eLC content topic ID. Recommended when embedding inside a topic so completion events are reliably attributed; otherwise the topic is parsed from the parent URL.</td>
+            </tr>
+            <tr>
+              <td><code>type</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Where a multi-video data file lives: <code>local</code> for the current course, <code>program</code> for a shared program folder.</td>
+            </tr>
+            <tr>
+              <td><code>filename</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Path to the JSON data file, relative to the page. Used with <code>type</code>.</td>
+            </tr>
+            <tr>
+              <td><code>program</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Program identifier. Required when <code>type="program"</code>, ignored otherwise.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;!-- Multiple videos from file --&gt;
-&lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;
-
-&lt;!-- With custom player ID --&gt;
-&lt;uga-video type="local" filename="videos/videos-demo.json" playerid="53568732"&gt;&lt;/uga-video&gt;</uga-code>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <!-- Component bundle -->
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

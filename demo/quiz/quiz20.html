@@ -11,16 +11,9 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <style>
-    .obj-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-  </style>
 </head>
 <body>
-  <div class="obj-container">
+  <div class="obj-reading-width util-pad-vert-xl">
     <header>
       <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Fixed Assets & PP&E Quiz</h1>
       <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="../setup.html">Setup &amp; Usage</a>. This demo loads questions from <code>quiz20.json</code> in this folder via <code>type="local"</code> (from the repo root demo page use <code>quiz/quiz20.json</code>).</p>
@@ -28,7 +21,7 @@
 
     <section>
       <uga-quiz
-        passing-score="70"
+        passingscore="70"
         allow-retry="true"
         max-attempts="99"
         show-feedback="true"

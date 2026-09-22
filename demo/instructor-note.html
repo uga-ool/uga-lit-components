@@ -1,86 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instructor Note Component Demo</title>
+  <title>Instructor Note — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Instructor Note Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and examples.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Instructor Note Component</h1>
 
-        <p><strong>Displays notes visible only to instructors.</strong> Uses eLC role checking to hide content from students. Great for teaching notes, grading tips, etc.</p>
-        <p><strong>Content file:</strong> The note is an <strong>HTML fragment</strong> (not JSON). Download
-          <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note/instructor-note-demo.html</code></a>
-          (or copy the file in this folder), edit the HTML, and upload it to your course files. Reference it with <code>filename="your-note.html"</code> when it sits next to your page, or use the full path from <strong>Manage Files</strong>.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A note that only instructors can see, for teaching notes, grading reminders, or facilitation tips left inside the course content.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. Students and demo students never see the note. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">Set <code>type="local"</code> and point <code>filename</code> at the note. Note that the file is an <strong>HTML fragment</strong>, not JSON, so you write the note as ordinary markup.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"></uga-instructor-note>
-        <p><em>Note: Only visible to users with instructor role in eLC</em></p>
       </div>
+      <uga-code language="markup">&lt;uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+      <p class="util-reading-width">Download <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>instructor-note/instructor-note-demo.html</code></a> to modify and upload to your own course files. Use the filename alone when the file sits next to the page, or the full path from Manage Files.</p>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>Data source type: <code>local</code> (course-files HTML) or <code>program</code> (shared template HTML)</td>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>Name (or full path) of the <strong>HTML fragment</strong> that holds the note content. Use the filename when the file is next to the page; otherwise paste the full path from <strong>Manage Files</strong>.</td>
-          </tr>
-          <tr>
-            <td>program</td>
-            <td>string</td>
-            <td>Program code when loading shared template HTML (used with <code>type="program"</code>)</td>
-          </tr>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="a-short-note-inline">A short note inline</h2>
+      <p class="util-reading-width">For a single sentence, skip the file and use the <code>text</code> attribute. Plain text only, which also means it survives eLC HTML sanitization.</p>
+      <uga-code language="markup">&lt;uga-instructor-note text="Remind students that the rubric changed this term."&gt;&lt;/uga-instructor-note&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="loading-from-a-program-folder">Loading from a program folder</h2>
+      <p class="util-reading-width">Set <code>type="program"</code> and name the program to read a shared note from a program template instead of the current course.</p>
+      <uga-code language="markup">&lt;uga-instructor-note type="program" program="mba" filename="instructor-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-instructor-note attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>type</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Where the note file lives: <code>local</code> for the current course, <code>program</code> for a shared program folder.</td>
+            </tr>
+            <tr>
+              <td><code>filename</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Path to the HTML fragment holding the note, relative to the page, or the full path from Manage Files.</td>
+            </tr>
+            <tr>
+              <td><code>program</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Program identifier. Required when <code>type="program"</code>, ignored otherwise.</td>
+            </tr>
+            <tr>
+              <td><code>text</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>A plain-text note written directly on the tag, instead of loading a file.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
-      </div>
-      <p><em>The HTML in the file is rendered inside a styled callout. See <a href="instructor-note/instructor-note-demo.html">instructor-note/instructor-note-demo.html</a> for sample markup (in eLC, upload under <code>instructor-note/</code> and use <code>filename="instructor-note/instructor-note-demo.html"</code>).</em></p>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

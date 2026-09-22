@@ -1,92 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slideshow Component Demo</title>
+  <title>Slideshow — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Slideshow Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
-        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Requires Design System <code>base.css</code> for control radius utilities.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Slideshow Component</h1>
 
-        <p><strong>Creates an image slideshow with navigation controls.</strong> Perfect for visual content, step-by-step instructions, or image galleries. Dot indicators and prev/next controls use Design System radius utilities (<code>util-radius-all-circle</code>, <code>util-radius-left-sm</code> / <code>util-radius-right-sm</code>).</p>
-        <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>slideshow/slideshow-demo.json</code></a>
-          to modify and upload it to your course files.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>An image slideshow with previous and next controls and dot indicators, for visual walkthroughs, step-by-step instructions, or a gallery.</p>
+        <p>Slides come from a JSON data file rather than from the page. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">Point <code>filename</code> at a JSON file uploaded alongside the page. Unlike most data-driven components here, the slideshow has no <code>type</code> attribute; the filename is the whole configuration.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-slideshow filename="slideshow/slideshow-demo.json" imageheight="400"></uga-slideshow>
       </div>
+      <uga-code language="markup">&lt;uga-slideshow filename="slideshow/slideshow-demo.json" imageheight="400"&gt;&lt;/uga-slideshow&gt;</uga-code>
+      <p class="util-reading-width">Download <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>slideshow/slideshow-demo.json</code></a> to modify and upload to your own course files.</p>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>Name of the JSON data file</td>
-          </tr>
-          <tr>
-            <td>imageheight</td>
-            <td>string</td>
-            <td>Height of images in pixels (default: 500)</td>
-          </tr>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="data-file-format">Data file format</h2>
+      <p class="util-reading-width">The file carries a <code>title</code>, a <code>description</code> and an <code>id</code> for the slideshow as a whole, then a <code>data</code> array of slides. Every slide needs <code>src</code> and <code>alt</code>; <code>title</code> and <code>description</code> appear as the caption.</p>
+      <uga-code language="json">{
+  "title": "Course Walkthrough",
+  "description": "Step-by-step guide to navigating your course",
+  "id": "course-walkthrough",
+  "data": [
+    {
+      "src": "image/step-1.jpg",
+      "alt": "The course home page with announcements at the top",
+      "title": "Step 1: Course Home",
+      "description": "Start at the course home page for announcements and quick links."
+    }
+  ]
+}</uga-code>
+      <p class="util-reading-width">Write <code>alt</code> for every slide. It is the only description a screen reader gets, and the caption text does not substitute for it.</p>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="image-height">Image height</h2>
+      <p class="util-reading-width"><code>imageheight</code> sets the slide height in pixels and defaults to <code>500</code>. Pick one height that suits the whole set, since every slide uses it.</p>
+      <uga-code language="markup">&lt;uga-slideshow filename="slideshow/slideshow-demo.json" imageheight="400"&gt;&lt;/uga-slideshow&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-slideshow attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>filename</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Path to the JSON data file, relative to the page.</td>
+            </tr>
+            <tr>
+              <td><code>imageheight</code></td>
+              <td>string</td>
+              <td><code>500</code></td>
+              <td>Slide height in pixels, applied to every slide.</td>
+            </tr>
+            <tr>
+              <td><code>initialloadheight</code></td>
+              <td>string</td>
+              <td><code>700</code></td>
+              <td>Height reserved before the data arrives, which keeps the page from jumping as slides load.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-slideshow filename="slideshow/slideshow-demo.json" imageheight="400"&gt;&lt;/uga-slideshow&gt;</uga-code>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  
-  <script>
-    if (typeof axios === 'undefined') {
-      window.axios = {
-        get: async (url) => {
-          const response = await fetch(url);
-          const data = await response.json();
-          return { data };
-        }
-      };
-    }
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

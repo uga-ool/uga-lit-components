@@ -1,98 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Course Calendar Component Demo</title>
+  <title>Course Calendar — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
-  <style>
-    .component-demo { margin-bottom: 4rem; padding: 2rem; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #ffffff; }
-    .demo-description { margin-bottom: 1.5rem; padding: 1rem; background-color: #f5f5f5; border-left: 4px solid #ba0c2f; }
-    .demo-example { margin-bottom: 1.5rem; padding: 1.5rem; background-color: #fafafa; border: 1px dashed #ccc; }
-    .demo-props { margin: 1rem 0; padding: 1rem; background-color: #fff9e6; border-left: 4px solid #ffc107; }
-    .demo-props table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
-    .demo-props th, .demo-props td { padding: 0.5rem; text-align: left; border-bottom: 1px solid #ddd; }
-    .demo-props th { background-color: #f0f0f0; font-weight: bold; }
-    h1 { color: #ba0c2f; border-bottom: 3px solid #ba0c2f; padding-bottom: 1rem; margin-bottom: 2rem; }
-    .back-link { display: inline-block; margin-bottom: 1rem; color: #ba0c2f; text-decoration: none; }
-    .back-link:hover { text-decoration: underline; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="back-link">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <section class="component-demo">
-      <h1>Course Calendar Component</h1>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-      <div class="demo-description">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON / CSV examples.</p>
-        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). The calendar panel uses Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code> (requires <code>base.css</code>).</p>
-        <p><strong>Displays a table-only course calendar</strong> with week separators and row-type styling.</p>
-        <p>Titles, intro text, and legend should be authored in page HTML outside the component.</p>
-        <p>Use <code>filename</code> with <code>type="local"</code> (JSON), <code>type="csv"</code> (flat CSV with a <code>weekLabel</code> column), or <code>type="program"</code> (shared program template). Add <code>sync-from-course</code> (or legacy <code>sync-due-status</code>) to optionally reconcile date cells with live eLC assignment due dates by <code>dueTags[].folderId</code>.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Course Calendar Component</h1>
+
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A course schedule table with week separators and row-type styling. It renders the table only, so the heading, intro and legend stay in your page HTML where you can word them freely.</p>
+        <p>Data comes from a JSON or CSV file in your course files. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="demo-example">
-        <h4 style="margin-top: 0;">Basic calendar (static JSON)</h4>
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">Set <code>type="local"</code> and point <code>filename</code> at a JSON file uploaded alongside the page.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"></uga-course-calendar>
       </div>
+      <uga-code language="markup">&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;</uga-code>
 
-      <div class="demo-example">
-        <h4 style="margin-top: 0;">CSV calendar (single flat file)</h4>
-        <p style="margin-top: 0;">Use <code>type="csv"</code> with a flat file containing a <code>weekLabel</code> column on every row.</p>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="csv-instead-of-json">CSV instead of JSON</h2>
+      <p class="util-reading-width">Set <code>type="csv"</code> to use a flat CSV instead. Every row needs a <code>weekLabel</code> column, which is what the component groups on. A spreadsheet is usually easier to hand to a faculty member than JSON.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"></uga-course-calendar>
       </div>
+      <uga-code language="markup">&lt;uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;</uga-code>
+      <p class="util-reading-width"><code>demo/course-calendar/course-calendar-template.csv</code> in this repository is an empty starter with the right columns. The repository also has <code>npm run quiz:csv-to-json</code> for converting quiz CSVs, and the calendar accepts CSV directly.</p>
 
-      <div class="demo-example">
-        <h4 style="margin-top: 0;">Optional live sync mode</h4>
-        <p style="margin-top: 0;">This mode fetches assignment folders from eLC and updates matching date cells when <code>dueTags[].folderId</code> values are present.</p>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="syncing-with-live-due-dates">Syncing with live due dates</h2>
+      <p class="util-reading-width">Add <code>sync-from-course</code> and the component reconciles date cells against real assignment due dates in eLC, matching on <code>dueTags[].folderId</code> in your data. Dates then follow the course rather than the file, which is what you want when dates shift mid-term.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv" sync-from-course></uga-course-calendar>
       </div>
+      <uga-code language="markup">&lt;uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv" sync-from-course&gt;&lt;/uga-course-calendar&gt;</uga-code>
+      <p class="util-reading-width"><code>sync-due-status</code> is a legacy alias for the same behaviour. Use <code>sync-from-course</code> in new pages.</p>
 
-      <div class="demo-props">
-        <h4>Properties</h4>
-        <table>
-          <tr><th>Property</th><th>Type</th><th>Description</th></tr>
-          <tr><td><code>type</code></td><td>string</td><td><code>local</code>, <code>program</code>, or <code>csv</code></td></tr>
-          <tr><td><code>filename</code></td><td>string</td><td>JSON file to load (required)</td></tr>
-          <tr><td><code>program</code></td><td>string</td><td>Program code used with <code>type="program"</code></td></tr>
-          <tr><td><code>sync-from-course</code></td><td>boolean</td><td>Optional: synchronize date cells with live assignment due dates from the current course</td></tr>
-          <tr><td><code>sync-due-status</code></td><td>boolean</td><td>Legacy alias for <code>sync-from-course</code></td></tr>
-          <tr><td><code>course-id</code></td><td>string</td><td>Optional course OU override for sync mode</td></tr>
-          <tr><td><code>le-version</code></td><td>string</td><td>Optional LE API version override for sync mode</td></tr>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="loading-from-a-program-folder">Loading from a program folder</h2>
+      <p class="util-reading-width">Set <code>type="program"</code> and name the program to read a shared calendar from a program template.</p>
+      <uga-code language="markup">&lt;uga-course-calendar type="program" program="mba" filename="course-calendar.json"&gt;&lt;/uga-course-calendar&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-course-calendar attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>type</code></td>
+              <td>string</td>
+              <td><code>local</code></td>
+              <td>Data source: <code>local</code> for JSON in the current course, <code>csv</code> for a flat CSV, <code>program</code> for a shared program folder.</td>
+            </tr>
+            <tr>
+              <td><code>filename</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Path to the data file, relative to the page. Required.</td>
+            </tr>
+            <tr>
+              <td><code>program</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Program identifier. Required when <code>type="program"</code>, ignored otherwise.</td>
+            </tr>
+            <tr>
+              <td><code>sync-from-course</code></td>
+              <td>boolean</td>
+              <td><code>false</code></td>
+              <td>Reconcile date cells with live assignment due dates from the current course, matched by <code>dueTags[].folderId</code>.</td>
+            </tr>
+            <tr>
+              <td><code>sync-due-status</code></td>
+              <td>boolean</td>
+              <td><code>false</code></td>
+              <td>Legacy alias for <code>sync-from-course</code>.</td>
+            </tr>
+            <tr>
+              <td><code>course-id</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Course OU to sync against, when it should not be taken from the page URL.</td>
+            </tr>
+            <tr>
+              <td><code>le-version</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Valence LE API version override for sync mode.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <h4>Usage</h4>
-      <uga-code language="markup">&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;
-
-&lt;uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;
-
-&lt;uga-course-calendar
-  type="csv"
-  filename="course-calendar/course-calendar-demo.csv"
-  sync-from-course&gt;
-&lt;/uga-course-calendar&gt;</uga-code>
-
-      <p><strong>CSV template:</strong> Start from <code>course-calendar/course-calendar-template.csv</code>. Required columns: <code>weekLabel</code>, <code>rowType</code>, <code>date</code>, <code>day</code>, <code>event</code>. Use pipe separators for multi-values: <code>moduleItems</code>, <code>dueTags</code>, and <code>folderIds</code> (aligned by position with <code>dueTags</code>).</p>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function(){var s=document.createElement('script');s.type='module';s.src=window.location.hostname==='localhost'?'/dist/js/uga-components.js':'/shared/ugaonline/js/uga-components.js';document.body.appendChild(s);})();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

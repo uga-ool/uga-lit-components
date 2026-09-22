@@ -1,97 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rating Component Demo</title>
+  <title>Rating — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Rating Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Rating Component</h1>
 
-        <p><strong>Collects user ratings for content.</strong> Integrates with eLC forums to store feedback. Useful for video ratings, resource evaluations, etc.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A short rating control for a piece of content, so learners can say whether a video or resource was useful. Responses are stored in an eLC discussion forum.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <uga-rating
-          contentid="demo-video-001" 
-          contenttype="video" 
-          contentname="Introduction Video"
-          contentplatform="kaltura">
-        </uga-rating>
-        
-      </div>
+      <uga-toc></uga-toc>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>contentid</td>
-            <td>string</td>
-            <td>Unique identifier for the content</td>
-          </tr>
-          <tr>
-            <td>contenttype</td>
-            <td>string</td>
-            <td>Type of content (video, document, etc.)</td>
-          </tr>
-          <tr>
-            <td>contentname</td>
-            <td>string</td>
-            <td>Display name of the content</td>
-          </tr>
-          <tr>
-            <td>contentplatform</td>
-            <td>string</td>
-            <td>Platform hosting the content</td>
-          </tr>
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">Identify what is being rated. <code>contentid</code> is the key responses are grouped under, so keep it stable and unique; the other three describe the item for the stored record and the display.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-rating contentid="module-1-intro-video" contenttype="video" contentname="Introduction Video"
+          contentplatform="kaltura"></uga-rating>
+      </div>
+      <uga-code language="markup">&lt;uga-rating contentid="module-1-intro-video" contenttype="video" contentname="Introduction Video"
+  contentplatform="kaltura"&gt;&lt;/uga-rating&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="rating-a-video">Rating a video</h2>
+      <p class="util-reading-width">For Kaltura video you do not need this tag directly. <a href="video.html">Video</a> can render it below the player with <code>includerating="true"</code>, which fills in the content details from the video itself.</p>
+      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" name="Faculty Profile" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-rating attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>contentid</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Unique, stable identifier for the item being rated. Responses are grouped by this value, so changing it starts a new set.</td>
+            </tr>
+            <tr>
+              <td><code>contenttype</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Kind of item, for example <code>video</code> or <code>document</code>.</td>
+            </tr>
+            <tr>
+              <td><code>contentname</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Display name of the item.</td>
+            </tr>
+            <tr>
+              <td><code>contentplatform</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Where the item is hosted, for example <code>kaltura</code>.</td>
+            </tr>
+            <tr>
+              <td><code>name</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Optional label for the rating control itself.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-rating 
-  contentid="video-123" 
-  contenttype="video" 
-  contentname="Lecture 1"
-  contentplatform="kaltura"&gt;
-&lt;/uga-rating&gt;</uga-code>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

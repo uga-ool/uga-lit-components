@@ -1,82 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Due Date Component Demo</title>
+  <title>Due Date — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Due Date Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Due Date Component</h1>
 
-        <p><strong>Displays due dates for assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays all items with due dates in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A table of everything in the course that has a due date: assignments, discussions, quizzes and content items, gathered automatically.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">With no attributes it lists every item type that has a due date. Nothing needs configuring, because the course comes from the page URL.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-duedate></uga-duedate>
       </div>
+      <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;</uga-code>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td><code>types</code></td>
-            <td>String</td>
-            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
-          </tr>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="filtering-by-type">Filtering by type</h2>
+      <p class="util-reading-width">Pass <code>types</code> a comma-separated list to narrow the table. Useful on a page that should only talk about one kind of work, such as a discussion schedule.</p>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-duedate types="assignment"&gt;&lt;/uga-duedate&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-duedate types="assignment,discussion"&gt;&lt;/uga-duedate&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-duedate types="discussion"&gt;&lt;/uga-duedate&gt;</uga-code>
+      </div>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-duedate attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>types</code></td>
+              <td>string</td>
+              <td><code>assignment,discussion,quiz,content</code></td>
+              <td>Comma-separated list of item types to include. Any of <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <h4>Basic Usage</h4>
-        <uga-code language="markup">&lt;uga-duedate&gt;&lt;/uga-duedate&gt;</uga-code>
-        
-        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
-        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
-&lt;uga-duedate types="assignment"&gt;&lt;/uga-duedate&gt;
-
-&lt;!-- Show assignments and discussions --&gt;
-&lt;uga-duedate types="assignment,discussion"&gt;&lt;/uga-duedate&gt;
-
-&lt;!-- Show only discussions --&gt;
-&lt;uga-duedate types="discussion"&gt;&lt;/uga-duedate&gt;</uga-code>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

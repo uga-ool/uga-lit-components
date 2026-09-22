@@ -1,97 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instructor Card Component Demo</title>
+  <title>Instructor Card — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Instructor Card Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
-        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Requires Design System <code>base.css</code> for card shadow/radius utilities.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Instructor Card Component</h1>
 
-        <p><strong>Displays an instructor profile card with photo and name.</strong> Automatically detects the course from the URL and finds people on the classlist whose role is <strong>Banner Instructor</strong>, <strong>Instructor</strong>, or <strong>Teaching Assistant</strong> (in that order when multiple appear). Works for students, instructors, and admins.</p>
-        <p>Cards use Design System <code>util-shadow-base</code> and <code>util-radius-all-sm</code>. Use <code>username</code> to pin a specific account by Brightspace username (comma-separated for several). Use <code>multiple</code> to show more than one card when several instructors match.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A profile card showing an instructor’s photo and name, read from the course classlist.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. It detects the course from the URL and matches people whose role is Banner Instructor, Instructor, or Teaching Assistant, in that order. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">With no attributes it shows the first matching instructor for the current course. This is the usual case, and it needs no course or person configured.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-instructor-card></uga-instructor-card>
       </div>
+      <uga-code language="markup">&lt;uga-instructor-card&gt;&lt;/uga-instructor-card&gt;</uga-code>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="a-specific-person">A specific person</h2>
+      <p class="util-reading-width">Pass a Brightspace username to <code>username</code> to pin the card to one account, or a comma-separated list for several. Matching is case-insensitive. A pin only works for someone already holding an instructor or teaching assistant role, so it cannot be used to show a student.</p>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-instructor-card username="jdoe"&gt;&lt;/uga-instructor-card&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-instructor-card username="jdoe,jsmith" multiple&gt;&lt;/uga-instructor-card&gt;</uga-code>
+      </div>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="several-cards">Several cards</h2>
+      <p class="util-reading-width">Add <code>multiple</code> to show one card per matched instructor instead of just the first. With a <code>username</code> list, the display order follows the order you wrote.</p>
+      <uga-code language="markup">&lt;uga-instructor-card multiple&gt;&lt;/uga-instructor-card&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-instructor-card attributes</caption>
           <thead>
             <tr>
-              <th>Property</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><code>username</code></td>
               <td>string</td>
-              <td>Optional. Brightspace username(s), comma-separated. Filters to those accounts after role detection. Pins are allowed only for Banner Instructor, Instructor, or Teaching Assistant (or when the classlist hides the role label—empty—if the user is not clearly a Student/Learner). Case-insensitive.</td>
+              <td><em>empty</em></td>
+              <td>Brightspace username, or a comma-separated list, to pin the card to specific accounts. Case-insensitive. Applied after role detection, so only instructors and teaching assistants can be pinned.</td>
             </tr>
             <tr>
               <td><code>multiple</code></td>
               <td>boolean</td>
-              <td>Optional. Default <code>false</code>. When <code>true</code>, shows one card per matched instructor. When <code>false</code>, only the first match is shown.</td>
+              <td><code>false</code></td>
+              <td>Show one card per matched instructor. Without it only the first match appears.</td>
             </tr>
           </tbody>
         </table>
-        <p><strong>Examples:</strong></p>
-        <ul>
-          <li><code>&lt;uga-instructor-card username="jdoe"&gt;&lt;/uga-instructor-card&gt;</code> — single named instructor</li>
-          <li><code>&lt;uga-instructor-card username="jdoe,jsmith" multiple&gt;&lt;/uga-instructor-card&gt;</code> — two cards, display order follows the list</li>
-          <li><code>&lt;uga-instructor-card multiple&gt;&lt;/uga-instructor-card&gt;</code> — one card per Banner Instructor, Instructor, or Teaching Assistant in the course</li>
-        </ul>
       </div>
-
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-instructor-card&gt;&lt;/uga-instructor-card&gt;
-
-&lt;!-- Specific instructor(s) --&gt;
-&lt;uga-instructor-card username="jdoe"&gt;&lt;/uga-instructor-card&gt;
-
-&lt;!-- All instructors (multiple cards) --&gt;
-&lt;uga-instructor-card multiple&gt;&lt;/uga-instructor-card&gt;
-
-&lt;!-- Two named instructors --&gt;
-&lt;uga-instructor-card username="jdoe,jsmith" multiple&gt;&lt;/uga-instructor-card&gt;</uga-code>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

@@ -1,239 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Component Demo</title>
+  <title>Image — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Image Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
-        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Pages must also load UGA Online Design System <code>base.css</code> so utilities such as <code>util-shadow-hover</code> work.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Image Component</h1>
 
-        <p><strong>Displays an image with optional caption in a styled container.</strong> Click the image to expand it in a lightbox with zoom and pan controls for viewing details. Based on instructional designer patterns with UGA brand styling.</p>
-        <p><strong>Hover affordance (opt-in):</strong> Add <code>hover-shadow</code> when you want the Design System <code>util-shadow-hover</code> lift on mouseover so the image reads as clickable. Omit it to leave existing pages unchanged. For static elevation, use <code>shadow="base"</code>, <code>shadow="deep"</code>, or <code>shadow="tinted"</code>.</p>
-        <p><strong>Image path:</strong> Use a relative path (resolves from the page location) or the full path from eLC Manage Files (right-click file → Copy Path). This demo uses an <code>image/</code> folder (e.g. <code>image/demo_image.jpg</code>). In eLC, use the full path from Manage Files, e.g. <code>/content/enforced4/COURSE_ID/image/your-image.jpg</code>.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>An image in a branded container with an optional caption. Clicking it opens a lightbox with zoom and pan, so detail in a diagram stays readable.</p>
+        <p>Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <h4>Basic image with lightbox</h4>
-        <uga-image
-          src="image/demo_image.jpg"
-          alt="Sample image for demonstration"
-          caption="Scatterplot of two highly correlated variables (length and width). One vector is drawn through the centroid along the long axis of the data cloud (first principal component), with a second vector drawn perpendicular to it (second principal component)."
-        ></uga-image>
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width"><code>src</code> and <code>alt</code> are the only required attributes. Add <code>caption</code> for a line beneath the image. Use a path relative to the page, or the full path from eLC Manage Files (right-click the file, Copy Path).</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-image src="image/demo_image.jpg" alt="Scatterplot of length against width, with a trend line through the long axis of the data cloud"
+          caption="First and second principal components drawn through a correlated data cloud."></uga-image>
+      </div>
+      <uga-code language="markup">&lt;uga-image src="image/demo_image.jpg" alt="Scatterplot of length against width, with a trend line through the long axis of the data cloud"
+  caption="First and second principal components drawn through a correlated data cloud."&gt;&lt;/uga-image&gt;</uga-code>
+      <p class="util-reading-width"><code>alt</code> describes the image for someone who cannot see it, and the caption does not replace it. A chart needs its finding in the <code>alt</code> text, not just a title.</p>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="responsive-images">Responsive images</h2>
+      <p class="util-reading-width">Give <code>srcset</code> several widths and <code>sizes</code> the display width, and the browser picks the file that fits the screen. Worth doing for large images, since eLC pages are often read on phones.</p>
+      <uga-code language="markup">&lt;uga-image src="image/demo_image.jpg" srcset="image/demo-400w.jpg 400w, image/demo-800w.jpg 800w"
+  sizes="(max-width: 600px) 100vw, 450px" alt="Sample chart"&gt;&lt;/uga-image&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="turning-off-the-lightbox">Turning off the lightbox</h2>
+      <p class="util-reading-width">Add <code>lightbox-disabled</code> when the image has no detail worth enlarging, such as a small decorative graphic. The image then renders in the container but does not respond to clicks.</p>
+      <uga-code language="markup">&lt;uga-image src="image/demo_image.jpg" alt="Sample image" lightbox-disabled&gt;&lt;/uga-image&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="shadows">Shadows</h2>
+      <p class="util-reading-width"><code>hover-shadow</code> lifts the image on mouseover, which signals that it opens. For a fixed shadow instead, set <code>shadow</code> to <code>base</code>, <code>deep</code> or <code>tinted</code>; the explicit tints <code>base--red</code>, <code>deep--red</code>, <code>base--blue</code> and <code>deep--blue</code> also work.</p>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-image src="image/demo_image.jpg" alt="Sample image" hover-shadow&gt;&lt;/uga-image&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-image src="image/demo_image.jpg" alt="Sample image" shadow="base"&gt;&lt;/uga-image&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-image src="image/demo_image.jpg" alt="Sample image" shadow="deep"&gt;&lt;/uga-image&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-image src="image/demo_image.jpg" alt="Sample image" shadow="tinted"&gt;&lt;/uga-image&gt;</uga-code>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <h4>Responsive images (srcset/sizes)</h4>
-        <uga-image
-          src="image/demo_image.jpg"
-          srcset="image/demo_image.jpg 1x"
-          sizes="(max-width: 600px) 100vw, 450px"
-          alt="Responsive image example"
-          caption="Use srcset and sizes for responsive images. Provide multiple image URLs with width descriptors (e.g. image-400w.jpg 400w, image-800w.jpg 800w) so the browser picks the right size."
-        ></uga-image>
-      </div>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <h4>Lightbox disabled</h4>
-        <uga-image
-          src="image/demo_image.jpg"
-          alt="Image without lightbox"
-          caption="With lightbox-disabled, the image displays in the styled container but does not expand on click."
-          lightbox-disabled
-        ></uga-image>
-      </div>
+      <h2 id="appearance">Appearance</h2>
+      <p class="util-reading-width">The container is UGA red at 2px with rounded corners by default. Each part can be overridden, though changing them means stepping outside the standard look, so do it only when a page genuinely needs it.</p>
+      <uga-code language="markup">&lt;uga-image src="image/demo_image.jpg" alt="Sample image" max-width="600px" border-radius="0"
+  border-color="#000000" border-width="1" padding="0"&gt;&lt;/uga-image&gt;</uga-code>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <h4>Hover shadow (opt-in)</h4>
-        <uga-image
-          src="image/demo_image.jpg"
-          alt="Image with hover shadow"
-          caption="Add hover-shadow so the Design System util-shadow-hover lift appears on mouseover—makes the lightbox affordance clearer."
-          hover-shadow
-        ></uga-image>
-      </div>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <h4>Static shadows (opt-in)</h4>
-        <p>Use <code>shadow="base"</code>, <code>shadow="deep"</code>, or <code>shadow="tinted"</code> (UGA red deep tint). Explicit tints: <code>base--red</code>, <code>deep--red</code>, <code>base--blue</code>, <code>deep--blue</code>.</p>
-        <uga-image
-          src="image/demo_image.jpg"
-          alt="Image with base shadow"
-          caption="shadow=&quot;base&quot;"
-          shadow="base"
-          lightbox-disabled
-        ></uga-image>
-        <uga-image
-          src="image/demo_image.jpg"
-          alt="Image with deep shadow"
-          caption="shadow=&quot;deep&quot;"
-          shadow="deep"
-          lightbox-disabled
-        ></uga-image>
-        <uga-image
-          src="image/demo_image.jpg"
-          alt="Image with tinted shadow"
-          caption="shadow=&quot;tinted&quot; (deep red)"
-          shadow="tinted"
-          lightbox-disabled
-        ></uga-image>
-      </div>
-
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>src</td>
-            <td>string</td>
-            <td>Image URL (required)</td>
-          </tr>
-          <tr>
-            <td>alt</td>
-            <td>string</td>
-            <td>Alternative text for accessibility (required)</td>
-          </tr>
-          <tr>
-            <td>caption</td>
-            <td>string</td>
-            <td>Caption displayed below the image</td>
-          </tr>
-          <tr>
-            <td>srcset</td>
-            <td>string</td>
-            <td>Optional. Comma-separated list of image URLs with width descriptors. Example: <code>image-400w.jpg 400w, image-800w.jpg 800w</code>. The browser picks the best size for the screen.</td>
-          </tr>
-          <tr>
-            <td>sizes</td>
-            <td>string</td>
-            <td>Optional. Tells the browser how wide the image will display. Example: <code>(max-width: 600px) 100vw, 450px</code> means full width on small screens, 450px otherwise.</td>
-          </tr>
-          <tr>
-            <td>placeholder</td>
-            <td>string</td>
-            <td>Optional. Low-res or blur placeholder URL to show while the main image loads</td>
-          </tr>
-          <tr>
-            <td>lightbox-disabled</td>
-            <td>boolean</td>
-            <td>When true, disables the expand-on-click lightbox behavior</td>
-          </tr>
-          <tr>
-            <td>hover-shadow</td>
-            <td>boolean</td>
-            <td>Opt-in. When set (and lightbox is enabled), applies Design System <code>util-shadow-hover</code> so the image lifts on hover</td>
-          </tr>
-          <tr>
-            <td>shadow</td>
-            <td>string</td>
-            <td>Opt-in static elevation: <code>base</code>, <code>deep</code>, <code>tinted</code> (deep red), or <code>base--red</code> / <code>deep--red</code> / <code>base--blue</code> / <code>deep--blue</code>. Ignored when <code>hover-shadow</code> is set</td>
-          </tr>
-          <tr>
-            <td>max-width</td>
-            <td>string</td>
-            <td>Max width of container (default: 450px)</td>
-          </tr>
-          <tr>
-            <td>border-radius</td>
-            <td>number</td>
-            <td>Border radius in pixels (default: 15)</td>
-          </tr>
-          <tr>
-            <td>border-color</td>
-            <td>string</td>
-            <td>Border color (default: #ba0c2f UGA red)</td>
-          </tr>
-          <tr>
-            <td>border-width</td>
-            <td>number</td>
-            <td>Border width in pixels (default: 2)</td>
-          </tr>
-          <tr>
-            <td>padding</td>
-            <td>number</td>
-            <td>Container padding in pixels (default: 15)</td>
-          </tr>
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-image attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>src</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Image path, relative to the page or the full path from Manage Files. Required.</td>
+            </tr>
+            <tr>
+              <td><code>alt</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Alternative text. Required; it is the only description a screen reader gets.</td>
+            </tr>
+            <tr>
+              <td><code>caption</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Caption shown beneath the image. Does not substitute for <code>alt</code>.</td>
+            </tr>
+            <tr>
+              <td><code>srcset</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Comma-separated image paths with width descriptors, for example <code>demo-400w.jpg 400w, demo-800w.jpg 800w</code>.</td>
+            </tr>
+            <tr>
+              <td><code>sizes</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>How wide the image will display, for example <code>(max-width: 600px) 100vw, 450px</code>. Used with <code>srcset</code>.</td>
+            </tr>
+            <tr>
+              <td><code>placeholder</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Image shown while the full image loads.</td>
+            </tr>
+            <tr>
+              <td><code>lightbox-disabled</code></td>
+              <td>boolean</td>
+              <td><code>false</code></td>
+              <td>Render the image without click-to-enlarge.</td>
+            </tr>
+            <tr>
+              <td><code>hover-shadow</code></td>
+              <td>boolean</td>
+              <td><code>false</code></td>
+              <td>Lift the image on mouseover, signalling that it opens.</td>
+            </tr>
+            <tr>
+              <td><code>shadow</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Fixed shadow: <code>base</code>, <code>deep</code>, <code>tinted</code>, or a tint such as <code>base--red</code>.</td>
+            </tr>
+            <tr>
+              <td><code>max-width</code></td>
+              <td>string</td>
+              <td><code>450px</code></td>
+              <td>Maximum rendered width of the container.</td>
+            </tr>
+            <tr>
+              <td><code>border-radius</code></td>
+              <td>number</td>
+              <td><code>15</code></td>
+              <td>Corner radius in pixels.</td>
+            </tr>
+            <tr>
+              <td><code>border-color</code></td>
+              <td>string</td>
+              <td><code>#ba0c2f</code></td>
+              <td>Border color. Defaults to UGA red.</td>
+            </tr>
+            <tr>
+              <td><code>border-width</code></td>
+              <td>number</td>
+              <td><code>2</code></td>
+              <td>Border width in pixels.</td>
+            </tr>
+            <tr>
+              <td><code>padding</code></td>
+              <td>number</td>
+              <td><code>15</code></td>
+              <td>Space in pixels between the border and the image.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <h4>Basic usage (relative path when image is in an image/ folder)</h4>
-        <uga-code language="markup">&lt;uga-image
-  src="image/your-image.jpg"
-  alt="Description of image"
-  caption="Optional caption text."
-&gt;&lt;/uga-image&gt;</uga-code>
-      </div>
-      <div class="util-margin-top-md">
-        <h4>eLC: use full path from Manage Files</h4>
-        <uga-code language="markup">&lt;uga-image
-  src="/content/enforced4/COURSE_ID/image/your-image.jpg"
-  alt="Description of image"
-  caption="Optional caption."
-&gt;&lt;/uga-image&gt;</uga-code>
-      </div>
-      <div class="util-margin-top-md">
-        <h4>With responsive images (srcset + sizes)</h4>
-        <uga-code language="markup">&lt;uga-image
-  src="image/photo.jpg"
-  srcset="image/photo-400w.jpg 400w, image/photo-800w.jpg 800w"
-  sizes="(max-width: 600px) 100vw, 450px"
-  alt="Responsive photo"
-  caption="Caption text."
-&gt;&lt;/uga-image&gt;</uga-code>
-      </div>
-      <div class="util-margin-top-md">
-        <h4>With hover shadow (opt-in click affordance)</h4>
-        <uga-code language="markup">&lt;uga-image
-  src="image/photo.jpg"
-  alt="Description of image"
-  caption="Optional caption."
-  hover-shadow
-&gt;&lt;/uga-image&gt;</uga-code>
-      </div>
-      <div class="util-margin-top-md">
-        <h4>Static shadow options</h4>
-        <uga-code language="markup">&lt;uga-image src="image/photo.jpg" alt="…" caption="Base" shadow="base"&gt;&lt;/uga-image&gt;
-&lt;uga-image src="image/photo.jpg" alt="…" caption="Deep" shadow="deep"&gt;&lt;/uga-image&gt;
-&lt;uga-image src="image/photo.jpg" alt="…" caption="Tinted" shadow="tinted"&gt;&lt;/uga-image&gt;</uga-code>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

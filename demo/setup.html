@@ -1,152 +1,106 @@
 <!DOCTYPE html>
-<html lang="en" class="js">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Setup & Usage - UGA Lit Components</title>
+  <title>Setup and Usage — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
-  <style>
-    h3 {
-      color: #555;
-      margin-top: 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-    h4 {
-      color: #666;
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Setup & Usage</h1>
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-xl util-margin-bottom-xl">
-        <p><strong>Complete guide to setting up and using UGA Lit Components in eLC.</strong></p>
-        <p>This page covers installation, configuration, and data file creation for all components.</p>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
+
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Setup and Usage</h1>
+
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>How to put UGA Lit Components on an eLC page: loading the bundle, uploading data files, and finding the paths eLC expects.</p>
+        <p>Every component page links here, so this is the one page to read first.</p>
       </div>
-    </header>
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <h2>How to Use These Components in eLC</h2>
-      
-      <h3>1. Add to Your Page</h3>
-      <p>Create a new HTML page in eLC and add your components:</p>
+      <uga-toc></uga-toc>
+
+      <h2 id="adding-components-to-a-page">Adding components to a page</h2>
+      <p class="util-reading-width">Load the design system stylesheet in the <code>&lt;head&gt;</code> and the component bundle just before <code>&lt;/body&gt;</code>. The components are custom elements, so once the bundle loads, any tag on the page starts working.</p>
       <uga-code language="markup">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
+&lt;html lang="en" class="no-js"&gt;
+
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
   &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
   &lt;title&gt;My Page&lt;/title&gt;
-  &lt;link rel="stylesheet" href="https://design.online.uga.edu/css/base.css"&gt;
+  &lt;link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" /&gt;
 &lt;/head&gt;
+
 &lt;body&gt;
-  &lt;h1&gt;My Course Content&lt;/h1&gt;
-  
-  &lt;!-- Your components --&gt;
-  &lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
-  &lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
-  &lt;uga-image src="image/photo.jpg" alt="Description" caption="Optional caption"&gt;&lt;/uga-image&gt;
-  &lt;!-- Opt-in hover lift (Design System util-shadow-hover): add hover-shadow --&gt;
-  &lt;uga-image src="image/photo.jpg" alt="Description" caption="Optional caption" hover-shadow&gt;&lt;/uga-image&gt;
-  
-  &lt;!-- Load bundle at end of page --&gt;
+  &lt;a class="cmp-skip-to-content" href="#main-content"&gt;Skip to main content&lt;/a&gt;
+  &lt;main id="main-content"&gt;
+    &lt;h1&gt;My Course Content&lt;/h1&gt;
+
+    &lt;uga-accordion type="local" filename="my-accordion.json"&gt;&lt;/uga-accordion&gt;
+    &lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
+    &lt;uga-image src="image/photo.jpg" alt="Description of the image" caption="Optional caption"&gt;&lt;/uga-image&gt;
+  &lt;/main&gt;
+
   &lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;
+  &lt;script src="https://design.online.uga.edu/js/scripts.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
+
 &lt;/html&gt;</uga-code>
-      <p><strong>Production (eLC):</strong> Use <code>src="/shared/ugaonline/js/uga-components.js"</code>. Ensure the bundle is deployed to that path for instructional designers.</p>
-      <p><strong>Local demos:</strong> Run <code>npm run build</code> then <code>npm run dev</code>. Demo pages on <code>localhost</code> load <code>/dist/js/uga-components.js</code>. Always include Design System <code>base.css</code> so utilities (shadows, radius) apply.</p>
+      <p class="util-reading-width">Include <code>base.css</code> even if you use no design system classes of your own. Several components rely on its utilities for shadows and rounded corners, and without it they render unstyled.</p>
 
-      <h3>2. Create Data Files (for components that need them)</h3>
-      <p>Many components load data from JSON files. The <strong>uga-quiz</strong> component loads questions from <strong>JSON</strong> by default (<code>type="local"</code>); CSV is optional via <code>type="csv"</code>. Upload files to eLC course files and reference them with a relative filename when the file is next to your HTML, or use the full path from <strong>Manage Files</strong>.</p>
-      <p><strong>How to find the file path in eLC:</strong></p>
-      <ol>
-        <li>Go to <strong>Content</strong> → <strong>Manage Files</strong> (or <strong>Course Admin</strong> → <strong>Manage Files</strong>)</li>
-        <li>Upload your JSON file</li>
-        <li>Right-click the file and select <strong>View File Path</strong> or <strong>Copy Path</strong></li>
-        <li>The path will look like: <code>/content/enforced/12345-123456/your-file.json</code></li>
-        <li>Use this full path in your component's <code>filename</code> attribute</li>
-      </ol>
-      <p><strong>Note:</strong> JSON files don't display visually in eLC - they're loaded by components in the background for configuration purposes.</p>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <h4>Example: <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">accordion/accordion-demo.json</a></h4>
-      <uga-code language="javascript">{
+      <h2 id="uploading-data-files">Uploading data files</h2>
+      <p class="util-reading-width">Components such as Accordion, Tabs, Circles, Slideshow and Course Calendar read their content from a file rather than from the page. Upload the file to your course files, then reference it from the tag.</p>
+      <p class="util-reading-width">A path relative to the page works when the file sits beside it, which is why the examples across these pages use forms like <code>accordion/accordion-demo.json</code>. Otherwise use the full path from Manage Files.</p>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="finding-a-file-path-in-elc">Finding a file path in eLC</h2>
+      <p class="util-reading-width">Go to <strong>Content</strong> then <strong>Manage Files</strong>, or <strong>Course Admin</strong> then <strong>Manage Files</strong>. Upload the file, right-click it and choose <strong>View File Path</strong> or <strong>Copy Path</strong>. The result looks like <code>/content/enforced/12345-123456/your-file.json</code>, and that whole string goes in the <code>filename</code> attribute.</p>
+      <p class="util-reading-width">A JSON file uploaded this way does not appear as course content to students. It sits in the file area and is read by the component in the background.</p>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="data-file-examples">Data file examples</h2>
+      <p class="util-reading-width">Each component page documents its own format, and the examples below are a quick reference. Downloadable copies are linked from the individual pages.</p>
+      <p class="util-reading-width"><a href="accordion.html">Accordion</a> and <a href="tabs.html">Tabs</a> share a shape: a <code>data</code> array of entries with a <code>title</code> and an HTML <code>body</code>.</p>
+      <uga-code language="json">{
   "title": "Course FAQ",
   "data": [
-    {
-      "title": "How do I submit assignments?",
-      "body": "&lt;p&gt;Go to the Assignments page and click Submit.&lt;/p&gt;"
-    },
-    {
-      "title": "When are office hours?",
-      "body": "&lt;p&gt;Tuesday and Thursday, 2-4 PM EST.&lt;/p&gt;"
-    }
+    { "title": "How do I submit assignments?", "body": "&lt;p&gt;Go to Assignments and choose Submit.&lt;/p&gt;" },
+    { "title": "When are office hours?", "body": "&lt;p&gt;Tuesday and Thursday, 2 to 4 PM Eastern.&lt;/p&gt;" }
   ]
 }</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1a4rAQHgJCY8Z6u-dRpQ4fp8yibmDLm78/view?usp=drive_link" target="_blank" rel="noopener noreferrer">tabs/tabs-demo.json</a></h4>
-      <uga-code language="javascript">{
+      <p class="util-reading-width"><a href="circles.html">Circles</a> takes a figure and a caption per entry.</p>
+      <uga-code language="json">{
+  "data": [
+    { "figure": "85%", "caption": "Pass Rate" },
+    { "figure": "150", "caption": "Students Enrolled" }
+  ]
+}</uga-code>
+      <p class="util-reading-width"><a href="slideshow.html">Slideshow</a> needs <code>src</code> and <code>alt</code> on every slide, with <code>title</code> and <code>description</code> forming the caption.</p>
+      <uga-code language="json">{
+  "title": "Course Walkthrough",
+  "id": "course-walkthrough",
   "data": [
     {
-      "title": "Overview",
-      "body": "&lt;p&gt;This module covers...&lt;/p&gt;"
-    },
-    {
-      "title": "Learning Objectives",
-      "body": "&lt;ul&gt;&lt;li&gt;Objective 1&lt;/li&gt;&lt;/ul&gt;"
+      "src": "image/step-1.jpg",
+      "alt": "The course home page with announcements at the top",
+      "title": "Step 1: Course Home",
+      "description": "Start at the course home page."
     }
   ]
 }</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1M4Yqk_cgFMzCftXe1Whw8ytyH6ShyiCA/view?usp=drive_link" target="_blank" rel="noopener noreferrer">circles/circles-demo.json</a></h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "figure": "85%",
-      "caption": "Pass Rate"
-    },
-    {
-      "figure": "150",
-      "caption": "Students Enrolled"
-    }
-  ]
-}</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1YotR6E0F0eC1EC0QCJl9fw8WPskaWKaB/view?usp=drive_link" target="_blank" rel="noopener noreferrer">slideshow/slideshow-demo.json</a></h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "image": "/shared/PublicFiles/images/slide1.jpg",
-      "caption": "Introduction to the course"
-    },
-    {
-      "image": "/shared/PublicFiles/images/slide2.jpg",
-      "caption": "Key concepts overview"
-    }
-  ]
-}</uga-code>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1vjDvGoLhJLLVriQGTc4VbFwqkXRPQ-09/view?usp=drive_link" target="_blank" rel="noopener noreferrer">footer/footer-demo.json</a></h4>
-      <uga-code language="javascript">{
-  "data": {
-    "link": "https://online.uga.edu",
-    "alt": "University of Georgia Online Learning Logo",
-    "imageSrc": "https://design.online.uga.edu/images/uga-logo.png"
-  }
-}</uga-code>
-      <p>Use <code>filename="footer/footer-demo.json"</code> when the JSON sits under a <code>footer/</code> folder next to your HTML page (or the full path from Manage Files). Use <code>program="…"</code> or <code>name="…"</code> for built-in logo and links (e.g. <code>msw</code>, <code>terry</code>); add <code>data-file="footer.json"</code> only if that file exists under <code>/shared/ugaonline/templates/{code}/data/</code>. See <a href="footer.html">Footer demo</a> for codes and logo paths.</p>
-
-      <h4>Example: course-calendar/course-calendar-demo.json</h4>
-      <uga-code language="javascript">{
+      <p class="util-reading-width"><a href="course-calendar.html">Course Calendar</a> groups rows into weeks. The full format is in <a href="../docs/COURSE_CALENDAR_FORMAT.md">docs/COURSE_CALENDAR_FORMAT.md</a>, and a CSV alternative is described on the component page.</p>
+      <uga-code language="json">{
   "data": {
     "weeks": [
       {
@@ -157,220 +111,31 @@
             "date": "May 12",
             "day": "Tuesday",
             "moduleTitle": "Modules 00, 01 and 02 Open",
-            "moduleItems": ["M00: Welcome and Introduction"],
-            "event": "Classes Begin",
-            "notes": "First day of instruction."
+            "event": "Classes Begin"
           }
         ]
       }
     ]
   }
 }</uga-code>
-      <p>Use <code>&lt;uga-course-calendar type="local" filename="course-calendar/course-calendar-demo.json"&gt;&lt;/uga-course-calendar&gt;</code> to render the table. Put titles and intro copy in page HTML. Optional <code>caption</code> sets the table caption. Add <code>sync-from-course</code> (or legacy <code>sync-due-status</code>) only when rows include <code>dueTags</code> with <code>folderId</code> for assignment sync. Full format: <a href="../docs/COURSE_CALENDAR_FORMAT.md">docs/COURSE_CALENDAR_FORMAT.md</a>.</p>
-      <p><strong>CSV option:</strong> You can use <code>type="csv"</code> with a flat file that includes <code>weekLabel</code> on each row. Use <code>course-calendar/course-calendar-template.csv</code> as a starter template.</p>
-      <uga-code language="markup">&lt;uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;
+      <p class="util-reading-width"><a href="instructor-note.html">Instructor Note</a> is the exception: its file is an HTML fragment, not JSON, so you write the note as ordinary markup.</p>
 
-&lt;uga-course-calendar
-  type="csv"
-  filename="course-calendar/course-calendar-demo.csv"
-  sync-from-course&gt;
-&lt;/uga-course-calendar&gt;</uga-code>
-      <p><strong>CSV columns:</strong> required: <code>weekLabel</code>, <code>rowType</code>, <code>date</code>, <code>day</code>, <code>event</code>. Optional: <code>moduleTitle</code>, <code>moduleItems</code>, <code>notes</code>, <code>noteHint</code>, <code>rowDate</code>, <code>dueTags</code>, <code>folderIds</code>. Use pipe separators for multi-values (<code>|</code>), with <code>dueTags</code> and <code>folderIds</code> position-matched.</p>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <h4>Example: <a href="https://drive.google.com/file/d/1yuG53QMixE3ABcekpjNcs_dN157DPo5X/view?usp=drive_link" target="_blank" rel="noopener noreferrer">instructor-note/instructor-note-demo.html</a></h4>
-      <p>The instructor note is an <strong>HTML fragment</strong> (not JSON). Save the markup below under <code>instructor-note/instructor-note-demo.html</code> (or any path/filename you prefer) and reference it with <code>filename</code>:</p>
-      <uga-code language="markup">&lt;uga-callout type="note" label="Instructor Note"&gt;
-  &lt;p&gt;&lt;strong&gt;This content is only visible to instructors and teaching assistants.&lt;/strong&gt;&lt;/p&gt;
-  &lt;ul&gt;
-    &lt;li&gt;Grading tip 1&lt;/li&gt;
-    &lt;li&gt;Common misconception to address early&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/uga-callout&gt;</uga-code>
-      <p>Reference it with <code>&lt;uga-instructor-note type="local" filename="instructor-note/instructor-note-demo.html"&gt;&lt;/uga-instructor-note&gt;</code> when the file lives under <code>instructor-note/</code> next to your page.</p>
-
-      <h4>Example: <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer">videos/videos-demo.json</a> (for multiple videos)</h4>
-      <uga-code language="javascript">{
-  "data": [
-    {
-      "videoid": "1_abc123de",
-      "title": "Introduction Video"
-    },
-    {
-      "videoid": "1_xyz789fg",
-      "title": "Lecture 1"
-    }
-  ]
-}</uga-code>
-
-      <h4>Quiz component: JSON or CSV file</h4>
-      <p>The <strong>uga-quiz</strong> component can load questions from either a <strong>JSON file</strong> (component format) or an <strong>eLC CSV question-import file</strong>. Use <code>type="local"</code> for JSON or <code>type="csv"</code> for CSV, and point <code>filename</code> at the file.</p>
-      <p><strong>JSON format:</strong> The file must have a top-level <code>questions</code> array. Each question has <code>id</code>, <code>type</code>, <code>question</code>, <code>points</code>, <code>correctAnswer</code>, and optionally <code>options</code>, <code>explanation</code>, <code>caseSensitive</code>. See <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a> for the full format and examples.</p>
-      <p><strong>CSV format:</strong> Use the eLC question-import layout (the same one Brightspace produces when you export a question library). Each question is a block of rows beginning with <code>NewQuestion,&lt;type&gt;</code> (<code>MC</code>, <code>TF</code>, <code>SA</code>/<code>WR</code>, <code>M</code>, <code>MS</code>, <code>O</code>) followed by <code>QuestionText</code>, <code>Points</code>, and the type-specific rows (<code>Option</code>, <code>TRUE</code>/<code>FALSE</code>, <code>Answer</code>, <code>Choice</code>/<code>Match</code>, <code>Item</code>). Lines starting with <code>//</code> are ignored. See <code>quiz/quiz-sample.csv</code> for a full template covering all six types.</p>
-      <p><strong>Steps (JSON):</strong> (1) Create a JSON file with a <code>questions</code> array (templates: <code>quiz/quiz-sample.json</code>, <code>quiz/quiz10.json</code>, <code>quiz/quiz20.json</code>). (2) Upload it to course files (a <code>quiz/</code> folder next to your HTML works well). (3) Set <code>type="local"</code> and <code>filename</code> to the relative path or full path from <strong>Manage Files</strong>.</p>
-      <p><strong>Steps (CSV):</strong> (1) Export questions from eLC's question library as CSV, or hand-author a file using <code>quiz/quiz-sample.csv</code> as a template. (2) Upload it to course files. (3) Set <code>type="csv"</code> and <code>filename</code> to the relative or full path. See the <a href="quiz.html">Quiz demo</a> for full usage of both options.</p>
-
-      <h3>3. Component-Specific Setup</h3>
-      <h4>Components that do not require eLC API access</h4>
-      <ul>
-        <li><strong>uga-callout</strong> - Semantic callout block (<code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, <code>warning</code>) with an optional bolded <code>label</code>, optional <code>body</code> attribute (plain text), or slot content for richer HTML. Renders as <code>&lt;aside&gt;</code>. Corners use Design System <code>util-radius-all-sm</code>. See <a href="callout.html">Callout demo</a>.</li>
-        <li><strong>uga-image</strong> - Lightbox image with optional caption. Add <code>hover-shadow</code> for an opt-in Design System hover lift (<code>util-shadow-hover</code>). See <a href="image.html">Image demo</a>.</li>
-        <li><strong>uga-toc</strong> / <strong>uga-return-to-top</strong> / <strong>uga-slideshow</strong> - Navigation and media helpers. Several panels/controls use Design System shadow/radius utilities when available in <code>base.css</code>.</li>
-      </ul>
-      
-      <h4>eLC API Components</h4>
-      <p>These components require eLC API access and will only work in eLC:</p>
-      <ul>
-        <li><strong>uga-assignment</strong> - Displays assignments, discussions, quizzes, and content with due dates from the current eLC course. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment,discussion"</code>). Supports grade export when <code>enable-export</code> is set.</li>
-        <li><strong>uga-duedate</strong> - Displays due dates for assignments, discussions, quizzes, and content in a formatted table. By default, all item types are displayed. Use the <code>types</code> property to filter (e.g., <code>types="assignment"</code>).</li>
-        <li><strong>uga-quiz</strong> - Embed formative quizzes; loads questions from a JSON file (<code>type="local"</code>, <code>filename</code>) or eLC question-import CSV (<code>type="csv"</code>, <code>filename</code>). Can submit results to an eLC assignment. See <a href="quiz.html">Quiz demo</a>, <code>quiz/quiz-sample.json</code>, and <code>quiz/quiz-sample.csv</code>.</li>
-        <li><strong>uga-course-calendar</strong> - Renders a week-by-week calendar from JSON or CSV (<code>type="local" | "csv" | "program"</code>). Optional <code>sync-from-course</code> (legacy alias <code>sync-due-status</code>) updates date cells from live assignment due dates using <code>dueTags[].folderId</code>.</li>
-        <li><strong>uga-quiz-grade-sync</strong> - Instructor-only button to sync quiz submissions to the gradebook. Place below the quiz (or inside an instructor note); set <code>dropbox-assignment-name</code> (e.g. &quot;Quiz Demo 2&quot;) or <code>dropbox-folder-id</code> to the assignment folder ID.</li>
-        <li><strong>uga-course-analytics</strong> - Course-wide analytics aggregating data from content, assignments, and discussions. Shows module-level consumption statistics and comparisons. Does <strong>not</strong> enforce its own role check—hide the embedding page from students with eLC release conditions. See <a href="course-analytics.html">Course Analytics demo</a>.</li>
-        <li><strong>uga-elc-google-sync</strong> - Admin-only: template export to Google Drive / clear / back-copy (MVP: read-only preview). Configure <code>admin-role-names</code> or <code>admin-role-ids</code>; use <code>stub-mode</code> for demos. See <a href="../docs/ELC_GOOGLE_SYNC_WIDGET.md">docs/ELC_GOOGLE_SYNC_WIDGET.md</a> and <a href="elc-google-sync.html">eLC ⇄ Google Sync demo</a>.</li>
-        <li><strong>uga-instructor-note</strong> - Visible only to instructors (uses eLC role checking)</li>
-        <li><strong>uga-rating</strong> - Stores ratings in eLC forums</li>
-      </ul>
-
-      <h4>Quiz &amp; Grade Sync</h4>
-      <p>For the quiz and automatic grade sync:</p>
-      <ul>
-        <li>Create an assignment in eLC to receive quiz submissions (e.g. <strong>Quiz Demo 2</strong>).</li>
-        <li><strong>Make the assignment visible</strong> to students (e.g. in Assignments → assignment → Edit → Restrictions). If the assignment is hidden, the quiz component cannot find it and submissions will not pass through.</li>
-        <li>Set the assignment to allow <strong>Text or File</strong> submissions so it can accept the quiz result (submitted as text/JSON or as a .json file).</li>
-        <li>Link the assignment to a grade item in the gradebook so the sync button can push grades. When synced, the most recent grade overwrites any current grade for each student.</li>
-        <li>Place the grade sync component below the quiz (or inside an instructor note). Use <code>&lt;uga-instructor-note type="local" filename="quiz/quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</code> to wrap the sync button, or place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) directly below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot;</li>
-      </ul>
-      <p><strong>Example with instructor note wrapper:</strong></p>
-      <uga-code language="markup">&lt;uga-quiz 
-  quiz-id="quiz-1"
-  quiz-title="My Quiz"
-  passing-score="70"
-  type="local"
-  filename="quiz/quiz-sample.json"
-  dropbox-assignment-name="Quiz Demo 2"&gt;
-&lt;/uga-quiz&gt;
-&lt;uga-instructor-note type="local" filename="quiz/quiz-sync-note.html"&gt;&lt;/uga-instructor-note&gt;</uga-code>
-      <p>The instructor note file (<code>quiz/quiz-sync-note.html</code>) contains the grade sync component. See <a href="quiz/quiz-sync-note.html">quiz/quiz-sync-note.html</a> for the file content.</p>
-
-      <h4>Course Analytics</h4>
-      <p>The <strong>uga-course-analytics</strong> component provides course-wide analytics by aggregating data from multiple sources:</p>
-      <ul>
-        <li><strong>Content:</strong> Module/topic views and completions</li>
-        <li><strong>Assignments:</strong> Submission rates and scores</li>
-        <li><strong>Discussions:</strong> Post counts and participation</li>
-        <li><strong>Other course data:</strong> Objectives, login history, average final grade (from eLC APIs)</li>
-      </ul>
-      <p><strong>Usage:</strong></p>
-      <uga-code language="markup">&lt;!-- Show all analytics (default) --&gt;
-&lt;uga-course-analytics&gt;&lt;/uga-course-analytics&gt;
-
-&lt;!-- Show only content and assignment stats --&gt;
-&lt;uga-course-analytics 
-  show-content-stats="true"
-  show-assignments="true"
-  show-discussions="false"&gt;
-&lt;/uga-course-analytics&gt;</uga-code>
-      <p><strong>Properties:</strong></p>
-      <ul>
-        <li><code>show-content-stats</code> (boolean, default: true) - Show content view/completion statistics</li>
-        <li><code>show-assignments</code> (boolean, default: true) - Show assignment submission statistics</li>
-        <li><code>show-discussions</code> (boolean, default: true) - Show discussion participation statistics</li>
-        <li><code>group-by</code> (string, default: <code>module</code>) - Grouping for analytics: <code>module</code>, <code>topic</code>, or <code>all</code> (currently only <code>module</code> is implemented)</li>
-        <li><code>compare-modules</code> (boolean, default: true) - Enable module comparison view with visual indicators</li>
-      </ul>
-      <p><strong>Note:</strong> This component does <strong>not</strong> perform its own role check. Hide the embedding page from students using eLC <strong>release conditions</strong>. It makes multiple API calls to aggregate data, so loading may take several seconds for large courses.</p>
-
-      <h4>Assignment & Due Date Components - Type Filtering</h4>
-      <p>Both <strong>uga-assignment</strong> and <strong>uga-duedate</strong> support filtering by item type:</p>
-      <uga-code language="markup">&lt;!-- Show all types (default) --&gt;
-&lt;uga-assignment&gt;&lt;/uga-assignment&gt;
-
-&lt;!-- Show only assignments --&gt;
-&lt;uga-assignment types="assignment"&gt;&lt;/uga-assignment&gt;
-
-&lt;!-- Show assignments and discussions --&gt;
-&lt;uga-assignment types="assignment,discussion"&gt;&lt;/uga-assignment&gt;
-
-&lt;!-- Show only discussions --&gt;
-&lt;uga-duedate types="discussion"&gt;&lt;/uga-duedate&gt;</uga-code>
-      <p>Available types: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code></p>
-
-      <h4>Kaltura Video Component</h4>
-      <p>For <strong>uga-video</strong>, you'll need:</p>
-      <ul>
-        <li><strong>videoid</strong> - The Kaltura entry ID (found in Kaltura MediaSpace)</li>
-        <li><strong>playerid</strong> (optional) - Kaltura player / uiConf ID (default: 53568732; copy from Kaltura embed code)</li>
-        <li><strong>topic-id</strong> (optional) - eLC content topic ID for completion tracking (uses Playkit JS instead of iframe)</li>
-        <li><strong>uiconfid</strong> (optional) - UI configuration ID for custom player appearance</li>
-      </ul>
-
-      
-
-      <h3>4. Troubleshooting</h3>
-      
-      <h4>Components Not Showing</h4>
-      <ul>
-        <li>Verify the script tag is at the end of your HTML (before closing <code>&lt;/body&gt;</code>)</li>
-        <li>Check browser console for errors (F12)</li>
-        <li>Ensure the bundle path is correct: <code>/shared/ugaonline/js/uga-components.js</code></li>
-      </ul>
-
-      <h4>Data Not Loading</h4>
-      <ul>
-        <li>Verify JSON file paths are correct relative to Public Files</li>
-        <li>Check JSON syntax is valid (use a JSON validator)</li>
-        <li>For <strong>uga-quiz</strong>: create a JSON file with a <code>questions</code> array (see <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>), upload it, then set <code>type="local"</code> and <code>filename</code> to the file path (filename only if same folder as the page, or full course-files path)</li>
-        <li>Ensure files are uploaded to the correct location in eLC</li>
-      </ul>
-
-      <h4>Accordion Icons Not Showing</h4>
-      <ul>
-        <li>Add <code>class="js"</code> to your <code>&lt;html&gt;</code> tag: <code>&lt;html lang="en" class="js"&gt;</code></li>
-        <li>This enables the UGA CSS pseudo-element styles for accordion icons</li>
-      </ul>
-
-      <h4>eLC API Errors</h4>
-      <ul>
-        <li>These components only work inside eLC</li>
-        <li>Verify you're testing in the eLC environment, not locally</li>
-        <li>Check browser console for specific API error messages</li>
-      </ul>
-
-      <h3>5. Support & Documentation</h3>
-      <p>For additional help:</p>
-      <ul>
-        <li>View individual component demos for specific usage examples</li>
-        <li>Check the <a href="https://github.com/uga-ool/uga-lit-components">GitHub repository</a> for source code and issues</li>
-        <li>Contact UGA Online Learning for technical support</li>
-      </ul>
-
-    </section>
-
-    <!-- Footer -->
-    <div class="util-margin-top-xxl util-pad-top-xl">
-      <p class="util-color-gray" style="text-align: center;">
-        <strong>UGA Lit Components Setup Guide</strong><br>
-        Version 4.0 | University of Georgia | UGA Online
-      </p>
-    </div>
-
-    <!-- Return to Top Button -->
-    <uga-return-to-top></uga-return-to-top>
-
+      <h2 id="troubleshooting">Troubleshooting</h2>
+      <p class="util-reading-width"><strong>A component renders as an empty space.</strong> The bundle did not load. Check that the <code>&lt;script type="module"&gt;</code> tag is present and that the path resolves in your course.</p>
+      <p class="util-reading-width"><strong>The component appears but has no content.</strong> The data file was not found. The path is the usual cause; try the full Manage Files path rather than a relative one.</p>
+      <p class="util-reading-width"><strong>Corners and shadows look wrong.</strong> <code>base.css</code> is missing from the page.</p>
+      <p class="util-reading-width"><strong>An attribute seems to be ignored.</strong> Check the spelling against the attributes table on that component’s page. A few attributes are all lowercase rather than hyphenated, notably <code>quizid</code>, <code>quiztitle</code> and <code>passingscore</code> on <a href="quiz.html">Quiz</a>, and a misspelled attribute fails silently rather than reporting an error.</p>
+    </main>
   </div>
 
-  <!-- Load the components bundle -->
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>
