@@ -23,7 +23,7 @@
     <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
 
     <header class="util-margin-vert-lg">
-      <h1 class="util-color-red util-margin-bottom-xl">Quiz Component</h1>
+      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Quiz Component</h1>
     </header>
 
     <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
@@ -82,25 +82,25 @@
 
       <div class="util-margin-top-md">
         <h4>Basic (JSON, no timer):</h4>
-        <pre><code class="language-html">&lt;uga-quiz 
+        <uga-code language="markup">&lt;uga-quiz 
   quiz-id="demo-quiz"
   quiz-title="My Quiz"
   passing-score="70"
   type="local"
   filename="quiz/quiz-sample.json"&gt;
-&lt;/uga-quiz&gt;</code></pre>
+&lt;/uga-quiz&gt;</uga-code>
 
         <h4 style="margin-top: 1.5rem;">Basic (CSV, no timer):</h4>
-        <pre><code class="language-html">&lt;uga-quiz 
+        <uga-code language="markup">&lt;uga-quiz 
   quiz-id="demo-quiz-csv"
   quiz-title="My Quiz"
   passing-score="70"
   type="csv"
   filename="quiz/quiz-sample.csv"&gt;
-&lt;/uga-quiz&gt;</code></pre>
+&lt;/uga-quiz&gt;</uga-code>
 
         <h4 style="margin-top: 1.5rem;">With assignment submission:</h4>
-        <pre><code class="language-html">&lt;uga-quiz 
+        <uga-code language="markup">&lt;uga-quiz 
   quiz-id="demo-quiz"
   quiz-title="My Quiz"
   passing-score="70"
@@ -110,10 +110,10 @@
 &lt;/uga-quiz&gt;
 &lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;&lt;/uga-quiz-grade-sync&gt;
 &lt;!-- or use dropbox-folder-id="12345" with the assignment URL db= value --&gt;
-&lt;!-- swap type/filename to type="csv" filename="quiz/quiz-sample.csv" to load from an eLC CSV instead --&gt;</code></pre>
+&lt;!-- swap type/filename to type="csv" filename="quiz/quiz-sample.csv" to load from an eLC CSV instead --&gt;</uga-code>
 
         <h4 style="margin-top: 1.5rem;">All features (timer, auto-submit, randomize):</h4>
-        <pre><code class="language-html">&lt;uga-quiz 
+        <uga-code language="markup">&lt;uga-quiz 
   quiz-id="demo-quiz"
   quiz-title="Quiz: All Types &amp; Features"
   passing-score="70"
@@ -126,7 +126,7 @@
   type="local"
   filename="quiz/quiz-sample.json"
           dropbox-assignment-name="Quiz Demo 2"&gt;
-&lt;/uga-quiz&gt;</code></pre>
+&lt;/uga-quiz&gt;</uga-code>
         <p><strong>Note:</strong> The instructor creates the assignment (e.g. &quot;Quiz Demo 2&quot;) in eLC and <strong>makes it visible</strong> to students (if hidden, submissions will not pass through). Use <strong>Text or File</strong> submissions and link it to a grade item. Place <code>&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;</code> (or <code>dropbox-folder-id="<em>folderId</em>"</code>) below the quiz so instructors can run &quot;Sync quiz grades to gradebook.&quot; When synced, the most recent grade overwrites any current grade for each student.</p>
       </div>
 
