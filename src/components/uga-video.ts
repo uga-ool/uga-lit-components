@@ -41,6 +41,16 @@ class UgaVideo extends LitElement {
   private completedTopics: Set<string> = new Set();
   private analyticsContext: { userId: string | null; leVersion: string; lpVersion: string } | null = null;
 
+  /**
+   * Per-instance suffix for the embed container id. `playerid` defaults to the same
+   * fixed value ("660400380") on every instance that doesn't set one explicitly, and
+   * nothing stops two instances from being given the same explicit `playerid` either —
+   * without this, two such <uga-video> elements on one page would render container divs
+   * with the same id and Kaltura's setup() would throw for the second one.
+   */
+  private static instanceCounter = 0;
+  private readonly componentId = `uga-video-${UgaVideo.instanceCounter++}`;
+
   createRenderRoot() {
     return this;
   }
@@ -379,12 +389,14 @@ class UgaVideo extends LitElement {
   }
 
   /**
-   * The div id KalturaPlayer.setup() mounts into, matching Kaltura's own embed code
-   * (`kaltura_player_<playerid>`). When one element renders several videos from a data
-   * file, the entry id is appended so the ids stay unique on the page.
+   * The div id KalturaPlayer.setup() mounts into. Based on Kaltura's own embed code
+   * (`kaltura_player_<playerid>`), with `componentId` mixed in so multiple <uga-video>
+   * elements never collide even when they share (or both omit) `playerid`. When one
+   * element renders several videos from a data file, the entry id is also appended so
+   * those stay unique within the instance.
    */
   private getContainerId(videoId: string): string {
-    const base = `kaltura_player_${this.playerid}`;
+    const base = `kaltura_player_${this.playerid}_${this.componentId}`;
     return this.videos.length > 1 ? `${base}_${videoId}` : base;
   }
 

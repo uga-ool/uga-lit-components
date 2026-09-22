@@ -12,6 +12,14 @@ All notable changes to this project will be documented in this file.
 - `uga-footer`: `@customElement` registration; removed debug `console.log` calls.
 - Updated [src/types/global.d.ts](src/types/global.d.ts) (bundled axios note; `window.D2L`).
 
+### Bug Fixes
+
+- `uga-video`: **Multiple videos on one page could fail to load.** `playerid` feeds directly into the Kaltura embed container's DOM id and defaults to the same fixed value when omitted, so two `<uga-video>` elements that both omitted `playerid` (or that were given the same explicit `playerid`) rendered container divs with identical ids — Kaltura's `setup()` threw "target id provided is already in use" for the second one, which then displayed "This video failed to load." Each instance now mixes a unique per-instance id into its container id, so `playerid` can be omitted or reused freely across elements.
+- Resolved `tsc --noEmit` errors across `uga-assignment`, `uga-course-calendar`, `uga-quiz`, `uga-toc`, `analytics-utils.ts`, and `d2l-client.ts` (type/null-safety fixes; no other behavior changes). Added the missing `kaltura-secrets.example.ts` template referenced by docs.
+- `uga-quiz`: **True/false questions could never register as correct.** The rendered radio options compared against boolean literals (`correctAnswer === true`) and passed hardcoded `'true'`/`'false'` strings to the grader, but true/false questions store `correctAnswer` as an option index (0/1) exactly like multiple-choice, per [docs/QUIZ_JSON_FORMAT.md](docs/QUIZ_JSON_FORMAT.md) and the grading logic. Switched the true/false render path to the same index-based comparison already used for multiple-choice (merged into one `case` — the two branches were otherwise identical).
+- `csv-parser.ts`: True/false questions imported from eLC CSV now emit `options: ["True", "False"]` and a numeric `correctAnswer` (0/1) instead of a boolean, matching the index-based contract above. Without this, CSV-imported true/false questions rendered with no selectable answers.
+- `demo/quiz/quiz-demo.json`: updated its true/false sample question to the `options` + numeric `correctAnswer` format for the same reason.
+
 ### Scripts
 
 - Added [scripts/README.md](scripts/README.md) and `npm run quiz:csv-to-json`; updated Kaltura/CSV script usage in docs.

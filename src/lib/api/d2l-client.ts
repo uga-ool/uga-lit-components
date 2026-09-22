@@ -335,9 +335,9 @@ export async function fetchAllPages<T>(
   let nextPageUrl: string | null = null;
 
   for (;;) {
-    const useContinuation = nextPageUrl != null;
-    const requestUrl = useContinuation ? nextPageUrl : baseUrl;
-    const result = await fetchPaged<T>(requestUrl, {
+    const useContinuation: boolean = nextPageUrl != null;
+    const requestUrl: string = useContinuation ? (nextPageUrl as string) : baseUrl;
+    const result: { items: T[]; nextBookmark: string | null; nextPageUrl: string | null } = await fetchPaged<T>(requestUrl, {
       ...options,
       bookmark: useContinuation ? null : bookmark,
       _continuation: useContinuation,

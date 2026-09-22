@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, getGradebook, getGradeValues, getBulkGradeValues, getClasslist, getAssignmentSubmissions } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
-import { getItemType, getTypesArray, shouldIncludeItem, DEFAULT_TYPES_STRING } from '../lib/data/item-type-utils.js';
+import { getItemType, getTypesArray, shouldIncludeItem, DEFAULT_TYPES_STRING, type ItemType } from '../lib/data/item-type-utils.js';
 import { memoize } from '../lib/utils/memoize.js';
 import { observeLazyLoad } from '../lib/utils/lazy-load.js';
 import type { ApiVersions, MyItemsDue, Enrollment, DiscussionTopicWithForum, ClasslistUser, AssignmentSubmission, GradeValue } from '../types/d2l.js';
@@ -14,19 +14,21 @@ interface AssignmentData {
   ForumId?: number;
   ItemType?: string | number;
   Instructions?: {
-    Html: string;
+    Text?: string;
+    Html?: string;
   };
   CustomInstructions?: {
-    Html: string;
+    Text?: string;
+    Html?: string;
   };
   DueDate?: string | null;
   Availability?: {
-    StartDate?: string;
-    EndDate?: string;
+    StartDate?: string | null;
+    EndDate?: string | null;
   };
   DropboxType?: number;
   Assessment?: {
-    Rubrics: Array<{ Name: string }>;
+    Rubrics?: Array<{ Name: string }>;
   };
 }
 
@@ -56,7 +58,7 @@ class UgaAssignment extends LitElement {
   
   // Memoized filter function - caches filtered results
   private memoizedFilter = memoize(
-    (items: AssignmentData[], allowedTypes: string[]) => {
+    (items: AssignmentData[], allowedTypes: ItemType[]) => {
       return items.filter(item => shouldIncludeItem(item, allowedTypes));
     },
     (items, allowedTypes) => `${items.length}:${allowedTypes.join(',')}`
@@ -493,21 +495,21 @@ class UgaAssignment extends LitElement {
       console.log(`📤 Submission UserIds:`, submissions.map(s => ({ username: s.UserName, userId: s.UserId, displayName: s.DisplayName })));
       console.log(`📊 Grade UserIds:`, gradeValues.map(g => ({ userId: g.UserId, points: `${g.PointsNumerator}/${g.PointsDenominator}` })));
       
-      // Check for UserId mismatches
-      const classlistUserIds = new Set(students.map(u => u.UserId).filter(id => id !== undefined && id !== null));
-      const submissionUserIds = new Set(submissions.map(s => s.UserId));
-      const gradeUserIds = new Set(gradeValues.map(g => g.UserId));
-      
+      // Check for UserId mismatches (normalize to string since D2L API can return UserId as string or number)
+      const classlistUserIds = new Set(students.map(u => u.UserId).filter((id): id is number => id !== undefined && id !== null).map(String));
+      const submissionUserIds = new Set(submissions.map(s => String(s.UserId)));
+      const gradeUserIds = new Set(gradeValues.map(g => String(g.UserId)));
+
       const submissionsNotInClasslist = Array.from(submissionUserIds).filter(id => !classlistUserIds.has(id));
       const gradesNotInClasslist = Array.from(gradeUserIds).filter(id => !classlistUserIds.has(id));
       
       if (submissionsNotInClasslist.length > 0) {
         console.warn(`⚠️ Found ${submissionsNotInClasslist.length} submission(s) from users not in classlist:`, submissionsNotInClasslist);
-        console.warn(`   These submissions:`, submissions.filter(s => submissionsNotInClasslist.includes(s.UserId)));
+        console.warn(`   These submissions:`, submissions.filter(s => submissionsNotInClasslist.includes(String(s.UserId))));
       }
       if (gradesNotInClasslist.length > 0) {
         console.warn(`⚠️ Found ${gradesNotInClasslist.length} grade(s) for users not in classlist:`, gradesNotInClasslist);
-        console.warn(`   These grades:`, gradeValues.filter(g => gradesNotInClasslist.includes(g.UserId)));
+        console.warn(`   These grades:`, gradeValues.filter(g => gradesNotInClasslist.includes(String(g.UserId))));
       }
       
       const studentsWithoutUserId = students.filter(u => !u.UserId && !u.Identifier);

@@ -24,9 +24,9 @@ export function AbortControllerMixin<T extends Constructor<ReactiveElement>>(sup
     }
     
     /**
-     * Check if component is still connected (not aborted)
+     * Check if the request is still active (not aborted)
      */
-    protected isConnected(): boolean {
+    protected isRequestActive(): boolean {
       return this.abortController !== null && !this.abortController.signal.aborted;
     }
     

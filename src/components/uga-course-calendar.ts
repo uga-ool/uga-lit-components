@@ -295,7 +295,6 @@ class UgaCourseCalendar extends LitElement {
     return {
       title: 'Course Calendar',
       caption: 'Course Calendar',
-      introNote: 'Loaded from CSV template. Update title/notes in JSON mode if you need richer page metadata.',
       weeks: Array.from(weekMap.entries()).map(([label, weekRows]) => ({
         label,
         rows: weekRows

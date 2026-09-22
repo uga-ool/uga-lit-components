@@ -139,8 +139,9 @@ export class UGATableOfContents extends LitElement {
       }
 
       // If this is the root level, append directly to root list
-      if (normalizedLevel === rootLevel) {
-        currentLists[rootLevel].appendChild(listItem);
+      const rootList = normalizedLevel === rootLevel ? currentLists[rootLevel] : null;
+      if (rootList) {
+        rootList.appendChild(listItem);
       }
       // If this is a deeper level, create nested lists as needed
       else if (normalizedLevel > rootLevel) {
