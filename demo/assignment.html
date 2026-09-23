@@ -1,132 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Assignment Component Demo</title>
+  <title>Assignment — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Assignment Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Assignment Component</h1>
 
-        <p><strong>Displays assignments, discussions, quizzes, and content items from the current eLC course.</strong> Automatically fetches and displays item details including instructions, due dates, availability, rubric information, and submission links. By default, all item types are displayed. Use the <code>types</code> property to filter which item types to display.</p>
-        <p><strong>Grade Export Feature:</strong> When <code>enable-export</code> is set, instructors can download a CSV for an assignment that lists <strong>all students</strong>, whether they submitted, and their current gradebook value (blank if not graded yet).</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A detailed list of course work: instructions, due dates, availability, rubric information and submission links for assignments, discussions, quizzes and content items.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. It is the fuller counterpart to <a href="duedate.html">Due Date</a>, which shows dates alone. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">With no attributes it lists every item type. The course is detected from the page URL, so there is nothing to configure.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-assignment></uga-assignment>
+      </div>
+      <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
 
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="filtering-by-type">Filtering by type</h2>
+      <p class="util-reading-width">Pass <code>types</code> a comma-separated list to narrow what appears, the same options as Due Date.</p>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-assignment types="assignment"&gt;&lt;/uga-assignment&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-assignment types="quiz,discussion"&gt;&lt;/uga-assignment&gt;</uga-code>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg" style="margin-top: 2rem;">
-        <h4>With Grade Export Enabled (Instructor View)</h4>
-        <p><strong>Note:</strong> Grade export features are only visible to instructors. Students will see the standard assignment list.</p>
-        <uga-assignment enable-export></uga-assignment>
-        <p><em>When <code>enable-export</code> is set, instructors see "Export Grades" buttons for each assignment. Clicking it downloads a per-assignment CSV (all students + submission status + gradebook value). The "Export All Assignments (CSV)" button exports a course-level summary of assignments and gradebook metadata.</em></p>
-      </div>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td><code>types</code></td>
-            <td>String</td>
-            <td>Comma-separated list of item types to include. Options: <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>. Default: <code>assignment,discussion,quiz,content</code> (all types)</td>
-          </tr>
-          <tr>
-            <td><code>enable-export</code></td>
-            <td>Boolean</td>
-            <td>Enable grade export features for instructors. When enabled, instructors see "Export Grades" (per-assignment roster CSV) and "Export All Assignments (CSV)" (course summary). Default: <code>false</code></td>
-          </tr>
+      <h2 id="grade-export">Grade export</h2>
+      <p class="util-reading-width">Add <code>enable-export</code> and instructors gain two CSV downloads: per-assignment, listing every student with their submission status and current gradebook value, and a course-level summary of all assignments. Students never see the buttons, so the attribute is safe to leave on a page they also read.</p>
+      <uga-code language="markup">&lt;uga-assignment enable-export&gt;&lt;/uga-assignment&gt;</uga-code>
+      <p class="util-reading-width">Exported files carry student names and grades, so treat them as FERPA-protected records once downloaded.</p>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-assignment attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>types</code></td>
+              <td>string</td>
+              <td><code>assignment,discussion,quiz,content</code></td>
+              <td>Comma-separated list of item types to include. Any of <code>assignment</code>, <code>discussion</code>, <code>quiz</code>, <code>content</code>.</td>
+            </tr>
+            <tr>
+              <td><code>enable-export</code></td>
+              <td>boolean</td>
+              <td><code>false</code></td>
+              <td>Show grade export buttons to instructors. Has no effect for students.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <h4>Basic Usage</h4>
-        <uga-code language="markup">&lt;uga-assignment&gt;&lt;/uga-assignment&gt;</uga-code>
-        
-        <h4 style="margin-top: 1.5rem;">Filter by Type</h4>
-        <uga-code language="markup">&lt;!-- Show only assignments --&gt;
-&lt;uga-assignment types="assignment"&gt;&lt;/uga-assignment&gt;
-
-&lt;!-- Show assignments and discussions --&gt;
-&lt;uga-assignment types="assignment,discussion"&gt;&lt;/uga-assignment&gt;
-
-&lt;!-- Show only discussions --&gt;
-&lt;uga-assignment types="discussion"&gt;&lt;/uga-assignment&gt;</uga-code>
-
-        <h4 style="margin-top: 1.5rem;">Enable Grade Export</h4>
-        <uga-code language="markup">&lt;!-- Enable grade export for instructors --&gt;
-&lt;uga-assignment enable-export&gt;&lt;/uga-assignment&gt;
-
-&lt;!-- Combine with type filtering --&gt;
-&lt;uga-assignment types="assignment" enable-export&gt;&lt;/uga-assignment&gt;</uga-code>
-
-        <h4 style="margin-top: 1.5rem;">How Grade Export Works</h4>
-        <p><strong>Grade Export Feature:</strong></p>
-        <ol>
-          <li><strong>Instructor enables export</strong> - Set <code>enable-export</code> attribute on the component. This makes export buttons visible to instructors only.</li>
-          <li><strong>Export individual assignment grades</strong> - Click "Export Grades" button next to any assignment. This:
-            <ul>
-              <li>Finds the grade object in the gradebook that matches the assignment name</li>
-              <li>Loads the classlist to include every student</li>
-              <li>Loads submissions to mark who submitted</li>
-              <li>Loads gradebook values (if any) and leaves blanks for ungraded work</li>
-              <li>Downloads a per-assignment CSV</li>
-            </ul>
-          </li>
-          <li><strong>Export all assignments summary</strong> - Click "Export All Assignments (CSV)" button at the top. This:
-            <ul>
-              <li>Creates a CSV file with all assignments</li>
-              <li>Includes assignment name, due date, type, grade object ID, max points, and student count</li>
-              <li>Downloads the CSV file automatically</li>
-            </ul>
-          </li>
-        </ol>
-        
-        <p><strong>Important Notes:</strong></p>
-        <ul>
-          <li><strong>Grade objects must exist</strong> - The assignment must have a corresponding grade object in the eLC gradebook. The component matches assignments to grade objects by name.</li>
-          <li><strong>Export reads existing grades</strong> - The export feature reads grades that already exist in the gradebook. It does not create new grades or autograde submissions.</li>
-          <li><strong>Instructor-only feature</strong> - Students will not see the export buttons, only the standard assignment list.</li>
-        </ul>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

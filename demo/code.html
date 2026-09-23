@@ -1,91 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Code Block Component Demo</title>
+  <title>Code Block — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Code Block Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Code Block Component</h1>
 
-        <p><strong>Displays syntax-highlighted code with copy functionality.</strong> Supports multiple languages via Prism.js. Can load from file or inline code.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A syntax-highlighted code block with a copy button. Highlighting comes from Prism, which the design system’s <code>scripts.js</code> already loads, so no extra script is needed.</p>
+        <p>Every code sample on these demo pages is this component. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <uga-toc></uga-toc>
+
+      <h2 id="inline-code">Inline code</h2>
+      <p class="util-reading-width">Put the code between the tags and set <code>language</code> to the language name. The markup must be HTML-escaped, so write <code>&amp;lt;</code> for <code>&lt;</code>, otherwise the browser parses your sample as part of the page.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-code language="javascript">function greet(name) {
+          console.log(`Hello, ${name}!`);
+        }
+
+        greet('Student');</uga-code>
+      </div>
+      <uga-code language="markup">&lt;uga-code language="javascript"&gt;function greet(name) {
   console.log(`Hello, ${name}!`);
 }
 
-greet('Student');</uga-code>
+greet('Student');&lt;/uga-code&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="loading-from-a-file">Loading from a file</h2>
+      <p class="util-reading-width">Set <code>filename</code> instead and the component fetches the file and shows its contents. Useful when the sample is a real file in your course files, because it cannot drift from the copy on the page.</p>
+      <uga-code language="markup">&lt;uga-code language="python" filename="examples/grading.py"&gt;&lt;/uga-code&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="languages">Languages</h2>
+      <p class="util-reading-width"><code>language</code> takes any Prism language name. <code>markup</code> covers HTML and XML, and <code>html</code> is an alias for it. The name is shown as a label above the block, so it is also what tells a reader what they are looking at.</p>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-code language="markup"&gt;&amp;amp;lt;p&amp;amp;gt;Escaped HTML&amp;amp;lt;/p&amp;amp;gt;&lt;/uga-code&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-code language="css"&gt;.cmp-button { color: #ba0c2f; }&lt;/uga-code&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-code language="json"&gt;{ "title": "Module 1" }&lt;/uga-code&gt;</uga-code>
       </div>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>language</td>
-            <td>string</td>
-            <td>Programming language for syntax highlighting</td>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>Load code from external file</td>
-          </tr>
-          <tr>
-            <td>code</td>
-            <td>string</td>
-            <td>Inline code content</td>
-          </tr>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-code attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>language</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Prism language name, for example <code>markup</code>, <code>javascript</code>, <code>python</code>, <code>css</code> or <code>json</code>. Also shown as the label above the block.</td>
+            </tr>
+            <tr>
+              <td><code>filename</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Path to a file to load the code from, relative to the page. Overrides any content between the tags.</td>
+            </tr>
+            <tr>
+              <td><code>code</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>The code as a property rather than element content. Content between the tags is normally easier; this exists for setting the value from script.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-code language="javascript"&gt;
-const x = 10;
-console.log(x);
-&lt;/uga-code&gt;
-
-&lt;!-- Load from file --&gt;
-&lt;uga-code language="python" filename="example.py"&gt;&lt;/uga-code&gt;</uga-code>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

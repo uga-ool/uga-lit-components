@@ -1,159 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Course Analytics Component Demo</title>
+  <title>Course Analytics — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
-  <div class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-    <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Course Analytics Component</h1>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
-        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> when the hostname is <code>localhost</code>; in eLC, the same script tag should resolve to the production bundle at <code>/shared/ugaonline/js/uga-components.js</code>.</p>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-      <h2>Overview</h2>
-      <p>
-        The <code>&lt;uga-course-analytics&gt;</code> component provides course-wide analytics
-        that aggregate data from multiple sources (content views/completions, assignments,
-        discussions, and quizzes) to show module-level consumption statistics and comparisons.
-      </p>
-      <uga-callout type="note" label="Note">
-        <p>The embedding page should be hidden from students via eLC release conditions. This component does not perform its own role check.</p>
-      </uga-callout>
-    </div>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Course Analytics Component</h1>
 
-    <div class="util-pad-all-lg util-margin-bottom-lg">
-      <h2>Basic Usage</h2>
-      <p>Embed the component in any eLC content page:</p>
-      <div class="util-margin-top-md"><uga-code language="markup">&lt;uga-course-analytics&gt;&lt;/uga-course-analytics&gt;</uga-code></div>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A summary of course activity: content statistics, assignment and discussion counts, and comparisons between modules.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. It is aimed at instructors and designers reviewing how a course is put together. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
+      </div>
 
-      <h3>Live Example</h3>
-      <uga-course-analytics></uga-course-analytics>
-    </div>
+      <uga-toc></uga-toc>
 
-    <div class="util-margin-top-md util-margin-bottom-md">
-      <h4>Component Properties</h4>
-      <table>
-        <thead>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Default</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>show-content-stats</code></td>
-            <td>boolean</td>
-            <td>true</td>
-            <td>Show content view/completion statistics</td>
-          </tr>
-          <tr>
-            <td><code>show-assignments</code></td>
-            <td>boolean</td>
-            <td>true</td>
-            <td>Show assignment submission statistics</td>
-          </tr>
-          <tr>
-            <td><code>show-discussions</code></td>
-            <td>boolean</td>
-            <td>true</td>
-            <td>Show discussion participation statistics</td>
-          </tr>
-          <tr>
-            <td><code>group-by</code></td>
-            <td>string</td>
-            <td>'module'</td>
-            <td>Group statistics by 'module', 'topic', or 'all' (currently only 'module' is implemented)</td>
-          </tr>
-          <tr>
-            <td><code>compare-modules</code></td>
-            <td>boolean</td>
-            <td>true</td>
-            <td>Enable module comparison view with visual indicators</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">With no attributes it shows every panel, grouped by module. The course comes from the page URL.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-course-analytics></uga-course-analytics>
+      </div>
+      <uga-code language="markup">&lt;uga-course-analytics&gt;&lt;/uga-course-analytics&gt;</uga-code>
+      <p class="util-reading-width">The component makes a number of Valence calls to assemble its figures, so on a large course it takes a few seconds to fill in.</p>
 
-    <div class="util-pad-all-lg util-margin-bottom-lg">
-      <h2>Customized Example</h2>
-      <p>Show only content and assignment statistics:</p>
-      <div class="util-margin-top-md"><uga-code language="markup">&lt;uga-course-analytics
-  show-content-stats="true"
-  show-assignments="true"
-  show-discussions="false"
-  compare-modules="true"&gt;
-&lt;/uga-course-analytics&gt;</uga-code></div>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <h3>Live Example</h3>
-      <uga-course-analytics
-        show-content-stats="true"
-        show-assignments="true"
-        show-discussions="false"
-        compare-modules="true">
-      </uga-course-analytics>
-    </div>
+      <h2 id="choosing-what-to-show">Choosing what to show</h2>
+      <p class="util-reading-width">Each panel can be switched off. All three default to on, so you only need these attributes to remove something.</p>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-course-analytics show-discussions="false"&gt;&lt;/uga-course-analytics&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-course-analytics show-assignments="false" show-discussions="false"&gt;&lt;/uga-course-analytics&gt;</uga-code>
+      </div>
 
-    <div class="util-pad-all-lg util-margin-bottom-lg">
-      <h2>Data Sources</h2>
-      <p>The component aggregates data from:</p>
-      <ul>
-        <li><strong>Content:</strong> Module/topic views and completions from eLC Content API</li>
-        <li><strong>Assignments:</strong> Submission rates and scores from Dropbox API</li>
-        <li><strong>Discussions:</strong> Post counts and participation from Discussion API</li>
-        <li><strong>Objectives:</strong> Learning objectives count from Competencies API</li>
-        <li><strong>Login History:</strong> Student logins in last 30 days (excludes admin/instructors)</li>
-        <li><strong>Grades:</strong> Average final grade for students</li>
-      </ul>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <uga-callout type="note" label="Note">
-        <p>The component automatically groups assignments and discussions by module based on their distribution across course modules. For more accurate module assignment, ensure your course content is properly organized with modules and topics.</p>
-      </uga-callout>
-    </div>
+      <h2 id="grouping">Grouping</h2>
+      <p class="util-reading-width"><code>group-by</code> takes <code>module</code>, <code>topic</code> or <code>all</code>. Use <code>topic</code> for a per-item breakdown, or <code>all</code> for a single course-wide total. <code>compare-modules</code> adds the module-to-module comparison and is on by default.</p>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-course-analytics group-by="topic"&gt;&lt;/uga-course-analytics&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-course-analytics group-by="all" compare-modules="false"&gt;&lt;/uga-course-analytics&gt;</uga-code>
+      </div>
 
-    <div class="util-pad-all-lg util-margin-bottom-lg">
-      <h2>Visual Indicators</h2>
-      <p>The module comparison table includes color-coded indicators:</p>
-      <!-- Green/orange are the component's own above/below-average semantic colors; the UGA Design System palette has no equivalent success/warning hues, so these stay as literal colors matching what uga-course-analytics itself renders. -->
-      <ul>
-        <li><span class="util-radius-all-circle util-margin-right-sm" style="display: inline-block; width: 8px; height: 8px; background-color: #4caf50;"></span> <strong>Green:</strong> Above average performance</li>
-        <li><span class="util-radius-all-circle util-margin-right-sm" style="display: inline-block; width: 8px; height: 8px; background-color: #ff9800;"></span> <strong>Orange:</strong> Average or below average performance</li>
-      </ul>
-    </div>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-    <div class="util-pad-all-lg util-margin-bottom-lg">
-      <h2>Performance Considerations</h2>
-      <p>
-        The component makes multiple API calls to aggregate data across the course.
-        For large courses with many modules, students, and activities, loading may take
-        several seconds. The component includes:
-      </p>
-      <ul>
-        <li>Automatic caching of API responses (5-10 minute TTL)</li>
-        <li>Parallel API calls where possible</li>
-        <li>Error handling for missing or inaccessible data</li>
-        <li>Loading states during data fetch</li>
-      </ul>
-    </div>
-  </div>
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-course-analytics attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>show-content-stats</code></td>
+              <td>boolean</td>
+              <td><code>true</code></td>
+              <td>Show the content statistics panel.</td>
+            </tr>
+            <tr>
+              <td><code>show-assignments</code></td>
+              <td>boolean</td>
+              <td><code>true</code></td>
+              <td>Show the assignments panel.</td>
+            </tr>
+            <tr>
+              <td><code>show-discussions</code></td>
+              <td>boolean</td>
+              <td><code>true</code></td>
+              <td>Show the discussions panel.</td>
+            </tr>
+            <tr>
+              <td><code>group-by</code></td>
+              <td>string</td>
+              <td><code>module</code></td>
+              <td>How figures are grouped: <code>module</code>, <code>topic</code> or <code>all</code>.</td>
+            </tr>
+            <tr>
+              <td><code>compare-modules</code></td>
+              <td>boolean</td>
+              <td><code>true</code></td>
+              <td>Include the module-to-module comparison.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
   </div>
 
-  <script>
-    (function(){var s=document.createElement('script');s.type='module';s.src=window.location.hostname==='localhost'?'/dist/js/uga-components.js':'/shared/ugaonline/js/uga-components.js';document.body.appendChild(s);})();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

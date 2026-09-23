@@ -1,184 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Callout Component Demo</title>
+  <title>Callout — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Callout Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and examples.</p>
-        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> when the hostname is <code>localhost</code> (run <code>npm run build</code> first); in eLC, use <code>/shared/ugaonline/js/uga-components.js</code>. Callout corners use Design System <code>util-radius-all-sm</code> (requires <code>base.css</code>).</p>
-        <p><strong>Semantic callouts</strong> for examples, notes, warnings, tips, and important reminders. This component renders as an <code>&lt;aside&gt;</code> with an optional bolded pseudo-label, so it avoids adding heading tags that could interfere with page TOCs.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Callout Component</h1>
+
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>Semantic callouts for notes, tips, warnings, examples, and important reminders. The component renders an <code>&lt;aside&gt;</code> with an optional bold pseudo-label, so it adds no heading tags that would show up in a page table of contents.</p>
+        <p>Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <h2>Live Examples</h2>
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <uga-callout
-          id="note-callout-example"
-          type="note"
-          size="small"
-          label="Note (Small)"
-          body="Use this section to provide extra context that supports the main content."
-        ></uga-callout>
+      <uga-toc></uga-toc>
 
-        <uga-callout
-          id="important-callout-example"
-          type="important"
-          size="large"
-          label="Important (Large)"
-          body="Complete the identity check before opening the exam in eLC."
-        ></uga-callout>
-
-        <uga-callout
-          id="tip-callout-example"
-          type="tip"
-          size="medium"
-          label="Tip (Medium)"
-          body="Break long tasks into short numbered steps to improve completion rates."
-        ></uga-callout>
-
-        <uga-callout
-          id="example-callout-example"
-          type="example"
-          size="xlarge"
-          label="Example (X-Large)"
-          body="Apply the formula to one sample problem before assigning practice work."
-        ></uga-callout>
-
-        <uga-callout
-          id="warning-callout-example"
-          type="warning"
-          size="xlarge"
-          label="Warning (X-Large)"
-          body="Do not upload screenshots of spreadsheets; submit the original file instead."
-        ></uga-callout>
-
-        <uga-callout
-          id="id-usage-callout"
-          type="note"
-          size="medium"
-          label="ID Usage Example"
-          body="This callout has id=&quot;id-usage-callout&quot; so you can link directly to it using #id-usage-callout."
-        ></uga-callout>
+      <h2 id="types">Types</h2>
+      <p class="util-reading-width">Set <code>type</code> to one of <code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, or <code>warning</code>. Each type has its own color and icon. An unrecognized value falls back to <code>note</code>.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-callout type="note" label="Note" body="Use this section to provide extra context that supports the main content."></uga-callout>
+        <uga-callout type="important" label="Important" body="Complete the identity check before opening the exam in eLC."></uga-callout>
+        <uga-callout type="tip" label="Tip" body="Break long tasks into short numbered steps to improve completion rates."></uga-callout>
+        <uga-callout type="example" label="Example" body="Apply the formula to one sample problem before assigning practice work."></uga-callout>
+        <uga-callout type="warning" label="Warning" body="Do not upload screenshots of spreadsheets; submit the original file instead."></uga-callout>
       </div>
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-callout type="note" size="small" label="Note (Small)" body="Use this section to provide extra context that supports the main content."&gt;&lt;/uga-callout&gt;
-
-&lt;uga-callout type="important" size="large" label="Important (Large)" body="Complete the identity check before opening the exam in eLC."&gt;&lt;/uga-callout&gt;
-
-&lt;uga-callout id="id-usage-callout" type="note" label="ID Usage Example" body="Link to this block with #id-usage-callout."&gt;&lt;/uga-callout&gt;</uga-code>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="note" label="Note" body="Use this section to provide extra context that supports the main content."&gt;&lt;/uga-callout&gt;</uga-code>
       </div>
-    </section>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="important" label="Important" body="Complete the identity check before opening the exam in eLC."&gt;&lt;/uga-callout&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="tip" label="Tip" body="Break long tasks into short numbered steps to improve completion rates."&gt;&lt;/uga-callout&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="example" label="Example" body="Apply the formula to one sample problem before assigning practice work."&gt;&lt;/uga-callout&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="warning" label="Warning" body="Do not upload screenshots of spreadsheets; submit the original file instead."&gt;&lt;/uga-callout&gt;</uga-code>
+      </div>
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <h2>Without Label</h2>
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="sizes">Sizes</h2>
+      <p class="util-reading-width">Set <code>size</code> to <code>small</code>, <code>medium</code>, <code>large</code>, or <code>xlarge</code> to change the spacing and text size. It defaults to <code>medium</code>.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-callout type="note" size="small" label="Small" body="Compact spacing for a brief aside."></uga-callout>
+        <uga-callout type="note" size="medium" label="Medium" body="The default size."></uga-callout>
+        <uga-callout type="note" size="large" label="Large" body="More breathing room for a longer passage."></uga-callout>
+        <uga-callout type="note" size="xlarge" label="X-Large" body="Largest spacing and text size."></uga-callout>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="note" size="small" label="Small" body="Compact spacing for a brief aside."&gt;&lt;/uga-callout&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="note" size="medium" label="Medium" body="The default size."&gt;&lt;/uga-callout&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="note" size="large" label="Large" body="More breathing room for a longer passage."&gt;&lt;/uga-callout&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-callout type="note" size="xlarge" label="X-Large" body="Largest spacing and text size."&gt;&lt;/uga-callout&gt;</uga-code>
+      </div>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="without-a-label">Without a label</h2>
+      <p class="util-reading-width">Omit <code>label</code> and the callout still renders semantic aside markup, just without the bold heading strip.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-callout type="note">
           <p>This callout omits <code>label</code> and still renders semantic aside markup.</p>
         </uga-callout>
       </div>
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-callout type="note"&gt;
-  &lt;p&gt;This callout omits label.&lt;/p&gt;
-&lt;/uga-callout&gt;</uga-code>
-      </div>
-    </section>
+      <uga-code language="markup">&lt;uga-callout type="note"&gt;
+        &lt;p&gt;This callout omits &lt;code&gt;label&lt;/code&gt; and still renders semantic aside markup.&lt;/p&gt;
+        &lt;/uga-callout&gt;</uga-code>
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <h2>Nested Callouts</h2>
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>eLC tip:</strong> Use the <code>body</code> attribute for plain-text bodies so content stays inside the box after sanitization; nest another <code>&lt;uga-callout&gt;</code> in the slot for the inner callout.</p>
-      </div>
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <uga-callout
-          type="note"
-          label="Case Study Setup"
-          body="For a 12% annual rate over 6 months, convert to the period rate before applying the formula."
-        >
-          <uga-callout
-            type="example"
-            label="Worked Example"
-            body="Read the short scenario first, then work through the embedded example."
-          ></uga-callout>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="rich-body-content">Rich body content</h2>
+      <p class="util-reading-width">Use the <code>body</code> attribute for plain-text bodies, because plain text survives eLC HTML sanitization. For lists, links, or multiple paragraphs, put the content in the element instead of using <code>body</code>.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-callout type="tip" label="Before you submit">
+          <p>Check each of the following:</p>
+          <ul>
+            <li>File is a PDF, not a screenshot.</li>
+            <li>Your name appears in the file name.</li>
+            <li>You have reviewed the <a href="#attributes">rubric</a>.</li>
+          </ul>
         </uga-callout>
       </div>
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-callout type="note" label="Case Study Setup" body="For a 12% annual rate over 6 months, convert to the period rate before applying the formula."&gt;
-  &lt;uga-callout type="example" label="Worked Example" body="Read the short scenario first, then work through the embedded example."&gt;&lt;/uga-callout&gt;
-&lt;/uga-callout&gt;</uga-code>
-      </div>
-    </section>
+      <uga-code language="markup">&lt;uga-callout type="tip" label="Before you submit"&gt;
+        &lt;p&gt;Check each of the following:&lt;/p&gt;
+        &lt;ul&gt;
+        &lt;li&gt;File is a PDF, not a screenshot.&lt;/li&gt;
+        &lt;li&gt;Your name appears in the file name.&lt;/li&gt;
+        &lt;li&gt;You have reviewed the &lt;a href="#attributes"&gt;rubric&lt;/a&gt;.&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;/uga-callout&gt;</uga-code>
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <div class="util-scrollable-content">
-          <table>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="nested-callouts">Nested callouts</h2>
+      <p class="util-reading-width">Nest another <code>&lt;uga-callout&gt;</code> inside the element to place a worked example within a larger note.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-callout type="note" label="Case Study Setup" body="For a 12% annual rate over 6 months, convert to the period rate before applying the formula.">
+          <uga-callout type="example" label="Worked Example" body="Read the short scenario first, then work through the embedded example."></uga-callout>
+        </uga-callout>
+      </div>
+      <uga-code language="markup">&lt;uga-callout type="note" label="Case Study Setup" body="For a 12% annual rate over 6 months, convert to the period rate before applying the formula."&gt;
+        &lt;uga-callout type="example" label="Worked Example" body="Read the short scenario first, then work through the embedded example."&gt;&lt;/uga-callout&gt;
+        &lt;/uga-callout&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="linking-to-a-callout">Linking to a callout</h2>
+      <p class="util-reading-width">Give the element an <code>id</code> to link directly to it from elsewhere in the course, for example <code>#exam-window</code>.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-callout id="exam-window" type="important" label="Exam Window" body="The exam opens Friday at 8:00 a.m. and closes Sunday at 11:59 p.m."></uga-callout>
+      </div>
+      <uga-code language="markup">&lt;uga-callout id="exam-window" type="important" label="Exam Window" body="The exam opens Friday at 8:00 a.m. and closes Sunday at 11:59 p.m."&gt;&lt;/uga-callout&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content util-margin-bottom-xxl">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-callout attributes</caption>
+          <thead>
             <tr>
-              <th>Property</th>
-              <th>Type</th>
-              <th>Default</th>
-              <th>Description</th>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>type</code></td>
+              <td>string</td>
+              <td><code>note</code></td>
+              <td>One of <code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, or <code>warning</code>. Unrecognized values fall back to <code>note</code>.</td>
             </tr>
             <tr>
-              <td>type</td>
+              <td><code>size</code></td>
               <td>string</td>
-              <td>note</td>
-              <td>One of <code>note</code>, <code>important</code>, <code>tip</code>, <code>example</code>, or <code>warning</code>.</td>
-            </tr>
-            <tr>
-              <td>label</td>
-              <td>string</td>
-              <td>(empty)</td>
-              <td>Bold heading text shown in the colored top strip.</td>
-            </tr>
-            <tr>
-              <td>body</td>
-              <td>string</td>
-              <td>(empty)</td>
-              <td>Plain-text body in the lower section; survives eLC HTML sanitization. For lists, links, or multiple paragraphs, use slot content instead.</td>
-            </tr>
-            <tr>
-              <td>size</td>
-              <td>string</td>
-              <td>medium</td>
+              <td><code>medium</code></td>
               <td><code>small</code>, <code>medium</code>, <code>large</code>, or <code>xlarge</code> spacing and text size.</td>
             </tr>
-          </table>
-        </div>
+            <tr>
+              <td><code>label</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Bold heading text shown in the colored top strip. Omit it to render the callout with no strip.</td>
+            </tr>
+            <tr>
+              <td><code>body</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Plain-text body in the lower section; survives eLC HTML sanitization. For lists, links, or multiple paragraphs, put the content inside the element instead.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

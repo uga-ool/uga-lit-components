@@ -1,55 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>eLC ⇄ Google Sync Demo</title>
+  <title>eLC and Google Sync — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
 
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">eLC ⇄ Google Sync</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a>.</p>
-        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first). Panel corners use Design System <code>util-radius-all-md</code> / <code>util-radius-all-sm</code> (requires <code>base.css</code>).</p>
-        <p><strong>Admin-only</strong> widget for export to Google Drive, clearing a template, and back-copy from live to template. MVP shows a read-only content preview (module counts). Destructive actions and Drive export require configuration and API completion — see <a href="../docs/ELC_GOOGLE_SYNC_WIDGET.md">docs/ELC_GOOGLE_SYNC_WIDGET.md</a>.</p>
-        <p>This page uses <code>stub-mode</code> so you can open it outside eLC; set <code>template-ou</code> to a real template course id in eLC for a live preview.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">eLC and Google Sync Component</h1>
+
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>An admin widget for moving course content between an eLC template course and a live course, and for exporting content to Google Drive.</p>
+        <p>Only administrators see the controls. Destructive actions and Drive export need configuration before they do anything, so the widget is safe to place before that work is finished. Full detail is in <a href="../docs/ELC_GOOGLE_SYNC_WIDGET.md">docs/ELC_GOOGLE_SYNC_WIDGET.md</a>. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <uga-elc-google-sync
-        stub-mode
-        template-ou="demo-template-ou"
-        live-ou="demo-live-ou"
-      ></uga-elc-google-sync>
-    </section>
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">Point the widget at a template course and a live course by their OU numbers. Inside eLC it shows a read-only preview of the template content, with module counts.</p>
+      <uga-code language="markup">&lt;uga-elc-google-sync template-ou="123456" live-ou="654321"&gt;&lt;/uga-elc-google-sync&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="previewing-outside-elc">Previewing outside eLC</h2>
+      <p class="util-reading-width">Add <code>stub-mode</code> to render the widget with placeholder data, which is how this page can show it at all. Never leave it on in a real course, because nothing it displays reflects the actual content.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
+        <uga-elc-google-sync stub-mode template-ou="demo-template-ou" live-ou="demo-live-ou"></uga-elc-google-sync>
+      </div>
+      <uga-code language="markup">&lt;uga-elc-google-sync stub-mode template-ou="demo-template-ou" live-ou="demo-live-ou"&gt;&lt;/uga-elc-google-sync&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="who-counts-as-an-admin">Who counts as an admin</h2>
+      <p class="util-reading-width">By default the widget decides from the viewer’s eLC role. Use <code>admin-role-names</code> or <code>admin-role-ids</code> to name the roles that should qualify, as comma-separated lists.</p>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-elc-google-sync template-ou="123456" admin-role-names="Instructional Designer,Course Admin"&gt;&lt;/uga-elc-google-sync&gt;</uga-code>
+      </div>
+      <div class="util-margin-bottom-md">
+        <uga-code language="markup">&lt;uga-elc-google-sync template-ou="123456" admin-role-ids="104,115"&gt;&lt;/uga-elc-google-sync&gt;</uga-code>
+      </div>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="google-drive-export">Google Drive export</h2>
+      <p class="util-reading-width">Export needs an endpoint to upload to. Both values are deployment configuration rather than course content.</p>
+      <uga-code language="markup">&lt;uga-elc-google-sync template-ou="123456" drive-upload-url="https://example.org/upload"&gt;&lt;/uga-elc-google-sync&gt;</uga-code>
+      <p class="util-reading-width">Do not put a real token in course HTML. Anything in a page in Manage Files is readable by anyone who can open the page, so the upload credential belongs server-side behind the endpoint.</p>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-elc-google-sync attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>template-ou</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>OU number of the template course.</td>
+            </tr>
+            <tr>
+              <td><code>live-ou</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>OU number of the live course.</td>
+            </tr>
+            <tr>
+              <td><code>stub-mode</code></td>
+              <td>boolean</td>
+              <td><code>false</code></td>
+              <td>Render with placeholder data so the widget can be viewed outside eLC. Not for use in a real course.</td>
+            </tr>
+            <tr>
+              <td><code>admin-role-names</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Comma-separated eLC role names treated as administrators.</td>
+            </tr>
+            <tr>
+              <td><code>admin-role-ids</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Comma-separated eLC role IDs treated as administrators.</td>
+            </tr>
+            <tr>
+              <td><code>drive-upload-url</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Endpoint that receives the Drive export.</td>
+            </tr>
+            <tr>
+              <td><code>drive-upload-token</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Token for that endpoint. Prefer handling credentials server-side rather than placing one in course HTML.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
 
 </html>

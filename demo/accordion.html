@@ -1,96 +1,108 @@
 <!DOCTYPE html>
-<html lang="en" class="js">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accordion Component Demo</title>
+  <title>Accordion — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Accordion Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Accordion Component</h1>
 
-        <p><strong>Creates expandable/collapsible content sections.</strong> Great for FAQs, course modules, or organizing large amounts of content.</p>
-        <p><strong>Example data file:</strong> Download
-          <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>accordion/accordion-demo.json</code></a>
-          to modify and upload it to your course files.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>Expandable and collapsible content sections, with an Open All / Close All control above them. Useful for FAQs, course modules, or any page carrying more content than a learner needs at once.</p>
+        <p>Content comes from a JSON data file rather than from the page, so there is no markup to write beyond the tag itself. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
+      <uga-toc></uga-toc>
+
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">Set <code>type="local"</code> and point <code>filename</code> at a JSON file uploaded alongside the page in your course files.</p>
+      <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-accordion type="local" filename="accordion/accordion-demo.json"></uga-accordion>
       </div>
+      <uga-code language="markup">&lt;uga-accordion type="local" filename="accordion/accordion-demo.json"&gt;&lt;/uga-accordion&gt;</uga-code>
+      <p class="util-reading-width">Download <a href="https://drive.google.com/file/d/1nqN6beGq0RVNSyVANzMEGZvM0r1cdlqJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>accordion/accordion-demo.json</code></a> to modify and upload to your own course files.</p>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <table>
-          <tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-          <tr>
-            <td>type</td>
-            <td>string</td>
-            <td>Data source type: 'local' or 'program'</td>
-          </tr>
-          <tr>
-            <td>filename</td>
-            <td>string</td>
-            <td>Name of the JSON data file</td>
-          </tr>
-          <tr>
-            <td>program</td>
-            <td>string</td>
-            <td>Program identifier (for program type)</td>
-          </tr>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="data-file-format">Data file format</h2>
+      <p class="util-reading-width">The file holds a <code>title</code> and a <code>data</code> array. Each entry needs a <code>title</code> for the button and a <code>body</code>, which may contain HTML.</p>
+      <uga-code language="json">{
+        "title": "Frequently Asked Questions",
+        "data": [
+        {
+        "title": "How do I access course materials?",
+        "body": "&lt;p&gt;All course materials are in the &lt;strong&gt;Content&lt;/strong&gt; section of eLC.&lt;/p&gt;"
+        },
+        {
+        "title": "When are assignments due?",
+        "body": "&lt;p&gt;Due dates are listed in each module's overview page. All times are Eastern.&lt;/p&gt;"
+        }
+        ]
+        }</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="loading-from-a-program-folder">Loading from a program folder</h2>
+      <p class="util-reading-width">Set <code>type="program"</code> and name the program to read the same file from a shared program folder instead of the current course.</p>
+      <uga-code language="markup">&lt;uga-accordion type="program" program="mba" filename="accordion-demo.json"&gt;&lt;/uga-accordion&gt;</uga-code>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
+      <h2 id="attributes">Attributes</h2>
+      <div class="util-scrollable-content util-margin-bottom-xxl">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">uga-accordion attributes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Type</th>
+              <th scope="col">Default</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>type</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Where the data file lives: <code>local</code> for the current course, <code>program</code> for a shared program folder. Nothing loads until this is set.</td>
+            </tr>
+            <tr>
+              <td><code>filename</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Path to the JSON data file, relative to the page.</td>
+            </tr>
+            <tr>
+              <td><code>program</code></td>
+              <td>string</td>
+              <td><em>empty</em></td>
+              <td>Program identifier. Required when <code>type="program"</code>, ignored otherwise.</td>
+            </tr>
+          </tbody>
         </table>
       </div>
-
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-accordion type="local" filename="accordion/accordion-demo.json"&gt;&lt;/uga-accordion&gt;</uga-code>
-      </div>
-    </section>
-
-    <uga-return-to-top></uga-return-to-top>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
+  <uga-return-to-top></uga-return-to-top>
 
-  <script>
-    if (typeof axios === 'undefined') {
-      window.axios = {
-        get: async (url) => {
-          const response = await fetch(url);
-          const data = await response.json();
-          return { data };
-        }
-      };
-    }
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>

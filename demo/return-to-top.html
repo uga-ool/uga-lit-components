@@ -1,68 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Return to Top Component Demo</title>
+  <title>Return to Top — UGA Lit Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
 </head>
+
 <body>
-  <div class="obj-container">
-    <a href="index-all-in-one.html" class="util-color-red util-inline-block util-margin-bottom-md">← Back to All Components</a>
+  <a class="cmp-skip-to-content" href="#main-content">Skip to main content</a>
 
-    <header class="util-margin-vert-lg">
-      <h1 class="cmp-heading-1 util-color-red util-margin-bottom-xl">Return to Top Component</h1>
-    </header>
+  <div class="obj-content-width">
+    <main id="main-content" class="util-pad-bottom-xl">
 
-    <section class="util-shadow-base util-radius-all-sm util-pad-all-xl util-margin-bottom-xxl">
-      <div class="util-background-light-gray util-radius-all-sm util-pad-all-md util-margin-bottom-lg">
-        <p><strong>For instructional designers:</strong> Add <code>&lt;script type="module" src="/shared/ugaonline/js/uga-components.js"&gt;&lt;/script&gt;</code> before <code>&lt;/body&gt;</code>. See <a href="setup.html">Setup &amp; Usage</a> for steps and JSON examples.</p>
-        <p><em>Local preview:</em> This page loads <code>/dist/js/uga-components.js</code> on <code>localhost</code> (run <code>npm run build</code> first).</p>
+      <h1 class="cmp-heading-1 util-color-red util-pad-top-xl">Return to Top Component</h1>
 
-        <p><strong>Adds a "Return to Top" button.</strong> Appears after scrolling down, provides smooth scroll back to the top of the page.</p>
+      <div class="util-reading-width util-margin-bottom-xl">
+        <p>A button that appears once the learner has scrolled down and returns them to the top of the page. Useful on long content pages where the navigation sits at the top.</p>
+        <p>The button at the bottom right of this page is this component. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
       </div>
 
-      <div class="util-pad-all-lg util-margin-bottom-lg">
-        <uga-return-to-top></uga-return-to-top>
-        <p><em>Scroll down to see the button appear in the bottom right corner</em></p>
-      </div>
+      <uga-toc></uga-toc>
 
-      <div class="util-margin-top-md util-margin-bottom-md">
-        <h4>Properties</h4>
-        <p>No properties required - automatically appears when user scrolls.</p>
-      </div>
+      <h2 id="basic-usage">Basic usage</h2>
+      <p class="util-reading-width">Place the tag once, just before the closing <code>&lt;/body&gt;</code> tag. It positions itself and stays hidden until there is something to scroll back to, so it needs no configuration.</p>
+      <uga-code language="markup">&lt;uga-return-to-top&gt;&lt;/uga-return-to-top&gt;</uga-code>
 
-      <div class="util-margin-top-md">
-        <uga-code language="markup">&lt;uga-return-to-top&gt;&lt;/uga-return-to-top&gt;</uga-code>
-      </div>
-    </section>
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-    <!-- Spacer to allow scrolling -->
-    <div class="util-background-light-gray" style="height: 1000px; padding: 2rem;">
-      <h2>Scroll Down</h2>
-      <p>Keep scrolling to trigger the Return to Top button...</p>
-    </div>
-
-    <uga-return-to-top></uga-return-to-top>
+      <h2 id="attributes">Attributes</h2>
+      <p class="util-reading-width">None. The component takes no attributes and has no options to set.</p>
+    </main>
   </div>
 
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src =
-        window.location.hostname === 'localhost'
-          ? '/dist/js/uga-components.js'
-          : '/shared/ugaonline/js/uga-components.js';
-      document.body.appendChild(s);
-    })();
-  </script>
-  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
+  <uga-return-to-top></uga-return-to-top>
+
+
+  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+
+  <script src="https://design.online.uga.edu/js/scripts.js"></script>
 </body>
+
 </html>
