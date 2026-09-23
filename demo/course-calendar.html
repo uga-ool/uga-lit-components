@@ -21,7 +21,7 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>A course schedule table with week separators and row-type styling. It renders the table only, so the heading, intro and legend stay in your page HTML where you can word them freely.</p>
-        <p>Data comes from a JSON or CSV file in your course files. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p>Data comes from a JSON or CSV file in your course files. Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
 
       <uga-toc></uga-toc>
@@ -42,6 +42,7 @@
       </div>
       <uga-code language="markup">&lt;uga-course-calendar type="csv" filename="course-calendar/course-calendar-demo.csv"&gt;&lt;/uga-course-calendar&gt;</uga-code>
       <p class="util-reading-width"><code>demo/course-calendar/course-calendar-template.csv</code> in this repository is an empty starter with the right columns. The repository also has <code>npm run quiz:csv-to-json</code> for converting quiz CSVs, and the calendar accepts CSV directly.</p>
+      <p class="util-reading-width">Three columns hold multiple values separated by a pipe: <code>moduleItems</code>, <code>dueTags</code> and <code>folderIds</code>. Keep <code>folderIds</code> in the same order as <code>dueTags</code>, because the component pairs them by position when <code>sync-from-course</code> reconciles due dates.</p>
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
@@ -125,9 +126,19 @@
   <uga-return-to-top></uga-return-to-top>
 
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <script src="https://design.online.uga.edu/js/scripts.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 
 </html>

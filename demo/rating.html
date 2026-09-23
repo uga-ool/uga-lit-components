@@ -21,7 +21,7 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>A short rating control for a piece of content, so learners can say whether a video or resource was useful. Responses are stored in an eLC discussion forum.</p>
-        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
 
       <uga-toc></uga-toc>
@@ -38,7 +38,7 @@
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
       <h2 id="rating-a-video">Rating a video</h2>
-      <p class="util-reading-width">For Kaltura video you do not need this tag directly. <a href="video.html">Video</a> can render it below the player with <code>includerating="true"</code>, which fills in the content details from the video itself.</p>
+      <p class="util-reading-width">For Kaltura video you do not need this tag directly. Video can render it below the player with <code>includerating="true"</code>, which fills in the content details from the video itself.</p>
       <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" name="Faculty Profile" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
@@ -95,9 +95,19 @@
   <uga-return-to-top></uga-return-to-top>
 
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <script src="https://design.online.uga.edu/js/scripts.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 
 </html>

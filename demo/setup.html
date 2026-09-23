@@ -71,7 +71,7 @@
 
       <h2 id="data-file-examples">Data file examples</h2>
       <p class="util-reading-width">Each component page documents its own format, and the examples below are a quick reference. Downloadable copies are linked from the individual pages.</p>
-      <p class="util-reading-width"><a href="accordion.html">Accordion</a> and <a href="tabs.html">Tabs</a> share a shape: a <code>data</code> array of entries with a <code>title</code> and an HTML <code>body</code>.</p>
+      <p class="util-reading-width">Accordion and Tabs share a shape: a <code>data</code> array of entries with a <code>title</code> and an HTML <code>body</code>.</p>
       <uga-code language="json">{
   "title": "Course FAQ",
   "data": [
@@ -79,14 +79,14 @@
     { "title": "When are office hours?", "body": "&lt;p&gt;Tuesday and Thursday, 2 to 4 PM Eastern.&lt;/p&gt;" }
   ]
 }</uga-code>
-      <p class="util-reading-width"><a href="circles.html">Circles</a> takes a figure and a caption per entry.</p>
+      <p class="util-reading-width">Circles takes a figure and a caption per entry.</p>
       <uga-code language="json">{
   "data": [
     { "figure": "85%", "caption": "Pass Rate" },
     { "figure": "150", "caption": "Students Enrolled" }
   ]
 }</uga-code>
-      <p class="util-reading-width"><a href="slideshow.html">Slideshow</a> needs <code>src</code> and <code>alt</code> on every slide, with <code>title</code> and <code>description</code> forming the caption.</p>
+      <p class="util-reading-width">Slideshow needs <code>src</code> and <code>alt</code> on every slide, with <code>title</code> and <code>description</code> forming the caption.</p>
       <uga-code language="json">{
   "title": "Course Walkthrough",
   "id": "course-walkthrough",
@@ -99,7 +99,7 @@
     }
   ]
 }</uga-code>
-      <p class="util-reading-width"><a href="course-calendar.html">Course Calendar</a> groups rows into weeks. The full format is in <a href="../docs/COURSE_CALENDAR_FORMAT.md">docs/COURSE_CALENDAR_FORMAT.md</a>, and a CSV alternative is described on the component page.</p>
+      <p class="util-reading-width">Course Calendar groups rows into weeks. The full format is in <code>docs/COURSE_CALENDAR_FORMAT.md</code>, and a CSV alternative is described on the component page.</p>
       <uga-code language="json">{
   "data": {
     "weeks": [
@@ -118,7 +118,7 @@
     ]
   }
 }</uga-code>
-      <p class="util-reading-width"><a href="instructor-note.html">Instructor Note</a> is the exception: its file is an HTML fragment, not JSON, so you write the note as ordinary markup.</p>
+      <p class="util-reading-width">Instructor Note is the exception: its file is an HTML fragment, not JSON, so you write the note as ordinary markup.</p>
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
@@ -126,16 +126,26 @@
       <p class="util-reading-width"><strong>A component renders as an empty space.</strong> The bundle did not load. Check that the <code>&lt;script type="module"&gt;</code> tag is present and that the path resolves in your course.</p>
       <p class="util-reading-width"><strong>The component appears but has no content.</strong> The data file was not found. The path is the usual cause; try the full Manage Files path rather than a relative one.</p>
       <p class="util-reading-width"><strong>Corners and shadows look wrong.</strong> <code>base.css</code> is missing from the page.</p>
-      <p class="util-reading-width"><strong>An attribute seems to be ignored.</strong> Check the spelling against the attributes table on that component’s page. A few attributes are all lowercase rather than hyphenated, notably <code>quizid</code>, <code>quiztitle</code> and <code>passingscore</code> on <a href="quiz.html">Quiz</a>, and a misspelled attribute fails silently rather than reporting an error.</p>
+      <p class="util-reading-width"><strong>An attribute seems to be ignored.</strong> Check the spelling against the attributes table on that component’s page. A few attributes are all lowercase rather than hyphenated, notably <code>quizid</code>, <code>quiztitle</code> and <code>passingscore</code> on Quiz, and a misspelled attribute fails silently rather than reporting an error.</p>
     </main>
   </div>
 
   <uga-return-to-top></uga-return-to-top>
 
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <script src="https://design.online.uga.edu/js/scripts.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 
 </html>
