@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import './uga-callout.js';
 import { getVersions, getUser, getEnrollment, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
@@ -22,7 +23,7 @@ export class UgaElcGoogleSync extends LitElement {
   /** Live course OU; defaults to current course from URL when empty. */
   @property({ type: String, attribute: 'live-ou' }) liveOu = '';
   /** Demo/local: show UI without enforcing admin roles; no destructive API calls. */
-  @property({ type: Boolean, attribute: 'stub-mode' }) stubMode = false;
+  @property({ attribute: 'stub-mode', converter: booleanAttribute }) stubMode = false;
   /** Comma-separated Role.Name values allowed to see the widget (e.g. "Super Administrator"). */
   @property({ type: String, attribute: 'admin-role-names' }) adminRoleNames = '';
   /** Comma-separated Role.Id values allowed. */
