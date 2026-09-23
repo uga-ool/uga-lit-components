@@ -21,7 +21,7 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>Expandable and collapsible content sections, with an Open All / Close All control above them. Useful for FAQs, course modules, or any page carrying more content than a learner needs at once.</p>
-        <p>Content comes from a JSON data file rather than from the page, so there is no markup to write beyond the tag itself. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p>Content comes from a JSON data file rather than from the page, so there is no markup to write beyond the tag itself. Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
 
       <uga-toc></uga-toc>
@@ -100,9 +100,19 @@
   <uga-return-to-top></uga-return-to-top>
 
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <script src="https://design.online.uga.edu/js/scripts.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 
 </html>

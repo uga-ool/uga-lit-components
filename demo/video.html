@@ -21,7 +21,7 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>Embeds Kaltura or YouTube video. Kaltura embeds use Kaltura's Dynamic Embed method (a generated <code>&lt;div&gt;</code> plus <code>KalturaPlayer.setup()</code>), which is what Kaltura's own Share &amp; Embed dialog produces.</p>
-        <p>Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p>Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
 
       <uga-toc></uga-toc>
@@ -116,7 +116,7 @@
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
       <h2 id="collecting-a-rating">Collecting a rating</h2>
-      <p class="util-reading-width">Add <code>includerating="true"</code> to show the rating component below the video. It is a boolean attribute, so the <em>presence</em> of it is what turns the rating on: <code>includerating="false"</code> still enables it. Leave the attribute off entirely when you do not want a rating. Ratings need eLC, so this example is not rendered live here.</p>
+      <p class="util-reading-width">Add <code>includerating="true"</code> to show the rating component below the video. Leave the attribute off entirely when you do not want a rating. Ratings need eLC, so this example is not rendered live here.</p>
       <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" name="Faculty Profile" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
@@ -197,9 +197,19 @@
   <uga-return-to-top></uga-return-to-top>
 
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <script src="https://design.online.uga.edu/js/scripts.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 
 </html>

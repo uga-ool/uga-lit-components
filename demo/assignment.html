@@ -21,7 +21,7 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>A detailed list of course work: instructions, due dates, availability, rubric information and submission links for assignments, discussions, quizzes and content items.</p>
-        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. It is the fuller counterpart to <a href="duedate.html">Due Date</a>, which shows dates alone. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. It is the fuller counterpart to Due Date, which shows dates alone. Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
 
       <uga-toc></uga-toc>
@@ -87,9 +87,19 @@
   <uga-return-to-top></uga-return-to-top>
 
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <script src="https://design.online.uga.edu/js/scripts.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 
 </html>

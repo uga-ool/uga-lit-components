@@ -21,7 +21,7 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>A formative quiz embedded directly in a content page. It supports multiple choice, multi-select, true/false, ordering, matching and short answer, with auto-grading, immediate feedback, retries and an optional timer.</p>
-        <p>Results can be submitted to an eLC assignment, which makes it possible to gate a summative assessment behind release conditions. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p>Results can be submitted to an eLC assignment, which makes it possible to gate a summative assessment behind release conditions. Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
 
       <uga-toc></uga-toc>
@@ -33,7 +33,7 @@
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
       <h2 id="questions-from-a-json-file">Questions from a JSON file</h2>
-      <p class="util-reading-width">Set <code>type="local"</code> and point <code>filename</code> at a JSON file holding a <code>questions</code> array. The format is documented in <a href="../docs/QUIZ_JSON_FORMAT.md">docs/QUIZ_JSON_FORMAT.md</a>.</p>
+      <p class="util-reading-width">Set <code>type="local"</code> and point <code>filename</code> at a JSON file holding a <code>questions</code> array. The format is documented in <code>docs/QUIZ_JSON_FORMAT.md</code>.</p>
       <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
         <uga-quiz type="local" filename="quiz/quiz-sample.json" quizid="module-1-check"
           quiztitle="Module 1 Knowledge Check" passingscore="70"></uga-quiz>
@@ -114,7 +114,7 @@
       <h2 id="syncing-grades">Syncing grades</h2>
       <p class="util-reading-width"><code>&lt;uga-quiz-grade-sync&gt;</code> is a separate, instructor-only control that pushes submitted quiz results into the gradebook. Point it at the same assignment as the quiz. When it runs, the most recent grade overwrites any existing grade for that student in that grade item, so it is not safe to run after manual adjustments.</p>
       <uga-code language="markup">&lt;uga-quiz-grade-sync dropbox-assignment-name="Quiz Demo 2"&gt;&lt;/uga-quiz-grade-sync&gt;</uga-code>
-      <p class="util-reading-width">Place it inside an <a href="instructor-note.html">Instructor Note</a> so students never see the control. <code>quiz/quiz-sync-note.html</code> in this folder is a ready-made fragment that does exactly that.</p>
+      <p class="util-reading-width">Place it inside an Instructor Note so students never see the control. <code>quiz/quiz-sync-note.html</code> in this folder is a ready-made fragment that does exactly that.</p>
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
@@ -268,9 +268,19 @@
   <uga-return-to-top></uga-return-to-top>
 
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <script src="https://design.online.uga.edu/js/scripts.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 
 </html>

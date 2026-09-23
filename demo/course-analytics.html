@@ -21,8 +21,12 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>A summary of course activity: content statistics, assignment and discussion counts, and comparisons between modules.</p>
-        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. It is aimed at instructors and designers reviewing how a course is put together. Add the component bundle before <code>&lt;/body&gt;</code> &mdash; see <a href="setup.html">Setup &amp; Usage</a>.</p>
+        <p>This component reads the current eLC course through the Valence API, so it only fills in when the page is viewed inside eLC. It is aimed at instructors and designers reviewing how a course is put together. Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
+
+      <uga-callout type="warning" label="Work in progress">
+        <p>This component is under review and its figures should not yet be used for decisions about students. <code>group-by</code> is not implemented, so grouping is always by module. The per-module assignment and discussion counts are placeholders rather than real attribution, because eLC does not tell us which module an assignment or discussion belongs to, and discussion participation is estimated from the post count. Content statistics and the course-wide totals are accurate.</p>
+      </uga-callout>
 
       <uga-toc></uga-toc>
 
@@ -48,12 +52,9 @@
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
       <h2 id="grouping">Grouping</h2>
-      <p class="util-reading-width"><code>group-by</code> takes <code>module</code>, <code>topic</code> or <code>all</code>. Use <code>topic</code> for a per-item breakdown, or <code>all</code> for a single course-wide total. <code>compare-modules</code> adds the module-to-module comparison and is on by default.</p>
+      <p class="util-reading-width"><code>group-by</code> is reserved and does nothing yet. The component always groups by module, whatever value you give it. <code>compare-modules</code> adds the module-to-module comparison and is on by default.</p>
       <div class="util-margin-bottom-md">
-        <uga-code language="markup">&lt;uga-course-analytics group-by="topic"&gt;&lt;/uga-course-analytics&gt;</uga-code>
-      </div>
-      <div class="util-margin-bottom-md">
-        <uga-code language="markup">&lt;uga-course-analytics group-by="all" compare-modules="false"&gt;&lt;/uga-course-analytics&gt;</uga-code>
+        <uga-code language="markup">&lt;uga-course-analytics compare-modules="false"&gt;&lt;/uga-course-analytics&gt;</uga-code>
       </div>
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
@@ -93,7 +94,7 @@
               <td><code>group-by</code></td>
               <td>string</td>
               <td><code>module</code></td>
-              <td>How figures are grouped: <code>module</code>, <code>topic</code> or <code>all</code>.</td>
+              <td>Reserved. Only <code>module</code> grouping is implemented; other values are accepted and ignored.</td>
             </tr>
             <tr>
               <td><code>compare-modules</code></td>
@@ -110,9 +111,19 @@
   <uga-return-to-top></uga-return-to-top>
 
 
-  <script type="module" src="/shared/ugaonline/js/uga-components.js"></script>
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src =
+        window.location.hostname === 'localhost'
+          ? '/dist/js/uga-components.js'
+          : '/shared/ugaonline/js/uga-components.js';
+      document.body.appendChild(s);
+    })();
+  </script>
 
-  <script src="https://design.online.uga.edu/js/scripts.js"></script>
+  <script src="https://design.online.uga.edu/js/scripts.js" defer></script>
 </body>
 
 </html>
