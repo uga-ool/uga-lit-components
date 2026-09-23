@@ -26,7 +26,7 @@ class UgaRating extends LitElement {
     return this;
   }
 
-  @property({ type: Boolean }) loaded = true;
+  @state() loaded = true;
   @property({ type: String }) token: string | null = null;
   @property({ type: String }) xsrfRoute = '/d2l/lp/auth/xsrf-tokens';
   @property({ type: Object }) versions: ApiVersions = {};
@@ -47,7 +47,7 @@ class UgaRating extends LitElement {
   @property({ type: String }) contentName = '';
   @property({ type: String }) contentPlatform = '';
   @property({ type: String }) ou: string | null = null;
-  @property({ type: Boolean }) reviewExists = false;
+  @state() reviewExists = false;
   @property({ type: String }) name = '';
 
   private postId: string | null = null;

@@ -1,5 +1,6 @@
 import { LitElement, html, css, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 
 /**
  * UGA Image component with expandable lightbox.
@@ -31,12 +32,12 @@ class UgaImage extends LitElement {
   /** Padding in pixels (default: 15) */
   @property({ type: Number }) padding = 15;
   /** When true, disables the lightbox expand-on-click behavior */
-  @property({ type: Boolean, attribute: 'lightbox-disabled' }) lightboxDisabled = false;
+  @property({ attribute: 'lightbox-disabled', converter: booleanAttribute }) lightboxDisabled = false;
   /**
    * When true (and lightbox is enabled), applies Design System `.util-shadow-hover`
    * so the image lifts on hover as a click affordance. Opt-in so existing courses are unchanged.
    */
-  @property({ type: Boolean, attribute: 'hover-shadow' }) hoverShadow = false;
+  @property({ attribute: 'hover-shadow', converter: booleanAttribute }) hoverShadow = false;
   /**
    * Opt-in static elevation via Design System shadow utilities.
    * Values: `base`, `deep`, `tinted` (deep red), or explicit `base--red` / `deep--red` / `base--blue` / `deep--blue`.

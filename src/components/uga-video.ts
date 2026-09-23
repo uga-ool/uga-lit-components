@@ -2,6 +2,7 @@ import { LitElement, html } from 'lit';
 import type { PropertyValues } from 'lit';
 import axios from 'axios';
 import { customElement, property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import { getVersions, getCurrentUserId } from '../lib/api/d2l-client.js';
 import { getCourse, getTopicId } from '../lib/api/d2l-utils.js';
 import { completeContentTopic } from '../lib/api/d2l-client-content.js';
@@ -69,7 +70,7 @@ class UgaVideo extends LitElement {
   @property({ type: String }) host = '';
   @property({ type: String }) videoid = '';
   @property({ type: String }) playerid = '';
-  @property({ type: Boolean }) includeRating = false;
+  @property({ converter: booleanAttribute }) includeRating = false;
   @property({ type: String }) name = '';
   @property({ type: String, attribute: 'topic-id' }) topicId = '';
 
