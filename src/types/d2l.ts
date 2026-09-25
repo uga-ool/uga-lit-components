@@ -51,6 +51,8 @@ export interface User {
   FirstName: string;
   LastName: string;
   UserName: string;
+  /** D2L login username (real field on whoami; UserName above is not). */
+  UniqueName: string;
 }
 
 export interface Assignment {

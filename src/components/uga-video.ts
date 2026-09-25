@@ -1,56 +1,12 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, nothing } from 'lit';
 import type { PropertyValues } from 'lit';
-import axios from 'axios';
 import { customElement, property, state } from 'lit/decorators.js';
-import { getVersions, getCurrentUserId } from '../lib/api/d2l-client.js';
-import { getCourse, getTopicId } from '../lib/api/d2l-utils.js';
-import { completeContentTopic } from '../lib/api/d2l-client-content.js';
-import { loadData } from '../lib/data/data-loader.js';
-import { loadKalturaPlayerBundle } from '../lib/utils/kaltura-player-loader.js';
-import './uga-rating.js';
+import { getCurrentUsername } from '../lib/api/d2l-client.js';
+import { getCourse } from '../lib/api/d2l-utils.js';
+import { loadKalturaPlayerBundle, type KalturaBundle } from '../lib/utils/kaltura-player-loader.js';
+import { requestKalturaSession } from '../lib/api/kaltura-identity-client.js';
 
-/** Data-file shape: `{"data": ["1_p658t55u", "1_icw0df6y"]}`. */
-interface VideoData {
-  data?: unknown;
-}
-
-interface AnalyticsContext {
-  userId: string | null;
-  leVersion: string;
-  lpVersion: string;
-}
-
-/**
- * Versions + current user, resolved once per page rather than once per element. The promise
- * itself is memoized, not just its result: `timeupdate` fires several times a second, and
- * memoizing only the settled value let every event before the first resolution start its own
- * `whoami` request, which has neither caching nor in-flight dedupe in d2l-client.
- */
-let analyticsContextPromise: Promise<AnalyticsContext> | null = null;
-
-function analyticsContext(): Promise<AnalyticsContext> {
-  if (!analyticsContextPromise) {
-    analyticsContextPromise = (async () => {
-      try {
-        const versions = await getVersions();
-        const lpVersion = versions.lp || '';
-        return {
-          userId: await getCurrentUserId(lpVersion),
-          leVersion: versions.le || '',
-          lpVersion,
-        };
-      } catch {
-        return { userId: null, leVersion: '', lpVersion: '' };
-      }
-    })();
-  }
-  return analyticsContextPromise;
-}
-
-/** Kaltura widget session, shared by every entry on the page. */
-let kalturaSessionPromise: Promise<string | null> | null = null;
-/** entryId -> display name, shared so two elements showing one entry fetch it once. */
-const kalturaNames = new Map<string, Promise<string | null>>();
+type VideoState = 'idle' | 'loading' | 'ready' | 'error';
 
 /**
  * Container ids have to be unique document-wide, not merely within the element, because
@@ -61,20 +17,20 @@ let instanceSeq = 0;
 
 @customElement('uga-video')
 class UgaVideo extends LitElement {
-
   @property({ type: String }) ou: string | null = null;
-  @property({ type: String }) type = '';
-  @property({ type: String }) filename = '';
-  @property({ type: String }) program = '';
   @property({ type: String }) host = '';
   @property({ type: String }) videoid = '';
   @property({ type: String }) playerid = '';
-  @property({ type: Boolean }) includeRating = false;
   @property({ type: String }) name = '';
-  @property({ type: String, attribute: 'topic-id' }) topicId = '';
 
-  @state() private loaded = false;
-  @state() private videos: string[] = [];
+  /**
+   * Fully lazy: nothing is fetched or loaded (no whoami, no identity-service call, no Kaltura
+   * script/player, no `loadMedia`) until the user actually clicks play. Until then a thumbnail +
+   * play button is shown, so a page with videos nobody watches never mints unused sessions or
+   * loads unused player bundles, and the first real play is already attributed.
+   */
+  @state() private videoState: VideoState = 'idle';
+  @state() private thumbnailFailed = false;
 
   /**
    * UGA's Kaltura account, and the player used when `playerid` is omitted. A uiConf ID is the
@@ -84,21 +40,19 @@ class UgaVideo extends LitElement {
   private static readonly DEFAULT_UICONF_ID = '57494843';
 
   /**
-   * Shipped as the `playerid` default between 2026-09-08 and this change, when `playerid` was
-   * wired to the container div id rather than the uiConf. It is not a player — Kaltura returns
-   * 404 for it — so course HTML still carrying it falls back to the default.
+   * Shipped as the `playerid` default between 2026-09-08 and an earlier change, when `playerid`
+   * was wired to the container div id rather than the uiConf. It is not a player — Kaltura
+   * returns 404 for it — so course HTML still carrying it falls back to the default.
    */
   private static readonly RETIRED_PLAYER_IDS = new Set(['660400380']);
 
   private readonly instanceKey = `${PAGE_TOKEN}${instanceSeq++}`;
-  /** Bumped on teardown so remounts render into fresh, empty divs. */
+  /** Bumped on teardown so remounts render into a fresh, empty div. */
   private generation = 0;
-  private bootstrapped = false;
   private disposed = false;
+  private player: any = null;
   private mountedUiConfId = '';
-  private playerInstances: Map<string, { entryId: string; player: any }> = new Map();
-  private videoNames: Map<string, string> = new Map();
-  private completedTopics: Set<string> = new Set();
+  private ks: { value: string | null; expiresAt: number | null } = { value: null, expiresAt: null };
 
   createRenderRoot() {
     return this;
@@ -107,55 +61,25 @@ class UgaVideo extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     this.disposed = false;
-
     if (this.ou === null) this.ou = getCourse();
 
-    if (this.bootstrapped) {
-      // Re-attached (D2L content panes and the tab/slideshow components move DOM). The players
-      // were destroyed on disconnect, so mount them again rather than re-running the bootstrap.
-      void this.remountPlayers();
-      return;
+    if (this.videoState === 'ready') {
+      // Re-attached (D2L content panes and the tab/slideshow components move DOM without
+      // destroying this element). The player was torn down on disconnect; resume it rather
+      // than dropping back to the placeholder, reusing the KS if it hasn't expired.
+      void this.remount();
+    } else if (this.videoState === 'loading') {
+      // A play click was in flight when this element was disconnected. The in-flight promise
+      // chain guards itself against a stale generation, so it's safe to just let the user
+      // click play again rather than trying to resume a mid-flight fetch.
+      this.videoState = 'idle';
     }
-    this.bootstrapped = true;
-    void this.bootstrap();
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
     this.disposed = true;
-    this.teardownPlayers();
-  }
-
-  /** Resolve `videos` exactly once: an explicit videoid, else the data file. */
-  private async bootstrap(): Promise<void> {
-    try {
-      if (this.videoid !== '') {
-        this.videos = [this.videoid];
-        return;
-      }
-
-      if (this.type !== 'local' && this.type !== 'program') {
-        console.error('uga-video: set videoid, or type="local"/"program" with a filename.');
-        return;
-      }
-
-      const payload = await loadData<VideoData>(this.type, this.filename, this.program || undefined);
-      this.videos = this.readVideoIds(payload);
-      if (this.videos.length === 0) {
-        console.error('uga-video: no video ids found in', this.filename, payload);
-      }
-    } catch (error) {
-      console.error('uga-video: failed to load video data file', this.filename, error);
-    } finally {
-      this.loaded = true;
-    }
-  }
-
-  private readVideoIds(payload: VideoData | null | undefined): string[] {
-    const entries = Array.isArray(payload?.data) ? payload.data : [];
-    return entries
-      .filter((entry): entry is string => typeof entry === 'string' && entry.trim() !== '')
-      .map((entry) => entry.trim());
+    this.teardownPlayer();
   }
 
   /**
@@ -165,12 +89,18 @@ class UgaVideo extends LitElement {
   willUpdate(changedProperties: PropertyValues<this>): void {
     if (!this.hasUpdated) return;
 
-    if (changedProperties.has('videoid') && this.videoid !== '') {
-      this.videos = [this.videoid];
-      this.loaded = true;
-      this.teardownPlayers();
-    } else if (changedProperties.has('playerid') && this.resolvedUiConfId() !== this.mountedUiConfId) {
-      this.teardownPlayers();
+    if (changedProperties.has('videoid')) {
+      this.teardownPlayer();
+      this.videoState = 'idle';
+      this.ks = { value: null, expiresAt: null };
+      this.thumbnailFailed = false;
+    } else if (
+      changedProperties.has('playerid') &&
+      this.resolvedUiConfId() !== this.mountedUiConfId &&
+      this.videoState !== 'idle'
+    ) {
+      this.teardownPlayer();
+      this.videoState = 'idle';
     }
   }
 
@@ -193,275 +123,234 @@ class UgaVideo extends LitElement {
     return requested;
   }
 
-  private getContainerId(index: number): string {
-    return `kaltura_player_${this.instanceKey}_${this.generation}_${index}`;
+  private getContainerId(): string {
+    return `kaltura_player_${this.instanceKey}_${this.generation}`;
   }
 
-  private teardownPlayers(): void {
-    for (const [containerId, { player }] of this.playerInstances) {
+  private teardownPlayer(): void {
+    const containerId = this.getContainerId();
+    if (this.player) {
       try {
-        void player?.destroy?.();
+        void this.player.destroy?.();
       } catch {
-        // A player that won't destroy shouldn't block teardown of the rest.
+        // A player that won't destroy shouldn't block teardown.
       }
-      this.querySelector<HTMLElement>(`#${containerId}`)?.replaceChildren();
+      this.player = null;
     }
-    this.playerInstances.clear();
+    this.querySelector<HTMLElement>(`#${containerId}`)?.replaceChildren();
     this.mountedUiConfId = '';
-    // Every container id changes, so the next render emits divs Kaltura hasn't mounted into.
+    // The container id changes, so the next render emits a div Kaltura hasn't mounted into.
     this.generation++;
   }
 
-  private async remountPlayers(): Promise<void> {
-    // Teardown bumped the generation, so the DOM still holds the previous render's container
-    // ids. Force a re-render first or mountPlayers would look for divs that don't exist yet.
-    this.requestUpdate();
-    await this.updateComplete;
-    void this.mountPlayers();
-  }
+  private async handlePlayClick(): Promise<void> {
+    if (this.videoState !== 'idle' && this.videoState !== 'error') return;
 
-  private async mountPlayers(): Promise<void> {
+    this.videoState = 'loading';
+    const startedGeneration = this.generation;
+    const containerId = this.getContainerId();
     const uiConfId = this.resolvedUiConfId();
 
-    for (const [index, entryId] of this.videos.entries()) {
-      const containerId = this.getContainerId(index);
-      if (this.playerInstances.has(containerId)) continue;
-
-      const container = this.querySelector<HTMLElement>(`#${containerId}`);
-      if (!container) continue;
-      if (container.querySelector('.kaltura-player-container')) continue;
-
-      // Claim the slot before awaiting; updated() can fire again while the bundle is in flight.
-      this.playerInstances.set(containerId, { entryId, player: null });
-
-      try {
-        const bundle = await loadKalturaPlayerBundle(uiConfId, UgaVideo.PARTNER_ID);
-        if (this.disposed || this.getContainerId(index) !== containerId) {
-          this.playerInstances.delete(containerId);
-          return;
-        }
-
-        const player = bundle.player.setup({
-          targetId: containerId,
-          provider: {
-            partnerId: UgaVideo.PARTNER_ID,
-            uiConfId,
-          },
-          ui: {
-            components: {
-              logo: { disabled: true },
-            },
-          },
-        });
-
-        player.loadMedia({ entryId });
-        this.playerInstances.set(containerId, { entryId, player });
-        this.mountedUiConfId = uiConfId;
-        this.attachKalturaPlaybackListeners(player, entryId);
-
-        const errorEventName = player?.Event?.Core?.ERROR || 'error';
-        player.addEventListener(errorEventName, (ev: any) => {
-          console.error(`uga-video: Kaltura player error (entry ${entryId}, uiConfId ${uiConfId}):`, ev);
-          this.showVideoError(containerId);
-        });
-      } catch (error) {
-        this.playerInstances.delete(containerId);
-        console.error(`uga-video: Kaltura setup failed (entry ${entryId}, uiConfId ${uiConfId}):`, error);
-        this.showVideoError(containerId);
-      }
-    }
-  }
-
-  private showVideoError(containerId: string): void {
-    const container = this.querySelector<HTMLElement>(`#${containerId}`);
-    if (!container) return;
-
-    const message = document.createElement('p');
-    message.setAttribute('role', 'alert');
-    message.style.cssText = 'color: #fff; text-align: center; padding: 1rem;';
-    message.textContent = 'This video failed to load. Please contact your instructor.';
-    container.replaceChildren(message);
-  }
-
-  /** D2L topic completion when the video ends or reaches 80%. */
-  private attachKalturaPlaybackListeners(player: any, entryId: string): void {
-    const EventCore = player?.Event?.Core || {};
-    const eventMap = [
-      { key: 'ENDED', name: 'ended' },
-      { key: 'TIME_UPDATE', name: 'timeupdate' },
-    ];
-
-    for (const { key, name } of eventMap) {
-      const eventName = EventCore[key] || name;
-      player.addEventListener(eventName, (ev: any) => this.handleVideoEvent(player, entryId, name, ev));
-    }
-
-    if (this.ou && getTopicId(this.topicId)) {
-      // Warm the context now so the first qualifying event doesn't wait on it.
-      void analyticsContext();
-    }
-  }
-
-  private handleVideoEvent(player: any, entryId: string, eventType: string, ev: any): void {
-    const topicId = getTopicId(this.topicId);
-    const ou = this.ou;
-    if (!topicId || !ou) return;
-
-    const completionKey = `${entryId}:${topicId}`;
-    if (this.completedTopics.has(completionKey)) return;
-
-    if (eventType === 'timeupdate') {
-      const currentTime = player?.currentTime ?? ev?.payload?.currentTime ?? 0;
-      const duration = player?.duration ?? ev?.payload?.duration ?? 0;
-      if (duration <= 0 || (currentTime / duration) * 100 < 80) return;
-    } else if (eventType !== 'ended') {
-      return;
-    }
-
-    // Claim before awaiting, so events arriving together can't each fire a completion.
-    this.completedTopics.add(completionKey);
-    void this.markTopicComplete(ou, topicId, completionKey);
-  }
-
-  private async markTopicComplete(ou: string, topicId: string, completionKey: string): Promise<void> {
-    const ctx = await analyticsContext();
-    if (!ctx.userId || !ctx.leVersion) {
-      this.completedTopics.delete(completionKey);
-      return;
-    }
-
     try {
-      await completeContentTopic(ou, ctx.leVersion, topicId, ctx.userId);
+      const [bundle, ks] = await Promise.all([
+        loadKalturaPlayerBundle(uiConfId, UgaVideo.PARTNER_ID),
+        this.resolveKs(),
+      ]);
+      if (this.disposed || this.generation !== startedGeneration) return;
+
+      this.videoState = 'ready';
+      await this.updateComplete;
+      this.setupPlayer(bundle, containerId, uiConfId, ks);
     } catch (error) {
-      console.error('uga-video: failed to mark topic complete', topicId, error);
-      this.completedTopics.delete(completionKey);
+      if (this.disposed || this.generation !== startedGeneration) return;
+      console.error(`uga-video: failed to load Kaltura player (entry ${this.videoid}):`, error);
+      this.videoState = 'error';
     }
-  }
-
-  private getKalturaSession(): Promise<string | null> {
-    if (!kalturaSessionPromise) {
-      kalturaSessionPromise = (async () => {
-        try {
-          const params = new URLSearchParams();
-          params.append('widgetId', `_${UgaVideo.PARTNER_ID}`);
-          params.append('format', '1');
-          const { data } = await axios.post(
-            'https://www.kaltura.com/api_v3/service/session/action/startWidgetSession',
-            params
-          );
-          return data?.ks ?? null;
-        } catch {
-          return null;
-        }
-      })();
-    }
-    return kalturaSessionPromise;
-  }
-
-  private fetchKalturaName(entryId: string): Promise<string | null> {
-    const cached = kalturaNames.get(entryId);
-    if (cached) return cached;
-
-    const pending = (async () => {
-      try {
-        const ks = await this.getKalturaSession();
-        if (!ks) return null;
-        const params = new URLSearchParams();
-        params.append('entryId', entryId);
-        params.append('ks', ks);
-        params.append('format', '1');
-        const { data } = await axios.post(
-          'https://www.kaltura.com/api_v3/service/media/action/get',
-          params
-        );
-        return data?.name ?? null;
-      } catch {
-        return null;
-      }
-    })();
-
-    kalturaNames.set(entryId, pending);
-    return pending;
   }
 
   /**
-   * Only `uga-rating` uses the Kaltura-reported name, so this runs after render rather than
-   * during it, and only when a rating will actually be shown.
+   * Re-mounts after a D2L-driven reconnect when the video was already playing. Reuses the
+   * cached KS if it's still valid; only re-mints one in the rare case it expired mid-session.
    */
-  private async ensureVideoNames(): Promise<void> {
-    if (!this.includeRating || this.name !== '') return;
+  private async remount(): Promise<void> {
+    this.requestUpdate();
+    await this.updateComplete;
 
-    for (const entryId of this.videos) {
-      if (this.videoNames.has(entryId)) continue;
-      const name = await this.fetchKalturaName(entryId);
-      if (name && !this.disposed) {
-        this.videoNames.set(entryId, name);
-        this.requestUpdate();
-      }
+    const startedGeneration = this.generation;
+    const containerId = this.getContainerId();
+    const uiConfId = this.resolvedUiConfId();
+
+    try {
+      const ksStillValid = this.ks.value && (this.ks.expiresAt === null || Date.now() < this.ks.expiresAt);
+      const [bundle, ks] = await Promise.all([
+        loadKalturaPlayerBundle(uiConfId, UgaVideo.PARTNER_ID),
+        ksStillValid ? Promise.resolve(this.ks.value) : this.resolveKs(),
+      ]);
+      if (this.disposed || this.generation !== startedGeneration) return;
+
+      this.setupPlayer(bundle, containerId, uiConfId, ks);
+    } catch (error) {
+      if (this.disposed || this.generation !== startedGeneration) return;
+      console.error(`uga-video: failed to remount Kaltura player (entry ${this.videoid}):`, error);
+      this.videoState = 'error';
     }
   }
 
-  private kalturaCode(entryId: string, index: number) {
-    return html`
-      <div class="cmp-video util-margin-top-lg">
-        <div class="cmp-video__container">
-          <div id="${this.getContainerId(index)}" style="width: 100%; aspect-ratio: 16 / 9;"></div>
-        </div>
-      </div>
-      ${this.includeRating
-        ? html`<uga-rating
-            .contentId="${entryId}"
-            contentType="video"
-            .ou=${this.ou}
-            .contentName=${this.videoNames.get(entryId) ?? this.name}
-            contentPlatform="kaltura"
-          ></uga-rating>`
-        : html``}
-    `;
+  /**
+   * Resolves a view-only, user-attributed KS from kaltura-identity-service. Never throws:
+   * whoami failing, the identity-service call failing, or the org unit id being unresolvable
+   * all degrade to anonymous playback rather than blocking the video — attribution is a
+   * reporting nice-to-have, never a gate on watching.
+   */
+  private async resolveKs(): Promise<string | null> {
+    try {
+      const username = await getCurrentUsername();
+      const orgUnitId = this.ou ?? getCourse();
+      if (!username || !orgUnitId) return null;
+
+      const session = await requestKalturaSession({ username, orgUnitId, entryId: this.videoid });
+      this.ks = { value: session.ks, expiresAt: Date.parse(session.expiresAt) };
+      return session.ks;
+    } catch (err) {
+      console.warn('uga-video: falling back to anonymous Kaltura playback:', err);
+      return null;
+    }
   }
 
-  private youtubeCode(entryId: string) {
-    return html`
-      <div class="cmp-video util-margin-top-lg">
-        <div class="cmp-video__youtube-container">
-          <iframe
-            class="cmp-video__embed"
-            src="https://www.youtube.com/embed/${entryId}"
-            title="${this.name || `YouTube video ${entryId}`}"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-        </div>
-      </div>
-      ${this.includeRating
-        ? html`<uga-rating
-            .contentId="${entryId}"
-            contentType="video"
-            .ou=${this.ou}
-            .contentName=${this.name}
-            contentPlatform="youtube"
-          ></uga-rating>`
-        : html``}
-    `;
+  private setupPlayer(bundle: KalturaBundle, containerId: string, uiConfId: string, ks: string | null): void {
+    try {
+      // Don't trust the browser's ambient document.URL/referrer for course-level Kaltura
+      // reporting: confirmed against a real course (D2L's "Smart Curriculum" content viewer is an
+      // SPA shell whose top-level document.URL stays a generic, versioned app-shell path and
+      // never reflects the actual content item), so Kaltura's own default referrer resolution
+      // captures that generic URL, not anything with the org unit id in it. Build our own
+      // referrer explicitly instead, from the org unit id we already reliably have (getCourse()
+      // has its own fallback chain beyond raw URL parsing, e.g. a D2L context global) rather than
+      // depending on whatever page happens to be showing. Real origin (accurate) + a synthetic,
+      // always-parseable path in the same shape D2L's own content URLs use.
+      const orgUnitId = this.ou ?? getCourse();
+      const referrer = orgUnitId ? `${window.location.origin}/d2l/le/content/${orgUnitId}/` : undefined;
+
+      const player = bundle.player.setup({
+        targetId: containerId,
+        provider: {
+          partnerId: UgaVideo.PARTNER_ID,
+          uiConfId,
+        },
+        plugins: {
+          kava: { referrer },
+        },
+        // The user already clicked the placeholder's play button to get here, so start playing
+        // immediately instead of requiring a second click on the player's own control. Rely on
+        // Kaltura's own autoplay-policy handling (allowMutedAutoPlay defaults to true: if the
+        // browser blocks unmuted autoplay, it starts muted and unmutes on the next interaction)
+        // rather than calling player.play() ourselves, which the player can't distinguish from a
+        // non-user-initiated call for autoplay-policy purposes.
+        playback: {
+          autoplay: true,
+        },
+        ui: {
+          components: {
+            logo: { disabled: true },
+          },
+        },
+      });
+
+      player.loadMedia(ks ? { entryId: this.videoid, ks } : { entryId: this.videoid });
+      this.player = player;
+      this.mountedUiConfId = uiConfId;
+
+      const errorEventName = player?.Event?.Core?.ERROR || 'error';
+      player.addEventListener(errorEventName, (ev: any) => {
+        console.error(`uga-video: Kaltura player error (entry ${this.videoid}, uiConfId ${uiConfId}):`, ev);
+        this.videoState = 'error';
+      });
+    } catch (error) {
+      console.error(`uga-video: Kaltura setup failed (entry ${this.videoid}, uiConfId ${uiConfId}):`, error);
+      this.videoState = 'error';
+    }
   }
 
   private isKalturaHost(): boolean {
     return this.host === '' || this.host.toLowerCase() === 'kaltura';
   }
 
-  render() {
-    if (!this.loaded) {
-      return html`<p>Loading video...</p>`;
+  private get thumbnailUrl(): string {
+    return `https://cdnapisec.kaltura.com/p/${UgaVideo.PARTNER_ID}/thumbnail/entry_id/${this.videoid}/width/960/height/540`;
+  }
+
+  private renderKalturaStage() {
+    if (this.videoState === 'ready') {
+      return html`<div id="${this.getContainerId()}" class="cmp-video__player"></div>`;
     }
 
+    return html`
+      <div class="cmp-video__placeholder">
+        ${!this.thumbnailFailed
+          ? html`<img
+              class="cmp-video__thumb"
+              src="${this.thumbnailUrl}"
+              alt=""
+              loading="lazy"
+              @error=${() => {
+                this.thumbnailFailed = true;
+              }}
+            />`
+          : nothing}
+        ${this.videoState === 'idle'
+          ? html`<button
+              type="button"
+              class="cmp-video__play-button"
+              aria-label="${this.name ? `Play video: ${this.name}` : 'Play video'}"
+              @click=${this.handlePlayClick}
+            >
+              <svg viewBox="0 0 68 48" aria-hidden="true" class="cmp-video__play-icon">
+                <path
+                  d="M66.52 7.74a8 8 0 0 0-5.62-5.66C55.79 0 34 0 34 0S12.21 0 7.1 2.08a8 8 0 0 0-5.62 5.66A83.5 83.5 0 0 0 0 24a83.5 83.5 0 0 0 1.48 16.26 8 8 0 0 0 5.62 5.66C12.21 48 34 48 34 48s21.79 0 26.9-2.08a8 8 0 0 0 5.62-5.66A83.5 83.5 0 0 0 68 24a83.5 83.5 0 0 0-1.48-16.26z"
+                  fill="rgba(0,0,0,0.65)"
+                />
+                <path d="M45 24 27 14v20z" fill="#fff" />
+              </svg>
+            </button>`
+          : nothing}
+        ${this.videoState === 'loading'
+          ? html`<div class="cmp-video__spinner" role="status">
+              <span class="util-visually-hidden">Loading video…</span>
+            </div>`
+          : nothing}
+        ${this.videoState === 'error'
+          ? html`<div class="cmp-video__error-box">
+              <p>This video couldn't be loaded.</p>
+              <button type="button" @click=${this.handlePlayClick}>Try again</button>
+            </div>`
+          : nothing}
+      </div>
+    `;
+  }
+
+  private youtubeCode() {
+    return html`
+      <div class="cmp-video__youtube-container">
+        <iframe
+          class="cmp-video__embed"
+          src="https://www.youtube.com/embed/${this.videoid}"
+          title="${this.name || `YouTube video ${this.videoid}`}"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      </div>
+    `;
+  }
+
+  render() {
     const isYouTube = this.host.toLowerCase() === 'youtube';
     if (!this.isKalturaHost() && !isYouTube) {
       console.error(`uga-video: unsupported host "${this.host}". Use "kaltura" or "youtube".`);
-      return html`<p>No videos available.</p>`;
+      return html`<p>No video available.</p>`;
     }
-
-    if (this.videos.length === 0) {
-      return html`<p>No videos available.</p>`;
+    if (this.videoid === '') {
+      console.error('uga-video: videoid is required.');
+      return html`<p>No video available.</p>`;
     }
 
     return html`
@@ -474,12 +363,74 @@ class UgaVideo extends LitElement {
           padding-top: 0 !important;
         }
         .cmp-video__container {
+          position: relative;
           width: 100%;
+          aspect-ratio: 16 / 9;
           background: #000;
+          overflow: hidden;
         }
-        .cmp-video__container > div {
+        .cmp-video__player,
+        .cmp-video__placeholder {
+          position: absolute;
+          inset: 0;
           width: 100%;
-          height: auto;
+          height: 100%;
+        }
+        .cmp-video__thumb {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        .cmp-video__play-button {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          background: transparent;
+          border: 0;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+        }
+        .cmp-video__play-icon {
+          width: 68px;
+          height: 48px;
+        }
+        .cmp-video__spinner {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .cmp-video__spinner::before {
+          content: '';
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          border: 4px solid rgba(255, 255, 255, 0.3);
+          border-top-color: #fff;
+          animation: uga-video-spin 0.8s linear infinite;
+        }
+        @keyframes uga-video-spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .cmp-video__error-box {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+          color: #fff;
+          text-align: center;
+          padding: 1rem;
         }
         .cmp-video__youtube-container {
           width: 100%;
@@ -492,26 +443,9 @@ class UgaVideo extends LitElement {
           border: none;
         }
       </style>
-      ${isYouTube
-        ? this.videos.map((entryId) => this.youtubeCode(entryId))
-        : this.videos.map((entryId, index) => this.kalturaCode(entryId, index))}
+      <div class="cmp-video util-margin-top-lg">
+        ${isYouTube ? this.youtubeCode() : html`<div class="cmp-video__container">${this.renderKalturaStage()}</div>`}
+      </div>
     `;
-  }
-
-  // Untyped PropertyValues: `loaded` and `videos` are private, so they aren't in `keyof this`.
-  updated(changedProperties: PropertyValues): void {
-    super.updated(changedProperties);
-    if (!this.loaded || this.videos.length === 0) return;
-
-    void this.ensureVideoNames();
-
-    if (!this.isKalturaHost()) return;
-    const relevantChange =
-      changedProperties.has('loaded') ||
-      changedProperties.has('videos') ||
-      changedProperties.has('playerid');
-    if (!relevantChange) return;
-
-    void this.mountPlayers();
   }
 }
