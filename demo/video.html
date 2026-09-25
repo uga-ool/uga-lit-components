@@ -21,6 +21,7 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>Embeds Kaltura or YouTube video. Kaltura embeds use Kaltura's Dynamic Embed method (a generated <code>&lt;div&gt;</code> plus <code>KalturaPlayer.setup()</code>), which is what Kaltura's own Share &amp; Embed dialog produces.</p>
+        <p>Kaltura videos show a thumbnail and play button until clicked; nothing is fetched or loaded until then. On click, the video plays with a real, user-attributed Kaltura session when it can get one (falling back to anonymous playback if that fails for any reason), so plays show up against the actual viewer in Kaltura's own reporting instead of "Unknown".</p>
         <p>Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
 
@@ -99,25 +100,14 @@
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
-      <h2 id="multiple-videos-from-a-data-file">Multiple videos from a data file</h2>
-      <p class="util-reading-width">Set <code>type="local"</code> and point <code>filename</code> at a JSON file of entry IDs to render a playlist from one tag. Useful for module video collections.</p>
+      <h2 id="multiple-videos-on-one-page">Multiple videos on one page</h2>
+      <p class="util-reading-width">Use one <code>&lt;uga-video&gt;</code> per video, each with its own <code>videoid</code>. Nothing is fetched or loaded for a given video (no Kaltura player script, no attribution session) until its play button is actually clicked, so a page with several videos doesn't pay for the ones nobody watches.</p>
       <div class="util-shadow-base util-radius-all-sm util-pad-all-lg util-margin-bottom-md">
-        <uga-video type="local" filename="videos/videos-demo.json"></uga-video>
+        <uga-video videoid="1_icw0df6y"></uga-video>
+        <uga-video videoid="1_p658t55u"></uga-video>
       </div>
-      <uga-code language="markup">&lt;uga-video type="local" filename="videos/videos-demo.json"&gt;&lt;/uga-video&gt;</uga-code>
-      <p class="util-reading-width">Download <a href="https://drive.google.com/file/d/1CDYd03gCwEWYdA89fE1MEiUHHUYhfNqs/view?usp=drive_link" target="_blank" rel="noopener noreferrer"><code>videos/videos-demo.json</code></a> to modify and upload to your own course files.</p>
-
-      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
-
-      <h2 id="marking-an-elc-topic-complete">Marking an eLC topic complete</h2>
-      <p class="util-reading-width">Pass <code>topic-id</code> when the video should mark its eLC content topic complete. It is recommended whenever the video is embedded inside a topic, because without it the topic has to be parsed from the parent URL. This only does anything inside eLC, so it is not rendered live here.</p>
-      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" topic-id="12345"&gt;&lt;/uga-video&gt;</uga-code>
-
-      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
-
-      <h2 id="collecting-a-rating">Collecting a rating</h2>
-      <p class="util-reading-width">Add <code>includerating="true"</code> to show the rating component below the video. Leave the attribute off entirely when you do not want a rating. Ratings need eLC, so this example is not rendered live here.</p>
-      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" name="Faculty Profile" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y"&gt;&lt;/uga-video&gt;
+&lt;uga-video videoid="1_p658t55u"&gt;&lt;/uga-video&gt;</uga-code>
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
@@ -138,7 +128,7 @@
               <td><code>videoid</code></td>
               <td>string</td>
               <td><em>empty</em></td>
-              <td>Kaltura entry ID, or YouTube video ID when <code>host="youtube"</code>. Required unless the videos come from a data file.</td>
+              <td>Kaltura entry ID, or YouTube video ID when <code>host="youtube"</code>. Required.</td>
             </tr>
             <tr>
               <td><code>host</code></td>
@@ -156,37 +146,13 @@
               <td><code>name</code></td>
               <td>string</td>
               <td><em>empty</em></td>
-              <td>Video title, passed to Kaltura as <code>entryTitle</code> and used as the rating component's display name. Falls back to the video's Kaltura-reported name.</td>
+              <td>Video title, used as the play button's accessible label and the YouTube iframe title.</td>
             </tr>
             <tr>
-              <td><code>includerating</code></td>
-              <td>boolean</td>
-              <td><code>false</code></td>
-              <td>Show the rating component below the video. Presence of the attribute enables it, whatever the value.</td>
-            </tr>
-            <tr>
-              <td><code>topic-id</code></td>
+              <td><code>ou</code></td>
               <td>string</td>
               <td><em>empty</em></td>
-              <td>eLC content topic ID. Recommended when embedding inside a topic so completion events are reliably attributed; otherwise the topic is parsed from the parent URL.</td>
-            </tr>
-            <tr>
-              <td><code>type</code></td>
-              <td>string</td>
-              <td><em>empty</em></td>
-              <td>Where a multi-video data file lives: <code>local</code> for the current course, <code>program</code> for a shared program folder.</td>
-            </tr>
-            <tr>
-              <td><code>filename</code></td>
-              <td>string</td>
-              <td><em>empty</em></td>
-              <td>Path to the JSON data file, relative to the page. Used with <code>type</code>.</td>
-            </tr>
-            <tr>
-              <td><code>program</code></td>
-              <td>string</td>
-              <td><em>empty</em></td>
-              <td>Program identifier. Required when <code>type="program"</code>, ignored otherwise.</td>
+              <td>eLC org unit (course) ID. Only needed if it can't be parsed from the page's own URL; leave it off in normal course content.</td>
             </tr>
           </tbody>
         </table>
