@@ -520,6 +520,20 @@ export async function getCurrentUserId(lpVersion: string): Promise<string | null
 }
 
 /**
+ * Get the current user's D2L login username (whoami's `UniqueName`), fetched once per page and
+ * shared across every caller. Use this, never `getCurrentUserId`/`Identifier`, for anything sent
+ * to a third party (e.g. Kaltura session attribution) — UGA's FERPA/data-sharing terms for those
+ * integrations are scoped to username, not the internal numeric id or OrgDefinedId.
+ */
+export function getCurrentUsername(): Promise<string | null> {
+  return cachedApiCall('currentUsername', async () => {
+    const versions = await getVersions();
+    const user = await getUser(versions.lp);
+    return user?.UniqueName ? String(user.UniqueName) : null;
+  });
+}
+
+/**
  * Clear the assignments cache for a course (e.g. before submit so folder list is fresh).
  */
 export function clearAssignmentsCache(ou: string): void {

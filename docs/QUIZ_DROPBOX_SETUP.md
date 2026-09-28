@@ -119,7 +119,7 @@ If students complete a quiz but see "Quiz Already Completed" without the questio
 1. **Add `quiz-id`, `quiz-title`, or `filename`** – The component needs a stable ID to save and load results. You can use any of:
    - `quiz-id` (explicit, recommended)
    - `quiz-title` (derives ID from normalized title)
-   - `filename` (derives ID from the JSON filename, e.g. `quiz10.json` → `quiz10`)
+   - `filename` (derives ID from the JSON filename, e.g. `quiz-sample.json` → `quiz-sample`)
    Without any of these, the component falls back to a generated ID that can differ between loads, so saved feedback may not be found.
 
 2. **Set `show-feedback="true"`** – The question review only appears when this attribute is set (it defaults to true, but ensure it is not overridden).

@@ -5,7 +5,7 @@
 A comprehensive demo system with **multiple HTML pages** (hub, per-component demos, setup, and quiz variants) showcasing UGA Lit components:
 
 - ✅ **Main demo page** (`index-all-in-one.html`) - Comprehensive all-in-one scrollable demo with all components
-- ✅ **20 individual demo pages** - One HTML file per component showcase (**21** components in the bundle; `uga-quiz-grade-sync` is demonstrated on `quiz.html`). Plus `quiz/quiz10.html` and `quiz/quiz20.html` variants.
+- ✅ **20 individual demo pages** - One HTML file per component showcase (**21** components in the bundle; `uga-quiz-grade-sync` is demonstrated on `quiz.html`).
 - ✅ **Setup guide** (`setup.html`) - Deployment instructions and troubleshooting
 - ✅ **Property documentation** tables for every component
 - ✅ **Copy-paste ready** code snippets
@@ -56,15 +56,9 @@ demo/
 │   ├── course-calendar-demo.csv
 │   └── course-calendar-template.csv
 └── quiz/
-    ├── quiz10.html               # Smaller quiz demo page
-    ├── quiz20.html               # Larger quiz demo page
-    ├── quiz10.json
-    ├── quiz20.json
     ├── quiz-sample.json          # All six question types (JSON)
     ├── quiz-sample.csv           # Same types in eLC question-import CSV format
-    ├── quiz-demo.json            # Extra template
-    ├── quiz-sync-note.html       # Wraps uga-quiz-grade-sync for instructors
-    └── quiz-sync-note-basic.html
+    └── quiz-sync-note.html       # Wraps uga-quiz-grade-sync for instructors
 ```
 
 Repo root [`index.html`](../index.html) links to the all-in-one demo, setup guide, and a few focused pages.
@@ -116,7 +110,6 @@ Each component has a dedicated demo page:
 - **One component focus** - Single live example without distraction
 - **Complete documentation** - Property tables and code samples
 - **eLC-friendly** - Perfect for linking from eLC side navigation
-- **"Back to All Components" link** - Returns to index-all-in-one.html
 
 **When to use:**
 
@@ -194,7 +187,7 @@ In the eLC HTML editor, update file paths to:
 
 **Download example files from Google Drive links in the demo pages, then customize:**
 
-- `<uga-quiz>` - e.g. `quiz/quiz-sample.json`, `quiz/quiz10.json`, or `quiz/quiz20.json` for JSON, or `quiz/quiz-sample.csv` for the eLC question-import CSV format. Set `type="local"` (JSON) or `type="csv"` (CSV) and point `filename` at the relative or Manage Files path. See [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the JSON format and CSV usage notes.
+- `<uga-quiz>` - e.g. `quiz/quiz-sample.json` for JSON, or `quiz/quiz-sample.csv` for the eLC question-import CSV format. Set `type="local"` (JSON) or `type="csv"` (CSV) and point `filename` at the relative or Manage Files path. See [docs/QUIZ_JSON_FORMAT.md](../docs/QUIZ_JSON_FORMAT.md) for the JSON format and CSV usage notes.
 - `<uga-accordion>` - `accordion/accordion-demo.json` (expandable/collapsible sections)
 - `<uga-tabs>` - `tabs/tabs-demo.json` (tabbed content navigation)
 - `<uga-circles>` - `circles/circles-demo.json` (circular statistics/figures)

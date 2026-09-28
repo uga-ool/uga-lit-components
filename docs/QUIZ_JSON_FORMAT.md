@@ -181,8 +181,6 @@ The JSON file must have a top-level `questions` array. An optional `title` field
 ## Sample Files
 
 - **demo/quiz/quiz-sample.json** – All six question types (multiple-choice, true-false, short-answer, matching, multi-select, ordering)
-- **demo/quiz/quiz10.json** – Multiple-choice only (4 questions)
-- **demo/quiz/quiz20.json** – Multiple-choice only (8 questions)
 - **demo/quiz/quiz-sample.csv** – Same six question types in eLC question-import CSV format (use with `type="csv"`)
 
 ## Using an eLC CSV file directly
