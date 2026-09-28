@@ -188,34 +188,19 @@ The previous `uga-module-feedback` web component has been removed from this bund
 
 ## 🎥 Kaltura Video Integration
 
-The `uga-video` component embeds Kaltura via an **iframe** (default), matching the standard MediaSpace embed URL so the correct **thumbnail/poster** displays.
+The `uga-video` component embeds a Kaltura video with click-to-play: it shows a thumbnail and play button, and loads the Kaltura player only when the viewer clicks play. Plays are attributed to the signed-in eLC user.
 
-**Default Kaltura player:** uiConf ID **53568732** when `playerid` is omitted. Copy the **uiConf ID** from Kaltura’s embed code into `playerid` if your course uses a different player.
-
-**Embed behavior:**
-
-- **Default (no `topic-id`):** iframe with `embedPlaykitJs?iframeembed=true&entry_id=…` — no Playkit script on the page.
-- **With `topic-id`:** Playkit JS player for D2L topic completion (marks complete at **ended** or **≥ 80%** watched).
+**Default Kaltura player:** uiConf ID **57494843** when `playerid` is omitted. Copy the **uiConf ID** (the number after `uiconf_id/`) from Kaltura's embed code into `playerid` for a branded player.
 
 **Usage in eLC:**
 
 ```html
-<uga-video videoid="1_icw0df6y" includerating="false"></uga-video>
+<uga-video videoid="1_icw0df6y" name="Faculty Profile"></uga-video>
 ```
 
-**Multiple Videos:**
+**Multiple videos:** add one `<uga-video>` per video.
 
-```html
-<uga-video type="local" filename="videos.json"></uga-video>
-```
-
-**D2L topic completion:** Set **`topic-id`** (or rely on topic id parsed from the page URL) when the video should mark the content topic complete:
-
-```html
-<uga-video videoid="1_icw0df6y" topic-id="12345"></uga-video>
-```
-
-**D2L scope:** Ensure your LTI/app registration includes **`content:completions:write`** for the completion flow.
+**Ratings:** `uga-video` no longer renders a rating. Place a `<uga-rating>` after the video instead (see [demo/rating.html](demo/rating.html)).
 
 ---
 

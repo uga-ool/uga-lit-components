@@ -213,7 +213,7 @@ In the eLC HTML editor, update file paths to:
 
 ### Components That Need eLC API
 
-- `<uga-video>` - Kaltura `videoid` required; optional `topic-id` for D2L completion tracking. See [Video demo](video.html).
+- `<uga-video>` - Kaltura `videoid` required; optional `playerid` for a branded player. See [Video demo](video.html).
 - `<uga-assignment>` - Assignments, discussions, quizzes, and content with due dates. Filter with `types`. See [Assignment demo](assignment.html).
 - `<uga-duedate>` - Due-date table for the same activity types. See [Due date demo](duedate.html).
 - `<uga-instructor-card>` - Instructor photos/names from the classlist API; optional `username` pin list. See [Instructor card demo](instructor-card.html).
@@ -249,7 +249,7 @@ Follow the JSON structure in the sample files:
 <!-- Course overview with mixed components -->
 <uga-toc></uga-toc>
 <uga-accordion type="local" filename="module-overview.json"></uga-accordion>
-<uga-video videoid="1_icw0df6y" includerating="true"></uga-video>
+<uga-video videoid="1_icw0df6y"></uga-video>
 <uga-circles type="local" filename="course-stats.json"></uga-circles>
 <uga-return-to-top></uga-return-to-top>
 
