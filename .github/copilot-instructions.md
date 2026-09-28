@@ -69,14 +69,13 @@ const classlist = await getClasslist(ou, versions.le);
 
 ### Kaltura Video Embedding
 
-Default embed is a **Kaltura iframe** (`embedPlaykitJs?iframeembed=true&entry_id=`) for correct thumbnails. **Playkit JS** loads only when **`topic-id`** is set (D2L topic completion). Default uiConf **53568732**. See `src/components/uga-video.ts`.
+Click-to-play: a thumbnail placeholder renders first, and the Kaltura player bundle, identity-service call, and `loadMedia` run only after the viewer clicks play. Default uiConf **57494843**. See `src/components/uga-video.ts`.
 
 **Key points:**
 
-- `needsPlaykitApi()` — true when `getTopicId(topicId)` returns a non-empty id
-- Iframe path: no `initKalturaPlayer`, no Playkit script on the page
-- Playkit path: `loadKalturaScript` + `KalturaPlayer.setup` + playback listeners for 80%/ended completion
-- `playerid` overrides default uiConf (copy from Kaltura MediaSpace embed code)
+- `playerid` is the Kaltura uiConf ID (copy from the Kaltura embed code); omit it for the default player
+- Plays are attributed via a user KS from kaltura-identity-service; failures fall back to anonymous playback
+- No rating, topic completion, or data-file mode; use one `<uga-video>` per video and a separate `<uga-rating>` if needed
 
 ### Unsafe HTML Pattern
 
