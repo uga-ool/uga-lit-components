@@ -4,8 +4,15 @@ import './uga-callout.js';
 import { getVersions, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import { getCourseAnalytics } from '../lib/api/analytics-utils.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import type { ApiVersions, CourseAnalytics } from '../types/d2l.js';
 
+// WORK IN PROGRESS. Two known gaps, both pending a thorough review:
+// 1. groupBy below is declared but never read, so group-by renders module
+//    grouping whatever it is set to.
+// 2. The per-module assignment and discussion figures this renders are not
+//    real attribution. aggregateAssignmentStats and aggregateDiscussionStats
+//    in analytics-utils.ts spread items across modules round-robin.
 @customElement('uga-course-analytics')
 class UgaCourseAnalytics extends LitElement {
   // Light DOM: render into the page directly (eLC-friendly)
@@ -14,11 +21,11 @@ class UgaCourseAnalytics extends LitElement {
   }
 
   @property({ type: Object }) versions: ApiVersions = {};
-  @property({ type: Boolean, attribute: 'show-content-stats' }) showContentStats = true;
-  @property({ type: Boolean, attribute: 'show-assignments' }) showAssignments = true;
-  @property({ type: Boolean, attribute: 'show-discussions' }) showDiscussions = true;
+  @property({ attribute: 'show-content-stats', converter: booleanAttribute }) showContentStats = true;
+  @property({ attribute: 'show-assignments', converter: booleanAttribute }) showAssignments = true;
+  @property({ attribute: 'show-discussions', converter: booleanAttribute }) showDiscussions = true;
   @property({ type: String, attribute: 'group-by' }) groupBy: 'module' | 'topic' | 'all' = 'module';
-  @property({ type: Boolean, attribute: 'compare-modules' }) compareModules = true;
+  @property({ attribute: 'compare-modules', converter: booleanAttribute }) compareModules = true;
 
   @state() private loading = true;
   @state() private errorMessage: string | null = null;

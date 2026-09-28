@@ -7,6 +7,27 @@ All notable changes to this project will be documented in this file.
 
 ### Source (`src/`)
 
+- **Boolean attributes now honor `="false"`.** Writing `show-discussions="false"`,
+  `allow-retry="false"` or any other boolean attribute with the value `false` now
+  turns the feature off. Previously Lit read attribute presence only, so `="false"`
+  switched a feature **on**, and the six properties that default to on
+  (`show-content-stats`, `show-assignments`, `show-discussions`, `compare-modules`,
+  `allow-retry`, `show-feedback`) could not be turned off from course HTML at all.
+  Shared converter in [src/lib/utils/boolean-attribute.ts](src/lib/utils/boolean-attribute.ts).
+  - **Check existing course pages.** Any page that wrote an off-by-default attribute
+    as `="false"` (for example `sync-from-course="false"` or `hover-shadow="false"`)
+    was getting that feature *enabled*; after this change it is disabled, which is
+    what the markup always said.
+  - Internal lifecycle flags (`loaded` on seven components, `reviewExists` on
+    `uga-rating`) moved from `@property` to `@state`. They were never meant to be set
+    from markup and no demo or course page sets them.
+- **`uga-course-analytics` marked work in progress.** `group-by` is declared but never
+  read, so only module grouping happens whatever the attribute says. The per-module
+  assignment and discussion figures come from round-robin distribution in
+  `analytics-utils.ts` rather than real attribution, and discussion participation is
+  estimated rather than counted. Documented in the source, on the demo page, and in the
+  properties table; the component needs a thorough review before its module-level
+  numbers are used for decisions about students.
 - Added [src/README.md](src/README.md) and [src/archive/README.md](src/archive/README.md); moved unused modules to `src/archive/`.
 - `uga-accordion` and `uga-slideshow` use `loadData()` instead of raw `axios.get`.
 - `uga-footer`: `@customElement` registration; removed debug `console.log` calls.
@@ -63,6 +84,7 @@ All notable changes to this project will be documented in this file.
 
 ### Documentation
 
+- Removed the unused `demo/quiz/` fixtures (`quiz10.html`, `quiz20.html`, their JSON, `quiz-demo.json`, `quiz-sync-note-basic.html`) and updated the docs that pointed at them. `quiz-sample.json`, `quiz-sample.csv` and `quiz-sync-note.html` remain as the quiz templates.
 - Added root [`CLAUDE.md`](CLAUDE.md) and [`docs/CLAUDE_CODE_HANDOFF.md`](docs/CLAUDE_CODE_HANDOFF.md) for Claude Code onboarding; linked from `docs/README.md`, `docs/cursor/README.md`, and `WORKSPACE-HANDOFF.md`.
 - Consolidated root planning markdown into [`docs/planning/`](docs/planning/) (`FEATURE_REQUESTS`, `ROADMAP`, `valence-backlog`, `performance`); archived January 2026 originals under [`docs/planning/archive/`](docs/planning/archive/); root files are redirect stubs.
 - README, `WORKSPACE-HANDOFF`, and `src/README` aligned for agents: no root `index.html`, 21 components, bundled axios, links to planning index.

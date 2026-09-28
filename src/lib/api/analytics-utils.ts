@@ -193,6 +193,11 @@ async function aggregateContentStats(
 
 /**
  * Aggregate assignment submission statistics by module
+ *
+ * WORK IN PROGRESS: assignments are spread across modules round-robin below,
+ * so the per-module numbers are placeholders, not real attribution. Treat any
+ * module-level assignment figure this produces as unreliable until the eLC API
+ * gives us a genuine assignment-to-module mapping.
  */
 async function aggregateAssignmentStats(
   ou: string,
@@ -282,6 +287,10 @@ async function aggregateAssignmentStats(
 
 /**
  * Aggregate discussion participation statistics by module
+ *
+ * WORK IN PROGRESS: topics are spread across modules round-robin below, and
+ * participatingStudents is estimated as half the post count because the post
+ * loop never extracts user IDs. Both numbers are placeholders.
  */
 async function aggregateDiscussionStats(
   ou: string,

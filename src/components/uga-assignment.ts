@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import './uga-callout.js';
 import { getVersions, getEnrollment, getAssignments, getMyItemsDue, getForums, getTopics, getGradebook, getGradeValues, getBulkGradeValues, getClasslist, getAssignmentSubmissions } from '../lib/api/d2l-client.js';
 import { getCourse, transformDate } from '../lib/api/d2l-utils.js';
@@ -48,7 +49,7 @@ class UgaAssignment extends LitElement {
   @property({ type: Array }) studentRoles = ['Student', 'Demo Student'];
   @property({ type: String }) errorMessage: string | null = null;
   @property({ type: String }) types = DEFAULT_TYPES_STRING; // Comma-separated list of types to include
-  @property({ type: Boolean }) enableExport = false; // Enable grade export features for instructors
+  @property({ converter: booleanAttribute }) enableExport = false; // Enable grade export features for instructors
   @state() private exportInProgress = false;
   @state() private exportResults: { success: number; failed: number; errors: string[] } | null = null;
 

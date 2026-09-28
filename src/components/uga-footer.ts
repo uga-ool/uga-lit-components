@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import type { PropertyValues } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
@@ -186,9 +187,9 @@ class UgaFooter extends LitElement {
    * If omitted, logo and link come from built-in program maps (no network request).
    */
   @property({ type: String, attribute: 'data-file' }) datafile = '';
-  @property({ type: Boolean }) loaded = false;
+  @state() loaded = false;
   /** When true, appends ?t=timestamp to local JSON URL so edits show on refresh (avoids caching). */
-  @property({ type: Boolean, attribute: 'cache-bust' }) cacheBust = false;
+  @property({ attribute: 'cache-bust', converter: booleanAttribute }) cacheBust = false;
 
   @state() private footerData: FooterData | null = null;
   @state() private loadError: string | null = null;
