@@ -119,6 +119,7 @@ All notable changes to this project will be documented in this file.
 
 ### uga-footer
 
+- **Accounting (`acct`):** logo corrected to the Terry College of Business Master of Professional Accountancy lockup at `/shared/ugaonline/templates/acct/img/MPA_logo_Horizontal_CW.png`; alt text now reads "Terry College of Business, Master of Professional Accountancy". Default logo link now goes to the program page at `online.uga.edu/degrees-certificates/master-of-professional-accountancy/`. Upload the new file to Manage Files before deploying the bundle.
 - **Terry College of Business:** template code `terry` with logo `/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png`
 - **Academic Integrity:** template code `academicintegrity` with logo `/shared/ugaonline/templates/academicintegrity/img/AcademicIntegrity_logo_Formal_CW.svg` and default link `integrity.uga.edu`.
 - **Franklin College of Arts and Sciences:** template code `franklin` with logo `/shared/ugaonline/templates/franklin/img/FRANKLIN_logo_ExtremeHorizontal_CW.svg` and default link `franklin.uga.edu`.
