@@ -84,6 +84,7 @@ All notable changes to this project will be documented in this file.
 
 ### Documentation
 
+- `demo/video.html`: added a **Kaltura analytics** section covering what a play records (eLC username and course), how to read Kaltura's metrics for click-to-play videos, where to find the dashboards, and when playback falls back to anonymous.
 - Removed the unused `demo/quiz/` fixtures (`quiz10.html`, `quiz20.html`, their JSON, `quiz-demo.json`, `quiz-sync-note-basic.html`) and updated the docs that pointed at them. `quiz-sample.json`, `quiz-sample.csv` and `quiz-sync-note.html` remain as the quiz templates.
 - Added root [`CLAUDE.md`](CLAUDE.md) and [`docs/CLAUDE_CODE_HANDOFF.md`](docs/CLAUDE_CODE_HANDOFF.md) for Claude Code onboarding; linked from `docs/README.md`, `docs/cursor/README.md`, and `WORKSPACE-HANDOFF.md`.
 - Consolidated root planning markdown into [`docs/planning/`](docs/planning/) (`FEATURE_REQUESTS`, `ROADMAP`, `valence-backlog`, `performance`); archived January 2026 originals under [`docs/planning/archive/`](docs/planning/archive/); root files are redirect stubs.
