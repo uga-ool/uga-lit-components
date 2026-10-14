@@ -21,7 +21,7 @@
 
       <div class="util-reading-width util-margin-bottom-xl">
         <p>Embeds Kaltura or YouTube video. Kaltura embeds use Kaltura's Dynamic Embed method (a generated <code>&lt;div&gt;</code> plus <code>KalturaPlayer.setup()</code>), which is what Kaltura's own Share &amp; Embed dialog produces.</p>
-        <p>Kaltura videos show a thumbnail and play button until clicked; nothing is fetched or loaded until then. On click, the video plays with a real, user-attributed Kaltura session when it can get one (falling back to anonymous playback if that fails for any reason), so plays show up against the actual viewer in Kaltura's own reporting instead of "Unknown".</p>
+        <p>Kaltura videos show a thumbnail and play button until clicked; nothing is fetched or loaded until then. On click, the video plays with a real, user-attributed Kaltura session when it can get one (falling back to anonymous playback if that fails for any reason), so plays show up against the actual viewer in Kaltura's own reporting instead of "Unknown". See <a href="#kaltura-analytics">Kaltura analytics</a> for what is recorded.</p>
         <p>Add the component bundle before <code>&lt;/body&gt;</code>.</p>
       </div>
 
@@ -111,6 +111,80 @@
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
+      <h2 id="kaltura-analytics">Kaltura analytics</h2>
+      <p class="util-reading-width">When a viewer clicks play on a page inside an eLC course, the component asks UGA Online's identity service for a view-only Kaltura session tied to that viewer. Kaltura then records the play under the viewer's eLC username. Nothing needs to be added to the tag; this happens for every Kaltura video.</p>
+      <p class="util-reading-width">This matters because Kaltura counts every anonymous viewer as a single viewer. Without attribution, a video watched by forty students reports one unique viewer, and the per-user reports in Kaltura have nobody to list. With it, each student appears separately, with their own plays, completion rate, and a heatmap of which parts they watched.</p>
+
+      <h3 id="what-gets-recorded">What gets recorded</h3>
+      <ul class="util-reading-width">
+        <li>The viewer's eLC login username, which is their UGA MyID. The component reads it from eLC's record of who is signed in. It does not send the numeric eLC user ID or the student ID number.</li>
+        <li>The course, as a referrer address built from the course's org unit ID (<code>/d2l/le/content/<em>ou</em>/</code>). eLC's content viewer does not show the real content item in the page address, so the component sets this itself. In Kaltura it appears under the eLC domain in the <strong>Top domains</strong> list of the Engagement dashboard, and clicking the domain lists the page URLs, one per course.</li>
+        <li>Kaltura's standard viewing statistics for the play, which come from Kaltura's own player. The component does not collect or store viewing data itself.</li>
+      </ul>
+
+      <h3 id="reading-the-numbers">Reading the numbers</h3>
+      <p class="util-reading-width">Definitions below follow <a href="https://knowledge.kaltura.com/help/advanced-analytics-terminology">Kaltura's analytics terminology</a>. The last column notes where <code>uga-video</code> changes how a number should be read.</p>
+      <div class="util-scrollable-content util-margin-bottom-lg">
+        <table class="cmp-table">
+          <caption class="util-visually-hidden">Kaltura analytics metrics and how uga-video affects them</caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">How Kaltura counts it</th>
+              <th scope="col">With uga-video</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Plays</td>
+              <td>One play each time playback starts, whether from the Play button or autoplay. Pausing and resuming does not add a play.</td>
+              <td>The player starts as soon as the viewer clicks the thumbnail, so each click on a video's play button counts as one play.</td>
+            </tr>
+            <tr>
+              <td>Player impressions</td>
+              <td>One impression each time the player loads on a page, whether or not anyone presses play.</td>
+              <td>The player loads only after the click, so impressions and plays come out nearly equal. The impression-to-play ratio does <em>not</em> show how many students opened the page and skipped the video.</td>
+            </tr>
+            <tr>
+              <td>Unique viewers</td>
+              <td>Distinct signed-in viewers. All anonymous viewers count as one. Kaltura estimates this figure, and it can differ from exported reports by about 2%.</td>
+              <td>Accurate only for attributed plays. Anything that fell back to anonymous playback adds at most one viewer.</td>
+            </tr>
+            <tr>
+              <td>Minutes viewed</td>
+              <td>Counted by quartile milestones, not seconds. Watching 4 minutes of a 10-minute video counts as 2.5 minutes (the 25% mark).</td>
+              <td>No change.</td>
+            </tr>
+            <tr>
+              <td>Completion rate</td>
+              <td>Average completion is the average percentage watched per play. Total completion, shown per user, counts each part of the video once across all of that user's plays, so watching the first half one day and the second half the next is 100%.</td>
+              <td>Per-user completion needs attribution; for anonymous plays only the averages are meaningful.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="where-to-see-it">Where to see it</h3>
+      <p class="util-reading-width">The data lives in Kaltura, not eLC. For one video:</p>
+      <ul class="util-reading-width">
+        <li>In the Kaltura Rich Media CMS (formerly KMC), go to <strong>Content &gt; Entries</strong>, open the entry, and click <strong>View Analytics</strong>.</li>
+        <li>In MediaSpace or the Kaltura tools in eLC, open <strong>My Media</strong>, open the entry, and choose <strong>Analytics</strong> from the <strong>Actions</strong> menu.</li>
+      </ul>
+      <p class="util-reading-width">On the entry's dashboard, <strong>View Engagement Per User</strong> lists each viewer with their plays, player impressions, and completion rates, and the arrow next to a name opens a heatmap of the parts they watched. Clicking a username anywhere in the analytics opens that user's own dashboard across all videos. The account-wide dashboards under the Rich Media CMS <strong>Analytics</strong> menu (Engagement, Category, and others) are for Kaltura administrators. See <a href="https://knowledge.kaltura.com/help/kaltura-analytics">Kaltura analytics</a> and <a href="https://knowledge.kaltura.com/help/entry-level-analytics">Entry level analytics</a> in Kaltura's documentation.</p>
+      <p class="util-reading-width">Kaltura notes that privacy and ad-blocking browser extensions can stop its analytics from being collected, so some plays may be missing even when attribution worked.</p>
+      <p class="util-reading-width">The component does not write anything to the eLC gradebook or mark content topics complete; use eLC's own completion tracking for that. Viewing records tied to a named student are education records under FERPA, so share them only with people who have a legitimate need and follow UGA policy when exporting them.</p>
+
+      <h3 id="when-a-play-stays-anonymous">When a play stays anonymous</h3>
+      <p class="util-reading-width">Attribution never blocks the video. If any step fails, the video plays anonymously, and the browser console logs <code>uga-video: falling back to anonymous Kaltura playback</code>. That happens when:</p>
+      <ul class="util-reading-width">
+        <li>the page is not open inside an eLC course by a signed-in user (for example, a local preview or a public page);</li>
+        <li>eLC does not return the signed-in user, or the course ID cannot be found (set <code>ou</code> if the page's address does not include it);</li>
+        <li>the identity service returns an error or does not answer within 6 seconds.</li>
+      </ul>
+      <p class="util-reading-width">YouTube videos are not covered. Nothing about a YouTube play is sent to Kaltura.</p>
+
+      <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
+
       <h2 id="attributes">Attributes</h2>
       <div class="util-scrollable-content util-margin-bottom-xxl">
         <table class="cmp-table">
@@ -152,7 +226,7 @@
               <td><code>ou</code></td>
               <td>string</td>
               <td><em>empty</em></td>
-              <td>eLC org unit (course) ID. Only needed if it can't be parsed from the page's own URL; leave it off in normal course content.</td>
+              <td>eLC org unit (course) ID, also used to attribute plays to the course in Kaltura. Only needed if it can't be parsed from the page's own URL; leave it off in normal course content.</td>
             </tr>
           </tbody>
         </table>

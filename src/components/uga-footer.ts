@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import type { PropertyValues } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
@@ -53,7 +54,7 @@ interface FooterResponse {
 /** Display names for program codes (used in logo alt text). */
 const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
   academicintegrity: 'Academic Integrity',
-  acct: 'Accounting',
+  acct: 'Terry College of Business, Master of Professional Accountancy',
   cvle: 'Civil & Environmental Engineering',
   datascience: 'Data Science',
   envgeology: 'Environmental Geology',
@@ -76,7 +77,7 @@ const PROGRAM_DISPLAY_NAMES: Record<string, string> = {
  */
 const PROGRAM_IMAGE_PATHS: Record<string, string> = {
   academicintegrity: '/shared/ugaonline/templates/academicintegrity/img/AcademicIntegrity_logo_Formal_CW.svg',
-  acct: '/shared/ugaonline/templates/acct/img/logo.png',
+  acct: '/shared/ugaonline/templates/acct/img/MPA_logo_Horizontal_CW.png',
   datascience: '/shared/ugaonline/templates/datascience/img/datascience_logo.svg',
   envgeology: '/shared/ugaonline/templates/envgeology/img/logo.png',
   fanr: '/shared/ugaonline/templates/fanr/img/fanr_logo.svg',
@@ -94,7 +95,7 @@ const PROGRAM_IMAGE_PATHS: Record<string, string> = {
 /** Default logo hyperlink per program template (cvle omitted — no footer logo yet). */
 const PROGRAM_LOGO_LINKS: Record<string, string> = {
   academicintegrity: 'https://integrity.uga.edu/',
-  acct: 'https://www.terry.uga.edu/departments/accounting/',
+  acct: 'https://online.uga.edu/degrees-certificates/master-of-professional-accountancy/',
   datascience: 'https://www.stat.uga.edu/',
   envgeology: 'https://www.terry.uga.edu/departments/environmental-geology/',
   fanr: 'https://warnell.uga.edu/',
@@ -186,9 +187,9 @@ class UgaFooter extends LitElement {
    * If omitted, logo and link come from built-in program maps (no network request).
    */
   @property({ type: String, attribute: 'data-file' }) datafile = '';
-  @property({ type: Boolean }) loaded = false;
+  @state() loaded = false;
   /** When true, appends ?t=timestamp to local JSON URL so edits show on refresh (avoids caching). */
-  @property({ type: Boolean, attribute: 'cache-bust' }) cacheBust = false;
+  @property({ attribute: 'cache-bust', converter: booleanAttribute }) cacheBust = false;
 
   @state() private footerData: FooterData | null = null;
   @state() private loadError: string | null = null;

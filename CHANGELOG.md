@@ -7,6 +7,27 @@ All notable changes to this project will be documented in this file.
 
 ### Source (`src/`)
 
+- **Boolean attributes now honor `="false"`.** Writing `show-discussions="false"`,
+  `allow-retry="false"` or any other boolean attribute with the value `false` now
+  turns the feature off. Previously Lit read attribute presence only, so `="false"`
+  switched a feature **on**, and the six properties that default to on
+  (`show-content-stats`, `show-assignments`, `show-discussions`, `compare-modules`,
+  `allow-retry`, `show-feedback`) could not be turned off from course HTML at all.
+  Shared converter in [src/lib/utils/boolean-attribute.ts](src/lib/utils/boolean-attribute.ts).
+  - **Check existing course pages.** Any page that wrote an off-by-default attribute
+    as `="false"` (for example `sync-from-course="false"` or `hover-shadow="false"`)
+    was getting that feature *enabled*; after this change it is disabled, which is
+    what the markup always said.
+  - Internal lifecycle flags (`loaded` on seven components, `reviewExists` on
+    `uga-rating`) moved from `@property` to `@state`. They were never meant to be set
+    from markup and no demo or course page sets them.
+- **`uga-course-analytics` marked work in progress.** `group-by` is declared but never
+  read, so only module grouping happens whatever the attribute says. The per-module
+  assignment and discussion figures come from round-robin distribution in
+  `analytics-utils.ts` rather than real attribution, and discussion participation is
+  estimated rather than counted. Documented in the source, on the demo page, and in the
+  properties table; the component needs a thorough review before its module-level
+  numbers are used for decisions about students.
 - Added [src/README.md](src/README.md) and [src/archive/README.md](src/archive/README.md); moved unused modules to `src/archive/`.
 - `uga-accordion` and `uga-slideshow` use `loadData()` instead of raw `axios.get`.
 - `uga-accordion`: element ids are now unique per accordion (`uga-accordion-1-button-0`, etc.), so several accordions on one page no longer share ids. The "Open All" button is no longer hidden from screen readers (`aria-hidden` removed) and points `aria-controls` at its list; each item button now references its panel with `aria-controls`.
@@ -64,6 +85,8 @@ All notable changes to this project will be documented in this file.
 
 ### Documentation
 
+- `demo/video.html`: added a **Kaltura analytics** section covering what a play records (eLC username and course), how to read Kaltura's metrics for click-to-play videos, where to find the dashboards, and when playback falls back to anonymous.
+- Removed the unused `demo/quiz/` fixtures (`quiz10.html`, `quiz20.html`, their JSON, `quiz-demo.json`, `quiz-sync-note-basic.html`) and updated the docs that pointed at them. `quiz-sample.json`, `quiz-sample.csv` and `quiz-sync-note.html` remain as the quiz templates.
 - Added root [`CLAUDE.md`](CLAUDE.md) and [`docs/CLAUDE_CODE_HANDOFF.md`](docs/CLAUDE_CODE_HANDOFF.md) for Claude Code onboarding; linked from `docs/README.md`, `docs/cursor/README.md`, and `WORKSPACE-HANDOFF.md`.
 - Consolidated root planning markdown into [`docs/planning/`](docs/planning/) (`FEATURE_REQUESTS`, `ROADMAP`, `valence-backlog`, `performance`); archived January 2026 originals under [`docs/planning/archive/`](docs/planning/archive/); root files are redirect stubs.
 - README, `WORKSPACE-HANDOFF`, and `src/README` aligned for agents: no root `index.html`, 21 components, bundled axios, links to planning index.
@@ -80,6 +103,7 @@ All notable changes to this project will be documented in this file.
 
 ### uga-video
 
+- **Removed `includerating` and `topic-id`.** `uga-video` no longer renders a `<uga-rating>` or marks the eLC content topic complete; both attributes are ignored. To collect ratings, place a `<uga-rating>` after the video (see `demo/rating.html`). Docs and demos updated to drop both attributes.
 - Removed **Kaltura Djinn** integration (`enable-djinn`, `djinn-api-base`, `djinn-api-key`, Q&A panel, and `docs/KALTURA_DJINN_D2L.md`). Caption Q&A belongs in the Brightspace agent framework, not this component.
 - **Kaltura embed:** every video now renders via Kaltura's Dynamic Embed method (`KalturaPlayer.setup()` mounted into a generated `<div>`), matching what Kaltura's own Share & Embed dialog produces — the old plain-`<iframe>` fallback (used when `topic-id` was omitted) has been removed.
 - **`playerid` selects the Kaltura player again** — it is the **uiConf ID**, the number after `uiconf_id/` in the Kaltura embed code, and it is what carries program/college branding and automatic end cards. Default **`57494843`** ("UGA Online Lit Component Player") when the attribute is omitted. This reverses the previous entry below, which made `playerid` the container `<div>` id: that number is an arbitrary timestamp in Kaltura's embed snippet, not a player, so every video rendered in one hard-coded player and branded players were unreachable.
@@ -90,18 +114,29 @@ All notable changes to this project will be documented in this file.
 - `videodata`, `loaded`, `videos` and `versions` are internal state and are no longer settable as attributes or properties.
 - Fixed: moving an `<uga-video>` in the DOM (D2L content panes, tabs, slideshows) duplicated its video list and left an empty black player behind. Fixed: a page with several videos could fire a burst of identical `whoami` requests during playback, and could send duplicate topic-completion calls.
 - **Previous behavior, now reversed:** `playerid` was the embed's player ID (the `kaltura_player_<N>` number), used as the container/`targetId`, with `partnerId` (1727411) and `uiConfId` (52620262) as fixed constants and a default player ID of `660400380`.
-- Removed `entryTitle` from `KalturaPlayer.setup()`. Playkit 7.276 does not read it (the string appears nowhere in the player bundle), and populating it required two cross-origin Kaltura calls from the render path. The Kaltura-reported name is still fetched, but only when `includerating` is set, since `uga-rating` is its only real consumer.
+- Removed `entryTitle` from `KalturaPlayer.setup()`. Playkit 7.276 does not read it (the string appears nowhere in the player bundle), and populating it required two cross-origin Kaltura calls from the render path. The Kaltura-reported name is no longer fetched at all (its only consumer was the `includerating` integration, since removed).
 - Fixed: `videoid` and `playerid` changing on an already-connected `<uga-video>` (not just on initial page load) now correctly updates the rendered video/player.
-- Removed custom **video analytics** (`sendVideoEvent`, `window.UGA_VIDEO_ANALYTICS_*`, Vite `/api/video-analytics` proxy, and `server/video-analytics/`). **D2L topic completion** when `topic-id` is set (ended or 80% watched) is unchanged.
+- Removed custom **video analytics** (`sendVideoEvent`, `window.UGA_VIDEO_ANALYTICS_*`, Vite `/api/video-analytics` proxy, and `server/video-analytics/`). D2L topic completion via `topic-id` was later removed as well (see above).
 - A video that fails to load now shows a visible "This video failed to load" message instead of a silent blank player, and logs the player/entry IDs to the console for troubleshooting.
+
+### uga-quiz
+
+- Fixed: **Start** and **Retake** could get trapped on the completed screen instead of returning to the quiz. A new internal `isRetaking` state tracks the transition so the completed-screen check no longer re-triggers after a retake begins.
+
+### uga-image
+
+- Added opt-in **`shadow`** attribute for static Design System elevation: `base`, `deep`, `tinted` (deep red), or explicit `base--red` / `deep--red` / `base--blue` / `deep--blue`. Includes CSS fallbacks when the host page lacks the Design System's shadow utility classes. Ignored when `hover-shadow` is set.
+- Added opt-in **`hover-shadow`** attribute so the image lifts (base → deep elevation) on hover as a click affordance; off by default so existing courses are unchanged.
 
 ### uga-footer
 
+- **Accounting (`acct`):** logo corrected to the Terry College of Business Master of Professional Accountancy lockup at `/shared/ugaonline/templates/acct/img/MPA_logo_Horizontal_CW.png`; alt text now reads "Terry College of Business, Master of Professional Accountancy". Default logo link now goes to the program page at `online.uga.edu/degrees-certificates/master-of-professional-accountancy/`. Upload the new file to Manage Files before deploying the bundle.
 - **Terry College of Business:** template code `terry` with logo `/shared/ugaonline/templates/terry/img/TERRY_logo_Banner_CW.png`
 - **Academic Integrity:** template code `academicintegrity` with logo `/shared/ugaonline/templates/academicintegrity/img/AcademicIntegrity_logo_Formal_CW.svg` and default link `integrity.uga.edu`.
 - **Franklin College of Arts and Sciences:** template code `franklin` with logo `/shared/ugaonline/templates/franklin/img/FRANKLIN_logo_ExtremeHorizontal_CW.svg` and default link `franklin.uga.edu`.
 - **School of Law:** template code `law` with logo `/shared/ugaonline/templates/law/img/LAW_logo_Formal_CW.svg` and default link `law.uga.edu`.
 - Optional **`name`** attribute as alias for **`program`** (e.g. `name="terry"`); if both are set, `program` wins. Demos and setup text updated.
+- Fixed: legacy flat-JSON footer data (logo fields at the payload root instead of nested under `logo`) failed to parse under the stricter `FooterData` type. Added a `FlatLogoFooterFields`/`FooterRawPayload` type so both the nested and legacy flat shapes are accepted.
 
 ### uga-toc
 

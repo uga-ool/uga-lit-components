@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import type { PropertyValues } from 'lit';
 import { loadData } from '../lib/data/data-loader.js';
 import './uga-callout.js';
@@ -67,9 +68,9 @@ class UgaCourseCalendar extends LitElement {
   @property({ type: String }) type: 'local' | 'program' | 'csv' = 'local';
   @property({ type: String }) filename = '';
   @property({ type: String }) program = '';
-  @property({ type: Boolean }) loaded = false;
-  @property({ type: Boolean, attribute: 'sync-due-status' }) syncDueStatus = false;
-  @property({ type: Boolean, attribute: 'sync-from-course' }) syncFromCourse = false;
+  @state() loaded = false;
+  @property({ attribute: 'sync-due-status', converter: booleanAttribute }) syncDueStatus = false;
+  @property({ attribute: 'sync-from-course', converter: booleanAttribute }) syncFromCourse = false;
   @property({ type: String, attribute: 'course-id' }) courseId = '';
   @property({ type: String, attribute: 'le-version' }) leVersion = '';
 

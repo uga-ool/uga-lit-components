@@ -10,9 +10,9 @@ The **uga-quiz** component is a standalone Lit component used as embedded HTML. 
 
 ```html
 <uga-quiz
-  quiz-id="my-quiz"
-  quiz-title="My Quiz"
-  passing-score="70"
+  quizid="my-quiz"
+  quiztitle="My Quiz"
+  passingscore="70"
   type="local"
   filename="my-quiz.json"
 >
@@ -23,7 +23,7 @@ The **uga-quiz** component is a standalone Lit component used as embedded HTML. 
 
 ## JSON File Structure
 
-The JSON file must have a top-level `questions` array. An optional `title` field provides the quiz title (avoids duplicating it in the HTML `quiz-title` attribute). Each question is an object with required and optional fields:
+The JSON file must have a top-level `questions` array. An optional `title` field provides the quiz title (avoids duplicating it in the HTML `quiztitle` attribute). Each question is an object with required and optional fields:
 
 ```json
 {
@@ -189,9 +189,9 @@ You can skip the JSON conversion entirely and load an eLC question-import CSV wi
 
 ```html
 <uga-quiz
-  quiz-id="my-quiz"
-  quiz-title="My Quiz"
-  passing-score="70"
+  quizid="my-quiz"
+  quiztitle="My Quiz"
+  passingscore="70"
   type="csv"
   filename="quiz/quiz-sample.csv">
 </uga-quiz>

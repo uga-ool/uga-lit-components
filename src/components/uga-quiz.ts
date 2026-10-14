@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getVersions, getUser, getEnrollment, getAssignments, clearAssignmentsCache, submitToDropbox, submitToDropboxCommentOnly, getMySubmission, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
 import { parseD2LCSV } from '../lib/data/csv-parser.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import type { ApiVersions, User, Enrollment } from '../types/d2l.js';
 
 /**
@@ -69,14 +70,14 @@ class UgaQuiz extends LitElement {
   @property({ type: Number, attribute: 'dropbox-folder-id' }) dropboxFolderId = 0; // eLC Dropbox (assignment) folder ID to submit quiz result as a file
   @property({ type: String, attribute: 'dropbox-assignment-name' }) dropboxAssignmentName = ''; // Name of existing assignment to submit to (instructor creates it in eLC)
   @property({ type: Number }) passingScore = 70; // Percentage required to pass
-  @property({ type: Boolean, attribute: 'allow-retry' }) allowRetry = true;
+  @property({ attribute: 'allow-retry', converter: booleanAttribute }) allowRetry = true;
   @property({ type: Number, attribute: 'max-attempts' }) maxAttempts = 3; // Maximum retry attempts
-  @property({ type: Boolean, attribute: 'show-feedback' }) showFeedback = true; // Show immediate feedback
-  @property({ type: Boolean }) allowReset = false; // Reset button removed; kept for API compatibility
-  @property({ type: Boolean, attribute: 'randomize-questions' }) randomizeQuestions = false;
-  @property({ type: Boolean, attribute: 'randomize-answers' }) randomizeAnswers = false; // Randomize answer order within each question
+  @property({ attribute: 'show-feedback', converter: booleanAttribute }) showFeedback = true; // Show immediate feedback
+  @property({ converter: booleanAttribute }) allowReset = false; // Reset button removed; kept for API compatibility
+  @property({ attribute: 'randomize-questions', converter: booleanAttribute }) randomizeQuestions = false;
+  @property({ attribute: 'randomize-answers', converter: booleanAttribute }) randomizeAnswers = false; // Randomize answer order within each question
   @property({ type: Number, attribute: 'time-limit' }) timeLimit = 0; // Time limit in minutes (0 = no limit)
-  @property({ type: Boolean, attribute: 'auto-submit' }) autoSubmit = false; // Auto-submit when time expires
+  @property({ attribute: 'auto-submit', converter: booleanAttribute }) autoSubmit = false; // Auto-submit when time expires
   @property({ type: String }) type: 'local' | 'inline' | 'csv' = 'inline'; // Load from file (JSON/CSV) or inline JSON
   @property({ type: String }) filename = ''; // Filename if type='local' or type='csv'
 
@@ -138,7 +139,7 @@ class UgaQuiz extends LitElement {
           console.log(`ℹ️ quizId generated from quizTitle and stored: "${this.quizId}"`);
         }
       } else if (this.filename?.trim()) {
-        // No quizTitle - derive stable quizId from filename (e.g. quiz10.json -> quiz-quiz10)
+        // No quizTitle - derive stable quizId from filename (e.g. quiz-sample.json -> quiz-sample)
         const base = this.filename.replace(/\.(json|csv)$/i, '').replace(/[^a-z0-9_-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'quiz';
         this.quizId = base.startsWith('quiz') ? base : `quiz-${base}`;
         console.log(`ℹ️ quizId derived from filename: "${this.quizId}"`);

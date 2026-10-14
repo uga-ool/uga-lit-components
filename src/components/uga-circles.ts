@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { loadData } from '../lib/data/data-loader.js';
 
 
@@ -18,7 +18,7 @@ class UgaCircles extends LitElement {
 	@property({ type: String }) type = '';
 	@property({ type: String }) filename = '';
 	@property({ type: String }) program = '';
-	@property({ type: Boolean }) loaded = false;
+	@state() loaded = false;
 
 	private circles: CircleData[] = [];
 

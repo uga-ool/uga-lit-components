@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
 
@@ -37,7 +37,7 @@ class UgaSlideshow extends LitElement {
   @property({ type: Number }) activeImage = 0;
   @property({ type: String }) imageHeight = '500';
   @property({ type: String }) initialLoadHeight = '700';
-  @property({ type: Boolean }) loaded = false;
+  @state() loaded = false;
 
   connectedCallback(): void {
     super.connectedCallback();

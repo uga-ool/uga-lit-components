@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
 
@@ -26,7 +26,7 @@ class UgaAccordion extends LitElement {
   @property({ type: String }) type = '';
   @property({ type: String }) filename = '';
   @property({ type: String }) program = '';
-  @property({ type: Boolean }) loaded = false;
+  @state() loaded = false;
 
   private readonly uid = `uga-accordion-${++accordionCount}`;
 

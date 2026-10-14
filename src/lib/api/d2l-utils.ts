@@ -89,8 +89,8 @@ export function getCourse(): string | null {
 
 /**
  * Get the current content topic ID from URL or attribute.
- * Try attribute first (instructors set topic-id when embedding), then parse from URL.
- * @param topicIdAttr - Optional topic-id attribute from uga-video
+ * Try the explicit value first, then parse from URL.
+ * @param topicIdAttr - Optional topic ID supplied by the caller
  * @returns Topic ID string or null if not found
  */
 export function getTopicId(topicIdAttr?: string): string | null {

@@ -38,8 +38,10 @@
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 
       <h2 id="rating-a-video">Rating a video</h2>
-      <p class="util-reading-width">For Kaltura video you do not need this tag directly. Video can render it below the player with <code>includerating="true"</code>, which fills in the content details from the video itself.</p>
-      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" name="Faculty Profile" includerating="true"&gt;&lt;/uga-video&gt;</uga-code>
+      <p class="util-reading-width">To collect ratings for a video, place a rating tag right after the <code>&lt;uga-video&gt;</code>. Use the video's entry ID as <code>contentid</code> and type its title into <code>contentname</code>.</p>
+      <uga-code language="markup">&lt;uga-video videoid="1_icw0df6y" name="Faculty Profile"&gt;&lt;/uga-video&gt;
+&lt;uga-rating contentid="1_icw0df6y" contenttype="video" contentname="Faculty Profile"
+  contentplatform="kaltura"&gt;&lt;/uga-rating&gt;</uga-code>
 
       <div class="util-background-black util-margin-top-xl util-margin-bottom-xl" style="height:2px"></div>
 

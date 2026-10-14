@@ -4,6 +4,7 @@
 
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 import type { PropertyValues } from 'lit';
 import { getVersions, getClasslist, getClasslistPaged, logApiVersionWarning } from '../lib/api/d2l-client.js';
 import { getCourse } from '../lib/api/d2l-utils.js';
@@ -30,7 +31,7 @@ class UgaInstructorCard extends LitElement {
   /** Comma-separated Brightspace usernames; when set, only those users are shown (after instructor detection). Pins users even if classlist role labels are hidden. Case-insensitive. */
   @property({ type: String }) username = '';
   /** When true, show a card for each matched instructor; when false, only the first match is shown. */
-  @property({ type: Boolean, reflect: true }) multiple = false;
+  @property({ reflect: true, converter: booleanAttribute }) multiple = false;
   @state() private _cards: Instructor[] = [];
   @state() private _loading: boolean = false;
   @state() private _error: string = '';
