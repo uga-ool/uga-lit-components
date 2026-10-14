@@ -2,7 +2,6 @@ import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { loadData } from '../lib/data/data-loader.js';
-import { booleanAttribute } from '../lib/utils/boolean-attribute.js';
 
 interface AccordionItem {
   id?: string;
@@ -17,16 +16,19 @@ interface AccordionData {
   data: AccordionItem[];
 }
 
+let accordionCount = 0;
+
 @customElement('uga-accordion')
 class UgaAccordion extends LitElement {
 
   @property({ type: Object }) accordionData: AccordionData = { title: '', data: [] };
-  @property({ converter: booleanAttribute }) ariaHiddenAll = false;
   @property({ type: String }) allState = 'Open';
   @property({ type: String }) type = '';
   @property({ type: String }) filename = '';
   @property({ type: String }) program = '';
   @state() loaded = false;
+
+  private readonly uid = `uga-accordion-${++accordionCount}`;
 
   createRenderRoot() {
     return this;
@@ -55,8 +57,7 @@ class UgaAccordion extends LitElement {
   render() {
     if (this.loaded) {
       for (let i in this.accordionData.data) {
-        if (this.accordionData.data[i]['id'] == undefined) {
-          this.accordionData.data[i]['id'] = i;
+        if (this.accordionData.data[i]['ariaExpanded'] == undefined) {
           this.accordionData.data[i]['ariaExpanded'] = false;
           this.accordionData.data[i]['ariaHidden'] = true;
         }
@@ -64,17 +65,17 @@ class UgaAccordion extends LitElement {
       
       return html`
       <link rel="stylesheet" href="https://design.online.uga.edu/css/base.css" />
-      <button class="cmp-button cmp-accordion-toggle-all js-toggle-all" aria-controls="${this.accordionData.title}" aria-hidden="${this.ariaHiddenAll}" @click="${this.allToggle}">${this.allState} All</button>
-      <dl id="${this.accordionData.title}" class="cmp-accordion">
+      <button class="cmp-button cmp-accordion-toggle-all js-toggle-all" aria-controls="${this.uid}" @click="${this.allToggle}">${this.allState} All</button>
+      <dl id="${this.uid}" class="cmp-accordion">
         ${this.accordionData.data.map(
-          (item) => html`
+          (item, i) => html`
           <dt>
-            <button id="${item.id}" class="cmp-accordion__button js-toggler" aria-expanded="${item.ariaExpanded}" @click="${() => this.toggleItem(item)}">
+            <button id="${this.uid}-button-${i}" class="cmp-accordion__button js-toggler" aria-expanded="${item.ariaExpanded}" aria-controls="${this.uid}-panel-${i}" @click="${() => this.toggleItem(i)}">
               ${item.title}
               <span class="icon"></span>
             </button>
           </dt>
-          <dd class="cmp-accordion__content" aria-labelledby="${item.id}" aria-hidden="${item.ariaHidden}">
+          <dd id="${this.uid}-panel-${i}" class="cmp-accordion__content" aria-labelledby="${this.uid}-button-${i}" aria-hidden="${item.ariaHidden}">
             ${unsafeHTML(item.body)}
           </dd>
           `
@@ -87,8 +88,6 @@ class UgaAccordion extends LitElement {
   }
 
   allToggle(): void {
-    this.ariaHiddenAll = !this.ariaHiddenAll;
-
     if (this.allState === "Open") {
       this.allState = "Close";
       for (let i in this.accordionData.data) {
@@ -106,11 +105,11 @@ class UgaAccordion extends LitElement {
     this.requestUpdate();
   }
 
-  toggleItem(item: AccordionItem): void {
-    const index = this.accordionData.data.findIndex(i => i.id == item.id);
-    if (index !== -1) {
-      this.accordionData.data[index]['ariaHidden'] = !item['ariaHidden'];
-      this.accordionData.data[index]['ariaExpanded'] = !item['ariaExpanded'];
+  toggleItem(index: number): void {
+    const item = this.accordionData.data[index];
+    if (item) {
+      item['ariaHidden'] = !item['ariaHidden'];
+      item['ariaExpanded'] = !item['ariaExpanded'];
       this.requestUpdate();
     }
   }
