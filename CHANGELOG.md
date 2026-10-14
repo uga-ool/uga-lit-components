@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 - Added [src/README.md](src/README.md) and [src/archive/README.md](src/archive/README.md); moved unused modules to `src/archive/`.
 - `uga-accordion` and `uga-slideshow` use `loadData()` instead of raw `axios.get`.
+- `uga-accordion`: element ids are now unique per accordion (`uga-accordion-1-button-0`, etc.), so several accordions on one page no longer share ids. The "Open All" button is no longer hidden from screen readers (`aria-hidden` removed) and points `aria-controls` at its list; each item button now references its panel with `aria-controls`.
 - `uga-footer`: `@customElement` registration; removed debug `console.log` calls.
 - Updated [src/types/global.d.ts](src/types/global.d.ts) (bundled axios note; `window.D2L`).
 - **Design System compliance pass.** Removed styling that wasn't sourced from the UGA
